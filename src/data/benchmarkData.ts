@@ -1,0 +1,81 @@
+import { ResearchMetric, DatasetSummary } from '../types/benchmark.types';
+
+export const BENCHMARK_METRICS: ResearchMetric[] = [
+  {
+    id: 'm-1',
+    metric: 'Word Error Rate (WER)',
+    definition: 'Frequency of incorrect, inserted, or substituted words across handwritten clinical text lines.',
+    traditionalOcr: '58.4%',
+    generalVlm: '34.2%',
+    auraRxModel: '8.7%',
+    improvement: '-74.6% relative to VLM baseline',
+    isLowerBetter: true,
+  },
+  {
+    id: 'm-2',
+    metric: 'Character Error Rate (CER)',
+    definition: 'Normalized Levenshtein edit distance at character level on cursive prescription strokes.',
+    traditionalOcr: '39.8%',
+    generalVlm: '21.5%',
+    auraRxModel: '4.9%',
+    improvement: '-77.2% relative to VLM baseline',
+    isLowerBetter: true,
+  },
+  {
+    id: 'm-3',
+    metric: 'Clinical Entity F1 (Medicine Names)',
+    definition: 'Harmonic mean of precision and recall for extracting recognized brand/salt entities mapped to CDSCO/RxNorm.',
+    traditionalOcr: '41.2%',
+    generalVlm: '68.9%',
+    auraRxModel: '93.4%',
+    improvement: '+35.5% precision gain',
+    isLowerBetter: false,
+  },
+  {
+    id: 'm-4',
+    metric: 'Dosage & Posology F1',
+    definition: 'Exact extraction accuracy for dose strength, frequency (1-0-1, SOS), and meal instructions.',
+    traditionalOcr: '32.1%',
+    generalVlm: '54.7%',
+    auraRxModel: '89.6%',
+    improvement: '+63.8% over generic models',
+    isLowerBetter: false,
+  },
+  {
+    id: 'm-5',
+    metric: 'Hallucination Rate (High-Risk Tokens)',
+    definition: 'Tendency of model to fabricate plausible-sounding drugs when handwritten ink is smudged or ambiguous.',
+    traditionalOcr: 'N/A (Garbled text)',
+    generalVlm: '28.6%',
+    auraRxModel: '1.2%',
+    improvement: '95.8% reduction via Abstention Gate',
+    isLowerBetter: true,
+  },
+  {
+    id: 'm-6',
+    metric: 'Selective Abstention AUROC',
+    definition: 'Ability of calibrated uncertainty module to correctly halt prediction when ambiguity could induce clinical harm.',
+    traditionalOcr: '0.51 (Random)',
+    generalVlm: '0.64',
+    auraRxModel: '0.94',
+    improvement: 'State-of-the-art selective risk calibration',
+    isLowerBetter: false,
+  },
+];
+
+export const DATASET_EVALUATION_SUMMARY: DatasetSummary[] = [
+  {
+    name: 'IndoRx-Handwritten-1200',
+    sampleCount: 1200,
+    origin: 'Multicenter OPDs across Maharashtra, Tamil Nadu, and Delhi NCR',
+    doctorSpecialties: ['Internal Medicine', 'Paediatrics', 'Cardiology', 'Pulmonology', 'Orthopaedics'],
+    handwritingStyles: 'Fast clinical cursive, rapid outpatient shorthand, mixed abbreviations (PC, AC, SOS, TDS)',
+  },
+  {
+    name: 'IAM-Medical-Curated-500',
+    sampleCount: 500,
+    origin: 'Benchmarked international handwritten medical scripts with ground-truth ontology linking',
+    doctorSpecialties: ['Emergency Medicine', 'Primary Healthcare', 'Endocrinology'],
+    handwritingStyles: 'Varying ballpoint/gel inks, angled paper, scanning artifacts, variable lighting',
+  },
+];
