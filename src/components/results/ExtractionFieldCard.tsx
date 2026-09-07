@@ -27,22 +27,22 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
     switch (field.status) {
       case 'confident':
         return (
-          <div className="inline-flex items-center gap-1.5 text-xs text-theme-muted font-medium">
-            <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-theme-muted font-medium">
+            <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
             <span>Grounded</span>
           </div>
         );
       case 'uncertain':
         return (
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>Needs verification</span>
           </div>
         );
       case 'flagged':
         return (
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-semibold bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800">
-            <AlertTriangle className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800">
+            <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
             <span>Flagged for review</span>
           </div>
         );
@@ -57,7 +57,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       return 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800';
     }
     if (isActive) {
-      return 'bg-sky-50/70 dark:bg-sky-950/30 border-sky-400 dark:border-sky-600 shadow-xs';
+      return 'bg-teal-50/60 dark:bg-teal-950/30 border-teal-500 dark:border-teal-500 shadow-sm ring-1 ring-teal-500/20';
     }
     return 'bg-surface border-theme hover:border-theme-hover shadow-xs';
   };
@@ -68,25 +68,25 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
     <div
       onMouseEnter={() => onHover && onHover(field.boundingBox, field.fieldName)}
       onMouseLeave={() => onLeave && onLeave()}
-      className={`p-4 rounded-2xl border transition-all duration-200 space-y-3 cursor-pointer ${getBorderAndBgStyle()}`}
+      className={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 space-y-4 cursor-pointer ${getBorderAndBgStyle()}`}
     >
       {/* Top Header: Field Name, Status Badge, and Confidence Score */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="space-y-0.5">
-          <span className="text-xs text-theme-muted font-medium block">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1">
+          <span className="text-xs sm:text-sm text-theme-muted font-medium block">
             {field.fieldName}
           </span>
-          <div className="text-base sm:text-lg font-bold text-theme-primary tracking-tight">
+          <h3 className="text-xl sm:text-2xl lg:text-[1.65rem] font-bold text-theme-primary tracking-tight leading-snug">
             {field.value}
-          </div>
+          </h3>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           {getStatusBadge()}
           <div className="text-right">
             <span
               title="Illustrative demo confidence score for prototype testing"
-              className={`text-xs font-bold font-mono ${
+              className={`text-sm font-bold font-mono ${
                 field.status === 'confident'
                   ? 'text-emerald-700 dark:text-emerald-400'
                   : field.status === 'uncertain'
@@ -96,7 +96,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
             >
               {confidencePercent}%
             </span>
-            <span className="text-[10px] text-theme-muted block font-medium">Demo Score</span>
+            <span className="text-xs text-theme-muted block font-medium">Demo Score</span>
           </div>
         </div>
       </div>
@@ -118,24 +118,24 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       </div>
 
       {/* Explanation & Rationale */}
-      <div className="text-xs text-theme-secondary leading-relaxed">
+      <p className="text-base sm:text-lg text-theme-secondary leading-relaxed">
         {field.explanation}
-      </div>
+      </p>
 
       {/* Uncertainty & Verification Instructions */}
       {field.status === 'uncertain' && (
-        <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 space-y-1.5 text-xs text-amber-900 dark:text-amber-200">
-          <div className="flex items-center gap-1.5 font-semibold text-amber-800 dark:text-amber-300">
-            <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+        <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 space-y-2 text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+          <div className="flex items-center gap-2 font-semibold text-amber-800 dark:text-amber-300">
+            <Info className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>Ambiguity &amp; Verification Guidance</span>
           </div>
           {field.uncertaintyReason && (
-            <p className="text-[11px] text-amber-800/90 dark:text-amber-200/90">
+            <p className="text-xs sm:text-sm text-amber-800/90 dark:text-amber-200/90 leading-relaxed">
               <strong>Observation:</strong> {field.uncertaintyReason}
             </p>
           )}
           {field.verificationInstruction && (
-            <p className="text-[11px] text-amber-900 dark:text-amber-100 bg-amber-100/60 dark:bg-amber-900/30 p-2 rounded-lg border border-amber-300 dark:border-amber-800">
+            <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 bg-amber-100/60 dark:bg-amber-900/30 p-2.5 rounded-lg border border-amber-300 dark:border-amber-800 leading-relaxed">
               <strong>Action Required:</strong> {field.verificationInstruction}
             </p>
           )}
@@ -144,18 +144,18 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
 
       {/* Flagged / Selective Abstention Notice */}
       {field.status === 'flagged' && (
-        <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 space-y-1.5 text-xs text-red-900 dark:text-red-200">
-          <div className="flex items-center gap-1.5 font-semibold text-red-800 dark:text-red-300">
+        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 space-y-2 text-xs sm:text-sm text-red-900 dark:text-red-200">
+          <div className="flex items-center gap-2 font-semibold text-red-800 dark:text-red-300">
             <ShieldAlert className="w-4 h-4 text-red-600 dark:text-red-400" />
             <span>Selective Abstention Activated</span>
           </div>
           {field.uncertaintyReason && (
-            <p className="text-[11px] text-red-800/90 dark:text-red-200/90">
+            <p className="text-xs sm:text-sm text-red-800/90 dark:text-red-200/90 leading-relaxed">
               <strong>Hazard Analysis:</strong> {field.uncertaintyReason}
             </p>
           )}
           {field.verificationInstruction && (
-            <p className="text-[11px] text-red-900 dark:text-red-100 bg-red-100/60 dark:bg-red-900/40 p-2 rounded-lg border border-red-300 dark:border-red-800 leading-relaxed font-semibold">
+            <p className="text-xs sm:text-sm text-red-900 dark:text-red-100 bg-red-100/60 dark:bg-red-900/40 p-2.5 rounded-lg border border-red-300 dark:border-red-800 leading-relaxed font-semibold">
               {field.verificationInstruction}
             </p>
           )}
@@ -163,14 +163,14 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       )}
 
       {/* Card Footer */}
-      <div className="pt-2 border-t border-theme flex items-center justify-between text-[11px] text-theme-muted">
-        <div className="flex items-center gap-1">
-          <FileSearch className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+      <div className="pt-3 border-t border-theme flex items-center justify-between text-xs text-theme-muted">
+        <div className="flex items-center gap-1.5">
+          <FileSearch className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
           <span>Source: {field.source}</span>
         </div>
-        <div className="flex items-center gap-1 text-teal-700 dark:text-teal-400 hover:underline">
+        <div className="flex items-center gap-1.5 text-teal-700 dark:text-teal-400 hover:underline font-medium">
           <span>Highlight On Script</span>
-          <ExternalLink className="w-2.5 h-2.5" />
+          <ExternalLink className="w-3 h-3" />
         </div>
       </div>
     </div>

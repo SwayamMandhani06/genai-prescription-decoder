@@ -232,9 +232,9 @@ export const MultilingualExplanationSection: React.FC = () => {
             </div>
 
             {/* Overall Advice Callout */}
-            <div className="p-5 rounded-2xl bg-sky-50 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-800/80 space-y-2 text-xs">
-              <div className="font-mono font-bold text-sky-900 dark:text-sky-300 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+            <div className="p-5 rounded-2xl bg-teal-50/70 dark:bg-teal-950/25 border border-teal-200 dark:border-teal-800/80 space-y-2 text-xs">
+              <div className="font-mono font-bold text-teal-900 dark:text-teal-300 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span>
                   {selectedLanguage === 'en'
                     ? 'General Recovery Advice'

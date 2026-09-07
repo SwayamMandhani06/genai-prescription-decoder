@@ -275,29 +275,30 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
           </div>
         )}
         {/* Narrative Header */}
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-medium">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
                 <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
                 <span>
                   Stage 0{currentStageDef.stepNumber}: {currentStageDef.label}
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-theme-primary tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-theme-primary tracking-tight leading-[1.05]">
                 {activeNarrative.title}
               </h1>
             </div>
 
             {/* Quick Actions */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={handleRerun}
                 disabled={isRunning}
-                leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+                leftIcon={<RotateCcw className="w-4 h-4" />}
+                className="text-xs sm:text-sm font-semibold"
               >
                 Rerun
               </Button>
@@ -308,6 +309,7 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
                   size="sm"
                   onClick={handleProceedToFindings}
                   rightIcon={<ArrowRight className="w-4 h-4 text-white" />}
+                  className="text-xs sm:text-sm font-semibold"
                 >
                   View Prescription Findings
                 </Button>
@@ -315,11 +317,11 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
             </div>
           </div>
 
-          <p className="text-sm text-theme-secondary max-w-3xl leading-relaxed">
+          <p className="text-base sm:text-lg text-theme-secondary max-w-3xl leading-relaxed">
             {activeNarrative.narrative}
           </p>
 
-          <div className="text-xs text-theme-muted flex items-center gap-2">
+          <div className="text-xs sm:text-sm font-mono text-theme-muted flex items-center gap-2">
             <span>&gt;</span>
             <span className="truncate">{currentLogMessage}</span>
           </div>

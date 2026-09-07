@@ -131,7 +131,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                     height: `${activeBoundingBox.height}%`,
                   }}
                 >
-                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-sky-700 dark:text-sky-300 rounded border border-theme shadow-xs">
+                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-teal-700 dark:text-teal-300 rounded border border-theme shadow-xs">
                     {highlightLabel || 'Active Stroke'}
                   </span>
                 </div>
@@ -139,43 +139,43 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
             </div>
           ) : (
             /* Curated Clinical Script Canvas */
-            <div className="prescription-paper p-5 sm:p-7 text-slate-900 dark:text-slate-100 w-[580px] max-w-full rounded-xl shadow-md relative border border-slate-300 dark:border-slate-700">
+            <div className="prescription-paper shadow-paper p-6 sm:p-8 text-slate-900 w-[580px] max-w-full rounded-2xl relative border border-amber-900/15 dark:border-white/15">
               {/* Clinic Letterhead */}
-              <div className="border-b border-slate-300 dark:border-slate-700 pb-2 mb-3">
+              <div className="border-b border-slate-300 pb-2 mb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-bold text-sm text-slate-950 dark:text-slate-100 tracking-tight font-sans">
+                    <h3 className="font-bold text-sm text-slate-950 tracking-tight font-sans">
                       {canvas.doctorHeader.name}
                     </h3>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400">{canvas.doctorHeader.qualifications}</p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{canvas.doctorHeader.regNo}</p>
+                    <p className="text-[11px] text-slate-600">{canvas.doctorHeader.qualifications}</p>
+                    <p className="text-[10px] text-slate-500 font-mono">{canvas.doctorHeader.regNo}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[11px] text-teal-800 dark:text-teal-400 tracking-wide">
+                    <p className="font-bold text-[11px] text-teal-800 tracking-wide">
                       {canvas.doctorHeader.clinicName}
                     </p>
-                    <p className="text-[10px] text-slate-600 dark:text-slate-400">{canvas.doctorHeader.clinicAddress}</p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{canvas.doctorHeader.phone}</p>
+                    <p className="text-[10px] text-slate-600">{canvas.doctorHeader.clinicAddress}</p>
+                    <p className="text-[10px] text-slate-500 font-mono">{canvas.doctorHeader.phone}</p>
                   </div>
                 </div>
               </div>
 
               {/* Patient Profile Bar */}
-              <div className="bg-slate-100 dark:bg-slate-800/60 rounded-lg px-3 py-1.5 mb-4 border border-slate-200 dark:border-slate-700 flex justify-between items-center text-xs font-sans">
+              <div className="bg-amber-900/5 rounded-lg px-3 py-1.5 mb-4 border border-amber-900/10 flex justify-between items-center text-xs font-sans text-slate-800">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400 mr-1">Patient:</span>
-                  <strong className="text-slate-900 dark:text-slate-100">{canvas.patientInfo.name}</strong>
+                  <span className="text-slate-500 mr-1">Patient:</span>
+                  <strong className="text-slate-900">{canvas.patientInfo.name}</strong>
                   <span className="text-slate-400 mx-1.5">|</span>
-                  <span className="text-slate-600 dark:text-slate-300">{canvas.patientInfo.ageGender}</span>
+                  <span className="text-slate-700">{canvas.patientInfo.ageGender}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400 mr-1">Date:</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-mono">{canvas.patientInfo.date}</strong>
+                  <span className="text-slate-500 mr-1">Date:</span>
+                  <strong className="text-slate-800 font-mono">{canvas.patientInfo.date}</strong>
                 </div>
               </div>
 
               {/* Rx Symbol */}
-              <div className="text-2xl font-serif italic font-bold text-slate-900 dark:text-slate-100 mb-2">℞</div>
+              <div className="text-2xl font-serif italic font-bold text-slate-900 mb-2">℞</div>
 
               {/* Ruled lines with SVG Cursive Ink Strokes */}
               <div className="space-y-4 relative py-2 min-h-[200px]">
@@ -193,7 +193,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                         strokeWidth="3.2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="drop-shadow-xs dark:stroke-sky-400"
+                        className="drop-shadow-xs"
                       />
                     </g>
                   ))}
@@ -202,7 +202,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                 {/* Dynamic Coordinate Highlight Box */}
                 {activeBoundingBox && (
                   <div
-                    className="absolute border-2 border-sky-500 bg-sky-500/10 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-sky-500/30"
+                    className="absolute border-2 border-teal-600 bg-teal-500/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-teal-500/30"
                     style={{
                       top: `${activeBoundingBox.y}%`,
                       left: `${activeBoundingBox.x}%`,
@@ -210,7 +210,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                       height: `${activeBoundingBox.height}%`,
                     }}
                   >
-                    <div className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-sky-700 dark:text-sky-300 rounded border border-theme flex items-center gap-1 shadow-xs">
+                    <div className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-teal-700 dark:text-teal-300 rounded border border-theme flex items-center gap-1 shadow-xs">
                       <Crosshair className="w-2.5 h-2.5" />
                       <span>{highlightLabel || 'Recognized Line'}</span>
                     </div>
@@ -219,8 +219,8 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
               </div>
 
               {/* Prescriber Signature & Stamp */}
-              <div className="mt-4 pt-3 border-t border-slate-300 dark:border-slate-700 flex justify-between items-end text-xs text-slate-600 dark:text-slate-400">
-                <div className="border border-slate-300 dark:border-slate-700 rounded px-2 py-1 bg-white/70 dark:bg-slate-800/80 font-mono text-[10px] text-slate-700 dark:text-slate-300">
+              <div className="mt-4 pt-3 border-t border-slate-300 flex justify-between items-end text-xs text-slate-600">
+                <div className="border border-red-300/80 rounded px-2 py-1 bg-red-50/70 font-mono text-[10px] text-red-900 font-semibold">
                   {canvas.clinicStampText}
                 </div>
                 <div className="text-right">
@@ -231,10 +231,9 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                       stroke="#1E3A8A"
                       strokeWidth="2.4"
                       strokeLinecap="round"
-                      className="dark:stroke-sky-400"
                     />
                   </svg>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Physician Signature</p>
+                  <p className="text-[10px] text-slate-500 font-mono">Physician Signature</p>
                 </div>
               </div>
             </div>

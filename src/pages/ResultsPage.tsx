@@ -168,24 +168,24 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
         />
 
         {/* Prescription Metadata */}
-        <div className="p-5 rounded-2xl bg-surface border border-theme flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
-          <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-medium">
-              <Stethoscope className="w-3.5 h-3.5" />
+        <div className="p-6 sm:p-7 rounded-3xl bg-surface border border-theme flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
+              <Stethoscope className="w-4 h-4" />
               <span>Accession: <strong className="font-mono">{currentState.accessionId}</strong></span>
               <span className="text-teal-400">|</span>
               <span>{currentState.difficultyTag}</span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-extrabold text-theme-primary tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-theme-primary tracking-tight leading-[1.05]">
               {currentState.scenarioTitle}
             </h1>
 
-            <p className="text-xs text-theme-secondary">{currentState.scenarioSubtitle}</p>
+            <p className="text-base sm:text-lg text-theme-secondary leading-relaxed">{currentState.scenarioSubtitle}</p>
           </div>
 
           {/* Patient Profile Readout */}
-          <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1 text-xs w-full md:w-auto">
+          <div className="p-4 rounded-2xl bg-surface-subtle border border-theme space-y-1.5 text-sm sm:text-base w-full md:w-auto shrink-0">
             <div>
               <span className="text-theme-muted mr-2">Patient:</span>
               <strong className="text-theme-primary">{currentState.patientName}</strong>{' '}
@@ -199,10 +199,10 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
         </div>
 
         {/* Statutory Assistive Tool Disclaimer Banner */}
-        <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme flex items-start gap-3 text-xs text-theme-secondary leading-relaxed">
-          <Info className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+        <div className="p-4 sm:p-5 rounded-2xl bg-surface-subtle border border-theme flex items-start gap-3.5 text-sm sm:text-base text-theme-secondary leading-relaxed">
+          <Info className="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
           <div>
-            <strong className="text-theme-primary uppercase text-[11px] block">
+            <strong className="text-theme-primary uppercase text-xs sm:text-sm font-semibold block mb-1">
               Assistive Prescription Interpretation Notice:
             </strong>
             This system is an assistive prescription-understanding tool. It does not diagnose
@@ -228,18 +228,18 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           {/* Right Column: Structured Interpretation, Safety & Evidence (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* 1. Extraction Fields Section */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between px-1 text-xs">
-                <span className="text-theme-secondary font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                  <FileSpreadsheet className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                  Interpreted Posology ({currentState.fields.length} Fields)
-                </span>
-                <span className="text-[11px] text-theme-muted">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight flex items-center gap-2">
+                  <FileSpreadsheet className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                  <span>Interpreted Posology ({currentState.fields.length} Fields)</span>
+                </h2>
+                <span className="text-xs sm:text-sm text-theme-muted">
                   Hover to locate on script
                 </span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {currentState.fields.map((field) => (
                   <ExtractionFieldCard
                     key={field.fieldKey}
@@ -272,53 +272,53 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
         </div>
 
         {/* Verification Checklist */}
-        <div className="pt-4 border-t border-theme space-y-4">
-          <div className="p-4 sm:p-5 rounded-2xl bg-surface border border-theme space-y-3 shadow-xs">
+        <div className="pt-6 border-t border-theme space-y-4">
+          <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-theme space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-theme-primary font-bold uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                <span>Verification Checklist</span>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">Verification Checklist</h2>
               </div>
-              <span className="text-[11px] text-theme-muted font-medium">Pharmacist Oversight</span>
+              <span className="text-xs sm:text-sm text-theme-muted font-medium">Pharmacist Oversight</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-theme-primary">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+              <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>1. Script Validation</span>
                 </div>
-                <p className="text-[11px] text-theme-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
                   Confirm physician signature, date, and state registration number.
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-theme-primary">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>2. Molecule &amp; Strength</span>
                 </div>
-                <p className="text-[11px] text-theme-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
                   Verify dosage strength matches patient age, weight, and renal profile.
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-theme-primary">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>3. Drug Interaction</span>
                 </div>
-                <p className="text-[11px] text-theme-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
                   Screen against co-prescribed molecules for potential drug-drug interactions or contraindications.
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                <div className="flex items-center gap-1.5 font-bold text-theme-primary">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>4. Patient Posology</span>
                 </div>
-                <p className="text-[11px] text-theme-secondary leading-relaxed">
+                <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
                   Counsel patient or caregiver on meal timing in their preferred regional language.
                 </p>
               </div>
@@ -326,31 +326,31 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           </div>
 
           {/* Bottom Workflow Action Ribbon */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-surface-subtle border border-theme">
+          <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl bg-surface-subtle border border-theme">
             <div className="flex items-center gap-3">
               <button
                 onClick={onBackToUpload}
-                className="px-4 py-2 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-xs font-semibold text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <UploadCloud className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <UploadCloud className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span>Upload Another Prescription</span>
               </button>
 
               <button
                 onClick={handlePrint}
-                className="px-4 py-2 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-xs font-semibold text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <Printer className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <Printer className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span>Print Findings</span>
               </button>
             </div>
 
             <button
               onClick={onBackToHome}
-              className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
             >
               <span>Return to Workspace Overview</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

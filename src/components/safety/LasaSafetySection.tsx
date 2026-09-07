@@ -159,7 +159,7 @@ export const LasaSafetySection: React.FC = () => {
 
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
                   <div className="text-theme-secondary text-[11px]">Acoustic Phonetic Distance:</div>
-                  <div className="text-base font-bold text-sky-700 dark:text-sky-300">
+                  <div className="text-base font-bold text-teal-700 dark:text-teal-300">
                     {Math.round(activePair.phoneticSimilarity * 100)}%
                   </div>
                   <div className="text-[10px] text-theme-muted">

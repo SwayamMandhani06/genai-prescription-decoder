@@ -63,7 +63,7 @@ export const LiveDocumentScanner: React.FC<LiveDocumentScannerProps> = ({
         </div>
 
         {/* Prescription Paper Display */}
-        <div className="relative max-w-full max-h-[460px] overflow-hidden rounded-xl border border-theme shadow-sm bg-white">
+        <div className="relative max-w-full max-h-[460px] overflow-hidden rounded-xl border border-theme shadow-sm prescription-paper">
           <img
             src={uploadedData?.previewUrl || '/assets/sample-standard.svg'}
             alt="Scanning prescription document"

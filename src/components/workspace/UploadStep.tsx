@@ -170,11 +170,11 @@ export const UploadStep: React.FC<UploadStepProps> = ({
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Step Header */}
-      <div className="max-w-2xl space-y-2">
-        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+      <div className="max-w-3xl space-y-2.5">
+        <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
           Mount a prescription.
         </h1>
-        <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+        <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
           Upload a prescription document or select an authentic clinic sample to begin interpretation.
         </p>
       </div>
@@ -222,43 +222,43 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                   >
                     {uploadedData.source === 'curated_sample' ? (
                       /* Curated Sample SVG Preview */
-                      <div className="space-y-4 text-slate-900 dark:text-slate-100">
-                        <div className="border-b border-slate-300 dark:border-slate-700 pb-2 flex justify-between items-start text-xs">
+                      <div className="space-y-4 text-slate-900">
+                        <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                           <div>
-                            <div className="font-semibold text-teal-800 dark:text-teal-400 text-[11px]">
+                            <div className="font-semibold text-teal-900 text-[11px]">
                               Example Outpatient Clinic (Demo)
                             </div>
-                            <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                            <div className="font-bold text-slate-900 text-xs">
                               Example Prescriber, M.D.
                             </div>
                           </div>
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                          <span className="text-[11px] text-slate-600">
                             {uploadedData.fileName}
                           </span>
                         </div>
 
-                        <div className="text-xl font-serif italic font-bold">℞</div>
+                        <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
 
-                        {/* Handwriting Lines - Clean presentation without artificial Line 01/02 tags */}
+                        {/* Handwriting Lines - Authentic dark fountain ink strokes */}
                         <div className="space-y-3.5 py-2">
-                          <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                            <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                          <div className="border-b border-slate-200 pb-2">
+                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                               Augm 625 Duo &mdash; 1-0-1 (PC) x 5d
                             </div>
                           </div>
-                          <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                            <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                          <div className="border-b border-slate-200 pb-2">
+                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                               Pan 40 &mdash; 1 tab OD (AC) x 5d
                             </div>
                           </div>
                           <div>
-                            <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                               Dolo 650 &mdash; SOS for fever
                             </div>
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-slate-300 dark:border-slate-700 flex justify-between text-[10px] text-slate-500">
+                        <div className="pt-2 border-t border-slate-300 flex justify-between text-[10px] text-slate-600">
                           <span>Patient: Demo Patient (34M)</span>
                           <span>Prescriber Signature Attached</span>
                         </div>
@@ -334,11 +334,11 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                   <UploadCloud className="w-8 h-8" />
                 </div>
 
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-theme-primary">
+                <div className="space-y-1.5">
+                  <h3 className="text-xl sm:text-2xl font-bold text-theme-primary">
                     Drop your prescription image here
                   </h3>
-                  <p className="text-xs text-theme-secondary">
+                  <p className="text-sm text-theme-secondary leading-relaxed">
                     Supports JPEG, PNG, WEBP, or scanned SVG (up to 15MB)
                   </p>
                 </div>
@@ -346,7 +346,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                 <div className="pt-2 flex justify-center">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-6 py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm"
+                    className="px-7 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-base font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Choose a prescription file</span>
@@ -378,29 +378,29 @@ export const UploadStep: React.FC<UploadStepProps> = ({
         <div className="lg:col-span-4 space-y-6">
           {/* Curated Samples */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold text-theme-secondary flex items-center gap-1.5">
+            <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span>Or choose a clinical sample:</span>
             </h3>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {curatedSamples.map((sample) => (
                 <button
                   key={sample.id}
                   onClick={() => handleSelectCuratedSample(sample.id)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer ${
                     uploadedData?.sampleId === sample.id
-                      ? 'bg-surface border-teal-500 shadow-sm'
+                      ? 'bg-surface border-teal-500 shadow-sm ring-1 ring-teal-500/20'
                       : 'bg-surface-subtle/70 hover:bg-surface border-theme'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="font-semibold text-theme-primary">{sample.title}</span>
-                    <span className="text-[11px] text-teal-700 dark:text-teal-400 font-medium">
+                    <span className="font-bold text-theme-primary text-sm sm:text-base">{sample.title}</span>
+                    <span className="text-xs text-teal-700 dark:text-teal-400 font-semibold">
                       {sample.difficulty}
                     </span>
                   </div>
-                  <p className="text-[11px] text-theme-secondary">{sample.subtitle}</p>
+                  <p className="text-xs sm:text-sm text-theme-secondary leading-normal">{sample.subtitle}</p>
                 </button>
               ))}
             </div>
@@ -408,30 +408,30 @@ export const UploadStep: React.FC<UploadStepProps> = ({
 
           {/* Document Quality Guidance - Quiet inline checklist without card wrapper */}
           <div className="space-y-3 pt-4 border-t border-theme">
-            <h3 className="text-xs font-semibold text-theme-secondary flex items-center gap-1.5">
+            <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
               <FileCheck2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span>Document quality guidelines</span>
             </h3>
 
-            <div className="space-y-2.5 text-xs text-theme-secondary">
-              <div className="flex items-start gap-2">
-                <Sun className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+            <div className="space-y-2.5 text-sm text-theme-secondary leading-[1.6]">
+              <div className="flex items-start gap-2.5">
+                <Sun className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
-                  <strong className="text-theme-primary font-medium">Even lighting:</strong> Minimal shadow over cursive handwriting.
+                  <strong className="text-theme-primary font-semibold">Even lighting:</strong> Minimal shadow over cursive handwriting.
                 </p>
               </div>
 
-              <div className="flex items-start gap-2">
-                <RotateCw className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5">
+                <RotateCw className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
-                  <strong className="text-theme-primary font-medium">Upright orientation:</strong> Rotate so physician header is at top.
+                  <strong className="text-theme-primary font-semibold">Upright orientation:</strong> Rotate so physician header is at top.
                 </p>
               </div>
 
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
-                  <strong className="text-theme-primary font-medium">Sharp focus:</strong> Avoid motion blur for clear stroke tracing.
+                  <strong className="text-theme-primary font-semibold">Sharp focus:</strong> Avoid motion blur for clear stroke tracing.
                 </p>
               </div>
             </div>

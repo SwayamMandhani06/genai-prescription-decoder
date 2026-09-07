@@ -82,77 +82,77 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Step Header */}
-      <div className="max-w-2xl space-y-2">
-        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+      <div className="max-w-3xl space-y-2.5">
+        <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
           Analyzing the prescription.
         </h1>
-        <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+        <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
           Interpreting cursive handwriting, verifying medicine entities against official formularies, and screening for ambiguity.
         </p>
       </div>
 
       {/* Main Analysis Cockpit */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Calm Document Scan Visual (7 cols) */}
+        {/* Left Column: Document Scan Visual (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="relative rounded-3xl border border-theme bg-surface/40 p-6 sm:p-8 flex flex-col items-center justify-center min-h-[440px] overflow-hidden">
+          <div className="relative rounded-3xl border border-theme bg-surface/40 p-6 sm:p-8 flex flex-col items-center justify-center min-h-[460px] overflow-hidden">
             {/* The Document Canvas */}
             <div
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transition: 'transform 0.25s ease-out',
               }}
-              className="max-w-md w-full shadow-md rounded-2xl prescription-paper p-6 border border-theme relative overflow-hidden"
+              className="max-w-md w-full prescription-paper shadow-paper rounded-2xl p-6 sm:p-7 border border-theme relative overflow-hidden"
             >
               {/* Subtle Scanning Beam Passing Over Document */}
               {!isDone && (
                 <div
                   style={{
                     top: `${(activeStageIdx + 1) * 18}%`,
-                    transition: 'top 1s ease-in-out',
+                    transition: 'top 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
-                  className="absolute inset-x-0 h-10 bg-gradient-to-b from-teal-500/10 via-teal-500/25 to-transparent pointer-events-none border-b border-teal-500/40"
+                  className="absolute inset-x-0 h-12 bg-gradient-to-b from-teal-500/10 via-teal-500/25 to-transparent pointer-events-none border-b-2 border-teal-500/50"
                 />
               )}
 
               {/* Prescription Document Static Layout */}
-              <div className="space-y-4 text-slate-900 dark:text-slate-100">
-                <div className="border-b border-slate-300 dark:border-slate-700 pb-2 flex justify-between items-start text-xs">
+              <div className="space-y-4 text-slate-900">
+                <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                   <div>
-                    <div className="font-semibold text-teal-800 dark:text-teal-400 text-[11px]">
+                    <div className="font-semibold text-teal-900 text-[11px]">
                       Example Outpatient Clinic (Demo)
                     </div>
-                    <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                    <div className="font-bold text-slate-900 text-xs">
                       Example Prescriber, M.D.
                     </div>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <span className="text-[11px] text-slate-600">
                     {uploadedData?.fileName || 'prescription.svg'}
                   </span>
                 </div>
 
-                <div className="text-xl font-serif italic font-bold">℞</div>
+                <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
 
                 {/* Handwriting Lines */}
                 <div className="space-y-3.5 py-2">
-                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                  <div className="border-b border-slate-200 pb-2">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Augm 625 Duo &mdash; 1-0-1 (PC) x 5d
                     </div>
                   </div>
-                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                  <div className="border-b border-slate-200 pb-2">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Pan 40 &mdash; 1 tab OD (AC) x 5d
                     </div>
                   </div>
                   <div>
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Dolo 650 &mdash; SOS for fever
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-300 dark:border-slate-700 flex justify-between text-[10px] text-slate-500">
+                <div className="pt-2 border-t border-slate-300 flex justify-between text-[10px] text-slate-600">
                   <span>Patient: Demo Patient (34M)</span>
                   <span>Prescriber Signature Attached</span>
                 </div>
@@ -231,17 +231,17 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
 
                   <div className="space-y-0.5">
                     <h4
-                      className={`text-sm ${
+                      className={`text-base sm:text-lg ${
                         isCurrent
                           ? 'font-bold text-teal-700 dark:text-teal-300'
                           : isPassed
-                          ? 'font-semibold text-theme-primary'
+                          ? 'font-bold text-theme-primary'
                           : 'font-medium text-theme-secondary'
                       }`}
                     >
                       {stage.label}
                     </h4>
-                    <p className="text-xs text-theme-secondary leading-snug">
+                    <p className="text-sm text-theme-secondary leading-[1.6]">
                       {stage.desc}
                     </p>
                   </div>
@@ -265,7 +265,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
           )}
 
           {/* Quiet Formulary Reassurance */}
-          <p className="text-xs text-theme-muted pt-2">
+          <p className="text-xs sm:text-sm text-theme-muted pt-2 leading-[1.6]">
             Grounded against CDSCO National Essential Medicines and US NLM RxNorm formularies.
           </p>
         </div>

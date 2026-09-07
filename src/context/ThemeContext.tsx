@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ResolvedTheme = 'light' | 'dark';
@@ -26,6 +26,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
+  const isFirstMount = useRef<boolean>(true);
 
   // Compute resolved theme and update DOM
   useEffect(() => {
@@ -49,7 +50,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (transitionTimer) window.clearTimeout(transitionTimer);
         transitionTimer = window.setTimeout(() => {
           root.classList.remove('theme-transitioning');
-        }, 220);
+        }, 200);
       }
 
       if (resolved === 'dark') {
@@ -61,8 +62,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
 
-    // First mount without animation to prevent flicker
-    applyTheme(false);
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      // First mount without animation to prevent flicker
+      applyTheme(false);
+    } else {
+      // User-initiated or dynamic change: apply fast, smooth transition
+      applyTheme(true);
+    }
 
     const handleChange = () => {
       if (theme === 'system') {

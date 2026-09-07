@@ -86,7 +86,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                 key={stage.id}
                 className={`p-3 rounded-xl border transition-all flex items-start gap-3 ${
                   isActive
-                    ? 'bg-sky-50/60 dark:bg-sky-950/20 border-sky-300 dark:border-sky-700 shadow-xs'
+                    ? 'bg-teal-50/60 dark:bg-teal-950/30 border-teal-400 dark:border-teal-700 shadow-xs'
                     : isCompleted
                     ? 'bg-surface border-theme text-theme-primary'
                     : isFailed
@@ -99,7 +99,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                   {isCompleted ? (
                     <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                   ) : isActive ? (
-                    <StageIcon className="w-4 h-4 text-sky-600 dark:text-sky-400 animate-pulse" />
+                    <StageIcon className="w-4 h-4 text-teal-600 dark:text-teal-400 animate-pulse" />
                   ) : isFailed ? (
                     <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                   ) : (
@@ -117,7 +117,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                       <h4
                         className={`text-xs font-semibold tracking-tight ${
                           isActive
-                            ? 'text-sky-700 dark:text-sky-300'
+                            ? 'text-teal-800 dark:text-teal-300'
                             : isCompleted
                             ? 'text-theme-primary'
                             : 'text-theme-secondary'
@@ -131,7 +131,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                       {isCompleted ? (
                         <span className="text-teal-700 dark:text-teal-400">Complete</span>
                       ) : isActive ? (
-                        <span className="text-sky-700 dark:text-sky-400">In Progress</span>
+                        <span className="text-teal-700 dark:text-teal-400">In Progress</span>
                       ) : isFailed ? (
                         <span className="text-red-700 dark:text-red-400">Failed</span>
                       ) : (
@@ -147,7 +147,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                   {/* Active Progress Bar */}
                   {isActive && (
                     <div className="w-full h-1 bg-surface-subtle rounded-full overflow-hidden mt-2 border border-theme">
-                      <div className="h-full bg-sky-500 w-3/4 rounded-full" />
+                      <div className="h-full bg-teal-600 w-3/4 rounded-full" />
                     </div>
                   )}
                 </div>

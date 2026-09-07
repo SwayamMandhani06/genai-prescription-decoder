@@ -33,33 +33,33 @@ export const CoreCapabilitiesSection: React.FC = () => {
     <section id="capabilities" className="py-20 sm:py-28 bg-canvas border-b border-theme">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Intro */}
-        <div className="max-w-2xl mb-16 space-y-3">
-          <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
-            Core capabilities
+        <div className="max-w-3xl mb-16 sm:mb-20 space-y-3">
+          <div className="text-sm font-semibold text-teal-700 dark:text-teal-400">
+            Core Architecture
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
             Designed for medical clarity, safety, and evidence.
           </h2>
-          <p className="text-base text-theme-secondary leading-relaxed">
+          <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
             Three foundational capabilities ensure that AURA-Rx operates with clinical accountability.
           </p>
         </div>
 
         {/* 3 Visually Distinct Capabilities */}
-        <div className="space-y-16">
+        <div className="space-y-20">
           {/* Capability 01: UNDERSTAND */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold text-teal-700 dark:text-teal-400">
-                1. Understanding handwriting
+              <span className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+                1. Understanding Handwriting
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-theme-primary">
+              <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
                 Structured extraction from handwritten prescriptions.
               </h3>
-              <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+              <p className="text-base sm:text-lg text-theme-secondary leading-[1.65]">
                 Rather than treating cursive scrawl as unconstrained text, our vision pipeline isolates localized ink stroke paths, disentangles clinical shorthands (such as 1-0-1, PC, AC, and TDS), and maps them into rigorous clinical slots.
               </p>
-              <div className="flex items-center gap-2 text-xs font-medium text-theme-muted pt-1">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
                 <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <span>Extracts drug, strength, frequency, timing &amp; duration</span>
               </div>
@@ -74,11 +74,11 @@ export const CoreCapabilitiesSection: React.FC = () => {
               </div>
 
               {/* Raw handwritten ink mockup */}
-              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <span className="font-serif italic text-lg text-slate-800 dark:text-slate-200 font-bold">
+              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme flex items-center justify-between">
+                <span className="font-serif italic text-lg text-theme-primary font-bold">
                   ℞ Augm 625 1-0-1 PC x 5d
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-theme-muted font-medium">
                   Doctor pen ink
                 </span>
               </div>
@@ -171,13 +171,13 @@ export const CoreCapabilitiesSection: React.FC = () => {
               <span className="text-xs font-bold text-teal-700 dark:text-teal-400">
                 2. Verifying candidates
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-theme-primary">
+              <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
                 Evidence-grounded medicine validation and ambiguity detection.
               </h3>
-              <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+              <p className="text-base sm:text-lg text-theme-secondary leading-[1.65]">
                 Every extracted candidate is cross-referenced against authoritative clinical databases. When severe Look-Alike Sound-Alike (LASA) pairs or low-confidence strokes appear, the system applies TALL MAN lettering and flags them rather than guessing.
               </p>
-              <div className="flex items-center gap-2 text-xs font-medium text-theme-muted pt-1">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
                 <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <span>CDSCO India &amp; US NLM RxNorm ontological verification</span>
               </div>
@@ -190,13 +190,13 @@ export const CoreCapabilitiesSection: React.FC = () => {
               <span className="text-xs font-bold text-teal-700 dark:text-teal-400">
                 3. Explaining posology
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-theme-primary">
+              <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
                 Patient-friendly English, Hindi and Marathi explanations.
               </h3>
-              <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+              <p className="text-base sm:text-lg text-theme-secondary leading-[1.65]">
                 Medical prescriptions are often written using Latin abbreviations that confuse patients. AURA-Rx converts complicated regimens into empathetic, plain-language guidance in regional languages while preserving the original signed prescription.
               </p>
-              <div className="flex items-center gap-2 text-xs font-medium text-theme-muted pt-1">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
                 <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <span>Native Devanagari script for Hindi and Marathi</span>
               </div>

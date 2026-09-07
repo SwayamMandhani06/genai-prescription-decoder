@@ -94,7 +94,7 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
                   isFinished
                     ? 'bg-teal-50/60 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800 text-theme-primary'
                     : isCurrent
-                    ? 'bg-sky-50/60 dark:bg-sky-950/20 border-sky-300 dark:border-sky-700 text-theme-primary ring-2 ring-sky-500/20'
+                    ? 'bg-teal-50/60 dark:bg-teal-950/25 border-teal-400 dark:border-teal-600 text-theme-primary ring-2 ring-teal-500/20'
                     : 'bg-surface-subtle border-theme text-theme-muted opacity-60'
                 }`}
               >
@@ -102,7 +102,7 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
                   {isFinished ? (
                     <CheckCircle2 className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                   ) : isCurrent ? (
-                    <div className="w-5 h-5 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
+                    <div className="w-5 h-5 rounded-full border-2 border-teal-600 border-t-transparent animate-spin" />
                   ) : (
                     <Icon className="w-5 h-5 text-theme-muted" />
                   )}

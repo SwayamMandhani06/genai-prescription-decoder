@@ -54,30 +54,30 @@ export const LanguageSupportSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Context & Controls */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="text-xs font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-1.5">
-              <Languages className="w-3.5 h-3.5" />
+            <div className="text-sm font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-2">
+              <Languages className="w-4 h-4" />
               <span>Multilingual Posology</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-theme-primary leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
               Medical guidance in the patient&rsquo;s language.
             </h2>
 
-            <p className="text-base text-theme-secondary leading-relaxed">
+            <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
               Prescriptions in India are written in Latin abbreviations like <em>1-0-1 PC</em> or <em>TDS AC</em>. AURA-Rx converts shorthand into actionable, patient-friendly guidance in English, Hindi, and Marathi.
             </p>
 
             {/* Interactive Language Selector Tabs */}
             <div className="space-y-2 pt-2">
-              <div className="text-xs font-medium text-theme-muted">
-                Switch language:
+              <div className="text-xs font-semibold uppercase tracking-wider text-theme-muted">
+                Switch Language:
               </div>
-              <div className="inline-flex p-1 rounded-xl bg-surface border border-theme shadow-xs">
+              <div className="inline-flex p-1.5 rounded-2xl bg-surface border border-theme shadow-xs">
                 {languages.map((lang) => (
                   <button
                     key={lang.id}
                     onClick={() => setActiveLang(lang.id)}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                       activeLang === lang.id
                         ? 'bg-teal-600 text-white shadow-xs'
                         : 'text-theme-secondary hover:text-theme-primary'
@@ -89,7 +89,7 @@ export const LanguageSupportSection: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-theme-muted">
+            <div className="pt-2 flex items-center gap-2 text-xs sm:text-sm text-theme-muted">
               <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
               <span>Standardized medical glossaries validated for Indian vernaculars</span>
             </div>
@@ -97,22 +97,22 @@ export const LanguageSupportSection: React.FC = () => {
 
           {/* Right Column: Animated Explanation Display */}
           <div className="lg:col-span-7">
-            <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-theme shadow-xs space-y-6 transition-all duration-300">
+            <div className="p-7 sm:p-9 rounded-3xl bg-surface shadow-elevated-card border border-theme space-y-6 transition-all duration-300">
               {/* Header with Drug Name and Audio Button */}
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-theme pb-4">
                 <div>
-                  <div className="text-xs font-medium text-teal-700 dark:text-teal-400">
+                  <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
                     Patient guidance card &middot; {languages.find((l) => l.id === activeLang)?.label}
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-theme-primary mt-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-theme-primary mt-1">
                     {active.drug}
                   </h3>
-                  <p className="text-xs text-theme-secondary mt-0.5">
+                  <p className="text-sm text-theme-secondary mt-0.5">
                     {active.generic}
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-subtle text-xs font-medium text-theme-primary">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-surface-subtle text-xs font-semibold text-theme-primary border border-theme">
                   <Volume2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                   <span>{active.audioLabel}</span>
                 </div>
@@ -124,27 +124,27 @@ export const LanguageSupportSection: React.FC = () => {
                 className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300"
               >
                 {/* Primary Schedule Instruction */}
-                <div className="p-4 rounded-xl bg-surface-subtle/70 space-y-1">
+                <div className="p-4 sm:p-5 rounded-xl bg-surface-subtle/70 space-y-1.5">
                   <div className="text-xs font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     <span>How &amp; when to take</span>
                   </div>
-                  <p className="text-base sm:text-lg font-bold text-theme-primary leading-snug">
+                  <p className="text-lg sm:text-xl font-bold text-theme-primary leading-snug">
                     {active.schedule}
                   </p>
-                  <p className="text-xs text-theme-secondary pt-1">
+                  <p className="text-sm text-theme-secondary pt-0.5">
                     {active.timing}
                   </p>
                 </div>
 
                 {/* Dietary Condition & Precaution Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                   <div className="p-3.5 rounded-xl bg-surface-subtle/50 space-y-1">
                     <div className="font-semibold text-theme-primary flex items-center gap-1.5">
                       <Utensils className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Meal relationship</span>
                     </div>
-                    <p className="text-theme-secondary leading-relaxed">
+                    <p className="text-theme-secondary leading-[1.6]">
                       {active.meals}
                     </p>
                   </div>
@@ -154,7 +154,7 @@ export const LanguageSupportSection: React.FC = () => {
                       <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>Important precaution</span>
                     </div>
-                    <p className="text-theme-secondary leading-relaxed">
+                    <p className="text-theme-secondary leading-[1.6]">
                       {active.precaution}
                     </p>
                   </div>
@@ -162,7 +162,7 @@ export const LanguageSupportSection: React.FC = () => {
               </div>
 
               {/* Footer reassurance */}
-              <div className="text-[11px] text-theme-muted pt-2 border-t border-theme flex items-center justify-between">
+              <div className="text-xs text-theme-muted pt-2 border-t border-theme flex items-center justify-between">
                 <span>Original English doctor handwriting preserved side-by-side</span>
                 <span>English &bull; Hindi &bull; Marathi</span>
               </div>

@@ -32,11 +32,11 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Step Header */}
-      <div className="max-w-2xl space-y-2">
-        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+      <div className="max-w-3xl space-y-2.5">
+        <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
           Review the prescription.
         </h1>
-        <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
+        <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
           Confirm document orientation and clarity before running the clinical interpretation engine.
         </p>
       </div>
@@ -54,43 +54,43 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               className="max-w-md w-full shadow-md rounded-2xl prescription-paper p-6 border border-theme origin-center"
             >
               {/* Prescription Document Display */}
-              <div className="space-y-4 text-slate-900 dark:text-slate-100">
-                <div className="border-b border-slate-300 dark:border-slate-700 pb-2 flex justify-between items-start text-xs">
+              <div className="space-y-4 text-slate-900">
+                <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                   <div>
-                    <div className="font-semibold text-teal-800 dark:text-teal-400 text-[11px]">
+                    <div className="font-semibold text-teal-900 text-[11px]">
                       Example Clinical Practice
                     </div>
-                    <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                    <div className="font-bold text-slate-900 text-xs">
                       Example Prescriber, M.D.
                     </div>
                   </div>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <span className="text-[11px] text-slate-600">
                     {uploadedData?.fileName || 'prescription.svg'}
                   </span>
                 </div>
 
-                <div className="text-xl font-serif italic font-bold">℞</div>
+                <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
 
                 {/* Handwriting Lines */}
                 <div className="space-y-3.5 py-2">
-                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                  <div className="border-b border-slate-200 pb-2">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Augm 625 Duo &mdash; 1-0-1 (PC) x 5d
                     </div>
                   </div>
-                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                  <div className="border-b border-slate-200 pb-2">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Pan 40 &mdash; 1 tab OD (AC) x 5d
                     </div>
                   </div>
                   <div>
-                    <div className="font-serif italic text-base text-blue-900 dark:text-sky-300 font-bold">
+                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
                       Dolo 650 &mdash; SOS for fever
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-300 dark:border-slate-700 flex justify-between text-[10px] text-slate-500">
+                <div className="pt-2 border-t border-slate-300 flex justify-between text-[10px] text-slate-600">
                   <span>Patient: Demo Patient (34M)</span>
                   <span>Prescriber Signature Attached</span>
                 </div>
@@ -134,13 +134,13 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
 
           {/* Pre-Flight Checklist - Unboxed, quiet typographic grouping */}
           <div className="space-y-3 pt-6 border-t border-theme">
-            <h3 className="text-xs font-semibold text-theme-secondary">
+            <h3 className="text-sm font-bold text-theme-primary uppercase tracking-wider">
               Pre-analysis checklist
             </h3>
 
-            <div className="space-y-2.5 text-xs text-theme-secondary">
+            <div className="space-y-2.5 text-sm text-theme-secondary leading-[1.6]">
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Document mounted:</strong>{' '}
                   {uploadedData?.fileName || 'Prescription Script'}
@@ -148,21 +148,21 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               </div>
 
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Formularies:</strong> CDSCO National List &amp; US NLM RxNorm linked
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <Languages className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <Languages className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Languages:</strong> English, हिन्दी, मराठी
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Safety barrier:</strong> Ambiguous cursive will be flagged for review
                 </p>

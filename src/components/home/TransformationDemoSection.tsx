@@ -65,26 +65,26 @@ export const TransformationDemoSection: React.FC = () => {
     <section id="transformation" className="py-20 sm:py-28 bg-canvas border-b border-theme">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
-        <div className="max-w-2xl mb-12 sm:mb-16 space-y-3">
-          <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
-            Transformation
+        <div className="max-w-3xl mb-12 sm:mb-16 space-y-3">
+          <div className="text-sm font-semibold text-teal-700 dark:text-teal-400">
+            Visual Transformation
           </div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
             See what changes.
           </h2>
-          <p className="text-base text-theme-secondary leading-relaxed">
-            From handwritten ink on clinical paper to verified medication slots and patient instructions.
+          <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
+            From handwritten doctor ink on clinical paper to verified medication slots and clear patient instructions.
           </p>
 
           {/* Interactive Prescription Line Selectors */}
-          <div className="flex flex-wrap items-center gap-2 pt-2">
+          <div className="flex flex-wrap items-center gap-2.5 pt-3">
             {demoItems.map((item, idx) => (
               <button
                 key={item.id}
                 onClick={() => setSelectedDemoIdx(idx)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   selectedDemoIdx === idx
-                    ? 'bg-teal-600 text-white shadow-xs font-semibold'
+                    ? 'bg-teal-600 text-white shadow-sm font-semibold'
                     : 'bg-surface hover:bg-surface-subtle border border-theme text-theme-secondary hover:text-theme-primary'
                 }`}
               >
@@ -95,21 +95,21 @@ export const TransformationDemoSection: React.FC = () => {
         </div>
 
         {/* Side-by-Side Transformation Stage */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left: Original Handwritten Ink (5 cols) */}
-          <div className="lg:col-span-5 p-6 rounded-2xl prescription-paper border border-theme flex flex-col justify-between space-y-6 shadow-xs">
+          <div className="lg:col-span-5 p-7 sm:p-8 rounded-3xl prescription-paper shadow-paper border border-amber-900/15 dark:border-white/15 flex flex-col justify-between space-y-6">
             <div className="space-y-1">
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Original handwriting
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-950">
                 Doctor penmanship stroke
               </h3>
             </div>
 
             {/* Handwritten Ink Stroke Visualizer */}
-            <div className="p-5 rounded-xl bg-white/70 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-3">
-              <div className="text-slate-800 dark:text-slate-200 font-serif italic text-xl font-black">
+            <div className="p-5 rounded-xl bg-black/[0.02] border border-slate-300 space-y-3">
+              <div className="text-slate-950 font-serif italic text-2xl font-black">
                 ℞
               </div>
 
@@ -123,19 +123,19 @@ export const TransformationDemoSection: React.FC = () => {
                     d={activeStroke.svgPath}
                     fill="none"
                     stroke="currentColor"
-                    className="text-blue-900 dark:text-sky-400 stroke-[2.8]"
+                    className="text-blue-900 stroke-[2.8]"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
               </div>
 
-              <div className="text-xs text-slate-500 dark:text-slate-400">
+              <div className="text-xs text-slate-600 font-medium">
                 {activeStroke.label}
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-700 leading-[1.6]">
               Hurried outpatient penmanship, cursive slant, and classical clinical shorthands are preserved as the legal record.
             </p>
           </div>
@@ -148,63 +148,63 @@ export const TransformationDemoSection: React.FC = () => {
           </div>
 
           {/* Right: Structured Interpretation & Grounded Evidence (6 cols) */}
-          <div className="lg:col-span-6 p-6 sm:p-7 rounded-2xl bg-surface border border-theme flex flex-col justify-between space-y-6 shadow-xs">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-xs text-teal-700 dark:text-teal-400">
+          <div className="lg:col-span-6 p-7 sm:p-8 rounded-3xl bg-surface shadow-elevated-card border border-theme flex flex-col justify-between space-y-6">
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between text-xs sm:text-sm">
+                <span className="font-semibold text-teal-700 dark:text-teal-400">
                   Interpreted medication
                 </span>
                 {activeItem.status === 'ambiguous' ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-md border border-amber-200 dark:border-amber-800">
-                    <AlertTriangle className="w-3.5 h-3.5" />
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-950/60 px-3 py-1 rounded-lg border border-amber-300 dark:border-amber-800">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <span>Requires verification</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-200 bg-emerald-100 dark:bg-emerald-950/60 px-3 py-1 rounded-lg border border-emerald-300 dark:border-emerald-800">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Verified match</span>
                   </span>
                 )}
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-theme-primary">
+                <h3 className="text-2xl sm:text-3xl font-bold text-theme-primary tracking-tight">
                   {activeItem.brand}
                 </h3>
-                <p className="text-xs text-theme-secondary mt-0.5">
+                <p className="text-sm sm:text-base text-theme-secondary mt-1 leading-normal">
                   {activeItem.generic}
                 </p>
               </div>
             </div>
 
-            {/* Extracted Slots - Typographic layout without card-in-a-card rectangles */}
-            <div className="space-y-3 py-1 border-y border-theme text-xs">
+            {/* Extracted Slots - Typographic layout with generous scale */}
+            <div className="space-y-4 py-2 border-y border-theme text-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-theme-muted block text-[11px] mb-0.5">Dosage</span>
-                  <span className="text-base font-bold text-theme-primary">{activeItem.dosage}</span>
+                  <span className="text-theme-muted block text-xs mb-0.5 font-medium">Dosage Strength</span>
+                  <span className="text-lg sm:text-xl font-bold text-theme-primary">{activeItem.dosage}</span>
                 </div>
                 <div>
-                  <span className="text-theme-muted block text-[11px] mb-0.5">Duration</span>
-                  <span className="text-base font-bold text-theme-primary">{activeItem.duration}</span>
+                  <span className="text-theme-muted block text-xs mb-0.5 font-medium">Prescribed Duration</span>
+                  <span className="text-lg sm:text-xl font-bold text-theme-primary">{activeItem.duration}</span>
                 </div>
               </div>
               <div>
-                <span className="text-theme-muted block text-[11px] mb-0.5">Schedule &amp; instructions</span>
-                <span className="text-sm font-semibold text-theme-primary">
+                <span className="text-theme-muted block text-xs mb-0.5 font-medium">Schedule &amp; Instructions</span>
+                <span className="text-base sm:text-lg font-bold text-theme-primary">
                   {activeItem.frequency} &middot; {activeItem.mealRelation}
                 </span>
               </div>
             </div>
 
             {/* Explanation & Formulary Reference */}
-            <div className="space-y-2 text-xs">
-              <div className="text-theme-secondary leading-relaxed">
+            <div className="space-y-2 text-xs sm:text-sm">
+              <div className="text-theme-secondary leading-[1.6]">
                 <strong className="text-theme-primary font-medium">Patient guidance: </strong>
                 {activeItem.explanation}
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-theme-muted pt-1">
+              <div className="flex items-center justify-between text-xs text-theme-muted pt-1">
                 <div className="flex items-center gap-1">
                   <CornerDownRight className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>{activeItem.formularyRef}</span>

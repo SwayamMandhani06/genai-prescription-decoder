@@ -209,17 +209,17 @@ export const UploadPage: React.FC<UploadPageProps> = ({
       {/* Main Container */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Page Header */}
-        <div className="max-w-3xl space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-medium">
-            <FileCheck2 className="w-3.5 h-3.5" />
+        <div className="max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
+            <FileCheck2 className="w-4 h-4" />
             <span>Stage 01: Document Intake</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
+          <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
             Bring the prescription into focus.
           </h1>
 
-          <p className="text-sm text-theme-secondary leading-relaxed">
+          <p className="text-lg sm:text-xl text-theme-secondary leading-relaxed">
             Mount your physician&rsquo;s physical handwritten prescription onto the focal stage. The system evaluates resolution, angle, and stroke contrast before running multimodal interpretation.
           </p>
         </div>
@@ -251,16 +251,16 @@ export const UploadPage: React.FC<UploadPageProps> = ({
             <ImageQualityHeuristicsCard metrics={uploadedData.metrics} />
 
             {/* Action Bar */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-surface border border-theme flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-              <div className="space-y-0.5 text-center sm:text-left">
-                <div className="text-sm font-bold text-theme-primary flex items-center justify-center sm:justify-start gap-2">
+            <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-theme flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="text-base sm:text-lg font-bold text-theme-primary flex items-center justify-center sm:justify-start gap-2">
                   <span>Prescription:</span>
                   <span className="font-mono text-teal-700 dark:text-teal-400">{uploadedData.fileName}</span>
-                  <Badge variant="emerald" size="xs">
+                  <Badge variant="emerald" size="sm">
                     Ready
                   </Badge>
                 </div>
-                <p className="text-xs text-theme-secondary">
+                <p className="text-sm text-theme-secondary leading-relaxed">
                   Pre-screening complete. Formularies linked: CDSCO & RxNorm.
                 </p>
               </div>
@@ -270,7 +270,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                   variant="secondary"
                   size="md"
                   onClick={handleRemoveFile}
-                  className="w-full sm:w-auto text-xs"
+                  className="w-full sm:w-auto text-sm font-semibold"
                 >
                   Change Document
                 </Button>
@@ -280,7 +280,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                   size="lg"
                   onClick={handleStartAnalysis}
                   isLoading={isAnalyzing}
-                  className="w-full sm:w-auto"
+                  className="w-full sm:w-auto text-sm font-semibold"
                   rightIcon={<ArrowRight className="w-4 h-4 text-white" />}
                 >
                   Analyze Prescription
