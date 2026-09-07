@@ -5,25 +5,25 @@
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Light Theme: Semantic Surface Hierarchy */
-    /* Background: Warm ivory / off-white */
-    --bg-canvas: #F3EFE6;
-    /* Surface 1: Soft white (primary containers) */
-    --bg-surface: #FCFBF8;
-    /* Surface 2: Warm gray-white (secondary / nested panels) */
-    --bg-surface-subtle: #ECE4D6;
-    /* Surface 3: Slightly deeper neutral (elevated / hover / pills) */
-    --bg-surface-elevated: #DFD7C7;
+    /* Light Theme: Semantic Surface Hierarchy (Crisp, Designed, High Contrast) */
+    /* Background: Warm neutral ivory */
+    --bg-canvas: #F2ECE1;
+    /* Surface 1: Clean warm white (primary containers pop from ivory) */
+    --bg-surface: #FFFFFF;
+    /* Surface 2: Warm neutral gray-white (secondary / nested panels) */
+    --bg-surface-subtle: #E9E1D2;
+    /* Surface 3: Slightly deeper warm neutral (elevated / hover / toolbars) */
+    --bg-surface-elevated: #DDD2C0;
 
     /* Border: Visible warm neutral */
-    --border-subtle: #D6CDBC;
-    --border-hover: #BDB3A0;
+    --border-subtle: #D2C7B3;
+    --border-hover: #B7A890;
     --border-focus: #0D9488;
     
-    /* Typography */
-    --text-primary: #181A1D;    /* Deep charcoal (contrast > 14:1) */
-    --text-secondary: #475569;  /* Medium slate (contrast > 6.2:1) */
-    --text-muted: #64748B;      /* Readable slate (contrast > 4.6:1) */
+    /* Typography: Deep charcoal & slate for maximum legibility */
+    --text-primary: #111827;    /* Very dark charcoal (contrast > 15:1) */
+    --text-secondary: #374151;  /* Deep slate (contrast > 8.5:1) */
+    --text-muted: #5B6B82;      /* Medium slate (contrast > 5.2:1) */
 
     /* Accent: Restrained clinical teal/cyan */
     --accent-teal: #0D9488;
@@ -34,11 +34,11 @@
 
     /* Document: Paper white with physical depth */
     --paper-bg: #FFFFFF;
-    --paper-line: rgba(180, 160, 130, 0.22);
-    --paper-shadow: 0 2px 8px -2px rgba(35, 28, 20, 0.08), 0 16px 36px -4px rgba(35, 28, 20, 0.10);
-    --paper-border: #D6CDBC;
+    --paper-line: rgba(180, 160, 130, 0.25);
+    --paper-shadow: 0 3px 12px -2px rgba(35, 28, 20, 0.09), 0 20px 45px -6px rgba(35, 28, 20, 0.12);
+    --paper-border: #D2C7B3;
     --ink-primary: #1E3A8A;
-    --ink-secondary: #181A1D;
+    --ink-secondary: #111827;
   }
 
   .dark {

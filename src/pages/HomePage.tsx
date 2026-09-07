@@ -4,6 +4,7 @@ import { HeroSection } from '../components/hero/HeroSection';
 import { TransformationDemoSection } from '../components/home/TransformationDemoSection';
 import { CoreCapabilitiesSection } from '../components/home/CoreCapabilitiesSection';
 import { SafetyPhilosophySection } from '../components/home/SafetyPhilosophySection';
+import { HowItWorksSection } from '../components/home/HowItWorksSection';
 import { LanguageSupportSection } from '../components/home/LanguageSupportSection';
 import { ResearchOverviewSection } from '../components/home/ResearchOverviewSection';
 import { FinalCtaSection } from '../components/home/FinalCtaSection';
@@ -32,7 +33,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* Top Navigation */}
       <Navbar
         onNavigateToAnalyze={onOpenUpload}
-        onNavigateToHowItWorks={() => scrollToSection('transformation')}
+        onNavigateToHowItWorks={() => scrollToSection('how-it-works')}
         onNavigateToSafety={() => scrollToSection('safety')}
         onNavigateToResearch={onOpenResearch}
         onOpenUploadClick={onOpenUpload}
@@ -57,7 +58,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* 4. Safety Philosophy: "The system should know when it does not know." */}
         <SafetyPhilosophySection />
 
-        {/* 5. Multilingual Posology: English · हिन्दी · मराठी */}
+        {/* 5. How It Works: 4-Stage Transparent Verification Pipeline */}
+        <HowItWorksSection />
+
+        {/* 6. Multilingual Posology: English · हिन्दी · मराठी */}
         <LanguageSupportSection />
 
         {/* 6. Compact Research Prototype Statement */}

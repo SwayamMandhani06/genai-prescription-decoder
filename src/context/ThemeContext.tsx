@@ -22,10 +22,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return saved;
       }
     }
-    return 'system';
+    return 'light';
   });
 
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
   const isFirstMount = useRef<boolean>(true);
 
   // Compute resolved theme and update DOM
