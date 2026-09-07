@@ -29,38 +29,37 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
 
   const steps = [
     {
-      label: 'Optical Normalization & Layout Segments',
-      desc: 'Compensating for document skew, paper grain, and clinical letterhead watermark.',
+      label: 'Document Focus & Ingestion',
+      desc: 'Compensating for document skew, paper grain, and doctor letterhead context.',
       icon: Layers,
     },
     {
-      label: 'BioClinical NER & Posology Tokenization',
-      desc: 'Segmenting cursive handwritten ligatures into Brand, Dosage Strength, and Frequency.',
+      label: 'Handwriting Parsing & Posology',
+      desc: 'Segmenting cursive handwritten strokes into medicine name, dosage, and frequency.',
       icon: FileCheck2,
     },
     {
-      label: 'CDSCO & RxNorm Pharmacopeia Grounding',
-      desc: 'Matching extracted drug entities against 45,000+ approved clinical monographs.',
+      label: 'Formulary Verification (CDSCO & RxNorm)',
+      desc: 'Matching candidate entities against official approved pharmaceutical references.',
       icon: Database,
     },
     {
-      label: 'Uncertainty Calibration & LASA Screening',
-      desc: 'Measuring token predictive entropy; verifying Look-Alike Sound-Alike collision risk.',
+      label: 'Uncertainty Calibration & Safety',
+      desc: 'Evaluating entropy; checking Look-Alike Sound-Alike confusion risks.',
       icon: ShieldAlert,
     },
   ];
 
-  // Animate through steps when open
   useEffect(() => {
     if (!isOpen) {
       setCurrentStep(0);
       return;
     }
 
-    const t1 = setTimeout(() => setCurrentStep(1), 300);
-    const t2 = setTimeout(() => setCurrentStep(2), 650);
-    const t3 = setTimeout(() => setCurrentStep(3), 1000);
-    const t4 = setTimeout(() => setCurrentStep(4), 1350);
+    const t1 = setTimeout(() => setCurrentStep(1), 400);
+    const t2 = setTimeout(() => setCurrentStep(2), 1000);
+    const t3 = setTimeout(() => setCurrentStep(3), 1600);
+    const t4 = setTimeout(() => setCurrentStep(4), 2200);
 
     return () => {
       clearTimeout(t1);
@@ -70,84 +69,57 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const isComplete = currentStep >= 4 && analysisResult !== null;
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={isComplete ? onClose : () => {}}
-      title="Multimodal Diagnostic Pipeline"
-      subtitle="Executing Swin-Doc layout transformer, CDSCO ontology grounding, and selective prediction gate."
-      maxWidth="xl"
+      onClose={onClose}
+      title="Processing Prescription"
+      subtitle="Multimodal vision pipeline analyzing handwritten script"
+      maxWidth="lg"
     >
-      <div className="space-y-6 py-2">
-        {/* Progress Bar Container */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-400">
-              {isComplete ? 'INFERENCE COMPLETE' : 'INFERENCE IN PROGRESS...'}
-            </span>
-            <span className="text-cyan-400 font-bold">
-              {Math.min(100, Math.round((currentStep / 4) * 100))}%
-            </span>
-          </div>
-
-          <div className="w-full h-2 rounded-full bg-slate-950 border border-white/10 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-300 ease-out"
-              style={{ width: `${Math.min(100, (currentStep / 4) * 100)}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Steps List */}
-        <div className="space-y-3 font-mono text-xs">
+      <div className="space-y-6">
+        {/* Step Progress List */}
+        <div className="space-y-3">
           {steps.map((step, idx) => {
-            const isStepActive = currentStep === idx;
-            const isStepDone = currentStep > idx;
-            const StepIcon = step.icon;
+            const Icon = step.icon;
+            const isFinished = currentStep > idx;
+            const isCurrent = currentStep === idx;
 
             return (
               <div
                 key={step.label}
-                className={`p-3 rounded-lg border transition-all flex items-start gap-3 ${
-                  isStepDone
-                    ? 'bg-emerald-950/20 border-emerald-500/30'
-                    : isStepActive
-                    ? 'bg-cyan-950/30 border-cyan-500/50 shadow-sm'
-                    : 'bg-black/20 border-white/[0.04] opacity-50'
+                className={`p-3.5 rounded-xl border transition-all flex items-start gap-3.5 ${
+                  isFinished
+                    ? 'bg-teal-50/60 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800 text-theme-primary'
+                    : isCurrent
+                    ? 'bg-sky-50/60 dark:bg-sky-950/20 border-sky-300 dark:border-sky-700 text-theme-primary ring-2 ring-sky-500/20'
+                    : 'bg-surface-subtle border-theme text-theme-muted opacity-60'
                 }`}
               >
-                <div className="mt-0.5 shrink-0">
-                  {isStepDone ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  ) : isStepActive ? (
-                    <StepIcon className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <div className="shrink-0 mt-0.5">
+                  {isFinished ? (
+                    <CheckCircle2 className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                  ) : isCurrent ? (
+                    <div className="w-5 h-5 rounded-full border-2 border-sky-500 border-t-transparent animate-spin" />
                   ) : (
-                    <StepIcon className="w-4 h-4 text-slate-500" />
+                    <Icon className="w-5 h-5 text-theme-muted" />
                   )}
                 </div>
 
-                <div className="space-y-0.5 flex-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`font-bold ${
-                        isStepDone
-                          ? 'text-emerald-300'
-                          : isStepActive
-                          ? 'text-cyan-300'
-                          : 'text-slate-400'
-                      }`}
-                    >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-theme-primary">
                       {step.label}
                     </span>
-                    <span className="text-[10px] text-slate-500">
-                      {isStepDone ? 'DONE' : isStepActive ? 'PROCESSING' : 'QUEUED'}
-                    </span>
+                    {isFinished && (
+                      <span className="text-[10px] font-medium text-teal-700 dark:text-teal-300 uppercase">
+                        Verified
+                      </span>
+                    )}
                   </div>
-                  <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
+                  <p className="text-[11px] text-theme-secondary mt-0.5 leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
@@ -156,60 +128,33 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
           })}
         </div>
 
-        {/* Outcome Summary when Complete */}
+        {/* Completion Callout */}
         {isComplete && analysisResult && (
-          <div className="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-3 animate-in fade-in duration-200">
+          <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-3 animate-in fade-in duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-bold text-white font-mono">
-                  Prescription Analysis Complete
+                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <span className="text-xs font-bold text-theme-primary">
+                  Analysis Complete
                 </span>
               </div>
               <Badge variant="emerald" size="xs">
-                {analysisResult.processingTimeMs} ms latency
+                {analysisResult.extractedMedications.length} Medicines Identified
               </Badge>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center font-mono text-xs">
-              <div className="p-2 rounded bg-black/50 border border-white/5">
-                <span className="text-[10px] text-slate-400 block">DETECTED</span>
-                <span className="text-base font-bold text-white">
-                  {analysisResult.summary.totalDetected} Drugs
-                </span>
-              </div>
-              <div className="p-2 rounded bg-black/50 border border-white/5">
-                <span className="text-[10px] text-slate-400 block">ABSTENTIONS</span>
-                <span
-                  className={`text-base font-bold ${
-                    analysisResult.summary.abstentionsCount > 0
-                      ? 'text-amber-400'
-                      : 'text-emerald-400'
-                  }`}
-                >
-                  {analysisResult.summary.abstentionsCount} Flagged
-                </span>
-              </div>
-              <div className="p-2 rounded bg-black/50 border border-white/5">
-                <span className="text-[10px] text-slate-400 block">LASA RISK</span>
-                <span
-                  className={`text-base font-bold ${
-                    analysisResult.summary.lasaRiskCount > 0 ? 'text-red-400' : 'text-emerald-400'
-                  }`}
-                >
-                  {analysisResult.summary.lasaRiskCount} Alerts
-                </span>
-              </div>
-            </div>
+            <p className="text-xs text-theme-secondary leading-relaxed">
+              Prescription interpretation complete. Medicine candidates grounded in official formularies with plain-language explanations.
+            </p>
 
             <Button
               variant="primary"
               size="md"
-              className="w-full mt-2"
               onClick={() => onViewResults(analysisResult)}
-              rightIcon={<ArrowRight className="w-4 h-4 text-slate-950" />}
+              className="w-full"
+              rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              Open Diagnostic Review Console
+              View Prescription Findings
             </Button>
           </div>
         )}

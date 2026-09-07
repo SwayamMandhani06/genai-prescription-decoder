@@ -1,64 +1,51 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import { HomePage } from './pages/HomePage';
-import { UploadPage } from './pages/UploadPage';
-import { ProcessingPage } from './pages/ProcessingPage';
-import { ResultsPage } from './pages/ResultsPage';
-import { AppView, UploadedPrescriptionFile } from './types/navigation.types';
-import { PrescriptionAnalysisResult } from './types/prescription.types';
+import { WorkspacePage } from './pages/WorkspacePage';
+import { ResearchPage } from './pages/ResearchPage';
+import { AppView, WorkspaceStep } from './types/navigation.types';
 
-export const App: React.FC = () => {
+export const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>('home');
-  const [uploadedFile, setUploadedFile] = useState<UploadedPrescriptionFile | null>(null);
-  const [lastAnalysisResult, setLastAnalysisResult] = useState<PrescriptionAnalysisResult | null>(null);
+  const [initialWorkspaceStep, setInitialWorkspaceStep] = useState<WorkspaceStep>('upload');
 
-  const handleStartProcessing = (file: UploadedPrescriptionFile) => {
-    setUploadedFile(file);
-    setCurrentView('processing');
+  const handleOpenWorkspace = (step: WorkspaceStep = 'upload') => {
+    setInitialWorkspaceStep(step);
+    setCurrentView('workspace');
   };
 
-  const handleProcessingComplete = (result: PrescriptionAnalysisResult) => {
-    setLastAnalysisResult(result);
-    // Transition directly to the dedicated Results Experience
-    setCurrentView('results');
-  };
-
-  if (currentView === 'results') {
+  if (currentView === 'research') {
     return (
-      <ResultsPage
-        uploadedData={uploadedFile}
-        initialResult={lastAnalysisResult}
+      <ResearchPage
         onBackToHome={() => setCurrentView('home')}
-        onBackToUpload={() => setCurrentView('upload')}
-        onRerunPipeline={() => setCurrentView('processing')}
+        onOpenUpload={() => handleOpenWorkspace('upload')}
       />
     );
   }
 
-  if (currentView === 'processing') {
+  if (currentView === 'workspace' || currentView === 'upload' || currentView === 'processing' || currentView === 'results') {
     return (
-      <ProcessingPage
-        uploadedData={uploadedFile}
-        onBackToUpload={() => setCurrentView('upload')}
-        onComplete={handleProcessingComplete}
-      />
-    );
-  }
-
-  if (currentView === 'upload') {
-    return (
-      <UploadPage
+      <WorkspacePage
         onBackToHome={() => setCurrentView('home')}
-        onAnalysisSuccess={handleProcessingComplete}
-        onStartProcessing={handleStartProcessing}
+        initialStep={initialWorkspaceStep}
       />
     );
   }
 
   return (
     <HomePage
-      onOpenUpload={() => setCurrentView('upload')}
-      onOpenResults={() => setCurrentView('results')}
+      onOpenUpload={() => handleOpenWorkspace('upload')}
+      onOpenResults={() => handleOpenWorkspace('findings')}
+      onOpenResearch={() => setCurrentView('research')}
     />
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 };
 

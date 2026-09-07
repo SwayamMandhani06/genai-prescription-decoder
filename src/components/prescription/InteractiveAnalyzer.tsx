@@ -32,17 +32,17 @@ export const InteractiveAnalyzer: React.FC = () => {
   const languageExplanation = MULTILINGUAL_EXPLANATIONS[selectedSampleId]?.[activeLanguage];
 
   return (
-    <section id="analyzer" className="py-20 bg-[#07090E] border-b border-white/[0.06] relative">
+    <section id="analyzer" className="py-20 bg-canvas border-b border-theme relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
           <Badge variant="cyan" size="sm" dot>
             Clinical Inspection Console
           </Badge>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight font-sans">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-theme-primary tracking-tight font-sans">
             Simulated Prescription Diagnostic Console
           </h2>
-          <p className="text-sm sm:text-base text-slate-300 font-sans">
+          <p className="text-sm sm:text-base text-theme-secondary font-sans">
             Inspect real-world outpatient clinical prescriptions. Compare the physical paper artifact with synchronized bounding polygons, ontology validation records, and vernacular schedules.
           </p>
         </div>
@@ -59,14 +59,14 @@ export const InteractiveAnalyzer: React.FC = () => {
                   setSelectedSampleId(sample.id);
                   setHoveredMedicineId(null);
                 }}
-                className={`p-3.5 rounded-lg text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#121826] border-cyan-500/60 shadow-lg'
-                    : 'bg-[#0B0E17] border-white/[0.06] hover:border-white/20'
+                    ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-400 dark:border-sky-600 shadow-xs'
+                    : 'bg-surface border-theme hover:bg-surface-subtle'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-xs font-mono font-bold text-cyan-400">
+                  <span className="text-xs font-mono font-bold text-teal-700 dark:text-cyan-400">
                     {sample.id === 'rx-sample-1'
                       ? 'SAMPLE A: MULTI-DRUG'
                       : sample.id === 'rx-sample-2'
@@ -86,10 +86,10 @@ export const InteractiveAnalyzer: React.FC = () => {
                     {sample.difficultyScore}
                   </Badge>
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-100 line-clamp-1 mb-0.5">
+                <h3 className="text-xs sm:text-sm font-bold text-theme-primary line-clamp-1 mb-0.5">
                   {sample.title}
                 </h3>
-                <p className="text-[11px] text-slate-400 line-clamp-2">
+                <p className="text-[11px] text-theme-secondary line-clamp-2">
                   {sample.chiefComplaint}
                 </p>
               </button>
@@ -98,36 +98,36 @@ export const InteractiveAnalyzer: React.FC = () => {
         </div>
 
         {/* Top Control Bar: Patient Context & Vernacular Switcher */}
-        <div className="p-3.5 rounded-lg bg-[#0E131F] border border-white/[0.08] mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="p-3.5 rounded-xl bg-surface border border-theme mb-6 flex flex-wrap items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded bg-cyan-950/60 text-cyan-400 border border-cyan-500/30">
+            <div className="p-2 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-cyan-400 border border-teal-200 dark:border-teal-800">
               <FileCheck2 className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-mono font-bold text-white">
+              <div className="text-xs font-mono font-bold text-theme-primary">
                 {currentSample.patientProfile} · {currentSample.doctorSpecialty}
               </div>
-              <div className="text-[11px] text-slate-400 font-sans">
-                Diagnosis Context: {currentSample.chiefComplaint}
+              <div className="text-[11px] text-theme-secondary font-sans">
+                Clinical Presentation (Demo Context): {currentSample.chiefComplaint}
               </div>
             </div>
           </div>
 
           {/* Vernacular Language Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-              <Languages className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-xs font-mono text-theme-secondary flex items-center gap-1">
+              <Languages className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
               <span>Vernacular Posology:</span>
             </span>
-            <div className="flex items-center bg-[#07090E] p-0.5 rounded border border-white/10">
+            <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg border border-theme">
               {(['en', 'hi', 'mr'] as LanguageCode[]).map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setActiveLanguage(lang)}
-                  className={`px-3 py-1 text-xs font-mono rounded transition-all cursor-pointer ${
+                  className={`px-3 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                     activeLanguage === lang
-                      ? 'bg-cyan-950 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-teal-600 text-white font-bold shadow-xs'
+                      : 'text-theme-secondary hover:text-theme-primary'
                   }`}
                 >
                   {lang === 'en' ? 'English' : lang === 'hi' ? 'हिन्दी' : 'मराठी'}
@@ -140,14 +140,14 @@ export const InteractiveAnalyzer: React.FC = () => {
         {/* Dual Pane Layout: Authentic Paper Artifact vs Structured AI Inspection */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Pane: Authentic Physical Paper Prescription Slip */}
-          <div className="lg:col-span-6 rounded-lg overflow-hidden border border-slate-700/60 shadow-xl bg-slate-900">
+          <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-theme shadow-sm bg-surface">
             {/* Window Telemetry Strip */}
-            <div className="bg-[#0D121D] px-4 py-2 border-b border-white/[0.08] flex items-center justify-between text-[11px] font-mono">
-              <div className="flex items-center gap-2 text-cyan-400 font-semibold">
+            <div className="bg-surface-subtle px-4 py-2.5 border-b border-theme flex items-center justify-between text-[11px] font-mono">
+              <div className="flex items-center gap-2 text-teal-700 dark:text-cyan-400 font-semibold">
                 <Crosshair className="w-3.5 h-3.5" />
-                <span>SPATIAL GROUND TRUTH · {canvasData.accessionId}</span>
+                <span>ORIGINAL SCRIPT CANVAS · {canvasData.accessionId}</span>
               </div>
-              <span className="text-slate-400 text-[10px]">HOVER TO TRACE INK</span>
+              <span className="text-theme-muted text-[10px]">HOVER TO TRACE INK</span>
             </div>
 
             {/* Physical Paper Document */}
@@ -211,10 +211,10 @@ export const InteractiveAnalyzer: React.FC = () => {
                       {/* Precise Coordinate Overlay */}
                       {isHovered && (
                         <div className="absolute -top-3 left-2 flex items-center gap-1.5 z-30">
-                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-900 text-cyan-300 border border-cyan-500/40 shadow-sm">
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface text-teal-800 dark:text-cyan-300 border border-theme shadow-xs">
                             TARGET INK POLYGON
                           </span>
-                          <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-slate-800 text-slate-300">
+                          <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-surface-subtle text-theme-muted border border-theme">
                             {stroke.pixelCoords}
                           </span>
                         </div>
@@ -278,11 +278,11 @@ export const InteractiveAnalyzer: React.FC = () => {
           {/* Right Pane: Extracted & Grounded Clinical Entities */}
           <div className="lg:col-span-6 space-y-3.5">
             <div className="flex items-center justify-between text-xs font-mono px-1">
-              <span className="text-slate-300 font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span>EXTRACTED & GROUNDED ENTITIES ({currentSample.medications.length})</span>
+              <span className="text-theme-primary font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
+                <span>EXTRACTED &amp; GROUNDED ENTITIES ({currentSample.medications.length})</span>
               </span>
-              <span className="text-slate-500 text-[10px]">CLICK FOR MONOGRAPH</span>
+              <span className="text-theme-muted text-[10px]">CLICK FOR MONOGRAPH</span>
             </div>
 
             {/* Medication Cards */}
@@ -298,14 +298,14 @@ export const InteractiveAnalyzer: React.FC = () => {
                     key={med.id}
                     variant={isHovered ? 'cyan' : 'glass'}
                     padding="md"
-                    className={`transition-all cursor-pointer border rounded-lg ${
+                    className={`transition-all cursor-pointer border rounded-xl shadow-xs ${
                       isHovered
-                        ? 'border-cyan-400 bg-cyan-950/30'
+                        ? 'border-teal-500 dark:border-cyan-400 bg-sky-50 dark:bg-sky-950/30'
                         : med.confidenceLevel === 'ABSTAIN_FLAGGED'
-                        ? 'border-red-500/40 bg-red-950/15'
+                        ? 'border-red-300 dark:border-red-500/40 bg-red-50/40 dark:bg-red-950/15'
                         : med.confidenceLevel === 'BORDERLINE'
-                        ? 'border-amber-500/40 bg-amber-950/15'
-                        : 'border-white/[0.08] bg-[#0E121B]'
+                        ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/15'
+                        : 'border-theme bg-surface hover:bg-surface-subtle'
                     }`}
                     onMouseEnter={() => setHoveredMedicineId(med.id)}
                     onMouseLeave={() => setHoveredMedicineId(null)}
@@ -315,7 +315,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-base font-bold text-white tracking-tight font-sans">
+                          <h4 className="text-base font-bold text-theme-primary tracking-tight font-sans">
                             {med.brandName}
                           </h4>
                           <Badge
@@ -331,7 +331,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                             {med.form}
                           </Badge>
                         </div>
-                        <p className="text-xs font-mono text-slate-300 mt-0.5">
+                        <p className="text-xs font-mono text-theme-secondary mt-0.5">
                           {med.genericName}
                         </p>
                       </div>
@@ -343,47 +343,47 @@ export const InteractiveAnalyzer: React.FC = () => {
 
                     {/* Vernacular posology translation */}
                     {localized && (
-                      <div className="my-2 p-2.5 rounded bg-black/40 border border-white/5 space-y-1">
-                        <div className="flex items-center justify-between text-xs font-bold text-cyan-300 font-mono">
+                      <div className="my-2 p-2.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
+                        <div className="flex items-center justify-between text-xs font-bold text-teal-800 dark:text-cyan-300 font-mono">
                           <span>{localized.localizedName}</span>
-                          <span className="text-[10px] text-slate-400 uppercase">
+                          <span className="text-[10px] text-theme-muted uppercase">
                             {activeLanguage === 'en' ? 'Posology' : 'डोस वेळापत्रक'}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-200 font-sans">
-                          {localized.dosageSummary} · {localized.foodInstruction}
+                        <p className="text-xs text-theme-secondary font-sans">
+                          {localized.dosageSummary} &middot; {localized.foodInstruction}
                         </p>
                       </div>
                     )}
 
                     {/* Abstention alert notice if flagged */}
                     {med.abstentionReason && (
-                      <div className="mt-2 p-2.5 rounded bg-red-500/10 border border-red-500/30 text-xs text-red-300 space-y-1">
-                        <div className="font-bold flex items-center gap-1.5 text-red-400 font-mono">
+                      <div className="mt-2 p-2.5 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-xs text-red-900 dark:text-red-300 space-y-1">
+                        <div className="font-bold flex items-center gap-1.5 text-red-700 dark:text-red-400 font-mono">
                           <AlertTriangle className="w-3.5 h-3.5" />
                           <span>Selective Prediction Gate: Model Abstained</span>
                         </div>
-                        <p className="text-[11px] text-red-200/90 leading-relaxed font-sans">
+                        <p className="text-[11px] text-red-800 dark:text-red-200/90 leading-relaxed font-sans">
                           {med.abstentionReason}
                         </p>
                       </div>
                     )}
 
                     {/* Footer tags */}
-                    <div className="mt-2.5 pt-2 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400">
+                    <div className="mt-2.5 pt-2 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-theme-muted">
                       <div className="flex items-center gap-2">
                         {med.rxNormCui && (
-                          <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                          <span className="px-1.5 py-0.5 rounded bg-surface-subtle text-theme-secondary border border-theme">
                             RxNorm: {med.rxNormCui}
                           </span>
                         )}
                         {med.cdscoApproved && (
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
                             CDSCO Verified
                           </span>
                         )}
                       </div>
-                      <span className="text-cyan-400 hover:underline flex items-center gap-1 text-[10px]">
+                      <span className="text-teal-700 dark:text-cyan-400 hover:underline flex items-center gap-1 text-[10px]">
                         <span>View Clinical Monograph</span>
                         <ExternalLink className="w-3 h-3" />
                       </span>
@@ -395,8 +395,8 @@ export const InteractiveAnalyzer: React.FC = () => {
 
             {/* Overall Advice Box */}
             {languageExplanation && (
-              <div className="p-4 rounded-lg bg-[#0E131F] border border-white/[0.08] text-xs text-slate-300 space-y-1.5">
-                <span className="font-mono font-bold text-cyan-400 uppercase text-[11px] block">
+              <div className="p-4 rounded-xl bg-surface border border-theme text-xs text-theme-secondary space-y-1.5 shadow-xs">
+                <span className="font-mono font-bold text-teal-700 dark:text-cyan-400 uppercase text-[11px] block">
                   Patient Guidance ({languageExplanation.nativeLabel}):
                 </span>
                 <p className="leading-relaxed font-sans">{languageExplanation.overallPatientAdvice}</p>
@@ -417,48 +417,48 @@ export const InteractiveAnalyzer: React.FC = () => {
         >
           <div className="space-y-4 text-xs sm:text-sm font-sans">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-xs">
-              <div className="p-2.5 rounded bg-slate-900 border border-white/5">
-                <span className="text-slate-500 block text-[10px]">DOSAGE STRENGTH</span>
-                <span className="text-white font-bold">{selectedMedicineForModal.dosage}</span>
+              <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
+                <span className="text-theme-muted block text-[10px]">DOSAGE STRENGTH</span>
+                <span className="text-theme-primary font-bold">{selectedMedicineForModal.dosage}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-900 border border-white/5">
-                <span className="text-slate-500 block text-[10px]">FREQUENCY</span>
-                <span className="text-cyan-400 font-bold">{selectedMedicineForModal.frequency}</span>
+              <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
+                <span className="text-theme-muted block text-[10px]">FREQUENCY</span>
+                <span className="text-teal-700 dark:text-cyan-400 font-bold">{selectedMedicineForModal.frequency}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-900 border border-white/5">
-                <span className="text-slate-500 block text-[10px]">DURATION</span>
-                <span className="text-slate-200">{selectedMedicineForModal.duration}</span>
+              <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
+                <span className="text-theme-muted block text-[10px]">DURATION</span>
+                <span className="text-theme-secondary font-medium">{selectedMedicineForModal.duration}</span>
               </div>
-              <div className="p-2.5 rounded bg-slate-900 border border-white/5">
-                <span className="text-slate-500 block text-[10px]">CALIBRATED CONFIDENCE</span>
-                <span className="text-emerald-400 font-bold">
+              <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
+                <span className="text-theme-muted block text-[10px]">CALIBRATED CONFIDENCE</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-bold">
                   {Math.round(selectedMedicineForModal.confidenceScore * 100)}%
                 </span>
               </div>
             </div>
 
             <div className="space-y-1">
-              <span className="text-slate-400 font-mono text-xs uppercase tracking-wider">
-                Clinical Indication & Purpose:
+              <span className="text-theme-muted font-mono text-xs uppercase tracking-wider">
+                Clinical Indication &amp; Purpose:
               </span>
-              <p className="text-slate-200 leading-relaxed">
+              <p className="text-theme-secondary leading-relaxed">
                 {selectedMedicineForModal.indication}
               </p>
             </div>
 
-            <div className="p-3.5 rounded bg-cyan-950/20 border border-cyan-500/20 space-y-1.5 font-mono text-xs">
-              <div className="text-cyan-400 font-bold">ONTOLOGY VERIFICATION RECORD</div>
-              <div className="flex justify-between text-slate-300">
+            <div className="p-3.5 rounded-xl bg-sky-50/60 dark:bg-cyan-950/20 border border-sky-200 dark:border-cyan-500/20 space-y-1.5 font-mono text-xs">
+              <div className="text-teal-800 dark:text-cyan-400 font-bold">ONTOLOGY VERIFICATION RECORD</div>
+              <div className="flex justify-between text-theme-secondary">
                 <span>RxNorm Concept Unique Identifier (CUI):</span>
-                <span className="text-white">{selectedMedicineForModal.rxNormCui || 'N/A'}</span>
+                <span className="text-theme-primary font-semibold">{selectedMedicineForModal.rxNormCui || 'N/A'}</span>
               </div>
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-theme-secondary">
                 <span>WHO Anatomical Therapeutic Chemical (ATC):</span>
-                <span className="text-white">{selectedMedicineForModal.atcCode || 'J01CR02'}</span>
+                <span className="text-theme-primary font-semibold">{selectedMedicineForModal.atcCode || 'J01CR02'}</span>
               </div>
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-theme-secondary">
                 <span>CDSCO India Regulatory Approval:</span>
-                <span className="text-emerald-400">
+                <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
                   {selectedMedicineForModal.cdscoApproved ? 'Verified Marketed Formulation' : 'Unverified'}
                 </span>
               </div>

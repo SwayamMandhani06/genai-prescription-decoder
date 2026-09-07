@@ -197,7 +197,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       language: 'en',
       languageLabel: 'English',
       nativeLabel: 'English',
-      overallPatientAdvice: 'Important: Hand-written name resembles antibiotic Metronidazole, but has been verified as Metformin for Diabetes. Take with food to reduce stomach cramps.',
+      overallPatientAdvice: 'Important: Cursive handwriting resembles antibiotic Metronidazole; candidate corresponds to Metformin for diabetes. Pharmacist confirmation required before dispensing.',
       doctorConsultDisclaimer: 'LASA safety alert: Confirm with pharmacist that you have received Metformin for blood sugar, NOT Metronidazole for infections.',
       medications: [
         {
@@ -242,7 +242,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       language: 'hi',
       languageLabel: 'Hindi',
       nativeLabel: 'हिन्दी',
-      overallPatientAdvice: 'सावधानी: हस्तलिखित नाम एंटीबायोटिक मेट्रोनिडाजोल जैसा दिखता है, परंतु यह मधुमेह के लिए मेटफॉर्मिन है। पेट की गड़बड़ी से बचने के लिए इसे भोजन के साथ ही लें।',
+      overallPatientAdvice: 'सावधानी: हस्तलिखित नाम एंटीबायोटिक मेट्रोनिडाजोल जैसा दिखता है, क्लिनिकल संदर्भ मेटफॉर्मिन का संकेत देता है। दवा लेने से पहले फार्मासिस्ट से पुष्टि अवश्य कराएं।',
       doctorConsultDisclaimer: 'सुरक्षा सूचना: मेडिकल स्टोर से दवा लेते समय पुष्टि करें कि आपको शुगर की मेटफॉर्मिन (Metformin) दी गई है, मेट्रोनिडाजोल नहीं।',
       medications: [
         {
@@ -287,7 +287,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       language: 'mr',
       languageLabel: 'Marathi',
       nativeLabel: 'मराठी',
-      overallPatientAdvice: 'महत्त्वाची सूचना: हस्तलिखित नाव मेट्रोनिडाझोलसारखे भासते, परंतु ही मधुमेहाची मेटफॉर्मिन आहे. औषध विक्रेत्याकडून खात्री करूनच औषध घ्या.',
+      overallPatientAdvice: 'महत्त्वाची सूचना: हस्तलिखित नाव मेट्रोनिडाझोलसारखे भासते, परंतु संदर्भ मेटफॉर्मिनचा निर्देश करतो. औषध विक्रेत्याकडून खात्री करूनच औषध घ्या.',
       doctorConsultDisclaimer: 'सुरक्षा सूचना: ही मधुमेहाची औषध आहे, इन्फेक्शनची नाही याची मेडिकल स्टोअरमध्ये खात्री करा.',
       medications: [
         {
@@ -335,7 +335,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       languageLabel: 'English',
       nativeLabel: 'English',
       overallPatientAdvice: 'MANDATORY WARNING: The dosage strength for Prednisolone is illegible in doctor handwriting (could be 1.0mg or 10mg). DO NOT ADMINISTER PREDNISOLONE until confirmed with the clinic.',
-      doctorConsultDisclaimer: 'AI Abstention Triggered: Due to 10x overdose toxicity risk, automated decoding of Prednisolone dose has been deliberately halted. Contact the pediatrician.',
+      doctorConsultDisclaimer: 'Assistive Abstention Triggered: Due to decimal dosage stroke ambiguity, automated interpretation of Prednisolone dose has been deliberately halted. Contact the pediatrician.',
       medications: [
         {
           medicineId: 'med-abs-1',
@@ -369,7 +369,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
             { period: 'night', amount: 'None', isActive: false, timeRange: '-', mealRelation: 'No dose' },
           ],
           foodInstruction: 'Do not administer without physical doctor verification.',
-          specialPrecaution: 'High risk of 10-fold overdose if 10mg is given instead of 1.0mg.',
+          specialPrecaution: 'Pediatric corticosteroid requires strict dosage verification to prevent dosing errors.',
           durationString: '3 days (once verified)',
           missedDoseAdvice: 'Consult paediatrician immediately.',
         },
@@ -398,7 +398,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       languageLabel: 'Hindi',
       nativeLabel: 'हिन्दी',
       overallPatientAdvice: 'अत्यंत महत्वपूर्ण चेतावनी: प्रेडनिसोलोन (Prednisolone) की खुराक लिखावट में अस्पष्ट है (1.0 mg या 10 mg)। डॉक्टर से पुष्टि किए बिना बच्चे को प्रेडनिसोलोन बिल्कुल न दें।',
-      doctorConsultDisclaimer: 'सुरक्षात्मक AI रोक: 10 गुना ओवरडोज़ के खतरे से बचने के लिए AI ने प्रेडनिसोलोन का स्वचालित अनुमान रोक दिया है। तुरंत बाल रोग विशेषज्ञ से संपर्क करें।',
+      doctorConsultDisclaimer: 'सुरक्षात्मक AI रोक: लिखावट में दशमलव अस्पष्ट होने के कारण AI ने प्रेडनिसोलोन का स्वचालित अनुमान रोक दिया है। तुरंत बाल रोग विशेषज्ञ से संपर्क करें।',
       medications: [
         {
           medicineId: 'med-abs-1',
@@ -432,7 +432,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
             { period: 'night', amount: 'नहीं', isActive: false, timeRange: '-', mealRelation: 'दवा नहीं' },
           ],
           foodInstruction: 'डॉक्टर की लिखित पुष्टि के बिना सेवन न कराएं।',
-          specialPrecaution: 'गलत खुराक से बच्चे को १० गुना अधिक दवा का गंभीर नुकसान हो सकता है।',
+          specialPrecaution: 'गलत खुराक से बचने के लिए डॉक्टर से सही मात्रा की पुष्टि आवश्यक है।',
           durationString: 'पुष्टि के बाद ३ दिन',
           missedDoseAdvice: 'तुरंत डॉक्टर से संपर्क करें।',
         },
@@ -461,7 +461,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
       languageLabel: 'Marathi',
       nativeLabel: 'मराठी',
       overallPatientAdvice: 'अत्यंत गंभीर सूचना: प्रेडनिसोलोन (Prednisolone) चा डोस डॉक्टरांच्या अक्षरात स्पष्ट नाही (1.0 mg किंवा 10 mg). डॉक्टरांकडून खात्री केल्याशिवाय मुलाला हे औषध अजिबात देऊ नका.',
-      doctorConsultDisclaimer: 'सुरक्षात्मक AI नकार: १० पट ओव्हरडोसचा धोका टाळण्यासाठी AI ने अंदाज बांधणे बंद केले आहे. बालरोगतज्ज्ञांशी त्वरित संपर्क साधा.',
+      doctorConsultDisclaimer: 'सुरक्षात्मक AI नकार: लिखाणातील दशांश अस्पष्टतेमुळे AI ने अंदाज बांधणे बंद केले आहे. बालरोगतज्ज्ञांशी त्वरित संपर्क साधा.',
       medications: [
         {
           medicineId: 'med-abs-1',
@@ -495,7 +495,7 @@ export const MULTILINGUAL_EXPLANATIONS: Record<string, Record<LanguageCode, Mult
             { period: 'night', amount: 'नाही', isActive: false, timeRange: '-', mealRelation: 'डोस नाही' },
           ],
           foodInstruction: 'डॉक्टरांच्या प्रत्यक्ष स्वाक्षरीशिवाय देऊ नका.',
-          specialPrecaution: 'चुकीचा डोस दिल्यास मुलाला १० पट ओव्हरडोसचा गंभीर धोका आहे.',
+          specialPrecaution: 'चुकीचा डोस टाळण्यासाठी डॉक्टरांकडून अचूक प्रमाणाची खात्री करून घेणे आवश्यक आहे.',
           durationString: 'खात्री झाल्यावर ३ दिवस',
           missedDoseAdvice: 'लगेच बालरोगतज्ज्ञांशी संपर्क साधा.',
         },

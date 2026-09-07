@@ -20,48 +20,45 @@ export const DemoStateSwitcher: React.FC<DemoStateSwitcherProps> = ({
   }> = [
     {
       id: 'state-confident',
-      label: '1. Fully Confident',
+      label: '1. Confident',
       icon: CheckCircle2,
-      tag: 'Augmentin 625 Duo · 96% Match',
+      tag: 'Augmentin 625 Duo · 96%',
       variant: 'emerald',
     },
     {
       id: 'state-uncertain',
-      label: '2. Uncertain Fields',
+      label: '2. Uncertain',
       icon: AlertCircle,
-      tag: 'Pan 40 · SOS Frequency Ambiguity',
+      tag: 'Pan 40 · Ambiguity',
       variant: 'amber',
     },
     {
       id: 'state-lasa',
-      label: '3. LASA Warning',
+      label: '3. LASA Alert',
       icon: AlertTriangle,
-      tag: 'Metformin vs Metronidazole (82%)',
+      tag: 'Metformin Collision',
       variant: 'coral',
     },
     {
       id: 'state-flagged',
-      label: '4. Multiple Flagged',
+      label: '4. Abstention',
       icon: ShieldAlert,
-      tag: 'Prednisolone · Selective Abstention',
+      tag: 'Selective Abstention',
       variant: 'red',
     },
   ];
 
   return (
-    <div className="p-3.5 rounded-xl bg-[#0B0F19] border border-white/10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 text-xs font-mono shadow-xl">
-      <div className="flex items-center gap-2 text-slate-300">
-        <Layers className="w-4 h-4 text-cyan-400" />
-        <span className="font-bold text-white uppercase tracking-wider">
-          ACADEMIC EVALUATION SCENARIOS:
-        </span>
-        <span className="text-slate-500 hidden sm:inline">|</span>
-        <span className="text-slate-400 hidden sm:inline text-[11px]">
-          Inspect 4 Critical Clinical Edge Cases
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs py-2 border-b border-theme">
+      <div className="flex items-center gap-2 text-theme-secondary font-medium">
+        <Layers className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+        <span className="font-semibold text-theme-primary">Demo scenarios:</span>
+        <span className="text-theme-muted hidden md:inline text-xs">
+          Inspect safety responses
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 w-full lg:w-auto">
+      <div className="flex flex-wrap items-center gap-1.5">
         {states.map((st) => {
           const isSelected = activeStateId === st.id;
           const StateIcon = st.icon;
@@ -70,25 +67,15 @@ export const DemoStateSwitcher: React.FC<DemoStateSwitcherProps> = ({
             <button
               key={st.id}
               onClick={() => onSelectState(st.id)}
-              className={`px-3 py-2 rounded-lg transition-all cursor-pointer flex flex-col items-start gap-0.5 text-left border ${
+              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${
                 isSelected
-                  ? st.variant === 'emerald'
-                    ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-bold shadow-md shadow-emerald-950/40'
-                    : st.variant === 'amber'
-                    ? 'bg-amber-950/60 border-amber-500 text-amber-300 font-bold shadow-md shadow-amber-950/40'
-                    : st.variant === 'coral'
-                    ? 'bg-red-950/60 border-red-500 text-red-300 font-bold shadow-md shadow-red-950/40'
-                    : 'bg-red-950/80 border-red-400 text-red-200 font-bold shadow-md shadow-red-950/50'
-                  : 'bg-black/40 border-white/5 text-slate-400 hover:text-slate-200 hover:bg-black/60'
+                  ? 'bg-teal-600 text-white font-semibold shadow-xs'
+                  : 'text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle'
               }`}
+              title={st.tag}
             >
-              <div className="flex items-center gap-1.5 w-full">
-                <StateIcon className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{st.label}</span>
-              </div>
-              <span className="text-[10px] text-slate-500 truncate w-full hidden sm:block">
-                {st.tag}
-              </span>
+              <StateIcon className="w-3.5 h-3.5" />
+              <span>{st.label}</span>
             </button>
           );
         })}

@@ -1,22 +1,25 @@
 import React from 'react';
 import { Navbar } from '../components/layout/Navbar';
 import { HeroSection } from '../components/hero/HeroSection';
-import { PipelineSection } from '../components/pipeline/PipelineSection';
-import { InteractiveAnalyzer } from '../components/prescription/InteractiveAnalyzer';
-import { UncertaintyAbstentionSection } from '../components/safety/UncertaintyAbstentionSection';
-import { LasaSafetySection } from '../components/safety/LasaSafetySection';
-import { MultilingualExplanationSection } from '../components/explanation/MultilingualExplanationSection';
-import { OriginalPrescriptionReference } from '../components/prescription/OriginalPrescriptionReference';
-import { ResearchBenchmarkSection } from '../components/research/ResearchBenchmarkSection';
-import { SafetyDisclaimer } from '../components/layout/SafetyDisclaimer';
+import { TransformationDemoSection } from '../components/home/TransformationDemoSection';
+import { CoreCapabilitiesSection } from '../components/home/CoreCapabilitiesSection';
+import { SafetyPhilosophySection } from '../components/home/SafetyPhilosophySection';
+import { LanguageSupportSection } from '../components/home/LanguageSupportSection';
+import { ResearchOverviewSection } from '../components/home/ResearchOverviewSection';
+import { FinalCtaSection } from '../components/home/FinalCtaSection';
 import { Footer } from '../components/layout/Footer';
 
 export interface HomePageProps {
   onOpenUpload?: () => void;
   onOpenResults?: () => void;
+  onOpenResearch?: () => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ onOpenUpload, onOpenResults }) => {
+export const HomePage: React.FC<HomePageProps> = ({
+  onOpenUpload,
+  onOpenResults,
+  onOpenResearch,
+}) => {
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -25,52 +28,50 @@ export const HomePage: React.FC<HomePageProps> = ({ onOpenUpload, onOpenResults 
   };
 
   return (
-    <div className="min-h-screen bg-[#060911] text-slate-100 flex flex-col selection:bg-cyan-500/25 selection:text-cyan-200">
-      {/* Top Navbar */}
+    <div className="min-h-screen bg-canvas text-theme-primary flex flex-col font-sans selection:bg-teal-500/20 selection:text-teal-800 dark:selection:text-teal-200">
+      {/* Top Navigation */}
       <Navbar
-        onLaunchDemoClick={() => scrollToSection('analyzer')}
+        onNavigateToAnalyze={onOpenUpload}
+        onNavigateToHowItWorks={() => scrollToSection('transformation')}
+        onNavigateToSafety={() => scrollToSection('safety')}
+        onNavigateToResearch={onOpenResearch}
         onOpenUploadClick={onOpenUpload}
         onOpenResultsClick={onOpenResults}
         activeView="home"
       />
 
-      {/* Main Content Sections */}
+      {/* Main Product Journey */}
       <main className="flex-1">
-        {/* 1. Hero Section & Interactive Transformation Narrative */}
+        {/* 1. Hero: Problem, Prescription Object & Visual 4-Phase Transformation */}
         <HeroSection
-          onScrollToAnalyzer={() => scrollToSection('analyzer')}
-          onScrollToMethodology={() => scrollToSection('benchmarks')}
           onOpenUpload={onOpenUpload}
-          onOpenResults={onOpenResults}
+          onScrollToHowItWorks={() => scrollToSection('transformation')}
         />
 
-        {/* 2. Pipeline: From Handwriting to Understanding */}
-        <PipelineSection />
+        {/* 2. First Scroll: "See what changes." Interactive Before/After */}
+        <TransformationDemoSection />
 
-        {/* 3. Interactive Simulated Prescription Analyzer */}
-        <InteractiveAnalyzer />
+        {/* 3. Three Core Capabilities: Understand · Verify · Explain */}
+        <CoreCapabilitiesSection />
 
-        {/* 4. Uncertainty & Calibrated Selective Abstention */}
-        <UncertaintyAbstentionSection />
+        {/* 4. Safety Philosophy: "The system should know when it does not know." */}
+        <SafetyPhilosophySection />
 
-        {/* 5. LASA Safety Awareness & TALL MAN Lettering */}
-        <LasaSafetySection />
+        {/* 5. Multilingual Posology: English · हिन्दी · मराठी */}
+        <LanguageSupportSection />
 
-        {/* 6. Multilingual Explanation & Audio Synthesis (EN / HI / MR) */}
-        <MultilingualExplanationSection />
+        {/* 6. Compact Research Prototype Statement */}
+        <ResearchOverviewSection onOpenResearchPage={onOpenResearch} />
 
-        {/* 7. Original Prescription as Ground Truth */}
-        <OriginalPrescriptionReference />
-
-        {/* 8. Research Benchmark & Quantitative Methodology */}
-        <ResearchBenchmarkSection />
-
-        {/* 9. Statutory Safety Disclaimer */}
-        <SafetyDisclaimer />
+        {/* 7. Final Calm CTA */}
+        <FinalCtaSection onOpenUpload={onOpenUpload} />
       </main>
 
-      {/* Footer */}
-      <Footer />
+      {/* 8. Clean, Professional Footer */}
+      <Footer
+        onNavigateToResearch={onOpenResearch}
+        onOpenUpload={onOpenUpload}
+      />
     </div>
   );
 };

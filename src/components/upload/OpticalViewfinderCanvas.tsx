@@ -3,15 +3,14 @@ import { UploadedPrescriptionFile } from '../../types/navigation.types';
 import {
   Camera,
   UploadCloud,
-  Crosshair,
   RotateCcw,
   ZoomIn,
   ZoomOut,
   Trash2,
   AlertCircle,
+  FileCheck2,
 } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { Badge } from '../ui/Badge';
 
 export interface OpticalViewfinderCanvasProps {
   uploadedData: UploadedPrescriptionFile | null;
@@ -67,18 +66,18 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
   const zoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.75));
 
   return (
-    <div className="w-full relative rounded-xl overflow-hidden border border-white/10 bg-[#0B0E17] shadow-2xl">
-      {/* Top Viewfinder Telemetry Header */}
-      <div className="flex flex-wrap items-center justify-between px-4 py-2.5 bg-[#0F1420] border-b border-white/[0.08] text-xs font-mono gap-2">
-        <div className="flex items-center gap-2.5 text-cyan-400">
-          <Crosshair className="w-3.5 h-3.5" />
-          <span className="font-semibold text-white tracking-wider">
-            {uploadedData ? 'OPTICAL STAGE: INTAKE ACTIVE' : 'OPTICAL STAGE: AWAITING DOCUMENT'}
+    <div className="w-full relative rounded-2xl overflow-hidden border border-theme bg-surface shadow-xs transition-colors">
+      {/* Top Viewfinder Control Bar */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-surface-subtle border-b border-theme text-xs gap-2">
+        <div className="flex items-center gap-2">
+          <FileCheck2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          <span className="font-semibold text-theme-primary">
+            {uploadedData ? 'Prescription Document Mounted' : 'Prescription Viewfinder'}
           </span>
           {uploadedData && (
-            <Badge variant="cyan" size="xs">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-surface border border-theme text-theme-secondary">
               {`${uploadedData.metrics.width}×${uploadedData.metrics.height}px`}
-            </Badge>
+            </span>
           )}
         </div>
 
@@ -87,38 +86,38 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
           <div className="flex items-center gap-1">
             <button
               onClick={zoomOut}
-              className="p-1 text-slate-400 hover:text-white rounded hover:bg-white/5 transition-colors"
+              className="p-1 text-theme-secondary hover:text-theme-primary rounded hover:bg-surface transition-colors cursor-pointer"
               title="Zoom out"
               aria-label="Zoom out"
             >
-              <ZoomOut className="w-3.5 h-3.5" />
+              <ZoomOut className="w-4 h-4" />
             </button>
-            <span className="text-[11px] text-slate-400 px-1 font-mono min-w-[45px] text-center">
+            <span className="text-[11px] text-theme-secondary px-1 font-mono min-w-[45px] text-center">
               {Math.round(zoomLevel * 100)}%
             </span>
             <button
               onClick={zoomIn}
-              className="p-1 text-slate-400 hover:text-white rounded hover:bg-white/5 transition-colors"
+              className="p-1 text-theme-secondary hover:text-theme-primary rounded hover:bg-surface transition-colors cursor-pointer"
               title="Zoom in"
               aria-label="Zoom in"
             >
-              <ZoomIn className="w-3.5 h-3.5" />
+              <ZoomIn className="w-4 h-4" />
             </button>
             <button
               onClick={resetZoom}
-              className="p-1 text-slate-400 hover:text-white rounded hover:bg-white/5 transition-colors ml-1"
-              title="Reset optical focal scale"
+              className="p-1 text-theme-secondary hover:text-theme-primary rounded hover:bg-surface transition-colors ml-1 cursor-pointer"
+              title="Reset optical scale"
               aria-label="Reset zoom"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={onRemoveFile}
-              className="p-1 text-red-400 hover:text-red-300 rounded hover:bg-red-500/10 transition-colors ml-2"
+              className="p-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 rounded hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors ml-2 cursor-pointer"
               title="Remove document"
               aria-label="Remove document"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -129,62 +128,51 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`relative min-h-[440px] sm:min-h-[500px] flex items-center justify-center p-6 sm:p-8 transition-all overflow-hidden ${
+        className={`relative min-h-[420px] sm:min-h-[480px] flex items-center justify-center p-6 sm:p-8 transition-all overflow-hidden ${
           isDragging
-            ? 'bg-cyan-950/20 border-2 border-cyan-400 ring-4 ring-cyan-500/20'
-            : 'bg-[#080A12]'
+            ? 'bg-teal-50/50 dark:bg-teal-950/20 border-2 border-teal-500'
+            : 'bg-canvas'
         }`}
       >
-        {/* Optical Alignment Reticles (Corner L-Brackets) */}
-        <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-cyan-500/60 pointer-events-none" />
-        <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-cyan-500/60 pointer-events-none" />
-        <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-cyan-500/60 pointer-events-none" />
-        <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-cyan-500/60 pointer-events-none" />
-
-        {/* Center Optical Crosshair (Subtle watermark) */}
-        {!uploadedData && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-            <div className="w-16 h-16 border border-dashed border-cyan-400 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-cyan-400 rounded-full" />
-            </div>
-            <div className="absolute w-32 h-[1px] bg-cyan-400/40" />
-            <div className="absolute h-32 w-[1px] bg-cyan-400/40" />
-          </div>
-        )}
+        {/* Subtle Framing Reticles */}
+        <div className="absolute top-4 left-4 w-5 h-5 border-t border-l border-theme pointer-events-none" />
+        <div className="absolute top-4 right-4 w-5 h-5 border-t border-r border-theme pointer-events-none" />
+        <div className="absolute bottom-4 left-4 w-5 h-5 border-b border-l border-theme pointer-events-none" />
+        <div className="absolute bottom-4 right-4 w-5 h-5 border-b border-r border-theme pointer-events-none" />
 
         {/* State A: Document Loaded & Mounted */}
         {uploadedData ? (
-          <div className="relative max-w-full max-h-[560px] overflow-auto flex items-center justify-center z-10 select-none">
-            {/* HUD Scanning Line during analysis */}
-            {isAnalyzing && (
-              <div className="absolute left-0 right-0 h-0.5 bg-cyan-400 shadow-[0_0_12px_#38bdf8] pointer-events-none animate-hud-scanline z-30 opacity-90" />
-            )}
-
+          <div className="relative max-w-full max-h-[520px] overflow-auto flex items-center justify-center z-10 select-none">
             {/* Document Image Surface */}
             <div
-              className="transition-transform duration-200 ease-out origin-center rounded border border-slate-700/60 shadow-2xl overflow-hidden bg-white"
+              className="transition-transform duration-200 ease-out origin-center rounded-xl border border-theme shadow-md overflow-hidden bg-white relative"
               style={{ transform: `scale(${zoomLevel})` }}
             >
+              {isAnalyzing && (
+                <div className="absolute inset-0 bg-teal-500/10 pointer-events-none z-20 flex items-center justify-center">
+                  <div className="h-0.5 w-full bg-teal-500 shadow-sm animate-pulse" />
+                </div>
+              )}
               <img
                 src={uploadedData.previewUrl}
                 alt="Prescription document preview"
-                className="max-h-[500px] w-auto object-contain block pointer-events-none"
+                className="max-h-[480px] w-auto object-contain block pointer-events-none"
               />
             </div>
           </div>
         ) : (
           /* State B: Empty Optical Focal Zone ("Bring the prescription into focus") */
-          <div className="text-center max-w-md mx-auto space-y-5 z-10 py-6">
-            <div className="w-16 h-16 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-400 shadow-inner">
-              <UploadCloud className="w-8 h-8 animate-pulse" />
+          <div className="text-center max-w-md mx-auto space-y-4 z-10 py-6">
+            <div className="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 flex items-center justify-center mx-auto text-teal-700 dark:text-teal-300">
+              <UploadCloud className="w-7 h-7" />
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-lg sm:text-xl font-bold text-white font-sans tracking-tight">
+            <div className="space-y-1.5">
+              <h3 className="text-lg sm:text-xl font-bold text-theme-primary tracking-tight">
                 Bring the prescription into focus.
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
-                Drag and drop your physician&rsquo;s handwritten script onto the optical focal stage, or select an image scan from your device.
+              <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
+                Drag and drop your physician&rsquo;s handwritten script here, or select an image scan from your device.
               </p>
             </div>
 
@@ -194,7 +182,7 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
                 variant="primary"
                 size="md"
                 onClick={() => fileInputRef.current?.click()}
-                leftIcon={<UploadCloud className="w-4 h-4 text-slate-950" />}
+                leftIcon={<UploadCloud className="w-4 h-4" />}
               >
                 Select from Device
               </Button>
@@ -203,19 +191,19 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
                 variant="secondary"
                 size="md"
                 onClick={() => cameraInputRef.current?.click()}
-                leftIcon={<Camera className="w-4 h-4 text-slate-300" />}
+                leftIcon={<Camera className="w-4 h-4 text-theme-muted" />}
               >
-                Scan with Camera
+                Use Camera
               </Button>
             </div>
 
-            {/* Supported Formats & Technical Specs */}
-            <div className="pt-4 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-mono text-slate-400">
-              <span>Formats: JPEG, PNG, WEBP, TIFF, PDF</span>
+            {/* Supported Formats */}
+            <div className="pt-4 border-t border-theme flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-theme-muted">
+              <span>JPEG, PNG, WEBP, PDF</span>
               <span>·</span>
-              <span>Max: 15 MB</span>
+              <span>Max 15 MB</span>
               <span>·</span>
-              <span>Recommended: &ge; 300 DPI</span>
+              <span>&ge; 300 DPI recommended</span>
             </div>
           </div>
         )}
@@ -244,8 +232,8 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
 
       {/* Error Message Strip */}
       {errorMessage && (
-        <div className="p-3 bg-red-950/50 border-t border-red-500/40 text-red-200 text-xs font-mono flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+        <div className="p-3 bg-red-50 dark:bg-red-950/40 border-t border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}

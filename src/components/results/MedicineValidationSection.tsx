@@ -21,32 +21,32 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
     evidence.validationStatus === 'RXNORM_GROUNDED';
 
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0A0E1A] p-5 sm:p-6 space-y-5">
+    <div className="rounded-2xl border border-theme bg-surface p-5 sm:p-6 space-y-5 shadow-xs transition-colors">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-theme pb-4">
         <div className="flex items-center gap-2">
-          <Database className="w-5 h-5 text-cyan-400" />
+          <Database className="w-5 h-5 text-teal-600 dark:text-teal-400" />
           <div>
-            <h3 className="text-sm font-bold text-white font-mono tracking-tight uppercase">
-              Pharmacopeial Validation &amp; Grounding Evidence
+            <h3 className="text-sm font-bold text-theme-primary tracking-tight">
+              Clinical Formulary &amp; Grounding Evidence
             </h3>
-            <p className="text-xs text-slate-400 font-sans">
-              CDSCO India Schedule H &amp; US NLM RxNorm Formulary Cross-Verification
+            <p className="text-xs text-theme-secondary">
+              Cross-verified with CDSCO India &amp; US NLM RxNorm Formularies
             </p>
           </div>
         </div>
 
         <div
-          className={`px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-1.5 ${
+          className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${
             isApproved
-              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-              : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+              : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
           }`}
         >
           {isApproved ? (
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
           ) : (
-            <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+            <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
           )}
           <span>{evidence.statusBadgeText}</span>
         </div>
@@ -54,88 +54,87 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
 
       {/* Grid: Extracted Candidate vs Matched Formulary Medicine */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-            Extracted Vision-Language Candidate:
+        <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
+          <span className="text-[11px] text-theme-muted uppercase tracking-wider block font-medium">
+            Extracted Vision Candidate:
           </span>
-          <div className="text-sm font-bold text-cyan-300 font-mono">
+          <div className="text-sm font-bold text-teal-700 dark:text-teal-300">
             {evidence.extractedCandidate}
           </div>
-          <span className="text-[11px] text-slate-400 font-sans block">
-            Tokenized directly from handwritten physician ligatures.
+          <span className="text-xs text-theme-secondary block">
+            Extracted directly from handwritten cursive strokes.
           </span>
         </div>
 
-        <div className="p-3.5 rounded-lg bg-black/40 border border-white/5 space-y-1">
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-            Verified Knowledge Graph Entity:
+        <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
+          <span className="text-[11px] text-theme-muted uppercase tracking-wider block font-medium">
+            Verified Formulary Entity:
           </span>
-          <div className="text-sm font-bold text-emerald-300 font-mono">
+          <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
             {evidence.matchedMedicine}
           </div>
-          <span className="text-[11px] text-slate-400 font-sans block">
-            Active Salt: <strong className="text-slate-200">{evidence.genericSalt}</strong>
+          <span className="text-xs text-theme-secondary block">
+            Active Molecule: <strong className="text-theme-primary">{evidence.genericSalt}</strong>
           </span>
         </div>
       </div>
 
       {/* Clinical Reference Metadata Badges */}
-      <div className="p-4 rounded-lg bg-[#070A12] border border-white/[0.06] grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-        <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase block">CDSCO CLASSIFICATION</span>
-          <span className="text-slate-200 font-semibold">{evidence.cdscoSchedule}</span>
+      <div className="p-4 rounded-xl bg-surface-subtle border border-theme grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div className="space-y-0.5">
+          <span className="text-[10px] text-theme-muted uppercase font-medium block">CDSCO Schedule</span>
+          <span className="text-theme-primary font-semibold font-mono">{evidence.cdscoSchedule}</span>
         </div>
-        <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase block">RXNORM CONCEPT (CUI)</span>
-          <div className="flex items-center gap-1.5 text-cyan-400 font-bold">
+        <div className="space-y-0.5">
+          <span className="text-[10px] text-theme-muted uppercase font-medium block">RxNorm Concept</span>
+          <div className="flex items-center gap-1.5 text-sky-700 dark:text-sky-400 font-bold font-mono">
             <span>RxCUI: {evidence.rxNormCui}</span>
-            <ExternalLink className="w-3 h-3 text-cyan-500" />
+            <ExternalLink className="w-3 h-3" />
           </div>
         </div>
-        <div className="space-y-1">
-          <span className="text-[10px] text-slate-500 uppercase block">THERAPEUTIC CLASS</span>
-          <span className="text-slate-300 font-sans text-[11px] leading-tight block">
+        <div className="space-y-0.5">
+          <span className="text-[10px] text-theme-muted uppercase font-medium block">Therapeutic Class</span>
+          <span className="text-theme-secondary text-xs leading-tight block">
             {evidence.therapeuticClass}
           </span>
         </div>
       </div>
 
       {/* Indications & Evidence Source */}
-      <div className="space-y-1.5 text-xs">
-        <div className="text-slate-400 font-sans">
-          <strong className="text-slate-200 font-mono">Standard Indications:</strong>{' '}
+      <div className="space-y-1 text-xs">
+        <div className="text-theme-secondary">
+          <strong className="text-theme-primary">Standard Indications:</strong>{' '}
           {evidence.standardIndications}
         </div>
-        <div className="text-[11px] font-mono text-slate-500">
+        <div className="text-[11px] text-theme-muted">
           Source: {evidence.evidenceSource}
         </div>
       </div>
 
-      {/* Alternative Candidates / Formulations */}
+      {/* Alternative Candidates */}
       {evidence.alternativeCandidates && evidence.alternativeCandidates.length > 0 && (
-        <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-            <span className="uppercase tracking-wider flex items-center gap-1.5">
-              <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
-              Alternative Bioequivalent Candidates Evaluated
+        <div className="space-y-2 pt-2 border-t border-theme">
+          <div className="flex items-center justify-between text-xs text-theme-secondary">
+            <span className="font-semibold flex items-center gap-1.5">
+              <HelpCircle className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              Bioequivalent Formulations Evaluated
             </span>
-            <span className="text-[10px] text-slate-500">EDIT DISTANCE &amp; FORMULARY SIMILARITY</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {evidence.alternativeCandidates.map((alt, idx) => (
               <div
                 key={idx}
-                className="p-2.5 rounded bg-black/30 border border-white/5 space-y-1 text-xs"
+                className="p-2.5 rounded-lg bg-surface border border-theme space-y-1 text-xs"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-200 font-mono">{alt.name}</span>
-                  <span className="text-[10px] font-mono text-cyan-400 font-semibold">
+                  <span className="font-semibold text-theme-primary">{alt.name}</span>
+                  <span className="text-[11px] font-mono text-teal-700 dark:text-teal-400 font-semibold">
                     {Math.round(alt.similarityScore * 100)}% Match
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 font-sans">{alt.generic}</div>
-                <div className="text-[10px] text-slate-500 font-sans">{alt.notes}</div>
+                <div className="text-[11px] text-theme-secondary">{alt.generic}</div>
+                <div className="text-[10px] text-theme-muted">{alt.notes}</div>
               </div>
             ))}
           </div>
@@ -143,13 +142,13 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
       )}
 
       {/* Statutory Primacy Reminder */}
-      <div className="p-3 rounded-lg bg-cyan-950/20 border border-cyan-500/20 flex items-start gap-2.5 text-xs text-cyan-200 font-sans leading-relaxed">
-        <FileCheck2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+      <div className="p-3 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 flex items-start gap-2.5 text-xs text-teal-900 dark:text-teal-200 leading-relaxed">
+        <FileCheck2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-white font-mono uppercase text-[11px] block">
-            Original Prescription Primacy Rule:
+          <strong className="text-teal-950 dark:text-teal-100 uppercase text-[11px] block">
+            Original Prescription Primacy:
           </strong>
-          Pharmacopeial cross-referencing is assistive. The prescriber&rsquo;s original signed
+          Pharmacopeial cross-referencing is assistive. The prescriber&rsquo;s signed
           prescription remains the primary legal reference for dispensing.
         </div>
       </div>

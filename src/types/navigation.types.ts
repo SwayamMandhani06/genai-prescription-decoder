@@ -1,4 +1,6 @@
-export type AppView = 'home' | 'upload' | 'processing' | 'results';
+export type AppView = 'home' | 'workspace' | 'research' | 'upload' | 'processing' | 'results';
+
+export type WorkspaceStep = 'upload' | 'review' | 'analyze' | 'findings';
 
 export interface ImageQualityMetrics {
   width: number;

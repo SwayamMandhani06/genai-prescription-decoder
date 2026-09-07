@@ -63,7 +63,7 @@ export const CLINICAL_LASA_CATALOG: LasaWarning[] = [
     phoneticSimilarity: 0.92,
     riskTier: 'CRITICAL',
     pharmacologicalDifference: 'Lamictal is an anticonvulsant and mood stabilizer; Lamisil is a synthetic allylamine antifungal for onychomycosis.',
-    clinicalDangerNotice: 'Omission of anticonvulsant can trigger status epilepticus; improper dosage of Lamictal can induce fatal Stevens-Johnson Syndrome.',
+    clinicalDangerNotice: 'Omission of anticonvulsant can trigger status epilepticus; improper dosage titration of Lamictal can induce severe adverse reactions including Stevens-Johnson Syndrome.',
     differentiationKey: 'TALL MAN Lettering: laMICtal vs laMISil',
   },
 ];

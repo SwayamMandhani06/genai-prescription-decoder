@@ -20,27 +20,27 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2';
 
   const sizeStyles = {
     sm: 'text-xs px-3 py-1.5 gap-1.5',
     md: 'text-sm px-4 py-2.5 gap-2',
-    lg: 'text-base px-6 py-3.5 gap-2.5 font-semibold',
+    lg: 'text-base px-6 py-3 gap-2.5 font-semibold',
   };
 
   const variantStyles = {
     primary:
-      'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_28px_rgba(14,165,233,0.5)] focus-visible:outline-cyan-400',
+      'bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-medium shadow-xs focus-visible:outline-teal-600',
     clinical:
-      'bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(20,184,166,0.25)] hover:shadow-[0_0_25px_rgba(20,184,166,0.45)] focus-visible:outline-teal-400',
+      'bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-medium shadow-xs focus-visible:outline-sky-600',
     secondary:
-      'bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 border border-slate-700/60 shadow-sm focus-visible:outline-slate-400',
+      'bg-surface hover:bg-surface-subtle text-theme-primary border border-theme shadow-xs focus-visible:outline-sky-500',
     outline:
-      'bg-transparent hover:bg-cyan-500/10 text-cyan-400 border border-cyan-500/40 hover:border-cyan-400 shadow-sm focus-visible:outline-cyan-400',
+      'bg-transparent hover:bg-surface text-theme-primary border border-theme hover:border-theme-hover shadow-xs focus-visible:outline-sky-500',
     ghost:
-      'bg-transparent hover:bg-slate-800/60 text-slate-300 hover:text-white focus-visible:outline-slate-400',
+      'bg-transparent hover:bg-surface-subtle text-theme-secondary hover:text-theme-primary focus-visible:outline-sky-500',
     danger:
-      'bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 focus-visible:outline-red-400',
+      'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 focus-visible:outline-red-600',
   };
 
   return (
@@ -75,7 +75,7 @@ export const Button: React.FC<ButtonProps> = ({
         leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>
       )}
       <span>{children}</span>
-      {!isLoading && rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
+      {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
     </button>
   );
 };

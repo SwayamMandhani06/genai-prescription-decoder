@@ -14,12 +14,12 @@ export const CuratedSamplePicker: React.FC<CuratedSamplePickerProps> = ({
 }) => {
   return (
     <div className="space-y-2.5">
-      <div className="flex items-center justify-between text-xs font-mono">
-        <span className="text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Or Quick-Load Curated Clinical Test Scripts:</span>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-theme-secondary font-medium flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <span>Or evaluate with curated test scripts:</span>
         </span>
-        <span className="text-[11px] text-slate-500">1-Click Evaluation Mode</span>
+        <span className="text-[11px] text-theme-muted">Sample Prescriptions</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -30,19 +30,19 @@ export const CuratedSamplePicker: React.FC<CuratedSamplePickerProps> = ({
             <button
               key={sample.id}
               onClick={() => onSelectSample(sample.id)}
-              className={`p-3 rounded-lg text-left border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-cyan-950/40 border-cyan-500/60 shadow-sm'
-                  : 'bg-[#0E131F] border-white/[0.06] hover:border-white/20'
+                  ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-500 shadow-xs'
+                  : 'bg-surface border-theme hover:border-theme-hover shadow-xs'
               }`}
             >
-              <div className="flex items-center justify-between gap-1.5 mb-1">
-                <span className="text-[10px] font-mono font-bold text-cyan-400">
+              <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                <span className="text-xs font-semibold text-theme-primary">
                   {sample.id === 'rx-sample-1'
-                    ? 'SAMPLE A'
+                    ? 'Sample 1: Standard'
                     : sample.id === 'rx-sample-2'
-                    ? 'SAMPLE B'
-                    : 'SAMPLE C'}
+                    ? 'Sample 2: LASA Pair'
+                    : 'Sample 3: Ambiguous'}
                 </span>
                 <Badge
                   variant={
@@ -58,12 +58,13 @@ export const CuratedSamplePicker: React.FC<CuratedSamplePickerProps> = ({
                 </Badge>
               </div>
 
-              <h4 className="text-xs font-bold text-slate-200 line-clamp-1 mb-0.5 font-sans">
-                {sample.title}
-              </h4>
-              <p className="text-[10px] text-slate-400 line-clamp-1 font-sans">
+              <div className="text-xs text-theme-secondary font-medium truncate">
+                {sample.medications.map((m) => m.brandName).join(', ')}
+              </div>
+
+              <div className="text-[11px] text-theme-muted mt-1">
                 {sample.doctorSpecialty}
-              </p>
+              </div>
             </button>
           );
         })}

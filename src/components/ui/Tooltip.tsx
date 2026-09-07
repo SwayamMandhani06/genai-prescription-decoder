@@ -29,7 +29,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         <div
           role="tooltip"
           className={cn(
-            'absolute z-50 px-2.5 py-1.5 text-xs text-slate-200 bg-slate-900/95 border border-white/10 rounded-md shadow-2xl backdrop-blur-md pointer-events-none whitespace-nowrap font-mono animate-in fade-in zoom-in-95 duration-150',
+            'absolute z-50 px-2.5 py-1.5 text-xs text-theme-primary bg-surface border border-theme rounded-lg shadow-lg pointer-events-none whitespace-nowrap font-mono animate-in fade-in zoom-in-95 duration-150',
             position === 'top' && 'bottom-full mb-2 left-1/2 -translate-x-1/2',
             position === 'bottom' && 'top-full mt-2 left-1/2 -translate-x-1/2',
             className

@@ -1,135 +1,128 @@
 import React from 'react';
-import { Activity, BookOpen, Layers, ShieldCheck } from 'lucide-react';
+import { FileText, ShieldCheck, ArrowUpRight } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+export interface FooterProps {
+  onNavigateToResearch?: () => void;
+  onOpenUpload?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onNavigateToResearch, onOpenUpload }) => {
   return (
-    <footer className="bg-[#05070D] border-t border-white/[0.08] pt-14 pb-12 text-slate-400">
+    <footer className="bg-surface border-t border-theme pt-12 pb-10 text-theme-secondary transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/[0.08]">
-          {/* Brand & Capstone Vision */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                <Activity className="w-4 h-4" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-theme">
+          {/* Brand & Project Description */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300">
+                <FileText className="w-4 h-4" />
               </div>
-              <span className="font-mono font-bold text-lg text-white">
-                AURA<span className="text-cyan-400">-Rx</span>
+              <span className="font-bold text-base text-theme-primary">
+                AURA<span className="text-teal-600 dark:text-teal-400">-Rx</span>
               </span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Explainable Multimodal AI for Handwritten Prescription Understanding. An academic research capstone addressing clinical illegibility, selective prediction abstention, and patient-centric vernacular explanation.
+            <p className="text-xs text-theme-secondary leading-relaxed">
+              Explainable Multimodal AI for Handwritten Prescription Understanding. An academic research prototype designed for clinical clarity, evidence grounding, and patient safety.
             </p>
-            <div className="text-[11px] font-mono text-slate-500 space-y-1">
-              <div>Domain: Medical Informatics & Vision-Language AI</div>
-              <div>Languages: English · हिन्दी · मराठी</div>
+            <div className="text-[11px] text-theme-muted font-mono">
+              CDSCO &bull; RxNorm &bull; EN / HI / MR
             </div>
           </div>
 
-          {/* Research Architecture */}
-          <div>
-            <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-200 mb-4 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Core Modules</span>
+          {/* Navigation Links: Analyze & How It Works */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-primary">
+              Product
             </h4>
             <ul className="space-y-2 text-xs">
+              {onOpenUpload && (
+                <li>
+                  <button
+                    onClick={onOpenUpload}
+                    className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer text-left"
+                  >
+                    Analyze a Prescription
+                  </button>
+                </li>
+              )}
               <li>
-                <a href="#pipeline" className="hover:text-cyan-400 transition-colors">
-                  Multimodal Layout & Tokenization
+                <a href="#transformation" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  How It Works (Transformation)
                 </a>
               </li>
               <li>
-                <a href="#pipeline" className="hover:text-cyan-400 transition-colors">
-                  CDSCO & RxNorm Knowledge Grounding
+                <a href="#capabilities" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Core Capabilities
                 </a>
               </li>
               <li>
-                <a href="#uncertainty" className="hover:text-cyan-400 transition-colors">
-                  Calibrated Entropy & Selective Abstention
-                </a>
-              </li>
-              <li>
-                <a href="#lasa-safety" className="hover:text-cyan-400 transition-colors">
-                  LASA Confusion Detection
-                </a>
-              </li>
-              <li>
-                <a href="#multilingual" className="hover:text-cyan-400 transition-colors">
-                  Vernacular Patient Posology Synthesis
+                <a href="#languages" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Multilingual Explanations
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Research Evaluation */}
-          <div>
-            <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-200 mb-4 flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-teal-400" />
-              <span>Evaluation & Benchmarks</span>
+          {/* Safety, Research & GitHub */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-primary">
+              Safety &amp; Source
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <a href="#benchmarks" className="hover:text-cyan-400 transition-colors">
-                  Character & Word Error Rates (CER/WER)
+                <a href="#safety" className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
+                  Safety &amp; Uncertainty Philosophy
                 </a>
               </li>
               <li>
-                <a href="#benchmarks" className="hover:text-cyan-400 transition-colors">
-                  IndoRx-1200 Handwriting Dataset
-                </a>
-              </li>
-              <li>
-                <a href="#benchmarks" className="hover:text-cyan-400 transition-colors">
-                  Abstention AUROC Curves
-                </a>
-              </li>
-              <li>
-                <a href="#benchmarks" className="hover:text-cyan-400 transition-colors">
-                  Comparison vs Tesseract & Zero-Shot VLMs
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Academic Capstone Details */}
-          <div>
-            <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-200 mb-4 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Project Information</span>
-            </h4>
-            <div className="space-y-3 text-xs">
-              <p className="text-slate-400">
-                Capstone Engineering Project in Multimodal Artificial Intelligence & Healthcare Systems.
-              </p>
-              <div className="p-3 rounded-lg bg-slate-900/60 border border-white/5 space-y-1 text-[11px] font-mono">
-                <div className="text-cyan-400 font-semibold">Phase 1: Architecture & UI</div>
-                <div className="text-slate-400">Phase 2: FastAPI + Swin-Doc Inference</div>
-              </div>
-              <div className="flex items-center gap-3 pt-2">
-                <a
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-slate-300 hover:text-white transition-colors"
+                <button
+                  onClick={onNavigateToResearch}
+                  className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer text-left"
                 >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                  Research &amp; Methodology
+                </button>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/SwayamMandhani06/genai-prescription-decoder"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                >
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current" aria-hidden="true">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                   </svg>
-                  <span>Repository</span>
+                  <span>GitHub Repository</span>
+                  <ArrowUpRight className="w-3 h-3 text-theme-muted" />
                 </a>
-              </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Team & Capstone Information */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-theme-primary flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Academic Capstone</span>
+            </h4>
+            <p className="text-[11px] text-theme-muted leading-relaxed">
+              Multidisciplinary Engineering Capstone Project. Supervised academic prototype for assistive clinical workflow safety. Does not dispense medical advice.
+            </p>
+            <div className="text-[11px] text-theme-secondary font-medium">
+              Lead Architect &amp; Research Team
             </div>
           </div>
         </div>
 
-        {/* Bottom copyright & status */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <p className="text-slate-500">
-            © 2026 AURA-Rx Capstone Research Project. Built with React, TypeScript & Vite.
-          </p>
-          <div className="flex items-center gap-4 text-slate-500 font-mono text-[11px]">
-            <span>MIT Academic License</span>
-            <span>·</span>
-            <span>Evidence-Grounded AI</span>
+        {/* Compact Bottom Bar */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-theme-muted">
+          <div>
+            &copy; {new Date().getFullYear()} AURA-Rx &middot; All rights reserved.
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="#safety" className="hover:underline">Safety Disclaimer</a>
+            <span>&bull;</span>
+            <button onClick={onNavigateToResearch} className="hover:underline cursor-pointer">Methodology</button>
           </div>
         </div>
       </div>

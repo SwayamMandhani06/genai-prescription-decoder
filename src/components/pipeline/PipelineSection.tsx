@@ -42,7 +42,7 @@ export const PipelineSection: React.FC = () => {
       summary:
         'Parses cursive sequences into distinct clinical entity slots: Brand Name, Generic Formulation, Dosage Strength, Route, Frequency (1-0-1, SOS), and Duration.',
       technicalDetails: [
-        'Fine-tuned on Indian outpatient clinical prescription corpora (IndoRx-1200)',
+        'Designed for regional outpatient clinical handwriting patterns and common prescribing conventions',
         'Disentangles Latin shorthand abbreviations (PC, AC, OD, BD, TDS, QID, HS)',
         'Extracts conditional dosage instructions (e.g. SOS for fever > 100°F)',
       ],
@@ -72,11 +72,11 @@ export const PipelineSection: React.FC = () => {
     {
       step: '04',
       title: 'Calibrated Selective Abstention',
-      subtitle: 'Entropy Thresholding & Anti-Hallucination Gate',
+      subtitle: 'Entropy Thresholding & Selective Abstention Gate',
       icon: ShieldAlert,
       badge: 'Uncertainty Quantification',
       summary:
-        'When handwritten ink is degraded or ambiguous (e.g. 1.0mg vs 10mg), the system quantifies predictive entropy. If entropy exceeds safe limits, the model deliberately abstains rather than hallucinating.',
+        'When handwritten ink is degraded or ambiguous (e.g. 1.0mg vs 10mg), the system quantifies predictive entropy. If entropy exceeds safe limits, the model deliberately abstains rather than emitting an ungrounded guess.',
       technicalDetails: [
         'Monte Carlo Dropout & Softmax temperature scaling for uncertainty calibration',
         'Selective classification with cost-sensitive penalty on dosage errors',
@@ -111,18 +111,18 @@ export const PipelineSection: React.FC = () => {
   const Icon = current.icon;
 
   return (
-    <section id="pipeline" className="py-20 bg-[#080C16] border-t border-white/[0.08] relative">
+    <section id="pipeline" className="py-20 bg-canvas border-t border-theme relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <Badge variant="cyan" size="sm" dot>
             Architectural Workflow
           </Badge>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-theme-primary tracking-tight">
             From Raw Cursive Ink to Verified Understanding
           </h2>
-          <p className="text-sm sm:text-base text-slate-300">
-            A 5-stage multimodal architecture designed to eliminate hallucinations, enforce clinical ontology grounding, and abstain when handwriting is ambiguous.
+          <p className="text-sm sm:text-base text-theme-secondary">
+            A 5-stage multimodal architecture designed to curb ungrounded generation, enforce clinical ontology grounding, and abstain when handwriting is ambiguous.
           </p>
         </div>
 
@@ -138,25 +138,25 @@ export const PipelineSection: React.FC = () => {
                 onClick={() => setActiveStep(idx)}
                 className={`p-4 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-cyan-950/40 border-cyan-500/60 shadow-[0_0_20px_rgba(14,165,233,0.2)]'
-                    : 'bg-slate-900/50 border-white/[0.06] hover:border-white/20 hover:bg-slate-900/80'
+                    ? 'bg-sky-50 dark:bg-sky-950/30 border-sky-400 dark:border-sky-700 shadow-xs'
+                    : 'bg-surface border-theme hover:bg-surface-subtle'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="font-mono text-xs font-bold text-slate-500">{step.step}</span>
+                  <span className="font-mono text-xs font-bold text-theme-muted">{step.step}</span>
                   <StepIcon
-                    className={`w-4 h-4 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`}
+                    className={`w-4 h-4 ${isSelected ? 'text-teal-600 dark:text-cyan-400' : 'text-theme-muted'}`}
                   />
                 </div>
                 <div>
                   <h3
                     className={`text-xs font-bold font-mono tracking-tight line-clamp-1 ${
-                      isSelected ? 'text-cyan-300' : 'text-slate-200'
+                      isSelected ? 'text-teal-800 dark:text-cyan-300' : 'text-theme-primary'
                     }`}
                   >
                     {step.title}
                   </h3>
-                  <span className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
+                  <span className="text-[10px] text-theme-muted line-clamp-1 mt-0.5">
                     {step.badge}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export const PipelineSection: React.FC = () => {
         </div>
 
         {/* Deep Dive Card for Selected Stage */}
-        <Card variant="glass" padding="lg" className="border-cyan-500/25 relative overflow-hidden">
+        <Card variant="glass" padding="lg" className="border-theme relative overflow-hidden shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Description Column */}
             <div className="lg:col-span-7 space-y-5">
@@ -180,26 +180,26 @@ export const PipelineSection: React.FC = () => {
               </div>
 
               <div>
-                <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
-                  <Icon className="w-6 h-6 text-cyan-400" />
+                <h3 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight flex items-center gap-2.5">
+                  <Icon className="w-6 h-6 text-teal-600 dark:text-cyan-400" />
                   <span>{current.title}</span>
                 </h3>
-                <p className="text-xs sm:text-sm font-mono text-cyan-400/80 mt-1">
+                <p className="text-xs sm:text-sm font-mono text-teal-700 dark:text-cyan-400/90 mt-1">
                   {current.subtitle}
                 </p>
               </div>
 
-              <p className="text-sm text-slate-300 leading-relaxed">{current.summary}</p>
+              <p className="text-sm text-theme-secondary leading-relaxed">{current.summary}</p>
 
               {/* Technical Specifications */}
               <div className="space-y-2 pt-2">
-                <div className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-400">
-                  Engine Architecture & Algorithmic Principles:
+                <div className="text-xs font-mono font-semibold uppercase tracking-wider text-theme-muted">
+                  Engine Architecture &amp; Algorithmic Principles:
                 </div>
                 <ul className="space-y-2">
                   {current.technicalDetails.map((detail, dIdx) => (
-                    <li key={dIdx} className="flex items-start gap-2.5 text-xs text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+                    <li key={dIdx} className="flex items-start gap-2.5 text-xs text-theme-secondary">
+                      <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                       <span>{detail}</span>
                     </li>
                   ))}
@@ -209,26 +209,26 @@ export const PipelineSection: React.FC = () => {
 
             {/* Right I/O Flow Visualizer */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-white/10 space-y-3 font-mono text-xs">
-                <div className="text-slate-400 flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-[11px] font-semibold text-cyan-400">DATA FLOW CONTRACT</span>
-                  <span className="text-[10px] text-slate-500">STAGE {current.step}</span>
+              <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-3 font-mono text-xs">
+                <div className="text-theme-secondary flex items-center justify-between border-b border-theme pb-2">
+                  <span className="text-[11px] font-semibold text-teal-700 dark:text-cyan-400">DATA FLOW CONTRACT</span>
+                  <span className="text-[10px] text-theme-muted">STAGE {current.step}</span>
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="text-[11px] text-slate-400 uppercase tracking-wider">Inputs:</div>
-                  <div className="p-2.5 rounded bg-black/50 border border-white/5 text-slate-300 text-[11px] break-words">
+                  <div className="text-[11px] text-theme-muted uppercase tracking-wider">Inputs:</div>
+                  <div className="p-2.5 rounded bg-surface border border-theme text-theme-primary text-[11px] break-words">
                     {current.inputOutput.input}
                   </div>
                 </div>
 
                 <div className="flex justify-center my-1">
-                  <ArrowRight className="w-4 h-4 text-cyan-400 rotate-90 lg:rotate-0" />
+                  <ArrowRight className="w-4 h-4 text-teal-600 dark:text-cyan-400 rotate-90 lg:rotate-0" />
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="text-[11px] text-slate-400 uppercase tracking-wider">Outputs:</div>
-                  <div className="p-2.5 rounded bg-cyan-950/30 border border-cyan-500/20 text-cyan-300 text-[11px] break-words">
+                  <div className="text-[11px] text-theme-muted uppercase tracking-wider">Outputs:</div>
+                  <div className="p-2.5 rounded bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 text-sky-900 dark:text-sky-300 text-[11px] break-words">
                     {current.inputOutput.output}
                   </div>
                 </div>
@@ -239,14 +239,14 @@ export const PipelineSection: React.FC = () => {
                 <button
                   disabled={activeStep === 0}
                   onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
-                  className="px-3 py-1.5 text-xs font-mono text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-mono text-theme-secondary hover:text-theme-primary disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  ← Previous Stage
+                  &larr; Previous Stage
                 </button>
                 <button
                   disabled={activeStep === steps.length - 1}
                   onClick={() => setActiveStep(Math.min(steps.length - 1, activeStep + 1))}
-                  className="px-4 py-1.5 text-xs font-mono font-semibold bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 rounded-lg border border-cyan-500/30 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-1.5 text-xs font-mono font-semibold bg-surface hover:bg-surface-subtle text-theme-primary rounded-lg border border-theme disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1.5 shadow-xs"
                 >
                   <span>Next Stage</span>
                   <ArrowRight className="w-3 h-3" />

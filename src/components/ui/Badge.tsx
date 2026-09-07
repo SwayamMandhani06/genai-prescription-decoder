@@ -24,21 +24,21 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const variantStyles = {
-    cyan: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30',
-    teal: 'bg-teal-500/15 text-teal-300 border border-teal-500/30',
-    emerald: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
-    amber: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
-    coral: 'bg-red-500/15 text-red-300 border border-red-500/30',
-    slate: 'bg-slate-800/80 text-slate-300 border border-slate-700/60',
-    outline: 'bg-transparent text-slate-300 border border-slate-700',
+    cyan: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800',
+    teal: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800',
+    emerald: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800',
+    amber: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
+    coral: 'bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800',
+    slate: 'bg-surface-subtle text-theme-secondary border border-theme',
+    outline: 'bg-transparent text-theme-secondary border border-theme',
   };
 
   const dotColors = {
-    cyan: 'bg-cyan-400 shadow-[0_0_8px_#38bdf8]',
-    teal: 'bg-teal-400 shadow-[0_0_8px_#2dd4bf]',
-    emerald: 'bg-emerald-400 shadow-[0_0_8px_#34d399]',
-    amber: 'bg-amber-400 shadow-[0_0_8px_#fbbf24]',
-    coral: 'bg-red-400 shadow-[0_0_8px_#f87171]',
+    cyan: 'bg-sky-500',
+    teal: 'bg-teal-500',
+    emerald: 'bg-emerald-500',
+    amber: 'bg-amber-500',
+    coral: 'bg-red-500',
     slate: 'bg-slate-400',
     outline: 'bg-slate-400',
   };
