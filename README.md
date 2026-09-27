@@ -5,7 +5,9 @@
 [![Dataset Infrastructure](https://img.shields.io/badge/Dataset%20Infrastructure-Phase%203%20Verified-10B981)](#7-research-datasets--experimental-infrastructure-phase-3)
 [![Image Preprocessing](https://img.shields.io/badge/Preprocessing%20%26%20Quality-Phase%204%20Verified-10B981)](#8-image-preprocessing--quality-assessment-phase-4)
 [![Multimodal Extraction](https://img.shields.io/badge/Multimodal%20Extraction-Phase%206%20Verified-10B981)](#10-multimodal-vision-language-extraction-phase-6)
+[![RAG Medicine Validation](https://img.shields.io/badge/RAG%20Validation-Phase%207%20Verified-10B981)](#11-rag-based-medicine-validation-phase-7)
 [![Safety Protocol](https://img.shields.io/badge/Safety-Selective%20Abstention%20%7C%20LASA%20Detection-F59E0B)](#clinical-safety--uncertainty-abstention)
+
 
 > **Academic Capstone Engineering Project**  
 > Multimodal Medical Informatics & Vision-Language Artificial Intelligence  
@@ -291,7 +293,43 @@ For complete verification logs and architecture specifications, refer to [`docs/
 
 ---
 
-## 11. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 11. RAG-Based Medicine Validation (Phase 7)
+
+Phase 7 implements an evidence-grounded Retrieval-Augmented Generation / retrieval-based medicine validation layer answering strictly: *"Does this visually extracted medicine candidate correspond to a known medicine/formulation in the available authoritative reference data?"*
+
+- **Non-Negotiable Safety Boundary:** RAG is strictly a validation and evidence layer — NOT OCR correction, handwriting stroke guessing, dosage inference, or clinical prescribing. Extracted candidates and visually observed dosages are strictly immutable and never mutated or rewritten.
+- **Evidence-Bounded Reference Sources:**
+  - **CDSCO Approved Drug Formulations Reference Subset:** Statutory regulatory authority under Directorate General of Health Services, India (Open Government Data License - India). *Scope limitation:* The implementation uses a finite CDSCO-derived reference subset (20 records) for engineering validation and provenance testing; it is not a comprehensive representation of all medicines or formulations approved or marketed in India.
+  - **NLM RxNorm Clinical Nomenclature Subset:** Standardized clinical drug nomenclature produced by the US National Library of Medicine (NLM). *Scope & licensing boundary:* RxNorm is U.S.-centric and should not be treated as a comprehensive Indian formulary. The full RxNorm release requires the applicable UMLS license/UTS access and contains source-vocabulary material with source-specific restrictions, whereas NLM-created normalized names/codes have public-domain status as described by NLM. The Current Prescribable Content subset has different access conditions. The license does not grant a general right to clinical validation. RxNorm 2024-08 is the frozen reference snapshot used by this implementation as a reduced development subset fixture (10 records); current NLM releases are newer, and the implementation does not claim to represent the current RxNorm release.
+  - Cryptographically fingerprinted reference manifest ([`data/reference/reference_manifest.json`](data/reference/reference_manifest.json)) verifying 30 curated records across both sources with SHA-256 integrity.
+- **Hierarchical Deterministic Retrieval:**
+  1. Exact normalized name match (`score: 1.0`)
+  2. Exact brand match (`score: 0.99`)
+  3. Exact alias match (`score: 0.98`)
+  4. Exact active ingredient match (`score: 0.95`)
+  5. Controlled token overlap (`score: 0.70 - 0.92`)
+  6. Controlled lexical similarity threshold (`score: >= 0.75`)
+- **Separation of Medicine Identity from Formulation Compatibility:**
+  - **Medicine Identity Status:** Defined strictly as *"Reference correspondence established according to the configured retrieval and validation rules."* (Strictly does NOT mean clinically validated, medically safe, therapeutically appropriate, prescription-correct, or dosage-correct):
+    - `validated`: Reference correspondence established according to configured retrieval/validation rules.
+    - `uncertain`: Multiple plausible reference candidates exist or match score is ambiguous; preserves uncertainty for human review (`requires_human_review: true`).
+    - `not_validated`: No corresponding approved formulation found in reference data (`requires_human_review: true`).
+  - **Formulation Compatibility & Dosage Preservation:**
+    - `dosage_observation_preserved: true`: Boolean asserting visual observation was not altered.
+    - `observed_dosage`: Verbatim visually observed dosage from prescription.
+    - `reference_strength`: Separately represented approved formulation strength from reference entity.
+    - `formulation_consistency`: Categorized as `consistent` or `mismatch`.
+    - **Dosage Mismatch Invariant:** If observed dosage differs from reference strength (e.g., observed `1000 mg` vs reference `625 mg`), `formulation_consistency` is flagged as `mismatch` and `requires_human_review` is forced to `true`. A dosage mismatch can never silently appear as a fully validated or clinically reassuring result.
+- **Dedicated Endpoints:**
+  - `POST /api/v1/validation/medicine`: Validates a single extracted candidate, returning status, reference entities, formulation consistency, and UI-compatible evidence.
+  - `POST /api/v1/validation/medicine/batch`: Validates batches of extracted posology items.
+  - `GET /api/v1/validation/status`: Reports index status, loaded sources, and configuration fingerprint.
+
+For full audit logs and verification records, refer to [`docs/phase-07-completion.md`](docs/phase-07-completion.md).
+
+---
+
+## 12. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -307,7 +345,7 @@ For complete verification logs and architecture specifications, refer to [`docs/
 
 ---
 
-## 12. Clinical Safety & Regulatory Disclaimer
+## 13. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -318,14 +356,15 @@ For complete verification logs and architecture specifications, refer to [`docs/
 
 ---
 
-## 13. Project Information
+## 14. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 14. License
+## 15. License
+
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
 

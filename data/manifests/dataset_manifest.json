@@ -34,8 +34,8 @@
     },
     {
       "dataset_id": "cdsco-approved-drugs",
-      "name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
-      "description": "Official gazette list of approved active pharmaceutical ingredients, strengths, and fixed-dose combinations in India.",
+      "name": "CDSCO Approved Drug Formulations Reference Subset",
+      "description": "Finite CDSCO-derived reference subset of approved active pharmaceutical ingredients, strengths, and fixed-dose combinations in India for engineering validation.",
       "document_type": "Regulatory gazette and drug formulary tables",
       "handwriting_characteristics": "Typeset regulatory pharmacopeia tables",
       "language_script": "English (Latin terminology)",
@@ -43,7 +43,7 @@
       "verification_status": "verified_regulatory",
       "access_method": "Open Government Data (OGD) Platform India / CDSCO portal",
       "known_limitations": [
-        "Covers authorized marketed formulations; does not contain colloquial handwriting slurs"
+        "The current implementation uses a finite CDSCO-derived reference subset for engineering validation and provenance testing. It is not a comprehensive representation of all medicines or formulations approved or marketed in India."
       ],
       "relevance": "Authoritative knowledge graph ground truth for Phase 7 RAG validation and Indian posology compliance.",
       "provenance": {
@@ -55,14 +55,14 @@
         "permitted_usage": "Public statutory use, health informatics research, clinical reference",
         "attribution_requirements": "Reference Central Drugs Standard Control Organisation, Govt of India",
         "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
-        "dataset_version": "2024.1",
+        "dataset_version": "2024.1 (finite development subset)",
         "archive_checksum": null
       }
     },
     {
       "dataset_id": "nlm-rxnorm",
-      "name": "NLM RxNorm Standard Clinical Drug Nomenclature",
-      "description": "Standard clinical drug vocabulary linking active ingredients, clinical dose forms, and concept unique identifiers (RxCUI).",
+      "name": "NLM RxNorm Clinical Nomenclature Subset",
+      "description": "Clinical drug vocabulary subset linking active ingredients, clinical dose forms, and concept unique identifiers (RxCUI).",
       "document_type": "Normalized clinical drug terminology graph",
       "handwriting_characteristics": "Standardized clinical typeset ontology",
       "language_script": "English (Latin medical terminology)",
@@ -70,19 +70,20 @@
       "verification_status": "verified_regulatory",
       "access_method": "UMLS Terminology Services / NLM Open Data",
       "known_limitations": [
-        "Primarily reflects US clinical pharmacopeia; international trade brands require mapping to Indian CDSCO names"
+        "RxNorm is U.S.-centric and should not be treated as a comprehensive Indian formulary.",
+        "RxNorm 2024-08 is the frozen reference snapshot used by this implementation as a reduced development subset fixture; current NLM releases are newer."
       ],
       "relevance": "Standardized posology taxonomy and RxCUI concept grounding for Phase 7.",
       "provenance": {
         "source_url": "https://www.nlm.nih.gov/research/umls/rxnorm/",
         "provider_organization": "National Library of Medicine, National Institutes of Health, USA",
         "retrieval_date": "2026-09-27T00:00:00Z",
-        "license": "UMLS Metathesaurus License (Free for research/clinical applications)",
+        "license": "UMLS Metathesaurus License / NLM Public Domain for NLM-authored terms (UTS access required for full dataset)",
         "license_category": "clinical_terminology_license",
-        "permitted_usage": "Research, academic development, and clinical decision support evaluation",
+        "permitted_usage": "Research and health informatics evaluation under UMLS terms; UTS access required for full distribution",
         "attribution_requirements": "RxNorm is provided courtesy of the U.S. National Library of Medicine",
         "citation": "Nelson, S. J. et al. (2011). Normalized names for clinical drugs: RxNorm at 6 years. J Am Med Inform Assoc, 18(4):441-448.",
-        "dataset_version": "2024-08",
+        "dataset_version": "2024-08 (frozen reference fixture subset)",
         "archive_checksum": null
       }
     },
@@ -198,5 +199,5 @@
     }
   ],
   "local_sample_count": 7,
-  "checksum": "42f9c46968c7549baf64082f3c5cbf0ab77834ce3da8d0de5c6efbae3ac2b5c4"
+  "checksum": "90df05c57d54b54cd8fe1138cd263f939fcca0dcddcb574fc2a743ba2c0f8a6f"
 }

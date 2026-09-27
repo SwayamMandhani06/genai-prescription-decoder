@@ -238,3 +238,10 @@ class PrescriptionAnalyzeResponse(BaseModel):
         description="Phase 6 complete PrescriptionExtractionResult including model audit metadata and raw traceability"
     )
 
+    # Phase 7 RAG Medicine Validation Extensions (PLAN.md Section 16):
+    medicine_validations: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Phase 7 evidence-grounded medicine validation results, retrieval candidates, and provenance"
+    )
+
+

@@ -1,0 +1,716 @@
+[
+  {
+    "reference_id": "REF-CDSCO-001",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Augmentin 625 Duo",
+    "normalized_name": "augmentin 625 duo",
+    "generic_name": "Amoxicillin (500mg) + Clavulanic Acid (125mg)",
+    "brand_name": "Augmentin",
+    "strength": "625 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Amoxicillin",
+      "Clavulanic Acid"
+    ],
+    "aliases": [
+      "Augmentin",
+      "Augmentin Duo",
+      "Clavam 625",
+      "Moxikind-CV 625",
+      "Amoxyclav 625"
+    ],
+    "rxnorm_cui": "226829",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "J01CR02",
+    "therapeutic_class": "Broad-spectrum beta-lactam antibacterial",
+    "indications": "Bacterial respiratory tract infections, skin and soft tissue infections, dental infections",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-002",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Amoxicillin 500mg",
+    "normalized_name": "amoxicillin 500mg",
+    "generic_name": "Amoxicillin Trihydrate",
+    "brand_name": "Novamox",
+    "strength": "500 mg",
+    "dosage_form": "Capsule",
+    "ingredients": [
+      "Amoxicillin"
+    ],
+    "aliases": [
+      "Amoxicillin",
+      "Novamox 500",
+      "Mox 500",
+      "Almox 500",
+      "Amoxil"
+    ],
+    "rxnorm_cui": "723",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "J01CA04",
+    "therapeutic_class": "Moderate-spectrum amino-penicillin antibiotic",
+    "indications": "Ear, nose, throat infections, urinary tract infections, skin infections",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-003",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Paracetamol 650mg",
+    "normalized_name": "paracetamol 650mg",
+    "generic_name": "Paracetamol (Acetaminophen)",
+    "brand_name": "Dolo",
+    "strength": "650 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Paracetamol"
+    ],
+    "aliases": [
+      "Paracetamol",
+      "Dolo 650",
+      "Calpol 650",
+      "Crocin 650",
+      "Pacimol 650",
+      "Acetaminophen"
+    ],
+    "rxnorm_cui": "161",
+    "cdsco_schedule": "Over The Counter (OTC)",
+    "atc_code": "N02BE01",
+    "therapeutic_class": "Analgesic and Antipyretic",
+    "indications": "Fever, mild to moderate acute pain, headache, musculoskeletal discomfort",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-004",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Paracetamol 500mg",
+    "normalized_name": "paracetamol 500mg",
+    "generic_name": "Paracetamol (Acetaminophen)",
+    "brand_name": "Crocin",
+    "strength": "500 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Paracetamol"
+    ],
+    "aliases": [
+      "Paracetamol",
+      "Crocin 500",
+      "Calpol 500",
+      "Dolo 500",
+      "Acetaminophen 500"
+    ],
+    "rxnorm_cui": "161",
+    "cdsco_schedule": "Over The Counter (OTC)",
+    "atc_code": "N02BE01",
+    "therapeutic_class": "Analgesic and Antipyretic",
+    "indications": "Symptomatic relief of fever and pain",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-005",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Pantoprazole 40mg",
+    "normalized_name": "pantoprazole 40mg",
+    "generic_name": "Pantoprazole Sodium",
+    "brand_name": "Pantocid",
+    "strength": "40 mg",
+    "dosage_form": "Enteric-coated Tablet",
+    "ingredients": [
+      "Pantoprazole"
+    ],
+    "aliases": [
+      "Pantoprazole",
+      "Pantocid 40",
+      "Pan 40",
+      "Pantodac 40",
+      "Protonix"
+    ],
+    "rxnorm_cui": "40790",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "A02BC02",
+    "therapeutic_class": "Proton Pump Inhibitor (Gastroprotective)",
+    "indications": "Gastroesophageal reflux disease (GERD), peptic ulcer disease, NSAID-induced gastric prophylaxis",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-006",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Azithromycin 500mg",
+    "normalized_name": "azithromycin 500mg",
+    "generic_name": "Azithromycin Dihydrate",
+    "brand_name": "Azee",
+    "strength": "500 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Azithromycin"
+    ],
+    "aliases": [
+      "Azithromycin",
+      "Azee 500",
+      "Azithral 500",
+      "Zithromax",
+      "Azimax 500"
+    ],
+    "rxnorm_cui": "18631",
+    "cdsco_schedule": "Schedule H1 (Controlled Antibiotic)",
+    "atc_code": "J01FA10",
+    "therapeutic_class": "Macrolide Antibacterial",
+    "indications": "Upper and lower respiratory tract infections, community-acquired pneumonia, skin infections",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-007",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Cetirizine 10mg",
+    "normalized_name": "cetirizine 10mg",
+    "generic_name": "Cetirizine Hydrochloride",
+    "brand_name": "Cetzine",
+    "strength": "10 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Cetirizine"
+    ],
+    "aliases": [
+      "Cetirizine",
+      "Cetzine 10",
+      "Alerid 10",
+      "Zyrtec",
+      "Okacet 10"
+    ],
+    "rxnorm_cui": "20610",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "R06AE07",
+    "therapeutic_class": "Second-generation H1 Antihistamine",
+    "indications": "Allergic rhinitis, chronic urticaria, allergic pruritus",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-008",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Metformin 500mg",
+    "normalized_name": "metformin 500mg",
+    "generic_name": "Metformin Hydrochloride",
+    "brand_name": "Glycomet",
+    "strength": "500 mg",
+    "dosage_form": "Sustained Release Tablet",
+    "ingredients": [
+      "Metformin"
+    ],
+    "aliases": [
+      "Metformin",
+      "Glycomet 500",
+      "Glyciphage 500",
+      "Glucophage",
+      "Obimet 500"
+    ],
+    "rxnorm_cui": "6809",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "A10BA02",
+    "therapeutic_class": "Biguanide Antihyperglycemic",
+    "indications": "Type 2 diabetes mellitus, insulin resistance syndrome",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-009",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Metronidazole 400mg",
+    "normalized_name": "metronidazole 400mg",
+    "generic_name": "Metronidazole",
+    "brand_name": "Flagyl",
+    "strength": "400 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Metronidazole"
+    ],
+    "aliases": [
+      "Metronidazole",
+      "Flagyl 400",
+      "Metrogyl 400",
+      "Aristogyl 400"
+    ],
+    "rxnorm_cui": "6922",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "J01XD01",
+    "therapeutic_class": "Nitroimidazole Antiprotozoal and Antibacterial",
+    "indications": "Amoebiasis, giardiasis, anaerobic bacterial infections, dental abscesses",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-010",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Atorvastatin 10mg",
+    "normalized_name": "atorvastatin 10mg",
+    "generic_name": "Atorvastatin Calcium",
+    "brand_name": "Atorva",
+    "strength": "10 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Atorvastatin"
+    ],
+    "aliases": [
+      "Atorvastatin",
+      "Atorva 10",
+      "Lipitor",
+      "Storvas 10",
+      "Atocor 10"
+    ],
+    "rxnorm_cui": "83367",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "C10AA05",
+    "therapeutic_class": "HMG-CoA Reductase Inhibitor (Statin)",
+    "indications": "Hypercholesterolemia, primary dyslipidemia, cardiovascular risk reduction",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-011",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Atorvastatin 80mg",
+    "normalized_name": "atorvastatin 80mg",
+    "generic_name": "Atorvastatin Calcium",
+    "brand_name": "Atorva 80",
+    "strength": "80 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Atorvastatin"
+    ],
+    "aliases": [
+      "Atorvastatin 80",
+      "Lipitor 80",
+      "Storvas 80"
+    ],
+    "rxnorm_cui": "83367",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "C10AA05",
+    "therapeutic_class": "High-intensity Statin",
+    "indications": "Severe hypercholesterolemia, secondary prevention of post-acute coronary syndrome",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-012",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Cefixime 200mg",
+    "normalized_name": "cefixime 200mg",
+    "generic_name": "Cefixime Trihydrate",
+    "brand_name": "Zifi",
+    "strength": "200 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Cefixime"
+    ],
+    "aliases": [
+      "Cefixime",
+      "Zifi 200",
+      "Taxim-O 200",
+      "Cefolac 200",
+      "Mahacef 200"
+    ],
+    "rxnorm_cui": "2193",
+    "cdsco_schedule": "Schedule H1 (Controlled Antibiotic)",
+    "atc_code": "J01DD08",
+    "therapeutic_class": "Third-generation Cephalosporin Antibiotic",
+    "indications": "Uncomplicated urinary tract infections, otitis media, typhoid fever, pharyngitis",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-013",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Cefuroxime Axetil 500mg",
+    "normalized_name": "cefuroxime axetil 500mg",
+    "generic_name": "Cefuroxime Axetil",
+    "brand_name": "Ceftum",
+    "strength": "500 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Cefuroxime"
+    ],
+    "aliases": [
+      "Cefuroxime",
+      "Ceftum 500",
+      "Cefakind 500",
+      "Zinacef 500",
+      "Altacef 500"
+    ],
+    "rxnorm_cui": "2194",
+    "cdsco_schedule": "Schedule H1 (Controlled Antibiotic)",
+    "atc_code": "J01DC02",
+    "therapeutic_class": "Second-generation Cephalosporin Antibiotic",
+    "indications": "Lower respiratory tract infections, severe sinusitis, acute pyelonephritis",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-014",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Ciprofloxacin 500mg",
+    "normalized_name": "ciprofloxacin 500mg",
+    "generic_name": "Ciprofloxacin Hydrochloride",
+    "brand_name": "Ciplox",
+    "strength": "500 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Ciprofloxacin"
+    ],
+    "aliases": [
+      "Ciprofloxacin",
+      "Ciplox 500",
+      "Cifran 500",
+      "Cipro 500"
+    ],
+    "rxnorm_cui": "2551",
+    "cdsco_schedule": "Schedule H1 (Controlled Antibiotic)",
+    "atc_code": "J01MA02",
+    "therapeutic_class": "Fluoroquinolone Antibacterial",
+    "indications": "Complicated urinary tract infections, infectious diarrhea, typhoid fever, bone infections",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-015",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Ampicillin 500mg",
+    "normalized_name": "ampicillin 500mg",
+    "generic_name": "Ampicillin Trihydrate",
+    "brand_name": "Campicillin",
+    "strength": "500 mg",
+    "dosage_form": "Capsule",
+    "ingredients": [
+      "Ampicillin"
+    ],
+    "aliases": [
+      "Ampicillin",
+      "Campicillin 500",
+      "Roscillin 500",
+      "Omnipen"
+    ],
+    "rxnorm_cui": "733",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "J01CA01",
+    "therapeutic_class": "Aminopenicillin Antibiotic",
+    "indications": "Meningitis, Listeria monocytogenes infection, enterococcal bacteremia",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-016",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Prednisolone 20mg",
+    "normalized_name": "prednisolone 20mg",
+    "generic_name": "Prednisolone",
+    "brand_name": "Wysolone",
+    "strength": "20 mg",
+    "dosage_form": "Dispersible Tablet",
+    "ingredients": [
+      "Prednisolone"
+    ],
+    "aliases": [
+      "Prednisolone",
+      "Wysolone 20",
+      "Omnacortil 20",
+      "Predcort 20"
+    ],
+    "rxnorm_cui": "8640",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "H02AB06",
+    "therapeutic_class": "Synthetic Glucocorticoid Corticosteroid",
+    "indications": "Severe allergic states, bronchial asthma, autoimmune arthritis, nephrotic syndrome",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-017",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Prednisone 20mg",
+    "normalized_name": "prednisone 20mg",
+    "generic_name": "Prednisone",
+    "brand_name": "Deltasone",
+    "strength": "20 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Prednisone"
+    ],
+    "aliases": [
+      "Prednisone",
+      "Deltasone 20",
+      "Sterapred"
+    ],
+    "rxnorm_cui": "8642",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "H02AB07",
+    "therapeutic_class": "Prodrug Glucocorticoid",
+    "indications": "Inflammatory disorders, acute immunosuppressive therapy",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-018",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Losartan Potassium 50mg",
+    "normalized_name": "losartan potassium 50mg",
+    "generic_name": "Losartan Potassium",
+    "brand_name": "Losacar",
+    "strength": "50 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Losartan"
+    ],
+    "aliases": [
+      "Losartan",
+      "Losacar 50",
+      "Cozaar",
+      "Repace 50",
+      "Zaart 50"
+    ],
+    "rxnorm_cui": "52175",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "C09CA01",
+    "therapeutic_class": "Angiotensin II Receptor Blocker (ARB)",
+    "indications": "Hypertension, diabetic nephropathy, heart failure",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-019",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Amlodipine 5mg",
+    "normalized_name": "amlodipine 5mg",
+    "generic_name": "Amlodipine Besylate",
+    "brand_name": "Amlong",
+    "strength": "5 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Amlodipine"
+    ],
+    "aliases": [
+      "Amlodipine",
+      "Amlong 5",
+      "Norvasc",
+      "Amtas 5",
+      "Amlopin 5"
+    ],
+    "rxnorm_cui": "17767",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "C08CA01",
+    "therapeutic_class": "Dihydropyridine Calcium Channel Blocker",
+    "indications": "Essential hypertension, chronic stable angina, vasospastic angina",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  },
+  {
+    "reference_id": "REF-CDSCO-020",
+    "source": "cdsco-approved-drugs",
+    "source_version": "2024.1",
+    "medicine_name": "Montelukast 10mg + Levocetirizine 5mg",
+    "normalized_name": "montelukast 10mg levocetirizine 5mg",
+    "generic_name": "Montelukast Sodium + Levocetirizine Dihydrochloride",
+    "brand_name": "Monticope",
+    "strength": "10 mg / 5 mg",
+    "dosage_form": "Tablet",
+    "ingredients": [
+      "Montelukast",
+      "Levocetirizine"
+    ],
+    "aliases": [
+      "Monticope",
+      "Montair-LC",
+      "Telekast-L",
+      "Levocet-M"
+    ],
+    "rxnorm_cui": "668853",
+    "cdsco_schedule": "Schedule H (Prescription Drug)",
+    "atc_code": "R03DC53",
+    "therapeutic_class": "Leukotriene Receptor Antagonist with Antihistamine",
+    "indications": "Seasonal and perennial allergic rhinitis, asthma with allergic manifestations",
+    "provenance": {
+      "source_id": "cdsco-approved-drugs",
+      "source_name": "CDSCO Approved Drug Formulations & Fixed Dose Combinations",
+      "source_version": "2024.1",
+      "license": "Open Government Data License - India",
+      "license_category": "statutory_government_open_data",
+      "retrieval_date": "2026-09-27T00:00:00Z",
+      "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+      "source_url": "https://cdsco.gov.in"
+    }
+  }
+]

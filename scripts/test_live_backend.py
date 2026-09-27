@@ -280,6 +280,96 @@ def run_live_tests():
         )
         check(r_unavail.status_code == 503, "POST /api/v1/multimodal/extract (model unavailable) returns 503")
 
+        # ------------------------------------------------------------------
+        # Phase 7: RAG Medicine Validation Live Checks
+        # ------------------------------------------------------------------
+        # 21. GET /api/v1/validation/status
+        r_val_status = client.get("/api/v1/validation/status")
+        check(r_val_status.status_code == 200, "GET /api/v1/validation/status returns 200 OK")
+        val_status_data = r_val_status.json()
+        check(val_status_data["initialized"] is True, "RAG validation service is initialized")
+        check(val_status_data["index_stats"]["total_records"] == 30, "Index contains 30 reference records")
+        check(val_status_data["ingestion_report"]["valid_records_count"] == 30, "30 verified records ingested")
+
+        # 22. POST /api/v1/validation/medicine (Exact Match)
+        r_exact = client.post(
+            "/api/v1/validation/medicine",
+            json={
+                "candidate_name": "Augmentin 625 Duo",
+                "observed_dosage": "625 mg",
+                "top_k": 5,
+            }
+        )
+        check(r_exact.status_code == 200, "POST /api/v1/validation/medicine (exact match) returns 200 OK")
+        exact_data = r_exact.json()
+        check(exact_data["validation_result"]["validation_status"] == "validated", "Exact match status is 'validated'")
+        check(exact_data["validation_result"]["requires_human_review"] is False, "Exact match does not require human review")
+        check(exact_data["validation_result"]["selected_reference"]["medicine_name"] == "Augmentin 625 Duo", "Selected reference formulation matches canonical title")
+        check(exact_data["ui_evidence"]["validation_status"] == "cdsco_approved", "UI evidence status is cdsco_approved")
+
+        # 23. POST /api/v1/validation/medicine (Uncertain Candidate - Preserves Uncertainty)
+        r_unc_val = client.post(
+            "/api/v1/validation/medicine",
+            json={
+                "candidate_name": "Amox...",
+                "observed_dosage": "500 mg",
+            }
+        )
+        check(r_unc_val.status_code == 200, "POST /api/v1/validation/medicine (uncertain) returns 200 OK")
+        unc_val_data = r_unc_val.json()
+        check(unc_val_data["validation_result"]["validation_status"] == "uncertain", "Uncertain match status is 'uncertain'")
+        check(unc_val_data["validation_result"]["requires_human_review"] is True, "Uncertain candidate requires human review")
+        check(unc_val_data["validation_result"]["selected_reference"] is None, "No reference entity forcibly assigned to uncertain candidate")
+
+        # 24. POST /api/v1/validation/medicine (No Match / Sub-threshold)
+        r_no_match = client.post(
+            "/api/v1/validation/medicine",
+            json={
+                "candidate_name": "UnknownPharmaceuticalEntity999",
+            }
+        )
+        check(r_no_match.status_code == 200, "POST /api/v1/validation/medicine (no match) returns 200 OK")
+        no_match_data = r_no_match.json()
+        check(no_match_data["validation_result"]["validation_status"] == "not_validated", "Unlisted candidate status is 'not_validated'")
+        check(no_match_data["validation_result"]["requires_human_review"] is True, "Unlisted candidate requires human review")
+
+        # 25. POST /api/v1/validation/medicine (Dosage Preservation Invariant & Formulation Consistency)
+        r_dosage = client.post(
+            "/api/v1/validation/medicine",
+            json={
+                "candidate_name": "Augmentin 625 Duo",
+                "observed_dosage": "1000 mg",
+            }
+        )
+        check(r_dosage.status_code == 200, "POST /api/v1/validation/medicine (dosage preservation) returns 200 OK")
+        dosage_data = r_dosage.json()
+        val_res = dosage_data["validation_result"]
+        check(val_res["dosage_observation_preserved"] is True, "Observed dosage preserved flag is True")
+        check(val_res["observed_dosage"] == "1000 mg", "Observed dosage 1000 mg strictly preserved")
+        check(val_res["reference_strength"] == "625 mg", "Reference strength 625 mg remains separate")
+        check(val_res["formulation_consistency"] == "mismatch", "Formulation consistency correctly flagged as mismatch")
+        check(val_res["requires_human_review"] is True, "Dosage mismatch requires human review")
+        check(val_res["medicine_identity_status"] == "validated", "Medicine identity remains validated despite dosage mismatch")
+
+        # 26. POST /api/v1/validation/medicine/batch (Batch Processing)
+        r_batch = client.post(
+            "/api/v1/validation/medicine/batch",
+            json={
+                "items": [
+                    {"candidate_name": "Augmentin 625 Duo", "observed_dosage": "625 mg"},
+                    {"candidate_name": "Paracetamol 500mg", "observed_dosage": "500 mg"},
+                    {"candidate_name": "UnknownDrugXYZ", "observed_dosage": "10 mg"},
+                ]
+            }
+        )
+        check(r_batch.status_code == 200, "POST /api/v1/validation/medicine/batch returns 200 OK")
+        batch_data = r_batch.json()
+        check(batch_data["total_processed"] == 3, "Batch processed 3 items")
+        check(batch_data["results"][0]["validation_result"]["validation_status"] == "validated", "Batch item 1 validated")
+        check(batch_data["results"][1]["validation_result"]["validation_status"] == "validated", "Batch item 2 validated")
+        check(batch_data["results"][2]["validation_result"]["validation_status"] == "not_validated", "Batch item 3 not validated")
+
+
     print("\n======================================================")
     print(f"LIVE TEST SUMMARY: {passed} PASSED | {failed} FAILED")
     print("======================================================\n")

@@ -18,6 +18,7 @@ from ..schemas.prescription import (
     ExtractedEntity,
     AlternativeCandidate,
     ValidationEvidence,
+    ValidationItem,
     LasaScreening,
     PosologyTimingSlot,
     PosologyLanguagePack,
@@ -37,6 +38,7 @@ from ..multimodal import (
     MockMultimodalModelAdapter,
     GeminiMultimodalAdapter,
 )
+from ai.rag import get_medicine_validation_service
 
 
 class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
@@ -271,7 +273,93 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         posology_summary_hi = f"{primary_med_name} {primary_dosage} {primary_freq} लें।"
         posology_summary_mr = f"{primary_med_name} {primary_dosage} {primary_freq} घ्या."
 
-        overall_status_str = "NEEDS_VERIFICATION" if extraction_result.requires_human_review else "VERIFIED"
+        # ------------------------------------------------------------------
+        # Phase 7: RAG-Based Medicine Validation (PLAN.md Section 16)
+        # ------------------------------------------------------------------
+        validation_dict: Dict[str, ValidationItem] = {}
+        medicine_validations_list: List[Dict[str, Any]] = []
+        primary_ui_evidence: Optional[Dict[str, Any]] = None
+        rag_requires_human_review = False
+
+        val_service = get_medicine_validation_service()
+        for idx, med in enumerate(extraction_result.medicines):
+            med_name_val = med.medicine_name.value
+            dosage_val = med.dosage.value
+            val_res = val_service.validate_candidate(
+                candidate_name=med_name_val or "",
+                observed_dosage=dosage_val,
+            )
+            medicine_validations_list.append(val_res.model_dump())
+
+            if val_res.requires_human_review:
+                rag_requires_human_review = True
+
+            # Formulate Section 6 ValidationItem
+            matched_ref = val_res.selected_reference
+            first_cand = val_res.matched_candidates[0] if val_res.matched_candidates else None
+            active_src = matched_ref.provenance.source_name if matched_ref else (first_cand.provenance.source_name if first_cand else "None")
+            active_match = matched_ref.medicine_name if matched_ref else (first_cand.medicine_name if first_cand else None)
+            active_salt = matched_ref.generic_name if matched_ref else (first_cand.generic_name if first_cand else None)
+            active_cui = matched_ref.rxnorm_cui if matched_ref else (first_cand.rxnorm_cui if first_cand else None)
+            active_sched = matched_ref.cdsco_schedule if matched_ref else (first_cand.cdsco_schedule if first_cand else None)
+
+            val_item = ValidationItem(
+                found_in_db=(val_res.validation_status == "validated"),
+                source=active_src,
+                matched_entity_name=active_match,
+                generic_salt=active_salt,
+                rxnorm_cui=active_cui,
+                cdsco_schedule=active_sched,
+            )
+            val_key = f"medicine_{idx + 1}" if len(extraction_result.medicines) > 1 else "medicine_name"
+            validation_dict[val_key] = val_item
+            if "medicine_name" not in validation_dict:
+                validation_dict["medicine_name"] = val_item
+
+            if idx == 0:
+                primary_ui_evidence = val_res.to_ui_validation_evidence()
+
+        effective_human_review = extraction_result.requires_human_review or rag_requires_human_review
+        overall_status_str = "NEEDS_VERIFICATION" if effective_human_review else "VERIFIED"
+
+        if primary_ui_evidence:
+            ui_val_evidence = ValidationEvidence(
+                candidate_name=primary_ui_evidence["candidate_name"],
+                matched_entity_name=primary_ui_evidence["matched_entity_name"],
+                generic_salt=primary_ui_evidence["generic_salt"],
+                validation_status=primary_ui_evidence["validation_status"],
+                status_badge_text=primary_ui_evidence["status_badge_text"],
+                cdsco_schedule=primary_ui_evidence["cdsco_schedule"],
+                rxnorm_cui=primary_ui_evidence["rxnorm_cui"],
+                atc_code=primary_ui_evidence["atc_code"],
+                therapeutic_class=primary_ui_evidence["therapeutic_class"],
+                indications=primary_ui_evidence["indications"],
+                evidence_source=primary_ui_evidence["evidence_source"],
+                reference_url=primary_ui_evidence.get("reference_url"),
+                alternatives=[
+                    AlternativeCandidate(
+                        name=a["name"],
+                        generic=a["generic"],
+                        similarity_score=a["similarity_score"],
+                        notes=a["notes"],
+                    )
+                    for a in primary_ui_evidence.get("alternatives", [])
+                ],
+            )
+        else:
+            ui_val_evidence = ValidationEvidence(
+                candidate_name=primary_med_name,
+                matched_entity_name=primary_med_name,
+                generic_salt=primary_med_name,
+                validation_status="unverified",
+                status_badge_text="UNVERIFIED",
+                cdsco_schedule="Schedule H Prescription Drug",
+                rxnorm_cui="N/A",
+                atc_code="N/A",
+                therapeutic_class="Prescription Medicine",
+                indications="Clinical Posology Recorded",
+                evidence_source="Reference Validation Service",
+            )
 
         # Build response
         response = PrescriptionAnalyzeResponse(
@@ -279,26 +367,26 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             original_image_url=public_image_url,
             fields=fields_dict,
             lasa_flags=[],
-            validation={},
+            validation=validation_dict,
             explanation=MultilingualSummary(
                 en=posology_summary_en,
                 hi=posology_summary_hi,
                 mr=posology_summary_mr,
             ),
-            requires_human_review=extraction_result.requires_human_review,
+            requires_human_review=effective_human_review,
             status="abstain" if overall_status_str == "NEEDS_VERIFICATION" and scenario in ("abstained", "flagged") else "success",
             meta=PrescriptionMetadata(
                 request_id=f"REQ-{uuid.uuid4().hex[:12].upper()}",
                 timestamp=extraction_result.created_at,
                 processing_time_ms=int(extraction_result.duration_seconds * 1000),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
-                pipeline_stages_completed=6,
+                pipeline_stages_completed=7,
             ),
             document_telemetry=DocumentTelemetry(
                 estimated_dpi=200,
                 contrast_ratio=18.5,
                 skew_angle_deg=0.4,
-                illegibility_score=0.15 if not extraction_result.requires_human_review else 0.45,
+                illegibility_score=0.15 if not effective_human_review else 0.45,
                 orientation="Portrait",
             ),
             data=PrescriptionData(
@@ -306,9 +394,9 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 script_sample_key="multimodal_v1",
                 scenario_title=f"Multimodal Extraction: {primary_med_name}",
                 scenario_subtitle="Multimodal Vision-Language Extraction Pipeline",
-                difficulty_tag="Moderate Cursive" if extraction_result.requires_human_review else "Clear Handwriting",
+                difficulty_tag="Moderate Cursive" if effective_human_review else "Clear Handwriting",
                 overall_status=overall_status_str,  # type: ignore
-                document_confidence=0.70 if extraction_result.requires_human_review else 0.94,
+                document_confidence=0.70 if effective_human_review else 0.94,
                 patient_info=PatientInfo(name="Anonymized Patient", age_gender="Adult"),
                 prescriber_info=PrescriberInfo(
                     name="Consulting Physician",
@@ -318,19 +406,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     clinic_address="Medical Outpatient Facility",
                 ),
                 extracted_entities=ui_entities,
-                validation_evidence=ValidationEvidence(
-                    candidate_name=primary_med_name,
-                    matched_entity_name=primary_med_name,
-                    generic_salt=primary_med_name,
-                    validation_status="cdsco_approved" if not extraction_result.requires_human_review else "unverified",
-                    status_badge_text="VISUALLY EXTRACTED",
-                    cdsco_schedule="Schedule H Prescription Drug",
-                    rxnorm_cui="MULTIMODAL-CANDIDATE",
-                    atc_code="J01CA04",
-                    therapeutic_class="Prescription Medicine",
-                    indications="Clinical Posology Recorded",
-                    evidence_source="Multimodal Vision Analysis",
-                ),
+                validation_evidence=ui_val_evidence,
+
                 lasa_screening=LasaScreening(
                     has_warning=False,
                     prescribed_candidate=primary_med_name,
@@ -390,7 +467,9 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             preprocessing_manifest=preprocessing_manifest_dict,
             medicines=[m.model_dump() for m in extraction_result.medicines],
             multimodal_result=extraction_result.model_dump(),
+            medicine_validations=medicine_validations_list,
         )
+
 
         # Attach telemetry from Phase 4 if available
         if quality_report_dict:

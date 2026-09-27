@@ -1,0 +1,43 @@
+{
+  "manifest_version": "1.0.0",
+  "created_at": "2026-09-27T00:00:00Z",
+  "reference_sources": [
+    {
+      "source_id": "cdsco-approved-drugs",
+      "file_path": "data/reference/cdsco_approved_drugs.json",
+      "record_count": 20,
+      "sha256": "a8077f6c5fa281e93c5b8581a1277b712c1d0d0d5d27a174fb826e8951ad17c1",
+      "provenance": {
+        "source_id": "cdsco-approved-drugs",
+        "source_name": "CDSCO Approved Drug Formulations Reference Subset",
+        "source_version": "2024.1 (finite development subset)",
+        "license": "Open Government Data License - India",
+        "license_category": "statutory_government_open_data",
+        "retrieval_date": "2026-09-27T00:00:00Z",
+        "citation": "CDSCO (2024). List of Approved New Drugs and Fixed Dose Combinations in India. Directorate General of Health Services.",
+        "source_url": "https://cdsco.gov.in"
+      }
+    },
+    {
+      "source_id": "nlm-rxnorm",
+      "file_path": "data/reference/nlm_rxnorm_drugs.json",
+      "record_count": 10,
+      "sha256": "22f0a37352b1d630123c62b98075b8d056a7f3d38572e8f3b82f7910e620356f",
+      "provenance": {
+        "source_id": "nlm-rxnorm",
+        "source_name": "NLM RxNorm Clinical Nomenclature Subset",
+        "source_version": "2024-08 (frozen reference fixture subset)",
+        "license": "UMLS Metathesaurus License / NLM Public Domain for NLM-authored terms (UTS access required for full dataset)",
+        "license_category": "clinical_terminology_license",
+        "retrieval_date": "2026-09-27T00:00:00Z",
+        "citation": "Nelson, S. J. et al. (2011). Normalized names for clinical drugs: RxNorm at 6 years. J Am Med Inform Assoc, 18(4):441-448.",
+        "source_url": "https://www.nlm.nih.gov/research/umls/rxnorm/"
+      }
+    }
+  ],
+  "summary": {
+    "total_records": 30,
+    "sources_cataloged": 2,
+    "verification_status": "verified_regulatory"
+  }
+}
