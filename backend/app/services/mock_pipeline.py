@@ -109,16 +109,66 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
             )
 
         # ------------------------------------------------------------------
-        # 2. Deterministic Scenario Matching (options.mock_scenario or sample_id)
+        # 2. Phase 4 Preprocessing & Quality Assessment Execution
+        # ------------------------------------------------------------------
+        from ..preprocessing import ImagePreprocessingService, ImageValidationError
+
+        preprocessing_service = ImagePreprocessingService()
+        processed_image_url: Optional[str] = None
+        quality_report_dict: Optional[dict] = None
+        preprocessing_manifest_dict: Optional[dict] = None
+
+        if image_bytes and len(image_bytes) > 0 and image_bytes != b"dummy":
+            try:
+                res, manifest, derived_url = preprocessing_service.process_and_store(
+                    image_bytes=image_bytes,
+                    filename=filename,
+                    prescription_id=prescription_id,
+                    reject_insufficient_quality=True,
+                )
+                processed_image_url = derived_url
+                quality_report_dict = res.quality_report.model_dump()
+                preprocessing_manifest_dict = manifest.model_dump()
+            except ImageValidationError as ive:
+                raise PipelineProcessingError(
+                    code=ive.code,
+                    message=ive.message,
+                    stage=ive.stage,
+                    status_code=ive.status_code,
+                    retryable=ive.retryable,
+                    details=ive.details,
+                    prescription_id=prescription_id,
+                    original_image_url=public_image_url,
+                )
+
+        # ------------------------------------------------------------------
+        # 3. Deterministic Scenario Matching (options.mock_scenario or sample_id)
         # ------------------------------------------------------------------
         if scenario == "uncertain":
-            return get_uncertain_fixture(prescription_id=prescription_id, image_url=public_image_url)
+            response = get_uncertain_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        elif scenario == "lasa_warning" or sample_id == "rx-sample-2":
+            response = get_lasa_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        elif scenario in ("abstained", "flagged") or sample_id == "rx-sample-3":
+            response = get_abstained_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        else:
+            response = get_confident_fixture(prescription_id=prescription_id, image_url=public_image_url)
 
-        if scenario == "lasa_warning" or sample_id == "rx-sample-2":
-            return get_lasa_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        # ------------------------------------------------------------------
+        # 4. Attach Phase 4 Preprocessing & Quality Extensions
+        # ------------------------------------------------------------------
+        if quality_report_dict:
+            res_metric = quality_report_dict["metrics"]["resolution"]
+            contrast_metric = quality_report_dict["metrics"]["contrast"]
+            skew_metric = quality_report_dict["metrics"]["skew"]
+            response.document_telemetry.estimated_dpi = int(res_metric["effective_ppi"])
+            response.document_telemetry.contrast_ratio = float(contrast_metric["rms_contrast"])
+            response.document_telemetry.skew_angle_deg = float(skew_metric["estimated_angle_deg"])
+            response.document_telemetry.illegibility_score = round(
+                float(1.0 - quality_report_dict["heuristic_quality_score"]), 2
+            )
 
-        if scenario in ("abstained", "flagged") or sample_id == "rx-sample-3":
-            return get_abstained_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        response.processed_image_url = processed_image_url
+        response.quality_report = quality_report_dict
+        response.preprocessing_manifest = preprocessing_manifest_dict
 
-        # Default to confident scenario
-        return get_confident_fixture(prescription_id=prescription_id, image_url=public_image_url)
+        return response

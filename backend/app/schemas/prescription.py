@@ -149,7 +149,7 @@ class DocumentTelemetry(BaseModel):
     contrast_ratio: float
     skew_angle_deg: float
     illegibility_score: float
-    orientation: Literal["Portrait", "Landscape"]
+    orientation: Literal["Portrait", "Landscape", "Square"]
 
 
 class PrescriptionMetadata(BaseModel):
@@ -196,7 +196,8 @@ class PrescriptionData(BaseModel):
 class PrescriptionAnalyzeResponse(BaseModel):
     """
     Complete Response Model:
-    Contains both the PLAN.md Section 6 Contract and the Phase 1 UI Envelope.
+    Contains both the PLAN.md Section 6 Contract and the Phase 1 UI Envelope,
+    extended with Phase 4 preprocessed image reference and quality assessment metadata.
     """
     # PLAN.md Section 6 Standard Top-Level Contract:
     prescription_id: str = Field(..., description="Statutory unique prescription tracking identifier")
@@ -212,3 +213,17 @@ class PrescriptionAnalyzeResponse(BaseModel):
     meta: PrescriptionMetadata = Field(..., description="Pipeline execution metadata and request ID")
     document_telemetry: DocumentTelemetry = Field(..., description="Pre-flight image quality metrics")
     data: PrescriptionData = Field(..., description="Detailed clinical and spatial posology dataset")
+
+    # Phase 4 Preprocessing & Quality Infrastructure Extensions (PLAN.md Section 13):
+    processed_image_url: Optional[str] = Field(
+        None,
+        description="Preserved accessible URL for the primary derived preprocessed image (enhanced representation)"
+    )
+    quality_report: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 4 image quality assessment report containing optical metrics and tri-state decision"
+    )
+    preprocessing_manifest: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 4 derived artifacts manifest and cryptographic SHA-256 fingerprints"
+    )

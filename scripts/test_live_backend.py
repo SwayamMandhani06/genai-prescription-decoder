@@ -66,12 +66,20 @@ def run_live_tests():
         check(data["data"]["overall_status"] == "ABSTAINED", "Status is ABSTAINED")
         check(data["requires_human_review"] is True, "Abstention mandates human review")
 
-        # 5. File Upload (Multipart/form-data)
-        dummy_png = (
-            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-            b"\x08\x06\x00\x00\x00\x1f\x15c4\x00\x00\x00\rIDATx\x9cc`\x00\x00\x00"
-            b"\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82"
-        )
+        # 5. File Upload (Multipart/form-data with valid readable image)
+        import io
+        from PIL import Image, ImageDraw
+
+        valid_im = Image.new("RGB", (400, 500), color=(250, 250, 250))
+        draw = ImageDraw.Draw(valid_im)
+        draw.text((20, 20), "Rx Clinic Prescription Pad", fill=(20, 20, 20))
+        draw.line([(20, 45), (380, 45)], fill=(60, 60, 60), width=2)
+        draw.text((20, 70), "Augmentin 625 Duo - 1 tab BD x 5 days", fill=(10, 10, 80))
+        draw.text((20, 100), "Dolo 650 - 1 tab TDS SOS", fill=(10, 10, 80))
+        buf = io.BytesIO()
+        valid_im.save(buf, format="PNG")
+        dummy_png = buf.getvalue()
+
         files = {"file": ("rx_patient_upload.png", dummy_png, "image/png")}
         r = client.post("/api/v1/prescriptions/analyze", files=files)
         check(r.status_code == 200, "POST analyze (file upload) returns 200 OK")
@@ -79,7 +87,21 @@ def run_live_tests():
         saved_url = data["original_image_url"]
         check(saved_url.startswith("/uploads/rx_"), "Original image URL formatted as /uploads/rx_*")
 
-        # 6. Verify image is retrievable over HTTP static mount
+        # 5b. Verify Phase 4 processed_image_url is present and retrievable
+        check(data.get("processed_image_url") is not None, "Phase 4 processed_image_url present")
+        proc_url = data["processed_image_url"]
+        r_proc = client.get(proc_url)
+        check(r_proc.status_code == 200, "GET preprocessed image via static mount returns 200 OK")
+
+        # 5c. Verify GET /api/v1/prescriptions/{id}/artifacts returns run manifest
+        rx_id = data["prescription_id"]
+        r_art = client.get(f"/api/v1/prescriptions/{rx_id}/artifacts")
+        check(r_art.status_code == 200, "GET /artifacts returns 200 OK")
+        art_data = r_art.json()
+        check("grayscale" in art_data["artifacts"], "Artifacts include grayscale")
+        check("enhanced" in art_data["artifacts"], "Artifacts include enhanced")
+
+        # 6. Verify original image is retrievable over HTTP static mount
         r_img = client.get(saved_url)
         check(r_img.status_code == 200, "GET uploaded image via static mount returns 200 OK")
         check(len(r_img.content) == len(dummy_png), "Preserved image content matches byte-for-byte")
@@ -94,6 +116,17 @@ def run_live_tests():
         r = client.post("/api/v1/prescriptions/analyze", files=bad_files)
         check(r.status_code == 415, "Unsupported format returns HTTP 415")
         check(r.json()["error"]["code"] == "INVALID_FILE_TYPE", "Error code is INVALID_FILE_TYPE")
+
+        # 8b. Error Test: Tiny/Insufficient Resolution Image -> 422
+        tiny_png = (
+            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+            b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\xff\xff?"
+            b"\x00\x05\xfe\x02\xfe\r\xefF\xb8\x00\x00\x00\x00IEND\xaeB`\x82"
+        )
+        tiny_files = {"file": ("tiny_rx.png", tiny_png, "image/png")}
+        r = client.post("/api/v1/prescriptions/analyze", files=tiny_files)
+        check(r.status_code == 422, "Tiny image (<150px) returns HTTP 422")
+        check(r.json()["error"]["code"] == "IMAGE_QUALITY_INSUFFICIENT", "Tiny image code is IMAGE_QUALITY_INSUFFICIENT")
 
         # 9a. Error Test: Image Quality Insufficient Injection -> 422
         r = client.post(

@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-0EA5E9)](#technology-stack)
 [![Dataset Infrastructure](https://img.shields.io/badge/Dataset%20Infrastructure-Phase%203%20Verified-10B981)](#7-research-datasets--experimental-infrastructure-phase-3)
+[![Image Preprocessing](https://img.shields.io/badge/Preprocessing%20%26%20Quality-Phase%204%20Verified-10B981)](#8-image-preprocessing--quality-assessment-phase-4)
 [![Safety Protocol](https://img.shields.io/badge/Safety-Selective%20Abstention%20%7C%20LASA%20Detection-F59E0B)](#clinical-safety--uncertainty-abstention)
 
 > **Academic Capstone Engineering Project**  
@@ -69,31 +70,35 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── backend/                     # FastAPI backend service (Phase 2 & Phase 3)
+├── backend/                     # FastAPI backend service (Phases 2-4)
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
-│   │   ├── api/v1/routes/       # /analyze, /{id}, /health route definitions
+│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health route definitions
 │   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
 │   │   ├── services/            # Mock pipeline synthesizer & image storage
-│   │   └── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
-│   ├── tests/                   # Pytest test suite (Phase 2 & Phase 3 test suites)
-│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, etc.)
+│   │   ├── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
+│   │   └── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
+│   ├── tests/                   # Pytest test suite (Phases 2, 3, 4 unit & integration suites)
+│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
 │   └── run.py                   # Development server runner (port 8000)
-├── data/                        # Dataset & experimental infrastructure (Phase 3)
+├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
 │   ├── README.md                # Dataset architecture and reproduction protocol
 │   ├── SOURCES.md               # Legal, licensing, and provenance inventory
 │   ├── manifests/               # Machine-readable inventory with cryptographic checksums
 │   ├── annotations/             # Gold-standard ground truth annotations & schema
 │   ├── splits/                  # Group-aware zero-leakage train/val/test partitions
 │   ├── samples/                 # Calibration & integration sample set (N=7)
+│   ├── processed/               # Isolated derived artifacts (data/processed/preprocessing_runs/)
 │   └── metadata/                # Version info and prospective experiment configurations
 ├── docs/
 │   ├── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
-│   └── phase-03-completion.md   # Formal Phase 3 exit gate verification report
+│   ├── phase-03-completion.md   # Formal Phase 3 exit gate verification report
+│   └── phase-04-completion.md   # Formal Phase 4 exit gate verification report
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
 │   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
+│   ├── inspect_preprocessing.py # Visual comparison sheet generator for research inspection
 │   ├── validate_dataset.py      # Automated dataset integrity & validation CLI
 │   ├── build_dataset_manifest.py# Automated manifest and schema builder
 │   └── build_metadata.py        # Dataset metadata and experiment config generator
@@ -213,7 +218,37 @@ For detailed documentation, refer to [`data/README.md`](data/README.md), [`data/
 
 ---
 
-## 8. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 8. Image Preprocessing & Quality Assessment (Phase 4)
+
+Phase 4 establishes an audit-verified, deterministic preprocessing and optical quality assessment infrastructure that strictly preserves the original prescription image as authoritative human-verifiable evidence (`original_image != preprocessed_image`):
+
+- **Image Ingestion Validation (`backend/app/preprocessing/validator.py`):** Enforces supported MIME types (JPEG, PNG, WEBP, TIFF, BMP), dimension boundaries ($150 \times 150\,\text{px}$ minimum, $8000 \times 8000\,\text{px}$ maximum), file corruption detection via header parsing, EXIF orientation correction, and RGBA-to-RGB white-canvas compositing.
+- **Image Metadata Extraction (`backend/app/preprocessing/metadata.py`):** Extracts dimensions, channels, color mode, aspect ratio, orientation, file size, and computes cryptographic SHA-256 digests while strictly stripping personal EXIF metadata (GPS, author, serial numbers). Pixel density is estimated heuristically from assumed prescription pad dimensions (not physical EXIF DPI).
+- **Deterministic Quality Assessment (`backend/app/preprocessing/quality.py`):** Evaluates 8 deterministic optical metrics using engineering heuristics:
+  - *Blur*: Variance of Laplacian ($\sigma^2$)
+  - *Brightness & Exposure*: Mean luminance ($\mu \in [0, 255]$)
+  - *Contrast*: Root-mean-square luminance contrast ($\sigma_{\text{RMS}}$)
+  - *Resolution*: Total pixel area ($W \times H$) and heuristic effective PPI
+  - *Noise*: Median filter residual variance ($\sigma^2_{\text{noise}}$)
+  - *Skew*: Projection profile variance sweep ($\theta \in [-10^\circ, +10^\circ]$)
+  - *Illumination*: Inter-region luminance variance across $3 \times 3$ spatial grid
+  - *Clipping / Saturation*: Proportion of pure black ($<5$) and pure white ($>250$) pixels
+- **Tri-State Quality Gate:** Classifies images into `acceptable` $[0.80, 1.0]$, `degraded_but_usable` $[0.40, 0.79]$, or `insufficient` $[0.0, 0.39]$. Fatal degradations reject processing via standard `IMAGE_QUALITY_INSUFFICIENT` (HTTP 422).
+- **8-Stage Modular Preprocessing Pipeline (`backend/app/preprocessing/pipeline.py`):** Produces 5 unconditional and 1 conditional non-destructive derived representations:
+  - `grayscale.png`: Standard luminance mapping ($0.299R + 0.587G + 0.114B$)
+  - `normalized.png`: Gaussian background division flat-field correction ($\sigma=35$)
+  - `denoised.png`: $3 \times 3$ median filtering
+  - `enhanced.png`: 1st-to-99th percentile contrast stretching
+  - `deskewed.png`: Interpolated bilinear rotation (conditional: only when detected skew $|\theta| \ge 0.5^\circ$)
+  - `thresholded.png`: Sauvola local adaptive binarization ($k=0.2$, $R=128$)
+- **Traceable Configuration & Isolation (`backend/app/preprocessing/config.py`, `artifacts.py`):** Every run is versioned (`p04_standard_v1`, version `1.0.0`) with SHA-256 config hashing. Derived representations and manifests are strictly quarantined in `data/processed/preprocessing_runs/<id>/` and `backend/uploads/preprocessed/<id>/`.
+- **Visual Inspection Utility (`scripts/inspect_preprocessing.py`):** Standalone research tool generating multi-panel side-by-side comparison sheets (`visual_comparison.png`) for pipeline inspection.
+
+For complete verification logs and metrics, refer to [`docs/phase-04-completion.md`](docs/phase-04-completion.md).
+
+---
+
+## 9. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -229,7 +264,7 @@ For detailed documentation, refer to [`data/README.md`](data/README.md), [`data/
 
 ---
 
-## 9. Clinical Safety & Regulatory Disclaimer
+## 10. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -240,14 +275,14 @@ For detailed documentation, refer to [`data/README.md`](data/README.md), [`data/
 
 ---
 
-## 10. Project Information
+## 11. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 11. License
+## 12. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
 

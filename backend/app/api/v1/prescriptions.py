@@ -152,3 +152,40 @@ async def get_prescription_by_id(
         status_code=404,
         detail=f"Prescription with accession ID '{prescription_id}' was not found.",
     )
+
+
+@router.get(
+    "/{prescription_id}/artifacts",
+    summary="Get Preprocessing Artifacts Manifest",
+    description="Retrieves the Phase 4 preprocessing run manifest, quality report, and accessible URLs for derived artifacts.",
+)
+async def get_preprocessing_artifacts(
+    prescription_id: str,
+):
+    from ...preprocessing import ImagePreprocessingService
+
+    service = ImagePreprocessingService()
+    manifest = service.get_run_manifest(prescription_id)
+    if not manifest:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Preprocessing artifacts for prescription ID '{prescription_id}' were not found.",
+        )
+
+    artifacts_map = {
+        artifact.type: f"/uploads/preprocessed/{prescription_id}/{artifact.type}.png"
+        for artifact in manifest.artifacts
+    }
+
+    return {
+        "prescription_id": manifest.prescription_id,
+        "source_image_sha256": manifest.source_image_sha256,
+        "preprocessing_config_id": manifest.preprocessing_config_id,
+        "quality_status": manifest.quality_status,
+        "heuristic_quality_score": manifest.heuristic_quality_score,
+        "deskew_applied_angle_deg": manifest.deskew_applied_angle_deg,
+        "primary_artifact_type": manifest.primary_artifact_type,
+        "primary_artifact_url": artifacts_map.get(manifest.primary_artifact_type),
+        "artifacts": artifacts_map,
+        "records": [a.model_dump() for a in manifest.artifacts],
+    }

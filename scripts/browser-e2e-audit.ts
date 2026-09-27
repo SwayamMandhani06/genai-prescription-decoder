@@ -265,8 +265,11 @@ async function runBrowserAudit() {
     const fileInput = await page.$('input[type="file"]');
     if (fileInput) {
       const testFilePath = path.resolve('scripts', 'test_prescription.png');
+      const sampleSourcePath = path.resolve('data', 'samples', 'sample_01_clear.png');
       if (!fs.existsSync(testFilePath)) {
-        fs.writeFileSync(testFilePath, Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64'));
+        if (fs.existsSync(sampleSourcePath)) {
+          fs.copyFileSync(sampleSourcePath, testFilePath);
+        }
       }
       await fileInput.uploadFile(testFilePath);
       await page.waitForFunction(
