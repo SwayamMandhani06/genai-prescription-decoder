@@ -206,7 +206,7 @@ async function runBrowserAudit() {
     );
     check(true, 'Uncertain State renders with amber badge and verification requirement');
 
-    const hasUncertainWhy = await page.evaluate(() => document.body.innerText.includes('Observation:') && document.body.innerText.includes('Required action:'));
+    const hasUncertainWhy = await page.evaluate(() => document.body.innerText.includes('Observation') && (document.body.innerText.includes('Action Required') || document.body.innerText.includes('Required action')));
     check(hasUncertainWhy, 'Uncertain field displays clinical WHY explanation and WHAT TO DO instruction');
 
     // -------------------------------------------------------------------------
@@ -246,6 +246,95 @@ async function runBrowserAudit() {
 
     const hasAbstainGuidance = await page.evaluate(() => document.body.innerText.includes('WHAT happened') && document.body.innerText.includes('WHY it halted'));
     check(hasAbstainGuidance, 'Abstention displays WHAT happened, WHY it halted, and WHAT to do');
+
+    // -------------------------------------------------------------------------
+    // 8b. Test Phase 9 Human Verification Interactive Workflow (Confirm, Correct, Unreadable)
+    // -------------------------------------------------------------------------
+    console.log('\n--- 8b. Verifying Phase 9 Human Verification Interactive Workflow ---');
+
+    // Switch to Uncertain state to have interactive field verification cards
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const uncertainTab = buttons.find(b => b.textContent?.includes('Uncertain') || b.textContent?.includes('2. Uncertain'));
+      if (uncertainTab) uncertainTab.click();
+    });
+
+    await page.waitForFunction(
+      () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.trim() === 'Confirm' || b.textContent?.trim() === 'Correct'),
+      { timeout: 8000 }
+    );
+    check(true, 'Phase 9 Human Verification action buttons rendered on abstained/uncertain fields');
+
+    // Test 1: Click "Confirm" on first eligible field card
+    const confirmClicked = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const confirmBtn = buttons.find(b => b.textContent?.trim() === 'Confirm');
+      if (confirmBtn) {
+        confirmBtn.click();
+        return true;
+      }
+      return false;
+    });
+    check(confirmClicked, 'Clicked [Confirm] button for extracted field');
+
+    await page.waitForFunction(
+      () => document.body.innerText.includes('CONFIRMED') || document.body.innerText.includes('Confirmed'),
+      { timeout: 5000 }
+    );
+    check(true, 'Field state updated to Verified: Confirmed badge with audit status');
+
+    // Test 2: Click "Correct" on an eligible field card
+    const correctOpened = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const correctBtn = buttons.find(b => b.textContent?.trim() === 'Correct');
+      if (correctBtn) {
+        correctBtn.click();
+        return true;
+      }
+      return false;
+    });
+    check(correctOpened, 'Clicked [Correct] button to open human verification transcription input');
+
+    // Enter corrected text into input and submit
+    const inputEntered = await page.evaluate(() => {
+      const input = document.querySelector('input[placeholder*="clinical"], input[placeholder*="Corrected"]') as HTMLInputElement;
+      if (input) {
+        input.value = 'Amoxicillin 500mg';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const saveBtn = buttons.find(b => b.textContent?.trim() === 'Save');
+        if (saveBtn) {
+          saveBtn.click();
+          return true;
+        }
+      }
+      return false;
+    });
+    check(inputEntered, 'Entered human correction and clicked [Save]');
+
+    await page.waitForFunction(
+      () => document.body.innerText.includes('CORRECTED') || document.body.innerText.includes('Amoxicillin 500mg'),
+      { timeout: 5000 }
+    );
+    check(true, 'Field updated to Verified: Corrected and preserves original value in audit trail');
+
+    // Test 3: Click "Mark Unreadable"
+    const unreadableClicked = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const unreadableBtn = buttons.find(b => b.textContent?.trim() === 'Mark Unreadable');
+      if (unreadableBtn) {
+        unreadableBtn.click();
+        return true;
+      }
+      return false;
+    });
+    check(unreadableClicked, 'Clicked [Mark Unreadable] button');
+
+    await page.waitForFunction(
+      () => document.body.innerText.includes('UNREADABLE') || document.body.innerText.includes('Marked Unreadable'),
+      { timeout: 5000 }
+    );
+    check(true, 'Field marked as unreadable without forcing arbitrary guess');
 
     // -------------------------------------------------------------------------
     // 9. Physical Prescription File Upload E2E Test

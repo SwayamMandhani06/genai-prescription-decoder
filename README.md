@@ -101,7 +101,10 @@ genai-prescription-decoder/
 │   ├── phase-03-completion.md   # Formal Phase 3 exit gate verification report
 │   ├── phase-04-completion.md   # Formal Phase 4 exit gate verification report
 │   ├── phase-05-completion.md   # Formal Phase 5 exit gate verification report
-│   └── phase-06-completion.md   # Formal Phase 6 exit gate verification report
+│   ├── phase-06-completion.md   # Formal Phase 6 exit gate verification report
+│   ├── phase-07-completion.md   # Formal Phase 7 exit gate verification report
+│   ├── phase-08-completion.md   # Formal Phase 8 exit gate verification report
+│   └── confidence_design.md     # Phase 8 Confidence & Calibration Design Specification
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
 │   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
@@ -329,7 +332,36 @@ For full audit logs and verification records, refer to [`docs/phase-07-completio
 
 ---
 
-## 12. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 12. Confidence Estimation & Calibration Layer (Phase 8)
+
+Phase 8 implements a rigorous, mathematically defensible confidence estimation and calibration layer transforming raw model signals into empirical confidence assessments evaluated against known correctness outcomes.
+
+- **Explicit Separation of Concepts:**
+  - **Raw Model Signal:** Continuous score or softmax output directly from the multimodal neural network.
+  - **Retrieval Correspondence Score:** Deterministic similarity score against CDSCO/RxNorm reference data.
+  - **Calibrated Confidence:** Empirically validated probability of correct extraction derived from fitted calibration parameters ($N \ge 15$).
+  - **Empirical Correctness:** Dataset-provided ground-truth annotations.
+- **Strict Decoupling of Visual Extraction from Reference Grounding:** Strong reference correspondence from retrieval never erases visual handwriting ambiguity. Visual certainty and reference correspondence remain separate metrics.
+- **Strict Visual Grounding of Dosage:** Dosage confidence is strictly grounded in visual handwriting evidence. Reference data matches never artificially inflate dosage confidence. Observed dosage values are strictly immutable and never rewritten.
+- **Multi-Medicine Independence:** Each medication in a multi-line prescription is evaluated with complete mathematical independence; high confidence in one medicine never inflates confidence in another.
+- **Calibration Methods & Metrics:**
+  - Support for **Platt Scaling** (logistic sigmoid calibration), **Isotonic Regression** (PAV algorithm), and **Temperature Scaling**.
+  - Mathematical computation of **Expected Calibration Error (ECE)**, **Maximum Calibration Error (MCE)**, **Brier Score**, **Negative Log-Likelihood (NLL)**, and reliability diagram bins.
+- **Sample Size Safeguards (`insufficient_data`):**
+  - Requires a minimum cohort of 15 samples (`min_samples_for_calibration = 15`) to fit calibration models.
+  - In the absence of an adequate calibration sample (e.g. the $N=7$ development set), the system safely reports `calibration_status = "insufficient_data"` and `calibrated_confidence = None`. Under no circumstances are calibration parameters fabricated.
+- **Deterministic Evaluation Fixtures:** 14 deterministic fixtures covering well-calibrated, overconfident, underconfident, ambiguous, insufficient data, missing confidence, dosage preservation, and conflicting signals.
+- **Dedicated Endpoints:**
+  - `GET /api/v1/confidence/config`: Active configuration, sample limits, and calibrator status.
+  - `POST /api/v1/confidence/evaluate`: Evaluates and calibrates a single field confidence score.
+  - `POST /api/v1/confidence/metrics`: Computes empirical ECE, MCE, Brier score, and reliability diagram bins.
+  - `GET /api/v1/confidence/fixtures`: Returns all 14 deterministic Phase 8 evaluation fixtures.
+
+For complete design specifications and verification logs, refer to [`docs/confidence_design.md`](docs/confidence_design.md) and [`docs/phase-08-completion.md`](docs/phase-08-completion.md).
+
+---
+
+## 13. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -345,7 +377,7 @@ For full audit logs and verification records, refer to [`docs/phase-07-completio
 
 ---
 
-## 13. Clinical Safety & Regulatory Disclaimer
+## 14. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -356,14 +388,14 @@ For full audit logs and verification records, refer to [`docs/phase-07-completio
 
 ---
 
-## 14. Project Information
+## 15. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 15. License
+## 16. License
 
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.

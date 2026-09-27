@@ -33,6 +33,13 @@ export interface ExtractedEntityDto {
   uncertainty_reason?: string | null;
   verification_instruction?: string | null;
   interpreted_candidate?: string | null;
+  raw_confidence?: number | null;
+  calibrated_confidence?: number | null;
+  calibration_status?: 'calibrated' | 'uncalibrated' | 'insufficient_data' | 'not_available';
+  calibration_method?: string | null;
+  abstention_decision?: 'accepted' | 'abstained' | null;
+  abstention_reasons?: string[] | null;
+  requires_human_verification?: boolean | null;
 }
 
 export interface AlternativeCandidateDto {
@@ -148,6 +155,43 @@ export interface PrescriptionAnalyzeResponseDto {
   preprocessing_manifest?: Record<string, unknown> | null;
   medicines?: Array<Record<string, unknown>>;
   multimodal_result?: Record<string, unknown> | null;
+  confidence_assessment?: Record<string, unknown> | null;
+  abstention?: {
+    prescription_id: string;
+    policy_version: string;
+    prescription_decision: 'ACCEPTED' | 'REQUIRES_HUMAN_VERIFICATION' | 'READY_FOR_REVIEW';
+    requires_human_verification: boolean;
+    fields_requiring_verification: string[];
+    total_fields_evaluated: number;
+    abstained_fields_count: number;
+    abstention_rate: number;
+    summary: string;
+    config_hash?: string;
+  } | null;
+}
+
+export interface HumanVerificationRecordDto {
+  verification_id: string;
+  prescription_id: string;
+  field_id: string;
+  original_value?: string | null;
+  verified_value?: string | null;
+  verification_status: 'pending' | 'confirmed' | 'corrected' | 'unreadable';
+  verifier_action: 'confirm' | 'correct' | 'mark_unreadable';
+  reason?: string | null;
+  timestamp: string;
+  policy_version: string;
+}
+
+export interface PrescriptionVerificationStateDto {
+  prescription_id: string;
+  original_image_url: string;
+  overall_verification_status: 'pending' | 'in_progress' | 'completed';
+  records: Record<string, HumanVerificationRecordDto>;
+  audit_trail: HumanVerificationRecordDto[];
+  pending_fields: string[];
+  verified_fields: string[];
+  updated_at: string;
 }
 
 

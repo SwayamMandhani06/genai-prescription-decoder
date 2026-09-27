@@ -26,6 +26,13 @@ class FieldExtractionItem(BaseModel):
     explanation: Optional[str] = Field(None, description="Clinical rationale for the interpretation")
     uncertainty_reason: Optional[str] = Field(None, description="Explicit clinical reason for uncertainty (WHY)")
     verification_instruction: Optional[str] = Field(None, description="Actionable instruction for human review (WHAT TO DO)")
+    raw_confidence: Optional[float] = Field(None, description="Uncalibrated raw model confidence signal")
+    calibrated_confidence: Optional[float] = Field(None, description="Calibrated confidence score if verified calibration model applied")
+    calibration_status: Optional[str] = Field("insufficient_data", description="Status of calibration: calibrated, uncalibrated, insufficient_data, not_available")
+    calibration_method: Optional[str] = Field(None, description="Calibration algorithm applied")
+    abstention_decision: Optional[str] = Field(None, description="Phase 9 decision: 'accepted' or 'abstained'")
+    abstention_reasons: Optional[List[str]] = Field(default_factory=list, description="Machine-readable reason codes if abstained")
+    requires_human_verification: Optional[bool] = Field(None, description="True if clinician/pharmacist verification is mandated")
 
 
 class LasaFlagItem(BaseModel):
@@ -242,6 +249,18 @@ class PrescriptionAnalyzeResponse(BaseModel):
     medicine_validations: Optional[List[Dict[str, Any]]] = Field(
         None,
         description="Phase 7 evidence-grounded medicine validation results, retrieval candidates, and provenance"
+    )
+
+    # Phase 8 Confidence Estimation & Calibration Extensions (PLAN.md Section 17):
+    confidence_assessment: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 8 confidence estimation, field-level assessments, and calibration metadata"
+    )
+
+    # Phase 9 Abstention & Human Verification Extensions (PLAN.md Section 18):
+    abstention: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 9 uncertainty-aware abstention determination, machine-readable reason codes, and verification flags"
     )
 
 

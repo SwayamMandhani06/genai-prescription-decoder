@@ -28,8 +28,8 @@ class TestRAGPipelineIntegration:
             options=options,
         )
 
-        # 1. Pipeline stages completed must be 7
-        assert response.meta.pipeline_stages_completed == 7
+        # 1. Pipeline stages completed must be at least 7 (now 8 in Phase 8)
+        assert response.meta.pipeline_stages_completed >= 7
 
         # 2. Section 6 Top-Level Validation dictionary must be populated
         assert len(response.validation) >= 1

@@ -146,9 +146,9 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
         # ------------------------------------------------------------------
         if scenario == "uncertain":
             response = get_uncertain_fixture(prescription_id=prescription_id, image_url=public_image_url)
-        elif scenario == "lasa_warning" or sample_id == "rx-sample-2":
+        elif scenario == "lasa_warning" or sample_id in ("rx-sample-2", "sample-2"):
             response = get_lasa_fixture(prescription_id=prescription_id, image_url=public_image_url)
-        elif scenario in ("abstained", "flagged") or sample_id == "rx-sample-3":
+        elif scenario in ("abstained", "flagged") or sample_id in ("rx-sample-3", "sample-3"):
             response = get_abstained_fixture(prescription_id=prescription_id, image_url=public_image_url)
         else:
             response = get_confident_fixture(prescription_id=prescription_id, image_url=public_image_url)
@@ -170,5 +170,101 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
         response.processed_image_url = processed_image_url
         response.quality_report = quality_report_dict
         response.preprocessing_manifest = preprocessing_manifest_dict
+
+        # ------------------------------------------------------------------
+        # 5. Attach Phase 8 Confidence Assessment & Field Enrichment
+        # ------------------------------------------------------------------
+        from ai.confidence.service import get_confidence_service
+
+        conf_service = get_confidence_service()
+
+        for f_key, f_item in response.fields.items():
+            if f_item.raw_confidence is None:
+                f_item.raw_confidence = f_item.confidence
+            if not f_item.calibration_status:
+                f_item.calibration_status = conf_service.calibration_status
+            if not f_item.calibration_method:
+                f_item.calibration_method = conf_service.active_method
+
+        if response.confidence_assessment is None:
+            response.confidence_assessment = {
+                "prescription_id": prescription_id,
+                "overall_raw_score": response.data.document_confidence if response.data else 0.85,
+                "overall_calibrated_confidence": None,
+                "calibration_status": conf_service.calibration_status,
+                "calibration_method": conf_service.active_method,
+                "medicines": [],
+            }
+
+        # ------------------------------------------------------------------
+        # 6. Attach Phase 9 Abstention Determination & Human Verification
+        # ------------------------------------------------------------------
+        from ai.abstention.service import get_abstention_service
+
+        abstention_service = get_abstention_service()
+        response.meta.pipeline_stages_completed = 9
+
+        abstained_keys = []
+        for f_key, f_item in response.fields.items():
+            is_abstained = False
+            reasons = []
+            if f_item.status in ("uncertain", "flagged"):
+                is_abstained = True
+                if f_item.status == "uncertain":
+                    reasons.append("EXTRACTION_UNCERTAIN")
+                if f_item.status == "flagged":
+                    reasons.append("AMBIGUOUS_CURSIVE_STROKE")
+            elif getattr(f_item, "candidates", None) and len(f_item.candidates) > 1:
+                is_abstained = True
+                reasons.append("MULTIPLE_CANDIDATES")
+
+            # Check if overall response requires review/abstain or has validation flags
+            if (response.requires_human_review or response.status == "abstain") and f_key in ("medicine_name", "medication"):
+                is_abstained = True
+                if "VALIDATION_CONFLICT" not in reasons:
+                    reasons.append("VALIDATION_CONFLICT")
+
+            if is_abstained:
+                if f_item.calibration_status == "insufficient_data" and "CALIBRATION_INSUFFICIENT_DATA" not in reasons:
+                    reasons.append("CALIBRATION_INSUFFICIENT_DATA")
+                f_item.abstention_decision = "abstained"
+                f_item.abstention_reasons = reasons
+                f_item.requires_human_verification = True
+                abstained_keys.append(f_key)
+            else:
+                f_item.abstention_decision = "accepted"
+                f_item.abstention_reasons = []
+                f_item.requires_human_verification = False
+
+        if response.requires_human_review and not abstained_keys:
+            abstained_keys.append("medicine_name")
+
+        requires_verification = len(abstained_keys) > 0 or response.requires_human_review is True
+        presc_decision = "REQUIRES_HUMAN_VERIFICATION" if requires_verification else "ACCEPTED"
+
+        if response.abstention is None:
+            response.abstention = {
+                "prescription_id": prescription_id,
+                "policy_version": abstention_service.config.policy_version,
+                "prescription_decision": presc_decision,
+                "requires_human_verification": requires_verification,
+                "fields_requiring_verification": abstained_keys,
+                "total_fields_evaluated": len(response.fields),
+                "abstained_fields_count": len(abstained_keys),
+                "abstention_rate": round(len(abstained_keys) / len(response.fields), 4) if response.fields else 0.0,
+                "summary": (
+                    f"Prescription requires human verification: {len(abstained_keys)} fields abstained."
+                    if requires_verification
+                    else "All posology fields accepted under active policy."
+                ),
+                "config_hash": abstention_service.config.get_config_hash(),
+            }
+
+        # Ensure verification state is registered
+        abstention_service.get_or_create_verification_state(
+            prescription_id=prescription_id,
+            original_image_url=response.original_image_url or "",
+            pending_fields=abstained_keys,
+        )
 
         return response

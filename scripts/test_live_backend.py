@@ -369,6 +369,150 @@ def run_live_tests():
         check(batch_data["results"][1]["validation_result"]["validation_status"] == "validated", "Batch item 2 validated")
         check(batch_data["results"][2]["validation_result"]["validation_status"] == "not_validated", "Batch item 3 not validated")
 
+        # 27. GET /api/v1/confidence/config (Phase 8 Confidence Config)
+        r_conf_cfg = client.get("/api/v1/confidence/config")
+        check(r_conf_cfg.status_code == 200, "GET /api/v1/confidence/config returns 200 OK")
+        conf_cfg_data = r_conf_cfg.json()
+        check(conf_cfg_data["config_version"] == "confidence_calibration_v1", "Confidence config_version is 'confidence_calibration_v1'")
+        check(conf_cfg_data["min_samples_for_calibration"] == 15, "min_samples_for_calibration is 15")
+        check(conf_cfg_data["calibration_status"] == "insufficient_data", "Default calibrator status is 'insufficient_data'")
+
+        # 28. POST /api/v1/confidence/evaluate (Phase 8 Direct Field Evaluation)
+        r_conf_eval = client.post(
+            "/api/v1/confidence/evaluate",
+            json={
+                "raw_score": 0.94,
+                "field_name": "medicine_name",
+                "source": "multimodal_extraction",
+            }
+        )
+        check(r_conf_eval.status_code == 200, "POST /api/v1/confidence/evaluate returns 200 OK")
+        conf_eval_data = r_conf_eval.json()
+        check(conf_eval_data["raw_signal"]["raw_value"] == 0.94, "Raw confidence signal 0.94 preserved")
+        check(conf_eval_data["calibrated_confidence"]["value"] is None, "Calibrated confidence is None when insufficient data")
+        check(conf_eval_data["calibration_status"] == "insufficient_data", "Calibration status is 'insufficient_data'")
+
+        # 29. POST /api/v1/confidence/metrics (Phase 8 Calibration Metrics)
+        r_conf_metrics = client.post(
+            "/api/v1/confidence/metrics",
+            json={
+                "confidences": [0.9, 0.8, 0.7, 0.4, 0.2],
+                "labels": [1, 1, 1, 0, 0],
+                "num_bins": 5,
+            }
+        )
+        check(r_conf_metrics.status_code == 200, "POST /api/v1/confidence/metrics returns 200 OK")
+        metrics_data = r_conf_metrics.json()
+        check("ece" in metrics_data, "ECE present in metrics output")
+        check("mce" in metrics_data, "MCE present in metrics output")
+        check("brier_score" in metrics_data, "Brier score present in metrics output")
+        check(metrics_data["sample_count"] == 5, "Sample count is 5")
+
+        # 30. GET /api/v1/confidence/fixtures (Phase 8 14 Deterministic Fixtures)
+        r_conf_fix = client.get("/api/v1/confidence/fixtures")
+        check(r_conf_fix.status_code == 200, "GET /api/v1/confidence/fixtures returns 200 OK")
+        fixtures_data = r_conf_fix.json()
+        check(fixtures_data["fixture_count"] == 14, "Contains exactly 14 deterministic fixtures")
+        check(any("01-WELL-CALIBRATED" in f.get("fixture_id", "") for f in fixtures_data["fixtures"]), "Fixture 1 present")
+        check(any("13-CONFLICTING" in f.get("fixture_id", "") for f in fixtures_data["fixtures"]), "Fixture 13 present")
+
+        # 31. Phase 9 Pipeline Stages & Confidence Assessment Verification
+        r_stage9 = client.post("/api/v1/prescriptions/analyze", data={"sample_id": "rx-sample-1"})
+        check(r_stage9.status_code == 200, "POST analyze (sample-1 stage 9) returns 200 OK")
+        s9_data = r_stage9.json()
+        check(s9_data["meta"]["pipeline_stages_completed"] == 9, "Pipeline stages completed is 9")
+        check("confidence_assessment" in s9_data, "confidence_assessment present in response")
+        check(s9_data["fields"]["medicine_name"]["raw_confidence"] is not None, "Field raw_confidence enriched")
+        check(s9_data["fields"]["medicine_name"]["calibration_status"] == "insufficient_data", "Field calibration_status is insufficient_data")
+        check("abstention" in s9_data, "abstention block present in analyze response")
+        check(s9_data["abstention"]["policy_version"] == "abstention_policy_v1", "Policy version is abstention_policy_v1")
+
+        # 32. GET /api/v1/abstention/config
+        r_abs_cfg = client.get("/api/v1/abstention/config")
+        check(r_abs_cfg.status_code == 200, "GET /api/v1/abstention/config returns 200 OK")
+        abs_cfg_data = r_abs_cfg.json()
+        check(abs_cfg_data["policy_version"] == "abstention_policy_v1", "Policy version is abstention_policy_v1")
+        check(abs_cfg_data["min_calibrated_confidence"] == 0.80, "Default min calibrated confidence is 0.80")
+        check(abs_cfg_data["dosage_strict_mode"] is True, "Dosage strict mode enabled")
+
+        # 33. GET /api/v1/abstention/fixtures
+        r_abs_fix = client.get("/api/v1/abstention/fixtures")
+        check(r_abs_fix.status_code == 200, "GET /api/v1/abstention/fixtures returns 200 OK")
+        abs_fix_data = r_abs_fix.json()
+        check(len(abs_fix_data) == 15, "Contains exactly 15 Phase 9 deterministic fixtures")
+        check(any("01-HIGH-CONFIDENCE-ACCEPT" in f.get("fixture_id", "") for f in abs_fix_data), "Fixture 1 present")
+        check(any("09-DOSAGE-FORMULATION-MISMATCH" in f.get("fixture_id", "") for f in abs_fix_data), "Fixture 9 present")
+        check(any("15-FULL-PRESCRIPTION-REQUIRES-VERIFICATION" in f.get("fixture_id", "") for f in abs_fix_data), "Fixture 15 present")
+
+        # 34. POST /api/v1/abstention/evaluate
+        r_abs_eval = client.post(
+            "/api/v1/abstention/evaluate",
+            json={
+                "field_name": "medicine_name",
+                "value": "Amoxicillin",
+                "raw_confidence": 0.95,
+                "calibrated_confidence": 0.95,
+                "calibration_status": "calibrated",
+            }
+        )
+        check(r_abs_eval.status_code == 200, "POST /api/v1/abstention/evaluate returns 200 OK")
+        eval_data = r_abs_eval.json()
+        check(eval_data["decision"] == "accepted", "High calibrated confidence evaluates to accepted")
+        check(eval_data["requires_human_verification"] is False, "Verification not required for accepted field")
+
+        # 35. Human Verification Endpoints (Confirm, Correct, Unreadable)
+        test_rx_id = "RX-LIVE-TEST-001"
+        test_field = "medicine_name"
+
+        # 35a. Confirm field
+        r_confirm = client.post(
+            f"/api/v1/verification/{test_rx_id}/fields/{test_field}/confirm",
+            json={
+                "original_value": "Augmentin 625 Duo",
+                "reason": "Clear pen stroke confirms Augmentin",
+            }
+        )
+        check(r_confirm.status_code == 200, "POST verification confirm returns 200 OK")
+        confirm_data = r_confirm.json()
+        check(confirm_data["verification_status"] == "confirmed", "Status is confirmed")
+        check(confirm_data["verified_value"] == "Augmentin 625 Duo", "Verified value matches original")
+
+        # 35b. Correct field
+        r_correct = client.post(
+            f"/api/v1/verification/{test_rx_id}/fields/{test_field}/correct",
+            json={
+                "original_value": "Augmentin 625 Duo",
+                "corrected_value": "Amoxicillin 500",
+                "reason": "Stroke inspection indicates Amoxicillin",
+            }
+        )
+        check(r_correct.status_code == 200, "POST verification correct returns 200 OK")
+        correct_data = r_correct.json()
+        check(correct_data["verification_status"] == "corrected", "Status is corrected")
+        check(correct_data["original_value"] == "Augmentin 625 Duo", "Original value strictly preserved")
+        check(correct_data["verified_value"] == "Amoxicillin 500", "Verified value stored")
+
+        # 35c. Mark unreadable
+        r_unread = client.post(
+            f"/api/v1/verification/{test_rx_id}/fields/dosage/unreadable",
+            json={
+                "original_value": "??? mg",
+                "reason": "Ink blot makes strength illegible",
+                "verifier_id": "verifier_live_01",
+            }
+        )
+        check(r_unread.status_code == 200, "POST verification unreadable returns 200 OK")
+        unread_data = r_unread.json()
+        check(unread_data["verification_status"] == "unreadable", "Status is unreadable")
+        check(unread_data["verified_value"] is None, "Verified value is None for unreadable")
+
+        # 35d. GET verification state
+        r_v_state = client.get(f"/api/v1/verification/{test_rx_id}")
+        check(r_v_state.status_code == 200, "GET verification state returns 200 OK")
+        v_state_data = r_v_state.json()
+        check(v_state_data["prescription_id"] == test_rx_id, "State prescription_id matches")
+        check(len(v_state_data["audit_trail"]) == 3, "Audit trail records all 3 verification actions")
+
 
     print("\n======================================================")
     print(f"LIVE TEST SUMMARY: {passed} PASSED | {failed} FAILED")

@@ -81,6 +81,15 @@ export interface ExtractedFieldItem {
   uncertaintyReason?: string;
   verificationInstruction?: string;
   interpretedCandidate?: string;
+  rawConfidence?: number | null;
+  calibratedConfidence?: number | null;
+  calibrationStatus?: 'calibrated' | 'uncalibrated' | 'insufficient_data' | 'not_available';
+  calibrationMethod?: string | null;
+  abstentionDecision?: 'accepted' | 'abstained';
+  abstentionReasons?: string[];
+  requiresHumanVerification?: boolean;
+  verificationStatus?: 'pending' | 'confirmed' | 'corrected' | 'unreadable';
+  verifiedValue?: string | null;
 }
 
 export interface ValidationEvidence {

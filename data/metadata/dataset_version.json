@@ -2,7 +2,7 @@
   "dataset_version": "1.0.0",
   "release_date": "2026-09-27T08:09:12.576431+00:00",
   "total_samples": 7,
-  "manifest_checksum": "837a945a62917250f56a59978a002cbc04447db0a3d9ebc997f28f7528b26ffa",
+  "manifest_checksum": "62cd5783f3330fa998c7430b281204abd44b078bc64fbc0c81b3f83050944882",
   "ground_truth_checksum": "3775cdfa002261833ba94368716bb1bc2c5881b29c7cdd2c212cf95ae840e37d",
   "splits_checksum": "19f99576eab1d096377c9d4175e29e6c63a75442b50d83a52b4fc7caa13b09d2",
   "git_commit_reference": "262389e",

@@ -282,6 +282,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         rag_requires_human_review = False
 
         val_service = get_medicine_validation_service()
+        raw_val_results: List[Any] = []
         for idx, med in enumerate(extraction_result.medicines):
             med_name_val = med.medicine_name.value
             dosage_val = med.dosage.value
@@ -289,6 +290,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 candidate_name=med_name_val or "",
                 observed_dosage=dosage_val,
             )
+            raw_val_results.append(val_res)
             medicine_validations_list.append(val_res.model_dump())
 
             if val_res.requires_human_review:
@@ -319,7 +321,58 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             if idx == 0:
                 primary_ui_evidence = val_res.to_ui_validation_evidence()
 
-        effective_human_review = extraction_result.requires_human_review or rag_requires_human_review
+        # ------------------------------------------------------------------
+        # Phase 8: Confidence Estimation & Calibration (PLAN.md Section 17)
+        # ------------------------------------------------------------------
+        from ai.confidence.service import get_confidence_service
+        confidence_service = get_confidence_service()
+        confidence_assessment = confidence_service.evaluate_prescription_confidence(
+            extraction_result=extraction_result,
+            validation_results=raw_val_results,
+        )
+
+        # Enrich Section 6 field extraction items with Phase 8 calibration signals
+        for f_name, f_item in fields_dict.items():
+            f_conf = confidence_assessment.fields.get(f_name)
+            if f_conf:
+                f_item.raw_confidence = f_conf.raw_signal.raw_value
+                f_item.calibrated_confidence = f_conf.calibrated.value
+                f_item.calibration_status = f_conf.calibrated.calibration_status
+                f_item.calibration_method = f_conf.calibrated.calibration_method
+
+        # ------------------------------------------------------------------
+        # Phase 9: Abstention & Human Verification (PLAN.md Section 18)
+        # ------------------------------------------------------------------
+        from ai.abstention.service import get_abstention_service
+        abstention_service = get_abstention_service()
+        abstention_decision = abstention_service.evaluate_prescription(
+            prescription_id=prescription_id,
+            extraction_result=extraction_result,
+            confidence_assessment=confidence_assessment,
+            validation_results=raw_val_results,
+            original_image_url=public_image_url,
+        )
+
+        # Enrich Section 6 field extraction items with Phase 9 abstention decisions
+        for f_name, f_item in fields_dict.items():
+            f_dec = abstention_decision.fields.get(f_name)
+            if f_dec:
+                f_item.abstention_decision = f_dec.decision
+                f_item.abstention_reasons = f_dec.reason_codes
+                f_item.requires_human_verification = f_dec.requires_human_verification
+
+        # Ensure human verification state is initialized for traceability
+        abstention_service.get_or_create_verification_state(
+            prescription_id=prescription_id,
+            original_image_url=public_image_url or "",
+            pending_fields=abstention_decision.fields_requiring_verification,
+        )
+
+        effective_human_review = (
+            extraction_result.requires_human_review
+            or rag_requires_human_review
+            or abstention_decision.requires_human_verification
+        )
         overall_status_str = "NEEDS_VERIFICATION" if effective_human_review else "VERIFIED"
 
         if primary_ui_evidence:
@@ -380,7 +433,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 timestamp=extraction_result.created_at,
                 processing_time_ms=int(extraction_result.duration_seconds * 1000),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
-                pipeline_stages_completed=7,
+                pipeline_stages_completed=9,
             ),
             document_telemetry=DocumentTelemetry(
                 estimated_dpi=200,
@@ -468,6 +521,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             medicines=[m.model_dump() for m in extraction_result.medicines],
             multimodal_result=extraction_result.model_dump(),
             medicine_validations=medicine_validations_list,
+            confidence_assessment=confidence_assessment.model_dump(),
+            abstention=abstention_decision.model_dump(),
         )
 
 

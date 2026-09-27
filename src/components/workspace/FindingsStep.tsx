@@ -12,15 +12,12 @@ import { DemoStateSwitcher } from '../results/DemoStateSwitcher';
 import { LasaSafetyCard } from '../results/LasaSafetyCard';
 import { MedicineValidationSection } from '../results/MedicineValidationSection';
 import { MultilingualExplanationCard } from '../results/MultilingualExplanationCard';
+import { ExtractionFieldCard } from '../results/ExtractionFieldCard';
 import {
   ShieldCheck,
   ShieldAlert,
-  AlertTriangle,
-  AlertCircle,
   Printer,
   UploadCloud,
-  CheckCircle2,
-  FileSearch,
 } from 'lucide-react';
 
 export interface FindingsStepProps {
@@ -191,118 +188,21 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
             </div>
 
             <div className="space-y-4">
-              {currentState.fields.map((field: ExtractedFieldItem) => {
-                const isFieldHovered = hoveredLabel === field.fieldName;
-                const isUncertain = field.status !== 'confident';
-                const confidencePercent = Math.round(field.confidence * 100);
-
-                return (
-                  <div
-                    key={field.fieldKey}
-                    onMouseEnter={() => {
-                      setHoveredBox(field.boundingBox || null);
-                      setHoveredLabel(field.fieldName);
-                    }}
-                    onMouseLeave={() => {
-                      setHoveredBox(null);
-                      setHoveredLabel(undefined);
-                    }}
-                    className={`rounded-2xl p-5 border transition-all ${
-                      isFieldHovered
-                        ? 'border-teal-500 shadow-md bg-surface ring-1 ring-teal-500/20'
-                        : field.status === 'abstained' || field.status === 'flagged'
-                        ? 'border-red-200 dark:border-red-900/60 bg-surface shadow-xs'
-                        : field.status === 'uncertain'
-                        ? 'border-amber-200 dark:border-amber-900/60 bg-surface shadow-xs'
-                        : 'border-theme bg-surface shadow-xs'
-                    }`}
-                  >
-                    {/* Header: Field Name, Extracted Value, and Semantic Status */}
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-2.5">
-                      <div className="space-y-0.5">
-                        <span className="text-xs text-theme-muted block font-medium">
-                          {field.fieldName}
-                        </span>
-                        <h3 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">
-                          {field.value}
-                        </h3>
-                        {field.interpretedCandidate && (
-                          <div className="text-xs sm:text-sm text-teal-700 dark:text-teal-400 font-medium">
-                            Candidate: {field.interpretedCandidate}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Status indicator badge */}
-                      <div className="flex items-center gap-3">
-                        {field.status === 'confident' && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                            <span>Grounded ({confidencePercent}%)</span>
-                          </span>
-                        )}
-
-                        {field.status === 'uncertain' && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-semibold">
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                            <span>Needs verification ({confidencePercent}%)</span>
-                          </span>
-                        )}
-
-                        {field.status === 'flagged' && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 text-xs font-semibold">
-                            <AlertTriangle className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-                            <span>Safety alert ({confidencePercent}%)</span>
-                          </span>
-                        )}
-
-                        {field.status === 'abstained' && (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-100 dark:bg-red-950/60 text-red-900 dark:text-red-200 border border-red-300 dark:border-red-800 text-xs font-semibold">
-                            <ShieldAlert className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-                            <span>Abstained ({confidencePercent}%)</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Explanation */}
-                    <p className="text-sm sm:text-base text-theme-secondary leading-relaxed pt-1">
-                      {field.explanation}
-                    </p>
-
-                    {/* Uncertainty Warning Box */}
-                    {isUncertain && (
-                      <div className="mt-3.5 p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 space-y-1.5 text-xs">
-                        <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300 font-semibold">
-                          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                          <span>Attention: Ambiguous handwriting</span>
-                        </div>
-                        <p className="text-amber-800 dark:text-amber-300 leading-relaxed">
-                          <strong>Observation: </strong>
-                          {field.uncertaintyReason ||
-                            'The handwriting does not provide enough visual evidence to confidently interpret this field.'}
-                        </p>
-                        <p className="font-semibold text-amber-950 dark:text-amber-200 pt-0.5">
-                          <strong>Required action: </strong>
-                          {field.verificationInstruction ||
-                            'Compare with original prescription / consult healthcare professional.'}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Source link */}
-                    <div className="pt-3 mt-3 border-t border-theme flex items-center justify-between text-xs text-theme-muted">
-                      <div className="flex items-center gap-1.5">
-                        <FileSearch className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                        <span>Source: {field.source}</span>
-                      </div>
-                      <span className="text-teal-700 dark:text-teal-400 font-medium">
-                        Hover to inspect stroke
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
+              {currentState.fields.map((field: ExtractedFieldItem) => (
+                <ExtractionFieldCard
+                  key={field.fieldKey}
+                  field={field}
+                  isActive={hoveredLabel === field.fieldName}
+                  onHover={(box, label) => {
+                    setHoveredBox(box || null);
+                    setHoveredLabel(label);
+                  }}
+                  onLeave={() => {
+                    setHoveredBox(null);
+                    setHoveredLabel(undefined);
+                  }}
+                />
+              ))}
             </div>
           </div>
 

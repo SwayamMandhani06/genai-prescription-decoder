@@ -449,7 +449,7 @@ class MockMultimodalModelAdapter(IMultimodalModelAdapter):
             })
 
         # Case 4: Uncertain medicine name
-        if active_scenario in ("uncertain_medicine_name", "uncertain_name", "ambiguous_name"):
+        if active_scenario in ("uncertain", "uncertain_medicine_name", "uncertain_name", "ambiguous_name"):
             return json.dumps({
                 "medicines": [
                     {

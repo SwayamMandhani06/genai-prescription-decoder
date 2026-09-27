@@ -50,6 +50,13 @@ export function mapEntityDtoToFieldItem(dto: ExtractedEntityDto): ExtractedField
     uncertaintyReason: dto.uncertainty_reason || undefined,
     verificationInstruction: dto.verification_instruction || undefined,
     interpretedCandidate: dto.interpreted_candidate || undefined,
+    rawConfidence: dto.raw_confidence ?? dto.confidence,
+    calibratedConfidence: dto.calibrated_confidence ?? null,
+    calibrationStatus: dto.calibration_status || 'insufficient_data',
+    calibrationMethod: dto.calibration_method || null,
+    abstentionDecision: dto.abstention_decision || undefined,
+    abstentionReasons: dto.abstention_reasons || [],
+    requiresHumanVerification: dto.requires_human_verification ?? undefined,
   };
 }
 
