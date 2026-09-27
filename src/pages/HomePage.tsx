@@ -38,6 +38,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         onNavigateToResearch={onOpenResearch}
         onOpenUploadClick={onOpenUpload}
         onOpenResultsClick={onOpenResults}
+        onHomeClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         activeView="home"
       />
 

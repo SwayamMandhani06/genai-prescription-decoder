@@ -24,6 +24,8 @@ export function mapEntityDtoToFieldItem(dto: ExtractedEntityDto): ExtractedField
       ? 'CONFIDENT · High confidence'
       : dto.status === 'uncertain'
       ? 'UNCERTAIN · Needs verification'
+      : dto.status === 'abstained'
+      ? 'ABSTAINED · Unable to interpret'
       : 'FLAGGED · Do not rely on this interpretation';
 
   // Map backend field keys to UI domain field keys
@@ -139,6 +141,11 @@ export function mapApiResponseToResultsState(
   const { data } = response;
 
   const idMap: Record<string, ResultsDemoState['id']> = {
+    'DEMO-RX-01': 'state-confident',
+    'DEMO-RX-02': 'state-uncertain',
+    'DEMO-RX-03': 'state-lasa',
+    'DEMO-RX-04': 'state-flagged',
+    'DEMO-RX-05': 'state-abstained',
     'RX-PUN-3412-A': 'state-confident',
     'RX-MUM-8921-B': 'state-uncertain',
     'RX-CHN-5510-C': 'state-lasa',
@@ -228,5 +235,6 @@ export function mapApiResponseToAnalysisResult(
       abstentionsCount: data.overall_status === 'SELECTIVE_ABSTAIN' ? 1 : 0,
       lasaRiskCount: data.lasa_screening.has_warning ? 1 : 0,
     },
+    overallStatus: data.overall_status,
   };
 }

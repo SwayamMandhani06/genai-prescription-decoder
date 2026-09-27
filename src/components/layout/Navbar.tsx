@@ -3,7 +3,7 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 import {
   FileText,
   ShieldCheck,
-  Sparkles,
+  ScanLine,
   HelpCircle,
   Menu,
   X,
@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={(e) => handleLinkClick(e, onNavigateToAnalyze, 'analyze')}
               className="px-3.5 py-1.5 text-xs font-medium text-theme-secondary hover:text-theme-primary hover:bg-surface rounded-full transition-all flex items-center gap-1.5"
             >
-              <Sparkles className="w-3.5 h-3.5 text-theme-muted" />
+              <ScanLine className="w-3.5 h-3.5 text-theme-muted" />
               <span>Analyze</span>
             </a>
 
@@ -195,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
           >
-            <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <ScanLine className="w-4 h-4 text-teal-600 dark:text-teal-400" />
             <span>Analyze</span>
           </a>
 

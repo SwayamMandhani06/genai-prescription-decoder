@@ -9,6 +9,7 @@ import {
   UNCERTAIN_RESPONSE_FIXTURE,
   FLAGGED_RESPONSE_FIXTURE,
   LASA_WARNING_RESPONSE_FIXTURE,
+  ABSTAINED_RESPONSE_FIXTURE,
   FASTAPI_VALIDATION_ERROR_FIXTURE,
   FASTAPI_SERVER_ERROR_FIXTURE,
   FASTAPI_GATEWAY_TIMEOUT_FIXTURE,
@@ -92,6 +93,7 @@ export class MockPrescriptionApiClient implements IPrescriptionApiClient {
     if (scenario === 'uncertain') return { ...UNCERTAIN_RESPONSE_FIXTURE };
     if (scenario === 'flagged') return { ...FLAGGED_RESPONSE_FIXTURE };
     if (scenario === 'lasa_warning') return { ...LASA_WARNING_RESPONSE_FIXTURE };
+    if (scenario === 'abstained') return { ...ABSTAINED_RESPONSE_FIXTURE };
 
     // 7. Dynamic Resolution based on sample key or uploaded file
     if (typeof input === 'string') {

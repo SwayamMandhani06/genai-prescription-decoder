@@ -1,5 +1,6 @@
 import React from 'react';
 import { UploadedPrescriptionFile } from '../../types/navigation.types';
+import { SAMPLE_PRESCRIPTION_CANVASES } from '../../data/sampleHandwrittenSvg';
 import {
   ArrowLeft,
   ArrowRight,
@@ -54,47 +55,64 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               className="max-w-md w-full shadow-md rounded-2xl prescription-paper p-6 border border-theme origin-center"
             >
               {/* Prescription Document Display */}
-              <div className="space-y-4 text-slate-900">
-                <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
-                  <div>
-                    <div className="font-semibold text-teal-900 text-[11px]">
-                      Example Clinical Practice
-                    </div>
-                    <div className="font-bold text-slate-900 text-xs">
-                      Example Prescriber, M.D.
-                    </div>
-                  </div>
-                  <span className="text-[11px] text-slate-600">
-                    {uploadedData?.fileName || 'prescription.svg'}
-                  </span>
-                </div>
-
-                <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
-
-                {/* Handwriting Lines */}
-                <div className="space-y-3.5 py-2">
-                  <div className="border-b border-slate-200 pb-2">
-                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                      Augm 625 Duo &mdash; 1-0-1 (PC) x 5d
-                    </div>
-                  </div>
-                  <div className="border-b border-slate-200 pb-2">
-                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                      Pan 40 &mdash; 1 tab OD (AC) x 5d
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                      Dolo 650 &mdash; SOS for fever
-                    </div>
+              {uploadedData?.source === 'user_upload' && uploadedData.previewUrl ? (
+                <div className="flex flex-col items-center">
+                  <img
+                    src={uploadedData.previewUrl}
+                    alt="Prescription Document Under Review"
+                    className="w-full max-h-[420px] object-contain rounded-lg shadow-xs"
+                  />
+                  <div className="pt-2 text-[10px] text-slate-600 font-mono text-center">
+                    {uploadedData.fileName}
                   </div>
                 </div>
+              ) : (
+                (() => {
+                  const activeCanvas =
+                    SAMPLE_PRESCRIPTION_CANVASES[uploadedData?.sampleId || 'rx-sample-1'] ||
+                    SAMPLE_PRESCRIPTION_CANVASES['rx-sample-1'];
+                  return (
+                    <div className="space-y-4 text-slate-900">
+                      <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
+                        <div>
+                          <div className="font-semibold text-teal-900 text-[11px]">
+                            {activeCanvas.doctorHeader.clinicName}
+                          </div>
+                          <div className="font-bold text-slate-900 text-xs">
+                            {activeCanvas.doctorHeader.name}
+                          </div>
+                        </div>
+                        <span className="text-[11px] text-slate-600 font-mono">
+                          {activeCanvas.accessionId}
+                        </span>
+                      </div>
 
-                <div className="pt-2 border-t border-slate-300 flex justify-between text-[10px] text-slate-600">
-                  <span>Patient: Demo Patient (34M)</span>
-                  <span>Prescriber Signature Attached</span>
-                </div>
-              </div>
+                      <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
+
+                      {/* Handwriting Lines */}
+                      <div className="space-y-3 py-1.5">
+                        {activeCanvas.strokes.map((stroke) => (
+                          <div key={stroke.id} className="border-b border-slate-200 pb-2">
+                            <div
+                              className="font-serif italic text-sm sm:text-base font-bold leading-relaxed"
+                              style={{ color: stroke.inkColor }}
+                            >
+                              {stroke.label}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-300 flex justify-between items-center text-[10px] text-slate-600">
+                        <span>Patient: {activeCanvas.patientInfo.name} ({activeCanvas.patientInfo.ageGender})</span>
+                        <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded bg-slate-200/80">
+                          {activeCanvas.clinicStampText}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
             </div>
 
             {/* Rotation Adjustment */}

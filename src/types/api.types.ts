@@ -18,7 +18,7 @@ export type EntityFieldKeyDto =
   | 'duration'
   | 'abbreviation';
 
-export type EntityStatusDto = 'confident' | 'uncertain' | 'flagged';
+export type EntityStatusDto = 'confident' | 'uncertain' | 'flagged' | 'abstained';
 
 export interface ExtractedEntityDto {
   field_key: EntityFieldKeyDto;
@@ -126,7 +126,7 @@ export interface PrescriptionDataDto {
   scenario_title: string;
   scenario_subtitle: string;
   difficulty_tag: 'Clear Handwriting' | 'Moderate Cursive' | 'LASA Similarity' | 'Severe Ambiguity';
-  overall_status: 'VERIFIED' | 'NEEDS_VERIFICATION' | 'SAFETY_ALERT' | 'SELECTIVE_ABSTAIN';
+  overall_status: 'VERIFIED' | 'NEEDS_VERIFICATION' | 'SAFETY_ALERT' | 'SELECTIVE_ABSTAIN' | 'ABSTAINED';
   document_confidence: number;
   patient_info: PatientInfoDto;
   prescriber_info: PrescriberInfoDto;
@@ -164,6 +164,8 @@ export interface PrescriptionAnalyzeOptionsDto {
     | 'uncertain'
     | 'flagged'
     | 'lasa_warning'
+    | 'abstained'
+    | 'invalid_image'
     | 'validation_error'
     | 'server_error'
     | 'timeout'

@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "tsc --noEmit",
+    "test": "npx vite-node scripts/verify-ui-states.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

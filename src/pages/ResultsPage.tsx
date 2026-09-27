@@ -39,12 +39,20 @@ export interface ResultsPageProps {
 }
 
 export const ResultsPage: React.FC<ResultsPageProps> = ({
+  initialResult,
   uploadedData,
   onBackToHome,
   onBackToUpload,
   onRerunPipeline,
 }) => {
   const determineInitialState = (): ResultsDemoStateId => {
+    if (initialResult) {
+      if (initialResult.overallStatus === 'ABSTAINED') return 'state-abstained';
+      if (initialResult.overallStatus === 'SAFETY_ALERT') return 'state-lasa';
+      if (initialResult.overallStatus === 'SELECTIVE_ABSTAIN') return 'state-flagged';
+      if (initialResult.overallStatus === 'NEEDS_VERIFICATION') return 'state-uncertain';
+      return 'state-confident';
+    }
     if (uploadedData?.sampleId === 'rx-sample-2') return 'state-lasa';
     if (uploadedData?.sampleId === 'rx-sample-3') return 'state-flagged';
     return 'state-confident';
@@ -88,6 +96,13 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           <Badge variant="coral" size="sm">
             <ShieldAlert className="w-3.5 h-3.5 inline mr-1" />
             Selective Abstention Active
+          </Badge>
+        );
+      case 'ABSTAINED':
+        return (
+          <Badge variant="coral" size="sm">
+            <ShieldAlert className="w-3.5 h-3.5 inline mr-1" />
+            Clinical Abstention Active
           </Badge>
         );
     }
@@ -212,13 +227,30 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           </div>
         </div>
 
+        {/* Explicit Clinical Abstention Notice if Document Abstained */}
+        {currentState.overallStatus === 'ABSTAINED' && (
+          <div className="p-5 sm:p-6 rounded-2xl bg-amber-500/10 border-2 border-amber-600/40 text-amber-900 dark:text-amber-200 space-y-2">
+            <div className="flex items-center gap-2.5 font-bold text-base sm:text-lg">
+              <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>Autonomous Abstention Protocol Active</span>
+            </div>
+            <p className="text-xs sm:text-sm leading-relaxed text-theme-secondary">
+              The multimodal vision and confidence calibration engines determined this prescription document has severe stroke ambiguity, overlapping ink, or non-decipherable posology. Per clinical safety guidelines, automated interpretation has been halted to prevent pharmacotherapeutic misadventure.
+            </p>
+            <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
+              <span>Required Action:</span>
+              <span className="font-normal text-theme-primary">Direct clinical pharmacist audit or requesting a digitized re-issue from the prescriber is required.</span>
+            </div>
+          </div>
+        )}
+
         {/* 2-Column Responsive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Interactive Original Script Viewer (5 cols) */}
           <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
             <OriginalScriptViewer
               scriptKey={currentState.rawScriptKey}
-              previewUrl={uploadedData?.previewUrl}
+              previewUrl={uploadedData?.source === 'user_upload' ? uploadedData.previewUrl : undefined}
               activeBoundingBox={hoveredBox}
               highlightLabel={hoveredLabel}
               accessionId={currentState.accessionId}

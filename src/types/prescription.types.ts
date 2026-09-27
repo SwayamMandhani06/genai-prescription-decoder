@@ -63,9 +63,10 @@ export interface PrescriptionAnalysisResult {
     abstentionsCount: number;
     lasaRiskCount: number;
   };
+  overallStatus?: 'VERIFIED' | 'NEEDS_VERIFICATION' | 'SAFETY_ALERT' | 'SELECTIVE_ABSTAIN' | 'ABSTAINED';
 }
 
-export type FieldConfidenceStatus = 'confident' | 'uncertain' | 'flagged';
+export type FieldConfidenceStatus = 'confident' | 'uncertain' | 'flagged' | 'abstained';
 
 export interface ExtractedFieldItem {
   fieldKey: 'medicineName' | 'dosage' | 'frequency' | 'duration' | 'abbreviation' | 'route';
@@ -73,7 +74,7 @@ export interface ExtractedFieldItem {
   value: string;
   confidence: number; // 0.0 - 1.0 (e.g. 0.94)
   status: FieldConfidenceStatus;
-  statusLabel: string; // e.g. "CONFIDENT · High confidence", "UNCERTAIN · Needs verification", "FLAGGED · Do not rely on this interpretation"
+  statusLabel: string; // e.g. "CONFIDENT · High confidence", "UNCERTAIN · Needs verification", "FLAGGED · Do not rely on this interpretation", "ABSTAINED · Unable to interpret"
   explanation: string;
   source: string; // e.g. "Prescription Line 01 · Pen Stroke #1"
   boundingBox?: BoundingBox;
@@ -119,7 +120,8 @@ export type ResultsDemoStateId =
   | 'state-confident'
   | 'state-uncertain'
   | 'state-lasa'
-  | 'state-flagged';
+  | 'state-flagged'
+  | 'state-abstained';
 
 export interface PosologyTimingSlot {
   slot: string;
@@ -147,11 +149,16 @@ export interface ResultsDemoState {
   patientAgeGender: string;
   doctorName: string;
   clinicName: string;
-  overallStatus: 'VERIFIED' | 'NEEDS_VERIFICATION' | 'SAFETY_ALERT' | 'SELECTIVE_ABSTAIN';
+  overallStatus: 'VERIFIED' | 'NEEDS_VERIFICATION' | 'SAFETY_ALERT' | 'SELECTIVE_ABSTAIN' | 'ABSTAINED';
   documentConfidence: number;
   fields: ExtractedFieldItem[];
   validationEvidence: ValidationEvidence;
   lasaDetail?: LasaSafetyDetail;
+  abstentionGuidance?: {
+    whatHappened: string;
+    why: string;
+    whatToDo: string;
+  };
   multilingual: {
     en: MultilingualExplanationContent;
     hi: MultilingualExplanationContent;

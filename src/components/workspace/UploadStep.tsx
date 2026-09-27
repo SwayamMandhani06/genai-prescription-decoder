@@ -221,48 +221,52 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     className="max-w-md w-full shadow-md rounded-2xl prescription-paper p-6 border border-theme origin-center"
                   >
                     {uploadedData.source === 'curated_sample' ? (
-                      /* Curated Sample SVG Preview */
-                      <div className="space-y-4 text-slate-900">
-                        <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
-                          <div>
-                            <div className="font-semibold text-teal-900 text-[11px]">
-                              Example Outpatient Clinic (Demo)
+                      /* Curated Sample SVG Preview dynamically reflecting selected scenario */
+                      (() => {
+                        const activeCanvas =
+                          SAMPLE_PRESCRIPTION_CANVASES[uploadedData.sampleId || 'rx-sample-1'] ||
+                          SAMPLE_PRESCRIPTION_CANVASES['rx-sample-1'];
+                        return (
+                          <div className="space-y-4 text-slate-900">
+                            <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
+                              <div>
+                                <div className="font-semibold text-teal-900 text-[11px]">
+                                  {activeCanvas.doctorHeader.clinicName}
+                                </div>
+                                <div className="font-bold text-slate-900 text-xs">
+                                  {activeCanvas.doctorHeader.name}
+                                </div>
+                              </div>
+                              <span className="text-[11px] text-slate-600 font-mono">
+                                {activeCanvas.accessionId}
+                              </span>
                             </div>
-                            <div className="font-bold text-slate-900 text-xs">
-                              Example Prescriber, M.D.
-                            </div>
-                          </div>
-                          <span className="text-[11px] text-slate-600">
-                            {uploadedData.fileName}
-                          </span>
-                        </div>
 
-                        <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
+                            <div className="text-xl font-serif italic font-bold text-slate-900">℞</div>
 
-                        {/* Handwriting Lines - Authentic dark fountain ink strokes */}
-                        <div className="space-y-3.5 py-2">
-                          <div className="border-b border-slate-200 pb-2">
-                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                              Augm 625 Duo &mdash; 1-0-1 (PC) x 5d
+                            {/* Handwriting Lines - Authentic dark fountain ink strokes */}
+                            <div className="space-y-3 py-1.5">
+                              {activeCanvas.strokes.map((stroke) => (
+                                <div key={stroke.id} className="border-b border-slate-200 pb-2">
+                                  <div
+                                    className="font-serif italic text-sm sm:text-base font-bold leading-relaxed"
+                                    style={{ color: stroke.inkColor }}
+                                  >
+                                    {stroke.label}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          </div>
-                          <div className="border-b border-slate-200 pb-2">
-                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                              Pan 40 &mdash; 1 tab OD (AC) x 5d
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-serif italic text-base text-[#1e3a8a] font-bold">
-                              Dolo 650 &mdash; SOS for fever
-                            </div>
-                          </div>
-                        </div>
 
-                        <div className="pt-2 border-t border-slate-300 flex justify-between text-[10px] text-slate-600">
-                          <span>Patient: Demo Patient (34M)</span>
-                          <span>Prescriber Signature Attached</span>
-                        </div>
-                      </div>
+                            <div className="pt-2 border-t border-slate-300 flex justify-between items-center text-[10px] text-slate-600">
+                              <span>Patient: {activeCanvas.patientInfo.name} ({activeCanvas.patientInfo.ageGender})</span>
+                              <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 rounded bg-slate-200/80">
+                                {activeCanvas.clinicStampText}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()
                     ) : (
                       /* User Uploaded Image Preview */
                       <img

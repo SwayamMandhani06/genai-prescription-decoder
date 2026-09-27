@@ -748,7 +748,178 @@ export const LASA_WARNING_RESPONSE_FIXTURE: PrescriptionAnalyzeResponseDto = {
 };
 
 /**
- * 5. ERROR RESPONSE FIXTURES
+ * 5. EXPLICIT CLINICAL ABSTENTION FIXTURE
+ * Severe Illegibility / Paper Crease / Full Epistemic Abstention
+ */
+export const ABSTAINED_RESPONSE_FIXTURE: PrescriptionAnalyzeResponseDto = {
+  status: 'abstain',
+  meta: {
+    request_id: 'req-aura-20260905-005',
+    timestamp: '2026-09-05T19:35:00Z',
+    processing_time_ms: 810,
+    model_version: 'aura-swin-v3.4-clinical',
+    pipeline_stages_completed: 7,
+  },
+  document_telemetry: {
+    estimated_dpi: 180,
+    contrast_ratio: 2.1,
+    skew_angle_deg: 3.2,
+    illegibility_score: 0.78,
+    orientation: 'Portrait',
+  },
+  data: {
+    accession_id: 'DEMO-RX-05',
+    script_sample_key: 'rx-sample-3',
+    scenario_title: 'Severe Illegibility (Clinical Abstention)',
+    scenario_subtitle: 'Automated transcription intentionally halted due to extreme cursive ambiguity',
+    difficulty_tag: 'Severe Ambiguity',
+    overall_status: 'ABSTAINED',
+    document_confidence: 0.24,
+    patient_info: {
+      name: 'Demo Patient',
+      age_gender: 'Adult / Demo',
+    },
+    prescriber_info: {
+      name: 'Example Prescriber, M.D.',
+      qualifications: 'General Medicine (Illustrative Demo)',
+      registration_no: 'Demo Reg. No. 00000',
+      clinic_name: 'Example Clinical Practice',
+      clinicAddress: 'Sample Clinic Address (Evaluation Demo)',
+    } as any,
+    extracted_entities: [
+      {
+        field_key: 'medicine_name',
+        field_label: 'Medicine Name',
+        raw_value: '~~ illegible cursive stroke ~~',
+        normalized_value: 'Unable to confidently interpret',
+        confidence: 0.24,
+        status: 'abstained',
+        stroke_source: 'Prescription Line 01 · Pen Stroke #1',
+        bounding_box: { x: 12, y: 32, width: 82, height: 18 },
+        explanation: 'Ink bleed and low-contrast cursive ascenders prevent reliable character isolation.',
+        uncertainty_reason: 'Epistemic uncertainty exceeds 76%. Ligature cannot be matched to known pharmacopeias without clinical hallucination risk.',
+        verification_instruction: 'Mandatory clinical consultation: verify handwritten slip directly with prescriber before dispensing.',
+        interpreted_candidate: 'Undetermined (Model Abstained)',
+      },
+      {
+        field_key: 'dosage',
+        field_label: 'Dosage / Strength',
+        raw_value: '~~ ambiguous numeral ~~',
+        normalized_value: 'Abstained (Not Determined)',
+        confidence: 0.19,
+        status: 'abstained',
+        stroke_source: 'Prescription Line 01 · Pen Stroke #2',
+        bounding_box: { x: 50, y: 32, width: 28, height: 18 },
+        explanation: 'Dosage numeral masked by paper crease and ink smear.',
+        uncertainty_reason: 'Insufficient optical resolution to confirm metric strength (e.g. mg vs mcg).',
+        verification_instruction: 'Physician clarification required prior to dispensing.',
+      },
+      {
+        field_key: 'frequency',
+        field_label: 'Frequency',
+        raw_value: '~~ obscured loop ~~',
+        normalized_value: 'Abstained (Not Determined)',
+        confidence: 0.22,
+        status: 'abstained',
+        stroke_source: 'Prescription Line 01 · Pen Stroke #3',
+        bounding_box: { x: 70, y: 32, width: 22, height: 16 },
+        explanation: 'Frequency ligature obscured by ink smear.',
+        uncertainty_reason: 'Trajectory loop does not match known sig codes (OD/BD/TDS).',
+        verification_instruction: 'Confirm administration frequency with prescriber.',
+      },
+      {
+        field_key: 'duration',
+        field_label: 'Duration',
+        raw_value: '~~ truncated ~~',
+        normalized_value: 'Abstained (Not Determined)',
+        confidence: 0.20,
+        status: 'abstained',
+        stroke_source: 'Prescription Line 01 · Pen Stroke #4',
+        bounding_box: { x: 82, y: 32, width: 14, height: 16 },
+        explanation: 'Duration notation truncated at margin fold.',
+        uncertainty_reason: 'Stroke clipped by page boundary.',
+        verification_instruction: 'Check medical records for prescribed course duration.',
+      },
+    ],
+    validation_evidence: {
+      candidate_name: 'Unidentified Formulation',
+      matched_entity_name: 'Clinical Verification Mandatory',
+      generic_salt: 'Undetermined (Formulary grounding halted)',
+      validation_status: 'unverified',
+      status_badge_text: 'Model Abstained · Verification Required',
+      cdsco_schedule: 'Prescription Drug (Schedule H/H1 Unverified)',
+      rxnorm_cui: 'UNVERIFIED',
+      atc_code: 'UNKNOWN',
+      therapeutic_class: 'Unconfirmed Clinical Entity',
+      indications: 'Clinical indication must be confirmed with patient chart.',
+      evidence_source: 'System Level Calibrated Epistemic Abstention Rule',
+      reference_url: null,
+      alternatives: [],
+    },
+    lasa_screening: {
+      has_warning: false,
+      prescribed_candidate: 'Undetermined',
+      confusable_counterpart: 'N/A',
+      tall_man_prescribed: 'N/A',
+      tall_man_confused: 'N/A',
+      similarity_score: 0,
+      similarity_type: 'Orthographic',
+      metaphone_match: false,
+      clinical_risk_summary: 'Automated screening halted due to full document abstention.',
+      mandated_action: 'Do not dispense based on AI transcription. Pharmacist inspection mandatory.',
+    },
+    posology_explanation: {
+      en: {
+        summary: 'AUTOMATED INTERPRETATION HALTED: The system cannot decipher this prescription with clinical safety standards.',
+        patient_instructions: 'The handwriting on this prescription contains severe ambiguities and ink smears. To protect patient safety, automated decoding has been suspended. Please show the original handwritten prescription slip directly to your doctor or pharmacist.',
+        daily_schedule: [
+          { time_slot: 'Morning', icon_key: 'Sun', dosage_label: 'VERIFY WITH DOCTOR', food_instruction: 'Do not take without confirmation' },
+          { time_slot: 'Afternoon', icon_key: 'CloudSun', dosage_label: 'VERIFY WITH DOCTOR', food_instruction: 'Do not take without confirmation' },
+          { time_slot: 'Evening', icon_key: 'Sunset', dosage_label: 'VERIFY WITH DOCTOR', food_instruction: 'Do not take without confirmation' },
+          { time_slot: 'Night', icon_key: 'Moon', dosage_label: 'VERIFY WITH DOCTOR', food_instruction: 'Do not take without confirmation' },
+        ],
+        precautions: [
+          'DO NOT DISPENSE OR TAKE MEDICATIONS BASED ON AUTOMATED INTERPRETATION.',
+          'Always preserve and inspect the original signed paper prescription.',
+          'Consult the prescribing doctor or pharmacist directly for verified instructions.',
+        ],
+      },
+      hi: {
+        summary: 'स्वचालित प्रतिलेखन रोका गया: सिस्टम इस पर्चे को चिकित्सीय सुरक्षा मानकों के साथ नहीं पढ़ सका।',
+        patient_instructions: 'इस पर्चे की लिखावट में अत्यधिक अस्पष्टता और स्याही का फैलाव है। मरीज की सुरक्षा के लिए स्वचालित डिकोडिंग रोक दी गई है। कृपया मूल लिखित पर्चा सीधे अपने डॉक्टर या फार्मासिस्ट को दिखाएं।',
+        daily_schedule: [
+          { time_slot: 'सुबह', icon_key: 'Sun', dosage_label: 'डॉक्टर से पुष्टि करें', food_instruction: 'पुष्टि के बिना दवा न लें' },
+          { time_slot: 'दोपहर', icon_key: 'CloudSun', dosage_label: 'डॉक्टर से पुष्टि करें', food_instruction: 'पुष्टि के बिना दवा न लें' },
+          { time_slot: 'शाम', icon_key: 'Sunset', dosage_label: 'डॉक्टर से पुष्टि करें', food_instruction: 'पुष्टि के बिना दवा न लें' },
+          { time_slot: 'रात', icon_key: 'Moon', dosage_label: 'डॉक्टर से पुष्टि करें', food_instruction: 'पुष्टि के बिना दवा न लें' },
+        ],
+        precautions: [
+          'स्वचालित व्याख्या के आधार पर दवा न लें।',
+          'मूल हस्ताक्षरित कागजी पर्चा हमेशा सुरक्षित रखें।',
+          'सत्यापित निर्देशों के लिए सीधे डॉक्टर या फार्मासिस्ट से परामर्श लें।',
+        ],
+      },
+      mr: {
+        summary: 'ऑटोमॅटिक डिकोडिंग थांबवले: सिस्टिम हे प्रिस्क्रिप्शन वैद्यकीय सुरक्षेच्या मानकांनुसार वाचू शकली नाही.',
+        patient_instructions: 'या प्रिस्क्रिप्शनमधील हस्ताक्षरात जास्त अस्पष्टता आणि शाईचा डाग आहे. रुग्णाच्या सुरक्षिततेसाठी सिस्टिमने वाचन थांबवले आहे. कृपया मूळ कागदी प्रिस्क्रिप्शन थेट तुमच्या डॉक्टरांना किंवा फार्मसिस्टना दाखवा.',
+        daily_schedule: [
+          { time_slot: 'सकाळी', icon_key: 'Sun', dosage_label: 'डॉक्टरांकडून तपासा', food_instruction: 'खात्रीशिवाय औषध घेऊ नका' },
+          { time_slot: 'दुपारी', icon_key: 'CloudSun', dosage_label: 'डॉक्टरांकडून तपासा', food_instruction: 'खात्रीशिवाय औषध घेऊ नका' },
+          { time_slot: 'संध्याकाळी', icon_key: 'Sunset', dosage_label: 'डॉक्टरांकडून तपासा', food_instruction: 'खात्रीशिवाय औषध घेऊ नका' },
+          { time_slot: 'रात्री', icon_key: 'Moon', dosage_label: 'डॉक्टरांकडून तपासा', food_instruction: 'खात्रीशिवाय औषध घेऊ नका' },
+        ],
+        precautions: [
+          'ऑटोमॅटिक अनुमानाच्या आधारे औषध देऊ किंवा घेऊ नका.',
+          'डॉक्टरांचे मूळ स्वाक्षरी असलेले प्रिस्क्रिप्शन सोबत ठेवा.',
+          'अचूक माहितीसाठी थेट डॉक्टर किंवा फार्मसिस्टचा सल्ला घ्या.',
+        ],
+      },
+    },
+  },
+};
+
+/**
+ * 6. ERROR RESPONSE FIXTURES
  * Authentic FastAPI HTTPException error responses
  */
 export const FASTAPI_VALIDATION_ERROR_FIXTURE: FastApiHttpErrorDto = {

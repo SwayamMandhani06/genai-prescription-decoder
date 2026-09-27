@@ -12,76 +12,79 @@ export const LasaSafetyCard: React.FC<LasaSafetyCardProps> = ({ lasaDetail }) =>
   }
 
   return (
-    <div className="rounded-3xl border border-red-200 dark:border-red-800 bg-red-50/60 dark:bg-red-950/20 p-6 sm:p-7 space-y-5 shadow-xs animate-in fade-in transition-colors">
+    <div className="rounded-2xl border border-amber-300 dark:border-amber-800/80 bg-amber-50/40 dark:bg-amber-950/20 p-5 sm:p-6 space-y-4 shadow-xs transition-colors">
       {/* Alert Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-red-200 dark:border-red-800/60 pb-4">
-        <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
-          <ShieldAlert className="w-6 h-6 text-red-600 dark:text-red-400 shrink-0" />
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-amber-200 dark:border-amber-800/60 pb-3.5">
+        <div className="flex items-center gap-3 text-amber-900 dark:text-amber-200">
+          <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 border border-amber-300 dark:border-amber-700 flex items-center justify-center shrink-0">
+            <ShieldAlert className="w-4 h-4 text-amber-700 dark:text-amber-400" />
+          </div>
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-red-900 dark:text-red-200 tracking-tight">
-              Look-Alike Sound-Alike (LASA) Confusion Alert
+            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-amber-950 dark:text-amber-100">
+              Look-Alike Sound-Alike (LASA) Conflict Notice
             </h3>
-            <p className="text-sm sm:text-base text-red-700 dark:text-red-300/80">
-              High Phonetic &amp; Orthographic Similarity Detected in Formularies
+            <p className="text-xs sm:text-sm text-amber-800 dark:text-amber-300">
+              High phonetic and orthographic similarity detected against clinical formularies
             </p>
           </div>
         </div>
 
-        <div className="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700 flex items-center gap-1.5">
-          <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
-          <span>{lasaDetail.levenshteinScore}% Similarity Index</span>
+        <div className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 flex items-center gap-1.5">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+          <span>{lasaDetail.levenshteinScore}% Similarity Index ({lasaDetail.similarityType})</span>
         </div>
       </div>
 
       {/* TALL MAN Lettering Comparison Box */}
-      <div className="p-5 rounded-2xl bg-surface border border-red-200 dark:border-red-800/60 space-y-4">
-        <div className="flex items-center justify-between text-xs sm:text-sm text-theme-muted font-medium">
+      <div className="p-4 sm:p-5 rounded-xl bg-surface border border-theme space-y-3">
+        <div className="flex items-center justify-between text-xs text-theme-muted font-medium">
           <span>ISMP TALL MAN LETTERING DIFFERENTIATION:</span>
-          <span className="text-red-600 dark:text-red-400 font-semibold">Confusion Risk</span>
+          <span className="text-amber-700 dark:text-amber-400 font-semibold">Formulary Collision Screened</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-          <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
-            <span className="text-xs sm:text-sm text-theme-muted uppercase font-medium block">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 items-stretch">
+          <div className="p-3.5 rounded-lg bg-surface-subtle border border-theme space-y-1">
+            <span className="text-xs text-theme-muted uppercase font-medium block">
               Interpreted Candidate:
             </span>
-            <div className="text-xl sm:text-2xl font-mono font-bold text-teal-800 dark:text-teal-300">
+            <div className="text-lg sm:text-xl font-mono font-bold text-teal-800 dark:text-teal-300">
               {lasaDetail.tallManPrescribed}
             </div>
-            <span className="text-xs sm:text-sm text-theme-secondary block leading-relaxed">
-              Biguanide oral hypoglycemic for diabetes.
+            <span className="text-xs text-theme-secondary block leading-relaxed">
+              Prescribed oral biguanide for glycaemic control.
             </span>
           </div>
 
-          <div className="p-4 rounded-xl bg-red-50/70 dark:bg-red-950/40 border border-red-300 dark:border-red-800 space-y-1.5">
+          <div className="p-3.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm text-red-800 dark:text-red-300 uppercase font-medium">
+              <span className="text-xs text-amber-800 dark:text-amber-300 uppercase font-medium">
                 Confusable Counterpart:
               </span>
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-red-200/70 dark:bg-red-900/60 text-red-900 dark:text-red-200 font-bold">
-                HIGH DANGER
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-900/60 text-amber-950 dark:text-amber-100 font-bold">
+                SIMILARITY CONFLICT
               </span>
             </div>
-            <div className="text-xl sm:text-2xl font-mono font-bold text-red-700 dark:text-red-300">
+            <div className="text-lg sm:text-xl font-mono font-bold text-amber-900 dark:text-amber-200">
               {lasaDetail.tallManConfused}
             </div>
-            <span className="text-xs sm:text-sm text-red-800 dark:text-red-300/80 block leading-relaxed">
-              Sulfonylurea antidiabetic; distinct dosing and potency.
+            <span className="text-xs text-amber-800/90 dark:text-amber-300/90 block leading-relaxed">
+              Distinct therapeutic class; separate dosing and clinical indications.
             </span>
           </div>
         </div>
       </div>
 
       {/* Clinical Risk Summary */}
-      <div className="text-sm sm:text-base text-red-900 dark:text-red-200 leading-relaxed">
-        <strong>Adverse Risk Note:</strong> {lasaDetail.clinicalRiskSummary}
+      <div className="text-xs sm:text-sm text-theme-secondary leading-relaxed bg-surface/60 p-3 rounded-lg border border-theme">
+        <strong className="text-theme-primary">Clinical Observation:</strong> {lasaDetail.clinicalRiskSummary}
       </div>
 
-      {/* Pharmacist Action Notice */}
-      <div className="p-4 rounded-xl bg-red-100/70 dark:bg-red-900/30 border border-red-300 dark:border-red-700 flex items-start gap-3 text-sm sm:text-base text-red-950 dark:text-red-100 font-semibold leading-relaxed">
-        <UserCheck className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+      {/* Pharmacist Action Safeguard */}
+      <div className="p-3.5 rounded-xl bg-amber-100/60 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 flex items-start gap-2.5 text-xs sm:text-sm text-amber-950 dark:text-amber-100 leading-relaxed font-medium">
+        <UserCheck className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <span>Dispensing Safeguard:</span> {lasaDetail.mandatedAction}
+          <strong className="font-semibold text-amber-950 dark:text-amber-100">Verification Safeguard: </strong>
+          <span>{lasaDetail.mandatedAction}</span>
         </div>
       </div>
     </div>

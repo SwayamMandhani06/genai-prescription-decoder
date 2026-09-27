@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MultilingualExplanationContent } from '../../types/prescription.types';
 import {
   Globe,
@@ -8,7 +8,7 @@ import {
   Moon,
   Volume2,
   VolumeX,
-  Sparkles,
+  FileText,
 } from 'lucide-react';
 
 export interface MultilingualExplanationCardProps {
@@ -28,6 +28,43 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
 
   const currentContent = multilingual[activeLang] || multilingual.en;
+
+  useEffect(() => {
+    // Stop any ongoing speech if language switches
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsPlayingAudio(false);
+    }
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [activeLang]);
+
+  const handleToggleAudio = () => {
+    if (isPlayingAudio) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingAudio(false);
+    } else {
+      setIsPlayingAudio(true);
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const textToSpeak = `${currentContent.instructions}. ${currentContent.summary || ''}`;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = activeLang === 'hi' ? 'hi-IN' : activeLang === 'mr' ? 'mr-IN' : 'en-IN';
+        utterance.rate = 0.95;
+        utterance.onend = () => setIsPlayingAudio(false);
+        utterance.onerror = () => setIsPlayingAudio(false);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Fallback simulation timer if speech API not available in environment
+        setTimeout(() => setIsPlayingAudio(false), 4000);
+      }
+    }
+  };
 
   const languages = [
     { code: 'en' as SupportedLanguage, label: 'English', sub: 'Clinical' },
@@ -92,16 +129,17 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       <div className="p-5 sm:p-6 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-teal-800 dark:text-teal-300 font-semibold">
-            <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-            <span>PATIENT SUMMARY</span>
+            <FileText className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <span>PATIENT POSOLOGY GUIDANCE</span>
           </div>
 
-          {/* Audio Explanation Simulator */}
+          {/* Audio Explanation Button */}
           <button
-            onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+            onClick={handleToggleAudio}
+            aria-label={isPlayingAudio ? 'Stop spoken audio explanation' : 'Listen to spoken audio explanation'}
             className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer border font-medium ${
               isPlayingAudio
-                ? 'bg-teal-700 text-white border-teal-800 animate-pulse'
+                ? 'bg-teal-700 text-white border-teal-800'
                 : 'bg-surface text-theme-secondary hover:text-theme-primary border-theme'
             }`}
           >

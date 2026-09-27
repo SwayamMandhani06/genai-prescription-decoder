@@ -50,3 +50,5 @@ logs/
 .eslintcache
 .stylelintcache
 .turbo/
+
+plan.md 

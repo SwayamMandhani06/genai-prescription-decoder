@@ -41,9 +41,16 @@ export const DemoStateSwitcher: React.FC<DemoStateSwitcherProps> = ({
     },
     {
       id: 'state-flagged',
-      label: '4. Abstention',
+      label: '4. Flagged',
+      icon: AlertTriangle,
+      tag: 'Selective Abstention · Decimal Ligature',
+      variant: 'coral',
+    },
+    {
+      id: 'state-abstained',
+      label: '5. Abstained',
       icon: ShieldAlert,
-      tag: 'Selective Abstention',
+      tag: 'Full Clinical Abstention · Epistemic Halt',
       variant: 'red',
     },
   ];
