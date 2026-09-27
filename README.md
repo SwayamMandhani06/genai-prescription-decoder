@@ -248,7 +248,22 @@ For complete verification logs and metrics, refer to [`docs/phase-04-completion.
 
 ---
 
-## 9. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 9. Conventional OCR/HTR Baseline (Phase 5)
+
+Phase 5 establishes a reproducible, transparent conventional OCR/HTR research baseline against which future multimodal architectures (Phase 6+) are compared:
+
+- **Isolated Research Comparison Path:** OCR/HTR is strictly a research baseline and **not** a mandatory upstream dependency for the future multimodal vision-language pipeline.
+- **Engine Traceability (`backend/app/ocr/engine.py`):** Wraps Tesseract OCR with runtime query of binary versions (`v5.4.0.20240606`) and language models (`eng`, `osd`).
+- **Raw Evidence Preservation (`schemas.py`, `service.py`):** Verbatim OCR text is stored immutably with cryptographic SHA-256 seals. Raw output is never silently converted into clinically plausible text.
+- **Reproducible Evaluation Metrics (`metrics.py`):** Implements exact Dynamic Programming Levenshtein distance algorithms for Character Error Rate (CER), Word Error Rate (WER), and clinical entity Precision/Recall/F1. Evaluation text normalization is strictly segregated from raw evidence.
+- **Controlled Preprocessing Comparison (`scripts/run_ocr_baseline.py`):** Evaluates OCR performance across supported preprocessing variants (four variants across all seven calibration samples, and the conditionally generated deskewed representation on the sample where deskew was generated), recording benchmarks in `eval/baseline_outputs.json`.
+- **Qualitative Inspection Utility (`scripts/inspect_ocr_baseline.py`):** Side-by-side terminal tool displaying image hashes, raw transcription, ground-truth comparison, error rates, and spatial tokens with genuine confidence scores.
+
+For complete verification logs and empirical baseline metrics, refer to [`docs/phase-05-completion.md`](docs/phase-05-completion.md).
+
+---
+
+## 10. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -264,7 +279,7 @@ For complete verification logs and metrics, refer to [`docs/phase-04-completion.
 
 ---
 
-## 10. Clinical Safety & Regulatory Disclaimer
+## 11. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -275,14 +290,14 @@ For complete verification logs and metrics, refer to [`docs/phase-04-completion.
 
 ---
 
-## 11. Project Information
+## 12. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 12. License
+## 13. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
 

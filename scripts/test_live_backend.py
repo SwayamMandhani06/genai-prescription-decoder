@@ -153,6 +153,41 @@ def run_live_tests():
         check(r.status_code == 500, "server_error scenario returns HTTP 500")
         check(r.json()["error"]["code"] == "PROCESSING_FAILED", "Error code is PROCESSING_FAILED")
 
+        # ----------------------------------------------------------------------
+        # Phase 5: Live OCR Baseline Endpoint Verification
+        # ----------------------------------------------------------------------
+        # 11. GET /api/v1/ocr/baseline/engine
+        r_eng = client.get("/api/v1/ocr/baseline/engine")
+        check(r_eng.status_code == 200, "GET /api/v1/ocr/baseline/engine returns 200 OK")
+        eng_data = r_eng.json()
+        check(eng_data["engine"] == "tesseract", "Engine moniker is tesseract")
+        check(eng_data["available"] is True, "Engine available is True")
+        check(eng_data["version"] is not None and len(eng_data["version"]) > 0, "Engine version is detected")
+        check("eng" in eng_data["languages"], "English language data installed")
+
+        # 12. POST /api/v1/ocr/baseline with sample_id
+        r_ocr = client.post("/api/v1/ocr/baseline", data={"sample_id": "doc-rx-001", "preprocessing_variant": "enhanced"})
+        check(r_ocr.status_code == 200, "POST /api/v1/ocr/baseline (sample) returns 200 OK")
+        ocr_data = r_ocr.json()
+        check(ocr_data["engine"]["name"] == "tesseract", "OCR run result records tesseract engine")
+        check(ocr_data["preprocessing_artifact"] == "enhanced", "Preprocessing artifact is enhanced")
+        check(ocr_data["source_image_sha256"] is not None, "Source image SHA256 recorded")
+        check("raw_text" in ocr_data, "Raw OCR text present in response")
+        check(len(ocr_data["tokens"]) > 0, "Spatial tokens extracted")
+
+        # 13. POST /api/v1/ocr/baseline/compare with sample_id
+        r_comp = client.post("/api/v1/ocr/baseline/compare", data={"sample_id": "doc-rx-001"})
+        check(r_comp.status_code == 200, "POST /api/v1/ocr/baseline/compare returns 200 OK")
+        comp_data = r_comp.json()
+        check("enhanced" in comp_data, "Variant comparison includes enhanced")
+        check("grayscale" in comp_data, "Variant comparison includes grayscale")
+        check("thresholded" in comp_data, "Variant comparison includes thresholded")
+        check("original" in comp_data, "Variant comparison includes original")
+
+        # 14. Error Test: Missing input on OCR baseline -> 400
+        r_ocr_err = client.post("/api/v1/ocr/baseline", data={})
+        check(r_ocr_err.status_code == 400, "POST /api/v1/ocr/baseline without input returns 400")
+
     print("\n======================================================")
     print(f"LIVE TEST SUMMARY: {passed} PASSED | {failed} FAILED")
     print("======================================================\n")

@@ -1,0 +1,1646 @@
+{
+  "benchmark_metadata": {
+    "phase": "Phase 5 - Conventional OCR/HTR Baseline",
+    "role": "Calibration & Integration Sample Evaluation (N=7; not a statistically sufficient research benchmark)",
+    "engine": {
+      "name": "tesseract",
+      "version": "5.4.0.20240606",
+      "languages": [
+        "eng",
+        "osd"
+      ]
+    },
+    "configuration": {
+      "id": "ocr_tesseract_baseline_v1",
+      "hash": "ff91303216355427a73c03eb806b120270a741e1b0e7f8abc982480c8bd648ae",
+      "language": "eng",
+      "psm": 6,
+      "oem": 1,
+      "preserve_raw_evidence": true
+    }
+  },
+  "summary_by_variant": {
+    "original": {
+      "sample_count": 7,
+      "mean_cer": 3.1033,
+      "mean_wer": 3.0083
+    },
+    "deskewed": {
+      "sample_count": 1,
+      "mean_cer": 1.0,
+      "mean_wer": 1.0
+    },
+    "enhanced": {
+      "sample_count": 7,
+      "mean_cer": 0.8076,
+      "mean_wer": 1.1227
+    },
+    "thresholded": {
+      "sample_count": 7,
+      "mean_cer": 1.3485,
+      "mean_wer": 2.3661
+    },
+    "grayscale": {
+      "sample_count": 7,
+      "mean_cer": 3.0802,
+      "mean_wer": 2.9632
+    }
+  },
+  "runs": [
+    {
+      "sample_id": "sample_01_clear.png",
+      "document_id": "DOC-RX-001",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-599b61d8",
+      "source_image_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "artifact_sha256": "38dc72b6acaa664cbdd5071f22f59ef27782aa9e5907ff8f87df0731a5c605c7",
+      "raw_text": "actrees. hon OY Sanaa W ae roca 2?\n*\\\nkare ene\n\nUoes OTL Shae tm Atte\n\noes 3 Dann et er ety =\n\nVes 18531 bane Set ttre net\n",
+      "raw_text_sha256": "3831727f6d879f963fcba74b86afcaaee1ae996f431f5580a3c71a2542a37c76",
+      "token_count": 29,
+      "status": "completed",
+      "duration_seconds": 0.3382,
+      "metrics": {
+        "cer": 0.7517,
+        "wer": 1.0741,
+        "char_edits": {
+          "substitutions": 83,
+          "deletions": 26,
+          "insertions": 0,
+          "reference_length": 145,
+          "hypothesis_length": 119,
+          "total_edits": 109
+        },
+        "word_edits": {
+          "substitutions": 27,
+          "deletions": 0,
+          "insertions": 2,
+          "reference_length": 27,
+          "hypothesis_length": 29,
+          "total_edits": 29
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_01_clear.png",
+      "document_id": "DOC-RX-001",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-ca43b8ea",
+      "source_image_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "artifact_sha256": "80401c0b76b7cdeac6b9bf523efa87255ae55348ad7873293d72bf3c48758b27",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. R K Sharma, MD (General Medicine)\nPeg No MCl-2018-847281 | eptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Augmentin 25 mg\nFreq: 1-0-1 (B0) | Dur Sdays | Note: After food\n2. Paraoetamol500 mg\nFreq: 90S | Dur: days | Note: For fever/body pain\n3. Pantocid 40 mg\nFreq, 1-0-0 (0D) | Dur:S days | Note: Before breaktast\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "4d931647bb1f5e02431fe35ff76b7eee92e469a771f3c525e6ce5098f2c4dd9a",
+      "token_count": 80,
+      "status": "completed",
+      "duration_seconds": 0.3964,
+      "metrics": {
+        "cer": 2.469,
+        "wer": 2.3704,
+        "char_edits": {
+          "substitutions": 8,
+          "deletions": 1,
+          "insertions": 349,
+          "reference_length": 145,
+          "hypothesis_length": 493,
+          "total_edits": 358
+        },
+        "word_edits": {
+          "substitutions": 11,
+          "deletions": 0,
+          "insertions": 53,
+          "reference_length": 27,
+          "hypothesis_length": 80,
+          "total_edits": 64
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "dosage": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "frequency": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_01_clear.png",
+      "document_id": "DOC-RX-001",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-e08cb9ff",
+      "source_image_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "artifact_sha256": "c3269388235ede6c287dae5aab9ca566239658d1588182c8289060bea3f2c380",
+      "raw_text": "2 Ae meme Wms Wee!\nMet ve ROOM wae owe Wee\nRectorate ter OF carer ae recat\n*\\\n+ emaereemns\n\nVast O1tad atone ten ater\n2 wwmeotee-s\n\nNo Nee le ery =\n2 ames\n\nTREC aba to abnomeee\n\nre\n\n2 AVIA aie ao woe ALM Sastre: face\n",
+      "raw_text_sha256": "d7ab5adce0ce09e519fc92be7933565ecfb51614a1ca52561a478725c0f71ab4",
+      "token_count": 47,
+      "status": "completed",
+      "duration_seconds": 0.4274,
+      "metrics": {
+        "cer": 1.0966,
+        "wer": 1.7407,
+        "char_edits": {
+          "substitutions": 93,
+          "deletions": 0,
+          "insertions": 66,
+          "reference_length": 145,
+          "hypothesis_length": 211,
+          "total_edits": 159
+        },
+        "word_edits": {
+          "substitutions": 27,
+          "deletions": 0,
+          "insertions": 20,
+          "reference_length": 27,
+          "hypothesis_length": 47,
+          "total_edits": 47
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_01_clear.png",
+      "document_id": "DOC-RX-001",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-4274b4ec",
+      "source_image_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "artifact_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. R K Sharma, MD (General Medicine)\neg No MC1-2018-847281 | Deptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Augmentin 25 mg\nFreq: 1-0-1 (B0) | Dur S days | Note: After food\n2. Paraoetamol500 mg\nFreq: 90S | Dur days | Note: For fever/body pain\n3. Pantocid 40 mg\nFreq, 1-0-0 (0D) | Dur:S days | Note: Before breaktast\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "7787896c60732c329017fd0652226166b11c4309e3a8d88e4ea65ad97ef72ce4",
+      "token_count": 81,
+      "status": "completed",
+      "duration_seconds": 0.4287,
+      "metrics": {
+        "cer": 2.469,
+        "wer": 2.3704,
+        "char_edits": {
+          "substitutions": 8,
+          "deletions": 1,
+          "insertions": 349,
+          "reference_length": 145,
+          "hypothesis_length": 493,
+          "total_edits": 358
+        },
+        "word_edits": {
+          "substitutions": 10,
+          "deletions": 0,
+          "insertions": 54,
+          "reference_length": 27,
+          "hypothesis_length": 81,
+          "total_edits": 64
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "dosage": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "frequency": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_02_cursive.png",
+      "document_id": "DOC-RX-002",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-f1d763de",
+      "source_image_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "artifact_sha256": "eefeb80288914f61ae17bfe261c64ddf51b2b4603ac32608fde265702b224285",
+      "raw_text": "actrees. hon OY Hanae ae recat\n*\\\n+ wots \u201ctae\nVest OTE Seaton Wow teat ee\n2 hen 25\nVes 26 tnd ame Sete Mme oe\n",
+      "raw_text_sha256": "068c4f8d602b046e7b3380dc458ec0d4d26c7fa251a8d8e8d117f333c5cc6367",
+      "token_count": 26,
+      "status": "completed",
+      "duration_seconds": 0.3525,
+      "metrics": {
+        "cer": 0.82,
+        "wer": 1.3684,
+        "char_edits": {
+          "substitutions": 67,
+          "deletions": 3,
+          "insertions": 12,
+          "reference_length": 100,
+          "hypothesis_length": 109,
+          "total_edits": 82
+        },
+        "word_edits": {
+          "substitutions": 19,
+          "deletions": 0,
+          "insertions": 7,
+          "reference_length": 19,
+          "hypothesis_length": 26,
+          "total_edits": 26
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_02_cursive.png",
+      "document_id": "DOC-RX-002",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-1276209d",
+      "source_image_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "artifact_sha256": "67cd6e72f5174daea20a52f9cba90ec5653b62a91a5193937f7ad4736e1a91fe",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nr.V. Anand, MD, DM (Endocrinology)\nPeg No MCl-2018-847281 | eptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Metformin 500 mg\nFreq. 1-0-1 (BO) | Dur 30 days | Note: Take with meals\n2. Atorvastatin 10 mg\nFreq 0-0-1 (HS) | Dur.30 days | Note: At bedtime\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "5d8400e973e51e2a185a7c56cc3a6a3779541e8816f49b4d26834ef06ed2a639",
+      "token_count": 67,
+      "status": "completed",
+      "duration_seconds": 0.3766,
+      "metrics": {
+        "cer": 3.26,
+        "wer": 2.6316,
+        "char_edits": {
+          "substitutions": 1,
+          "deletions": 0,
+          "insertions": 325,
+          "reference_length": 100,
+          "hypothesis_length": 425,
+          "total_edits": 326
+        },
+        "word_edits": {
+          "substitutions": 2,
+          "deletions": 0,
+          "insertions": 48,
+          "reference_length": 19,
+          "hypothesis_length": 67,
+          "total_edits": 50
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_02_cursive.png",
+      "document_id": "DOC-RX-002",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-ea439847",
+      "source_image_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "artifact_sha256": "05e797f96fdf575b9cdfacb6222792b86e122e277d52b4c9f86522bd7cfd201a",
+      "raw_text": "2 Arana WOM roar cope\nMe tewe GUM Ts \u201cwe Wee\nNartiecrrroa hes! hoe OY Sacon: W ae enc?\n\u201c\\\n+ wets tae se\n\nVee COT EE Sone tow \u201ctas nae\n2 wena = 25\n\nVee 20 TE a Sane Ne Re ne\n\n> Ber gre\n\nBAMA ees oe aio O28 PAM Batre fare\n",
+      "raw_text_sha256": "546e538029a79264baf0d8c251427e38a99a59784880fff6fb88fea2096e91ef",
+      "token_count": 54,
+      "status": "completed",
+      "duration_seconds": 0.4428,
+      "metrics": {
+        "cer": 1.73,
+        "wer": 2.8421,
+        "char_edits": {
+          "substitutions": 58,
+          "deletions": 0,
+          "insertions": 115,
+          "reference_length": 100,
+          "hypothesis_length": 215,
+          "total_edits": 173
+        },
+        "word_edits": {
+          "substitutions": 19,
+          "deletions": 0,
+          "insertions": 35,
+          "reference_length": 19,
+          "hypothesis_length": 54,
+          "total_edits": 54
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_02_cursive.png",
+      "document_id": "DOC-RX-002",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-0d89371e",
+      "source_image_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "artifact_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nr.V. Anand, MD, DM (Endocrinology)\neg No MC1-2018-847281 | Deptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Metformin 500 mg\nFreq 1-0-1 (BO) | Dur 30 days | Note: Take with meals\n2. Atorvastatin 10 mg\nFreq: 0-0-1 (HS) | Dur:30 days | Note: At bedtime\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "1bcd8e65c80145408a7d75fb70df6f4c65bbd9bdcaaa21f10881c634cfeaa784",
+      "token_count": 67,
+      "status": "completed",
+      "duration_seconds": 0.4313,
+      "metrics": {
+        "cer": 3.26,
+        "wer": 2.6316,
+        "char_edits": {
+          "substitutions": 1,
+          "deletions": 0,
+          "insertions": 325,
+          "reference_length": 100,
+          "hypothesis_length": 425,
+          "total_edits": 326
+        },
+        "word_edits": {
+          "substitutions": 2,
+          "deletions": 0,
+          "insertions": 48,
+          "reference_length": 19,
+          "hypothesis_length": 67,
+          "total_edits": 50
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_03_blurred.png",
+      "document_id": "DOC-RX-003",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-864ea88c",
+      "source_image_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "artifact_sha256": "39e1b30599f6586f62ae0f1996d15efe14a2730059f1be21098eeda187a077c7",
+      "raw_text": "See\n\u2014\u2014\u2014 oe oe =o\n\"\\\n\u2014\u2014\n\u2018\u2014_\"*.\noN\n\u2014\n",
+      "raw_text_sha256": "093e444cfddc9b53a043f70dd2f43421649daa1752fd52ef3ccc95e409504d92",
+      "token_count": 10,
+      "status": "completed",
+      "duration_seconds": 0.4487,
+      "metrics": {
+        "cer": 0.8713,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 21,
+          "deletions": 67,
+          "insertions": 0,
+          "reference_length": 101,
+          "hypothesis_length": 34,
+          "total_edits": 88
+        },
+        "word_edits": {
+          "substitutions": 10,
+          "deletions": 10,
+          "insertions": 0,
+          "reference_length": 20,
+          "hypothesis_length": 10,
+          "total_edits": 20
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_03_blurred.png",
+      "document_id": "DOC-RX-003",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-c2821c83",
+      "source_image_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "artifact_sha256": "519cf66c2cfbc1774e9e4668cb296ca605fd657aa961127ac1cc2716be8430e3",
+      "raw_text": "\u2014__......nnDnD a \u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\n_\u2014\u2014\u2014\u2014\u2014\u2014 oe = =e \u00a9 -\u2014\u2014-\n\"\\\n\u2014\n\u2014\nA\n\u2014\u2014\u2014\n",
+      "raw_text_sha256": "3adf1e83d3f46822d2eb862a7cddf74bcb0e888b76ae1dae6916dd6e269b82ee",
+      "token_count": 14,
+      "status": "completed",
+      "duration_seconds": 0.4708,
+      "metrics": {
+        "cer": 0.8218,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 52,
+          "deletions": 31,
+          "insertions": 0,
+          "reference_length": 101,
+          "hypothesis_length": 70,
+          "total_edits": 83
+        },
+        "word_edits": {
+          "substitutions": 14,
+          "deletions": 6,
+          "insertions": 0,
+          "reference_length": 20,
+          "hypothesis_length": 14,
+          "total_edits": 20
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_03_blurred.png",
+      "document_id": "DOC-RX-003",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-d391f982",
+      "source_image_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "artifact_sha256": "e0bb59fe08982060abbd809d16acc05c4c8fff5adc05744cc923c57bf562d1ee",
+      "raw_text": "\u00b0N\no aw\nQe eee\n\u00a2 aoe\neee\n>=.\n",
+      "raw_text_sha256": "e986037b1b1ac04e45194f83575d822c4cb3dd79db3e2edb4053896ea91cd030",
+      "token_count": 9,
+      "status": "completed",
+      "duration_seconds": 0.3132,
+      "metrics": {
+        "cer": 0.8416,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 12,
+          "deletions": 73,
+          "insertions": 0,
+          "reference_length": 101,
+          "hypothesis_length": 28,
+          "total_edits": 85
+        },
+        "word_edits": {
+          "substitutions": 9,
+          "deletions": 11,
+          "insertions": 0,
+          "reference_length": 20,
+          "hypothesis_length": 9,
+          "total_edits": 20
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_03_blurred.png",
+      "document_id": "DOC-RX-003",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-1208fe76",
+      "source_image_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "artifact_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "raw_text": "\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014EEEEEE\u2014\u2014\u2014EEEEEE\u2014\u2014\u2014\neee =\na eee\nmee wees eee\n_\u2014\u2014\u2014 ewes \u2014\u2014-\nnw\n\noem ee\n\n\u2014\u2014_\u2014\u2014\u2014\u2014\n\u2014_\u2014\n\n\u2014_\u2014\u2014\u2014\u2014\n\n\u2014\u2014\nsee\n\nme ae ee ee ee\n",
+      "raw_text_sha256": "bda5fcd5cb1c4aac233195c9c677ca2b99fac57336d7677541a55c7c3c7b3c79",
+      "token_count": 24,
+      "status": "completed",
+      "duration_seconds": 0.7035,
+      "metrics": {
+        "cer": 0.9802,
+        "wer": 1.2,
+        "char_edits": {
+          "substitutions": 81,
+          "deletions": 0,
+          "insertions": 18,
+          "reference_length": 101,
+          "hypothesis_length": 119,
+          "total_edits": 99
+        },
+        "word_edits": {
+          "substitutions": 20,
+          "deletions": 0,
+          "insertions": 4,
+          "reference_length": 20,
+          "hypothesis_length": 24,
+          "total_edits": 24
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_04_lowlight.png",
+      "document_id": "DOC-RX-004",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-099ede1b",
+      "source_image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "artifact_sha256": "7b5415a7e78c854f6e7a9d33b3602cc768838cd727a4c3491955f56dc2a4086f",
+      "raw_text": "AM iA UE AME DOPAMINE NED\nDA ye WE wee thes em!\nWe ME 727884770\" egret oe\n",
+      "raw_text_sha256": "3a79cf417dfa766b376726aa48539ad7bf4811bb42405df04aac8d4134e731f2",
+      "token_count": 17,
+      "status": "completed",
+      "duration_seconds": 0.3514,
+      "metrics": {
+        "cer": 0.9355,
+        "wer": 1.4167,
+        "char_edits": {
+          "substitutions": 47,
+          "deletions": 0,
+          "insertions": 11,
+          "reference_length": 62,
+          "hypothesis_length": 73,
+          "total_edits": 58
+        },
+        "word_edits": {
+          "substitutions": 12,
+          "deletions": 0,
+          "insertions": 5,
+          "reference_length": 12,
+          "hypothesis_length": 17,
+          "total_edits": 17
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_04_lowlight.png",
+      "document_id": "DOC-RX-004",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-ce1c0195",
+      "source_image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "artifact_sha256": "c13e02f75a2e828b2b91e4c284e010d0a5cb96368e2013c976f3c1f31eb1e521",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. M. Poy, MD (Internal Medicine)\neg Na MC1-2018-847281 | Deptofinternal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGaN\n1. Amoxiilin500 mg\nFreq: 1-1-1 (TDS) | Dur:7 days | Note: Every8 hourswith water\nDr. Signature (Signed)\n\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "e93a3dc7264583fd161eed777a48b2fa409cdb20a7bc304a51bdb3501021badb",
+      "token_count": 51,
+      "status": "completed",
+      "duration_seconds": 0.3734,
+      "metrics": {
+        "cer": 4.8871,
+        "wer": 3.8333,
+        "char_edits": {
+          "substitutions": 3,
+          "deletions": 1,
+          "insertions": 299,
+          "reference_length": 62,
+          "hypothesis_length": 360,
+          "total_edits": 303
+        },
+        "word_edits": {
+          "substitutions": 7,
+          "deletions": 0,
+          "insertions": 39,
+          "reference_length": 12,
+          "hypothesis_length": 51,
+          "total_edits": 46
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_04_lowlight.png",
+      "document_id": "DOC-RX-004",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-0b3ab0b9",
+      "source_image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "artifact_sha256": "9d535110e7e31eca14c1cf16b43dcd61a5cda09377b9ee31ff1b1358f4949f6c",
+      "raw_text": "tes ENE ge se\nOM Overy Secon\nSh nec FF ne cen,\nWer Arr re ate 1 OF Saray. y Ne,\n\u201c\\\npee wens\nhe oa Pye,\na\n- Se\naaa an\nAMS dot nang wo ea #8 tage\n",
+      "raw_text_sha256": "e75d17c8eff945d734fc720f70f25bb78593955bcc0343c605e36c4465311a70",
+      "token_count": 39,
+      "status": "completed",
+      "duration_seconds": 0.4624,
+      "metrics": {
+        "cer": 1.8871,
+        "wer": 3.25,
+        "char_edits": {
+          "substitutions": 36,
+          "deletions": 0,
+          "insertions": 81,
+          "reference_length": 62,
+          "hypothesis_length": 143,
+          "total_edits": 117
+        },
+        "word_edits": {
+          "substitutions": 12,
+          "deletions": 0,
+          "insertions": 27,
+          "reference_length": 12,
+          "hypothesis_length": 39,
+          "total_edits": 39
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_04_lowlight.png",
+      "document_id": "DOC-RX-004",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-7304a57f",
+      "source_image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "artifact_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. M. Poy, MD (Internal Medicine)\neg Na MC1-2018-847281 | Deptof internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nca\n1. Amaxieilin 500 mg\nFreq: 1-1-1 (TDS) | Dur:7 days | Note: Every hourswith water\nDr. Signature (Signed)\n\nDISCLAIMER Research evaluation sample for AURARx capstone verification,\n",
+      "raw_text_sha256": "376923a55db7aa3cdbeb95498e2ab309362661eace00653d5bbaa20ab9c28e3b",
+      "token_count": 53,
+      "status": "completed",
+      "duration_seconds": 0.4017,
+      "metrics": {
+        "cer": 4.9032,
+        "wer": 3.9167,
+        "char_edits": {
+          "substitutions": 2,
+          "deletions": 2,
+          "insertions": 300,
+          "reference_length": 62,
+          "hypothesis_length": 360,
+          "total_edits": 304
+        },
+        "word_edits": {
+          "substitutions": 6,
+          "deletions": 0,
+          "insertions": 41,
+          "reference_length": 12,
+          "hypothesis_length": 53,
+          "total_edits": 47
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_04_lowlight.png",
+      "document_id": "DOC-RX-004",
+      "variant": "deskewed",
+      "ocr_run_id": "ocr-comp-deskewed-9a299ac5",
+      "source_image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "artifact_sha256": "c9485e76ec191c4768151aeaa30a090bdbcc187eea96d40570b0ff0f9a83ea59",
+      "raw_text": "|\n",
+      "raw_text_sha256": "9d5244c50ced231a7bb23d76593f0bce8f8d3ff803dfe514176002739b6f75c1",
+      "token_count": 1,
+      "status": "completed",
+      "duration_seconds": 0.25,
+      "metrics": {
+        "cer": 1.0,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 1,
+          "deletions": 61,
+          "insertions": 0,
+          "reference_length": 62,
+          "hypothesis_length": 1,
+          "total_edits": 62
+        },
+        "word_edits": {
+          "substitutions": 1,
+          "deletions": 11,
+          "insertions": 0,
+          "reference_length": 12,
+          "hypothesis_length": 1,
+          "total_edits": 12
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_05_abbreviations.png",
+      "document_id": "DOC-RX-005",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-c1967414",
+      "source_image_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "artifact_sha256": "65ca8b6ebd17dee471256ab9314923b6d8384e9817e4877ca69a6feab5772a16",
+      "raw_text": "acters. hon OY Hanae ae roca?\n*\\\n\nLope Ee hae tam tare\n\nes a Fann ae howe\n",
+      "raw_text_sha256": "ab21875565cad4265ce48180a9d6f1eda22f7aa877e8878834ea0d95cb85aa51",
+      "token_count": 17,
+      "status": "completed",
+      "duration_seconds": 0.3707,
+      "metrics": {
+        "cer": 0.7463,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 37,
+          "deletions": 63,
+          "insertions": 0,
+          "reference_length": 134,
+          "hypothesis_length": 71,
+          "total_edits": 100
+        },
+        "word_edits": {
+          "substitutions": 17,
+          "deletions": 14,
+          "insertions": 0,
+          "reference_length": 31,
+          "hypothesis_length": 17,
+          "total_edits": 31
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_05_abbreviations.png",
+      "document_id": "DOC-RX-005",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-04f72f07",
+      "source_image_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "artifact_sha256": "bf023563e22162a0f37239ee8f018ea3ebdae050838c5f5618235b8ab618a89c",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. P, Deshmukh, MD (Consultant Physician)\nPeg No MCl-2018-847281 | eptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Tabeifran00 mg\nFreq BDPC | Dur 5 days | Note Postcibum\n2 TabDolo8s0 mg\nFreq: TDSS0S | Dur: days | Note: When pain occurs\n3. CapOmeprazole 20 mg\nFreq ODAC | Dur7 days | Note: Ante cibum\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "01d1bee86900d994afa2d73b509c1bbd17f91a4ec758aad29920ebee6299e3fb",
+      "token_count": 76,
+      "status": "completed",
+      "duration_seconds": 0.4597,
+      "metrics": {
+        "cer": 2.694,
+        "wer": 2.0323,
+        "char_edits": {
+          "substitutions": 10,
+          "deletions": 5,
+          "insertions": 346,
+          "reference_length": 134,
+          "hypothesis_length": 475,
+          "total_edits": 361
+        },
+        "word_edits": {
+          "substitutions": 18,
+          "deletions": 0,
+          "insertions": 45,
+          "reference_length": 31,
+          "hypothesis_length": 76,
+          "total_edits": 63
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "dosage": {
+            "precision": 0.3333,
+            "recall": 0.3333,
+            "f1": 0.3333
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_05_abbreviations.png",
+      "document_id": "DOC-RX-005",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-feb93321",
+      "source_image_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "artifact_sha256": "0861984e062bef32cf23bdd4a0ff16914ac26419781b325430dfa3ac35ef1bb2",
+      "raw_text": "Met ve RRO wae one Wee\nRectorate ter OF carer ae recat\n*\\\n\ncE ahem tee taro e\n2 cee memens\n\nee MEE dome en wee came\n2 eaeomeenron ree\n\nSOTA Fane Sew hese\n\nre\n\n2 AVIA aetna woe AL Sastre: farce\n",
+      "raw_text_sha256": "cddd0a3d583d7c1ae53a2c935dad289df8fabeeb27febfea48c950b0fce826c8",
+      "token_count": 42,
+      "status": "completed",
+      "duration_seconds": 0.4508,
+      "metrics": {
+        "cer": 1.0299,
+        "wer": 1.3548,
+        "char_edits": {
+          "substitutions": 85,
+          "deletions": 0,
+          "insertions": 53,
+          "reference_length": 134,
+          "hypothesis_length": 187,
+          "total_edits": 138
+        },
+        "word_edits": {
+          "substitutions": 31,
+          "deletions": 0,
+          "insertions": 11,
+          "reference_length": 31,
+          "hypothesis_length": 42,
+          "total_edits": 42
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_05_abbreviations.png",
+      "document_id": "DOC-RX-005",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-6179cc09",
+      "source_image_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "artifact_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. P. Deshmukh, MD (Consultant Physician)\neg No MC1-2018-847281 | Deptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Tabeifran00 mg\nFreq BDPC | Dur S days | Note Postcibum\n2 TabDolo8s0 mg\nFreq: TDSS0S | Dur:3 days | Note: When pain occurs\n3. CapOmeprazole 20 mg\nFreq ODAC | Dur7 days | Note: Ante cibum\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "a9492bbbd31841addc0b605233a15b6289fe95e3d57f88ccd8e5cddfe766a1be",
+      "token_count": 76,
+      "status": "completed",
+      "duration_seconds": 0.5535,
+      "metrics": {
+        "cer": 2.7015,
+        "wer": 2.0645,
+        "char_edits": {
+          "substitutions": 10,
+          "deletions": 5,
+          "insertions": 347,
+          "reference_length": 134,
+          "hypothesis_length": 476,
+          "total_edits": 362
+        },
+        "word_edits": {
+          "substitutions": 19,
+          "deletions": 0,
+          "insertions": 45,
+          "reference_length": 31,
+          "hypothesis_length": 76,
+          "total_edits": 64
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          },
+          "dosage": {
+            "precision": 0.3333,
+            "recall": 0.3333,
+            "f1": 0.3333
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_06_lasa_pair.png",
+      "document_id": "DOC-RX-006",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-3197c836",
+      "source_image_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "artifact_sha256": "ad2419bdd19d8621f0584c995f96b5e5bbfdcea90c15e5bf3846ef6f0779a01c",
+      "raw_text": "actions hon 0 Sanaa ae roca?\n*\\\nwets tee\nVee Baan Se hel abe near\n",
+      "raw_text_sha256": "900e0e9a5e6d857872ae98ea4c41cefc1eca0b8134451f9a591e9e604ba09a09",
+      "token_count": 15,
+      "status": "completed",
+      "duration_seconds": 0.4065,
+      "metrics": {
+        "cer": 0.7475,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 40,
+          "deletions": 34,
+          "insertions": 0,
+          "reference_length": 99,
+          "hypothesis_length": 65,
+          "total_edits": 74
+        },
+        "word_edits": {
+          "substitutions": 15,
+          "deletions": 1,
+          "insertions": 0,
+          "reference_length": 16,
+          "hypothesis_length": 15,
+          "total_edits": 16
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_06_lasa_pair.png",
+      "document_id": "DOC-RX-006",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-fbaa0550",
+      "source_image_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "artifact_sha256": "d9205c8973eb4ade32384af29bf909803b619104697f0d7da7bf1ef2facf67a9",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. H. Mehta, MD (General Medicine)\nPeg No MCl-2018-847281 | eptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Metformin 500 mg\nFreq BD | Dur 14days | Note: Oralanticiabetic.\n2. Metronidazole 400 mg\nFreq TDS | Dur-S days | Note: Antimicrobial therapy\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "ebf6be7a814378469e1d84dfcb6a33ae60928d2862ca1cbd31ef5338d3d8f41d",
+      "token_count": 63,
+      "status": "completed",
+      "duration_seconds": 0.4146,
+      "metrics": {
+        "cer": 3.3333,
+        "wer": 3.25,
+        "char_edits": {
+          "substitutions": 2,
+          "deletions": 2,
+          "insertions": 326,
+          "reference_length": 99,
+          "hypothesis_length": 423,
+          "total_edits": 330
+        },
+        "word_edits": {
+          "substitutions": 5,
+          "deletions": 0,
+          "insertions": 47,
+          "reference_length": 16,
+          "hypothesis_length": 63,
+          "total_edits": 52
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_06_lasa_pair.png",
+      "document_id": "DOC-RX-006",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-6342f23b",
+      "source_image_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "artifact_sha256": "b55c1bba45d7549c6b65dae9d47e5c6df0821fd737170abbc15303ee45f2cd84",
+      "raw_text": "Mets mNeUM wae we Ween\nRectorate ter OF carer ae recat\n*\\\n2 wwe ote os\n\n(ah ae toe New on rene\n2 wr ese ens\n\nVs bene on hela near\n\nre\n\n2 AVIA aero a weow A Sastre: tater\n",
+      "raw_text_sha256": "5eec1616bca69b648b3ee484e14939e0b4aab4d078fa6f7fe8afe3e0f597dd16",
+      "token_count": 40,
+      "status": "completed",
+      "duration_seconds": 0.4209,
+      "metrics": {
+        "cer": 1.2929,
+        "wer": 2.5,
+        "char_edits": {
+          "substitutions": 62,
+          "deletions": 0,
+          "insertions": 66,
+          "reference_length": 99,
+          "hypothesis_length": 165,
+          "total_edits": 128
+        },
+        "word_edits": {
+          "substitutions": 16,
+          "deletions": 0,
+          "insertions": 24,
+          "reference_length": 16,
+          "hypothesis_length": 40,
+          "total_edits": 40
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_06_lasa_pair.png",
+      "document_id": "DOC-RX-006",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-81fd8498",
+      "source_image_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "artifact_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. H. Mehta, MD (General Medicine)\neg No MC1-2018-847281 | Deptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. Metformin 500 mg\nFreq BD | Dur 14days | Note: Oralantidiabetic.\n2. Metronidazole 400 mg\nFreq TDS | Dur-5 days | Note: Antimicrobial therapy\nDr. Signature (Signed)\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "d32a62482ef95101f296b6785a3277a9b98bd484b7e652bc8261e762011e8f15",
+      "token_count": 63,
+      "status": "completed",
+      "duration_seconds": 0.5114,
+      "metrics": {
+        "cer": 3.3131,
+        "wer": 3.25,
+        "char_edits": {
+          "substitutions": 0,
+          "deletions": 2,
+          "insertions": 326,
+          "reference_length": 99,
+          "hypothesis_length": 423,
+          "total_edits": 328
+        },
+        "word_edits": {
+          "substitutions": 5,
+          "deletions": 0,
+          "insertions": 47,
+          "reference_length": 16,
+          "hypothesis_length": 63,
+          "total_edits": 52
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "dosage": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "frequency": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "duration": {
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_07_ambiguous_abstain.png",
+      "document_id": "DOC-RX-007",
+      "variant": "enhanced",
+      "ocr_run_id": "ocr-comp-enhanced-1aad1f1f",
+      "source_image_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "artifact_sha256": "76033a851dfda57d317186f39717b0e8fc14b77b919eb10b3318bd189174c607",
+      "raw_text": "actrees. hon 0 Hanae ae recat\n*\\\n",
+      "raw_text_sha256": "2c05595b1601574d25894f493e6ccdc2a9b064a39a54bde9901c1ac007a552b7",
+      "token_count": 7,
+      "status": "completed",
+      "duration_seconds": 0.3243,
+      "metrics": {
+        "cer": 0.7808,
+        "wer": 1.0,
+        "char_edits": {
+          "substitutions": 16,
+          "deletions": 41,
+          "insertions": 0,
+          "reference_length": 73,
+          "hypothesis_length": 32,
+          "total_edits": 57
+        },
+        "word_edits": {
+          "substitutions": 7,
+          "deletions": 1,
+          "insertions": 0,
+          "reference_length": 8,
+          "hypothesis_length": 7,
+          "total_edits": 8
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_07_ambiguous_abstain.png",
+      "document_id": "DOC-RX-007",
+      "variant": "grayscale",
+      "ocr_run_id": "ocr-comp-grayscale-5feb84f2",
+      "source_image_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "artifact_sha256": "475e6c6ab18685f1cec5233c4dec913fc1310e0dc45d9a7c7865fafee9ae8f87",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. Unknown Clinic, MBBS\nPeg No MCl-2018-847281 | eptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. AmbiguousllegibleStroke 77 mg\nFreq: 1-71 | Dur Unknown | Note: Unreadable cursive ligature\nDr. Signature (Signed)\n\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "380e923576fa8991f1ff451b69109c62676f39c52c88cf5a53cfc926ea1485b6",
+      "token_count": 50,
+      "status": "completed",
+      "duration_seconds": 0.4072,
+      "metrics": {
+        "cer": 4.0959,
+        "wer": 5.625,
+        "char_edits": {
+          "substitutions": 5,
+          "deletions": 2,
+          "insertions": 292,
+          "reference_length": 73,
+          "hypothesis_length": 363,
+          "total_edits": 299
+        },
+        "word_edits": {
+          "substitutions": 3,
+          "deletions": 0,
+          "insertions": 42,
+          "reference_length": 8,
+          "hypothesis_length": 50,
+          "total_edits": 45
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_07_ambiguous_abstain.png",
+      "document_id": "DOC-RX-007",
+      "variant": "thresholded",
+      "ocr_run_id": "ocr-comp-thresholded-88ef65fd",
+      "source_image_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "artifact_sha256": "07dfa49bf5bed1ee439476b8654e339ce610042d2f588e0dfeb17cc9ee4a2357",
+      "raw_text": "Mote ve RUM! wee we Wee\nMactiearpreates ter OF carer ae recat\n*\\\n+ keen oe Saas\nfet erica tae mentecn et\nre\n2 AVIA aac aot woe AL Sastre: face\n",
+      "raw_text_sha256": "529774f4a25fedf88c719d5f3bb64ceb6f15d37f2b20b991f5eb33f6da880063",
+      "token_count": 31,
+      "status": "completed",
+      "duration_seconds": 0.3767,
+      "metrics": {
+        "cer": 1.5616,
+        "wer": 3.875,
+        "char_edits": {
+          "substitutions": 45,
+          "deletions": 0,
+          "insertions": 69,
+          "reference_length": 73,
+          "hypothesis_length": 142,
+          "total_edits": 114
+        },
+        "word_edits": {
+          "substitutions": 8,
+          "deletions": 0,
+          "insertions": 23,
+          "reference_length": 8,
+          "hypothesis_length": 31,
+          "total_edits": 31
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          }
+        }
+      }
+    },
+    {
+      "sample_id": "sample_07_ambiguous_abstain.png",
+      "document_id": "DOC-RX-007",
+      "variant": "original",
+      "ocr_run_id": "ocr-comp-original-fde25516",
+      "source_image_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "artifact_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "raw_text": "\u2018APEX HEALTHCARE OUTPATIENTCLINIC\nDr. Unknown Clinic, MBBS\neg No MC1-2018-847281 | Deptof Internal Medicine\nPatient Anonymous Adult| Age: 42\u00a5 | Gender: M Date: 2026-09-27\nGN\n1. AmbiguousllegibleStroke 77 mg\nFreq: 1-71 | Dur Unknown | Note: Unreadable cursive ligature\nDr. Signature (Signed)\n\nDISCLAIMER Research evaluation sample for AURA-Rx capstone verification,\n",
+      "raw_text_sha256": "76289de8253904806dcee715617e76ff54055868fa9b735af0fd1832eea87b25",
+      "token_count": 50,
+      "status": "completed",
+      "duration_seconds": 0.4167,
+      "metrics": {
+        "cer": 4.0959,
+        "wer": 5.625,
+        "char_edits": {
+          "substitutions": 5,
+          "deletions": 2,
+          "insertions": 292,
+          "reference_length": 73,
+          "hypothesis_length": 363,
+          "total_edits": 299
+        },
+        "word_edits": {
+          "substitutions": 3,
+          "deletions": 0,
+          "insertions": 42,
+          "reference_length": 8,
+          "hypothesis_length": 50,
+          "total_edits": 45
+        },
+        "entity_metrics": {
+          "medicine_name": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "dosage": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          },
+          "frequency": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "duration": {
+            "precision": null,
+            "recall": null,
+            "f1": null
+          }
+        }
+      }
+    }
+  ]
+}
