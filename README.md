@@ -4,6 +4,7 @@
 [![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-0EA5E9)](#technology-stack)
 [![Dataset Infrastructure](https://img.shields.io/badge/Dataset%20Infrastructure-Phase%203%20Verified-10B981)](#7-research-datasets--experimental-infrastructure-phase-3)
 [![Image Preprocessing](https://img.shields.io/badge/Preprocessing%20%26%20Quality-Phase%204%20Verified-10B981)](#8-image-preprocessing--quality-assessment-phase-4)
+[![Multimodal Extraction](https://img.shields.io/badge/Multimodal%20Extraction-Phase%206%20Verified-10B981)](#10-multimodal-vision-language-extraction-phase-6)
 [![Safety Protocol](https://img.shields.io/badge/Safety-Selective%20Abstention%20%7C%20LASA%20Detection-F59E0B)](#clinical-safety--uncertainty-abstention)
 
 > **Academic Capstone Engineering Project**  
@@ -70,16 +71,18 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── backend/                     # FastAPI backend service (Phases 2-4)
+├── backend/                     # FastAPI backend service (Phases 2-6)
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
-│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health route definitions
+│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal/*
 │   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
-│   │   ├── services/            # Mock pipeline synthesizer & image storage
+│   │   ├── services/            # Mock & multimodal pipelines, image storage
 │   │   ├── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
-│   │   └── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
-│   ├── tests/                   # Pytest test suite (Phases 2, 3, 4 unit & integration suites)
+│   │   ├── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
+│   │   ├── ocr/                 # Phase 5 Tesseract OCR baseline engine & metrics
+│   │   └── multimodal/          # Phase 6 vision-language adapters, parser, schemas, service
+│   ├── tests/                   # Pytest test suite (Phases 2-6 unit & integration suites)
 │   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
 │   └── run.py                   # Development server runner (port 8000)
 ├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
@@ -94,7 +97,9 @@ genai-prescription-decoder/
 ├── docs/
 │   ├── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
 │   ├── phase-03-completion.md   # Formal Phase 3 exit gate verification report
-│   └── phase-04-completion.md   # Formal Phase 4 exit gate verification report
+│   ├── phase-04-completion.md   # Formal Phase 4 exit gate verification report
+│   ├── phase-05-completion.md   # Formal Phase 5 exit gate verification report
+│   └── phase-06-completion.md   # Formal Phase 6 exit gate verification report
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
 │   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
@@ -263,7 +268,30 @@ For complete verification logs and empirical baseline metrics, refer to [`docs/p
 
 ---
 
-## 10. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 10. Multimodal Vision-Language Prescription Extraction (Phase 6)
+
+Phase 6 implements and validates the multimodal vision-language prescription extraction pipeline using visual evidence grounding and deterministic schema parsing:
+
+- **Pluggable Adapter Interface (`backend/app/multimodal/adapter.py`):**
+  - Concrete adapter contract `IMultimodalModelAdapter` decoupling extraction service from underlying providers.
+  - `GeminiMultimodalAdapter`: Asynchronous HTTP integration with Google's official Gemini API (`gemini-3.8-flash`) using base64 inline image payloads and structured JSON mode.
+  - `MockMultimodalModelAdapter`: Deterministic test fixture covering all required evaluation scenarios (single medicine, multi-med, ambiguous cursive ligatures, absent fields, high-risk dosage flags) for offline and CI testing.
+- **Original Image as Primary Ground Truth:** The model analyzes the original untouched prescription image as primary visual evidence, accompanied by Phase 4 enhanced representations for supplementary contrast.
+- **Strict Semantic Distinction:**
+  - **MISSING / ABSENT:** The field is not present in the prescription or cannot be located (`presence: "absent"`, `extraction_state: "missing"`, `value: null`).
+  - **UNCERTAIN:** The field appears to be present, but visual content cannot be reliably determined due to cursive stroke ambiguity (`presence: "present"`, `extraction_state: "ambiguous"`, `status: "uncertain"`).
+  - **CONFIDENT:** The field is visually supported with sufficient extraction certainty for Phase 6 output (`presence: "present"`, `extraction_state: "extracted"`, `status: "confident"`).
+  - **FLAGGED:** The extraction requires explicit review or escalation (`status: "flagged"`).
+- **Research Traceability & Reproducibility:** Every extraction auditably records `model_id` (`gemini-3.8-flash`), `provider`, `prompt_version` (`prompt_v1_clinical_vision_extraction`), `config_version` (`multimodal_extraction_v1`), SHA-256 config hash, source image SHA-256, and raw model response text.
+- **Dedicated Endpoints:**
+  - `POST /api/v1/multimodal/extract`: Ingests original image bytes or sample ID and returns structured `PrescriptionExtractionResult`.
+  - `GET /api/v1/multimodal/config`: Returns active model metadata, provider, prompt version, and 64-character SHA-256 configuration hash.
+
+For complete verification logs and architecture specifications, refer to [`docs/phase-06-completion.md`](docs/phase-06-completion.md).
+
+---
+
+## 11. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -279,7 +307,7 @@ For complete verification logs and empirical baseline metrics, refer to [`docs/p
 
 ---
 
-## 11. Clinical Safety & Regulatory Disclaimer
+## 12. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -290,14 +318,14 @@ For complete verification logs and empirical baseline metrics, refer to [`docs/p
 
 ---
 
-## 12. Project Information
+## 13. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 13. License
+## 14. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
 

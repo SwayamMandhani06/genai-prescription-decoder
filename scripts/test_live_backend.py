@@ -188,6 +188,98 @@ def run_live_tests():
         r_ocr_err = client.post("/api/v1/ocr/baseline", data={})
         check(r_ocr_err.status_code == 400, "POST /api/v1/ocr/baseline without input returns 400")
 
+        # ==================================================================
+        # PHASE 6: MULTIMODAL VISION-LANGUAGE EXTRACTION ENDPOINTS
+        # ==================================================================
+        print("\n--- Phase 6: Multimodal Vision-Language Extraction ---")
+
+        # 15. GET /api/v1/multimodal/config
+        r_mc = client.get("/api/v1/multimodal/config")
+        check(r_mc.status_code == 200, "GET /api/v1/multimodal/config returns 200 OK")
+        mc_data = r_mc.json()
+        check(mc_data["config_version"] == "multimodal_extraction_v1", "Config version is multimodal_extraction_v1")
+        check(mc_data["model_id"] == "gemini-3.8-flash", "Model ID is gemini-3.8-flash")
+        check("config_hash_sha256" in mc_data, "Config hash SHA-256 present")
+        check(len(mc_data["config_hash_sha256"]) == 64, "Config hash is 64-char SHA-256")
+        check("prompt_version" in mc_data, "Prompt version present")
+        check("is_adapter_available" in mc_data, "Adapter availability reported")
+
+        # 16. POST /api/v1/multimodal/extract (single medicine confident)
+        from PIL import Image, ImageDraw
+        import io
+
+        im = Image.new("RGB", (400, 500), color=(250, 250, 250))
+        draw = ImageDraw.Draw(im)
+        draw.text((20, 70), "Augmentin 625 Duo - 1 tab BD x 5 days", fill=(10, 10, 80))
+        buf = io.BytesIO()
+        im.save(buf, format="PNG")
+        test_img_bytes = buf.getvalue()
+
+        r_ext = client.post(
+            "/api/v1/multimodal/extract",
+            files={"file": ("rx_test.png", io.BytesIO(test_img_bytes), "image/png")},
+            data={"scenario": "single_medicine_confident"},
+        )
+        check(r_ext.status_code == 200, "POST /api/v1/multimodal/extract (confident) returns 200 OK")
+        ext_data = r_ext.json()
+        check("prescription_id" in ext_data, "Extraction has prescription_id")
+        check("medicines" in ext_data, "Extraction has medicines list")
+        check(len(ext_data["medicines"]) == 1, "Single medicine extracted")
+        check(ext_data["medicines"][0]["medicine_name"]["value"] == "Amoxicillin", "Medicine name is Amoxicillin")
+        check(ext_data["medicines"][0]["medicine_name"]["status"] == "confident", "Medicine name status is confident")
+        check(ext_data["medicines"][0]["medicine_name"]["presence"] == "present", "Confident medicine presence is present")
+        check(ext_data["medicines"][0]["medicine_name"]["extraction_state"] == "extracted", "Confident medicine state is extracted")
+        check(ext_data["requires_human_review"] is False, "No human review required for confident case")
+        check("model" in ext_data, "Model audit metadata present")
+        check(ext_data["model"]["prompt_version"] == "prompt_v1_clinical_vision_extraction", "Prompt version is v1")
+
+        # 17. POST /api/v1/multimodal/extract (multiple medicines)
+        r_multi = client.post(
+            "/api/v1/multimodal/extract",
+            files={"file": ("rx_multi.png", io.BytesIO(test_img_bytes), "image/png")},
+            data={"scenario": "multiple_medicines"},
+        )
+        check(r_multi.status_code == 200, "POST /api/v1/multimodal/extract (multi-med) returns 200 OK")
+        multi_data = r_multi.json()
+        check(len(multi_data["medicines"]) == 2, "Two medicines extracted")
+        check(multi_data["medicines"][0]["medicine_name"]["value"] == "Paracetamol", "First med is Paracetamol")
+        check(multi_data["medicines"][1]["medicine_name"]["value"] == "Cetirizine", "Second med is Cetirizine")
+
+        # 18. POST /api/v1/multimodal/extract (uncertain medicine name)
+        r_unc = client.post(
+            "/api/v1/multimodal/extract",
+            files={"file": ("rx_unc.png", io.BytesIO(test_img_bytes), "image/png")},
+            data={"scenario": "uncertain_medicine_name"},
+        )
+        check(r_unc.status_code == 200, "POST /api/v1/multimodal/extract (uncertain) returns 200 OK")
+        unc_data = r_unc.json()
+        check(unc_data["medicines"][0]["medicine_name"]["status"] == "uncertain", "Uncertain medicine name detected")
+        check(unc_data["medicines"][0]["medicine_name"]["presence"] == "present", "Uncertain medicine presence is present")
+        check(unc_data["medicines"][0]["medicine_name"]["extraction_state"] == "ambiguous", "Uncertain medicine state is ambiguous")
+        check(unc_data["requires_human_review"] is True, "Human review required for uncertain extraction")
+
+        # 19. POST /api/v1/multimodal/extract (missing dosage)
+        r_miss = client.post(
+            "/api/v1/multimodal/extract",
+            files={"file": ("rx_miss.png", io.BytesIO(test_img_bytes), "image/png")},
+            data={"scenario": "missing_dosage"},
+        )
+        check(r_miss.status_code == 200, "POST /api/v1/multimodal/extract (missing dosage) returns 200 OK")
+        miss_data = r_miss.json()
+        check(miss_data["medicines"][0]["dosage"]["value"] is None, "Missing dosage value is null")
+        check(miss_data["medicines"][0]["dosage"]["status"] == "uncertain", "Missing dosage status is uncertain")
+        check(miss_data["medicines"][0]["dosage"]["presence"] == "absent", "Missing dosage presence is absent")
+        check(miss_data["medicines"][0]["dosage"]["extraction_state"] == "missing", "Missing dosage state is missing")
+        check(miss_data["medicines"][0]["dosage"]["uncertainty_reason"] is None, "Missing dosage has no fabricated uncertainty_reason")
+
+        # 20. POST /api/v1/multimodal/extract (model unavailable -> 503)
+        r_unavail = client.post(
+            "/api/v1/multimodal/extract",
+            files={"file": ("rx_unavail.png", io.BytesIO(test_img_bytes), "image/png")},
+            data={"scenario": "model_unavailable"},
+        )
+        check(r_unavail.status_code == 503, "POST /api/v1/multimodal/extract (model unavailable) returns 503")
+
     print("\n======================================================")
     print(f"LIVE TEST SUMMARY: {passed} PASSED | {failed} FAILED")
     print("======================================================\n")
@@ -198,3 +290,4 @@ def run_live_tests():
 
 if __name__ == "__main__":
     run_live_tests()
+

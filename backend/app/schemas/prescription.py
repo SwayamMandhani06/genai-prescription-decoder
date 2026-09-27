@@ -227,3 +227,14 @@ class PrescriptionAnalyzeResponse(BaseModel):
         None,
         description="Phase 4 derived artifacts manifest and cryptographic SHA-256 fingerprints"
     )
+
+    # Phase 6 Multimodal Vision-Language Extraction Extensions:
+    medicines: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Phase 6 structured multi-medicine extractions with field-level uncertainty and visual evidence"
+    )
+    multimodal_result: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 6 complete PrescriptionExtractionResult including model audit metadata and raw traceability"
+    )
+

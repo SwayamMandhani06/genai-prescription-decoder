@@ -29,12 +29,19 @@ router = APIRouter(prefix="/prescriptions", tags=["Prescriptions"])
 # Service dependency singletons
 _storage_service = StorageService()
 _mock_pipeline = MockPrescriptionPipeline()
+_multimodal_pipeline = None
 
 
 def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPipeline:
     """Dependency injector returning the active processing pipeline."""
-    # In Phase 2, the deterministic mock pipeline is active
+    global _multimodal_pipeline
+    if not settings.USE_MOCK_PIPELINE:
+        if _multimodal_pipeline is None:
+            from ...services.multimodal_pipeline import MultimodalPrescriptionPipeline
+            _multimodal_pipeline = MultimodalPrescriptionPipeline()
+        return _multimodal_pipeline
     return _mock_pipeline
+
 
 
 @router.post(

@@ -141,7 +141,15 @@ export interface PrescriptionAnalyzeResponseDto {
   meta: PrescriptionMetadataDto;
   document_telemetry: DocumentTelemetryDto;
   data: PrescriptionDataDto;
+  prescription_id?: string;
+  original_image_url?: string;
+  processed_image_url?: string | null;
+  quality_report?: Record<string, unknown> | null;
+  preprocessing_manifest?: Record<string, unknown> | null;
+  medicines?: Array<Record<string, unknown>>;
+  multimodal_result?: Record<string, unknown> | null;
 }
+
 
 export interface FastApiValidationErrorDetail {
   loc: (string | number)[];
