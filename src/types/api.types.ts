@@ -149,10 +149,21 @@ export interface FastApiValidationErrorDetail {
   type: string;
 }
 
+export interface ErrorDetailDto {
+  code: string;
+  message: string;
+  stage: string;
+  retryable?: boolean;
+  details?: Record<string, unknown>;
+}
+
 export interface FastApiHttpErrorDto {
-  detail: string | FastApiValidationErrorDetail[];
+  detail?: string | FastApiValidationErrorDetail[];
+  error?: ErrorDetailDto;
   error_code?: string;
   request_id?: string;
+  prescription_id?: string;
+  original_image_url?: string;
 }
 
 export interface PrescriptionAnalyzeOptionsDto {
@@ -166,6 +177,7 @@ export interface PrescriptionAnalyzeOptionsDto {
     | 'lasa_warning'
     | 'abstained'
     | 'invalid_image'
+    | 'image_quality_insufficient'
     | 'validation_error'
     | 'server_error'
     | 'timeout'

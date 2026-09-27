@@ -47,10 +47,19 @@ export class MockPrescriptionApiClient implements IPrescriptionApiClient {
     // Simulate realistic network transmission delay
     await this.delay(550);
 
-    // 1. Fault Injection: Validation Error (HTTP 422)
+    // 1a. Fault Injection: Image Quality Insufficient (HTTP 422)
+    if (scenario === 'image_quality_insufficient' || scenario === 'invalid_image') {
+      throw new ApiValidationError(
+        'Prescription image quality is insufficient for clinical interpretation (effective resolution below 150 DPI threshold or severe optical degradation).',
+        FASTAPI_VALIDATION_ERROR_FIXTURE.detail as any,
+        FASTAPI_VALIDATION_ERROR_FIXTURE
+      );
+    }
+
+    // 1b. Fault Injection: Validation Error (HTTP 422)
     if (scenario === 'validation_error') {
       throw new ApiValidationError(
-        'Document image resolution falls below the minimum required diagnostic threshold (422 Unprocessable Entity).',
+        'Prescription posology validation failed: conflicting dosage instructions or unrecognized formulation structure.',
         FASTAPI_VALIDATION_ERROR_FIXTURE.detail as any,
         FASTAPI_VALIDATION_ERROR_FIXTURE
       );
@@ -135,6 +144,10 @@ export class HttpPrescriptionApiClient implements IPrescriptionApiClient {
 
     if (options.target_language) {
       formData.append('target_language', options.target_language);
+    }
+
+    if (options.mock_scenario) {
+      formData.append('mock_scenario', options.mock_scenario);
     }
 
     return defaultApiClient.postFormData<PrescriptionAnalyzeResponseDto>(

@@ -152,7 +152,15 @@ export function mapApiResponseToResultsState(
     'RX-NGP-1104-D': 'state-flagged',
   };
 
-  const stateId = idMap[data.accession_id] || 'state-confident';
+  const deriveStateId = (): ResultsDemoState['id'] => {
+    if (idMap[data.accession_id]) return idMap[data.accession_id];
+    if (data.overall_status === 'ABSTAINED' || data.overall_status === 'SELECTIVE_ABSTAIN') return 'state-abstained';
+    if (data.overall_status === 'SAFETY_ALERT' || data.lasa_screening?.has_warning) return 'state-lasa';
+    if (data.overall_status === 'NEEDS_VERIFICATION' || data.document_confidence < 0.85) return 'state-uncertain';
+    return 'state-confident';
+  };
+
+  const stateId = deriveStateId();
 
   return {
     id: stateId,

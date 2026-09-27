@@ -47,8 +47,11 @@ ENV/
 # Logs & Caches
 logs/
 *.log
-.eslintcache
-.stylelintcache
-.turbo/
+# Backend temporary uploads (keep directory via .gitkeep)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Test scripts artifacts
+scripts/test_prescription.png
 
 plan.md 

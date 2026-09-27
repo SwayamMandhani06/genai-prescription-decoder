@@ -122,7 +122,13 @@ export function createApiErrorFromResponse(
     );
   }
 
-  const messageText = typeof detail === 'string' ? detail : fallbackMessage;
+  const innerError = errorObj.error as { message?: string; code?: string } | undefined;
+  const messageText =
+    typeof innerError?.message === 'string'
+      ? innerError.message
+      : typeof detail === 'string'
+      ? detail
+      : fallbackMessage;
 
   if (statusCode === 504) {
     return new ApiTimeoutError(messageText, 15000);

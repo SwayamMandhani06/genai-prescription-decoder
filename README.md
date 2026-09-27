@@ -69,6 +69,21 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
+├── backend/                     # FastAPI backend service (Phase 2)
+│   ├── app/
+│   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
+│   │   ├── config.py            # Pydantic v2 settings & environment configuration
+│   │   ├── api/v1/routes/       # /analyze, /{id}, /health route definitions
+│   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
+│   │   └── services/            # Mock pipeline synthesizer & image storage
+│   ├── tests/                   # Pytest test suite (unit, contract, error handling)
+│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Uvicorn)
+│   └── run.py                   # Development server runner (port 8000)
+├── docs/
+│   └── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
+├── scripts/
+│   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
+│   └── test_live_backend.py     # Live HTTP end-to-end socket verification
 ├── src/
 │   ├── main.tsx                 # Application DOM mounting
 │   ├── App.tsx                  # Root component shell
@@ -76,26 +91,24 @@ genai-prescription-decoder/
 │   ├── styles/
 │   │   └── globals.css          # Design system tokens, glass panels, scanlines
 │   ├── types/
+│   │   ├── api.types.ts         # Section 6 DTOs & frontend mapping interfaces
 │   │   ├── prescription.types.ts# Medicine entity, bounding boxes, analysis results
 │   │   ├── safety.types.ts      # LASA warnings, abstention alerts, interactions
 │   │   ├── explanation.types.ts # Multilingual schedules (EN, HI, MR)
 │   │   └── benchmark.types.ts   # Research evaluation metrics & datasets
+│   ├── services/
+│   │   ├── api/                 # HttpPrescriptionApiClient, MockPrescriptionApiClient
+│   │   └── mappers/             # prescriptionMapper (DTO <-> UI domain model)
 │   ├── data/
 │   │   ├── mockPrescriptions.ts # 3 clinically representative outpatient samples
 │   │   ├── sampleHandwrittenSvg.ts# Vectorized handwritten doctor cursive paths
 │   │   ├── lasaCatalog.ts       # Look-Alike Sound-Alike catalog with phonetic scores
 │   │   ├── multilingualCatalog.ts# Full translations in English, Hindi, and Marathi
 │   │   └── benchmarkData.ts     # CER, WER, F1, AUROC comparison metrics
-│   ├── services/
-│   │   └── prescriptionService.ts# Decoupled typed API service abstraction
-│   ├── utils/
-│   │   └── cn.ts                # Tailwind class merge utility
 │   ├── components/
 │   │   ├── ui/                  # Button, Badge, Card, ConfidenceMeter, Tooltip, Modal
 │   │   ├── layout/              # Navbar, Footer, SafetyDisclaimer
-│   │   ├── hero/                # HeroSection, HeroPrescriptionCanvas
-│   │   ├── pipeline/            # PipelineSection (5-stage interactive workflow)
-│   │   ├── prescription/        # InteractiveAnalyzer, OriginalPrescriptionReference
+│   │   ├── workspace/           # UploadStep, ReviewStep, AnalyzeStep, FindingsStep
 │   │   ├── safety/              # UncertaintyAbstentionSection, LasaSafetySection
 │   │   ├── explanation/         # MultilingualExplanationSection
 │   │   └── research/            # ResearchBenchmarkSection
@@ -111,85 +124,69 @@ genai-prescription-decoder/
 ### Prerequisites
 - **Node.js**: `v20.x` or later (tested on v24.18)
 - **npm**: `v10.x` or later
+- **Python**: `3.10` or later (tested on Python 3.12)
 
-### Installation
+### 1. Frontend Setup
 ```bash
-# Clone or enter repository
-cd genai-prescription-decoder
-
-# Install dependencies
+# Install frontend dependencies
 npm install
-```
 
-### Running Locally
-```bash
-# Start Vite development server
+# Start Vite development server (port 5173)
 npm run dev
 ```
-The application will launch on `http://localhost:5173`.
 
-### Production Build & Type Checking
+### 2. Backend Setup
 ```bash
-# Run TypeScript compilation and Vite build
+# Install Python dependencies
+pip install -r backend/requirements.txt
+
+# Start FastAPI development server (port 8000)
+python backend/run.py
+```
+
+### 3. Verification & Testing
+```bash
+# Run backend pytest test suite
+python -m pytest backend/tests -v
+
+# Run live FastAPI HTTP verification suite
+python scripts/test_live_backend.py
+
+# Run frontend unit & integration tests
+npm test
+
+# Run TypeScript type check
+npm run lint
+
+# Run genuine browser E2E audit (Chrome)
+npx vite-node scripts/browser-e2e-audit.ts
+
+# Production build
 npm run build
-
-# Preview production build locally
-npm run preview
 ```
 
 ---
 
-## 6. Future Backend Integration (Phase 2)
+## 6. Backend Architecture & API Contract (Phase 2)
 
-The frontend architecture in `src/services/prescriptionService.ts` is explicitly structured around an asynchronous REST / FastAPI contract.
+The backend is built with FastAPI in `backend/app` adhering to the frozen API contract defined in Section 6 and Section 11 of `plan.md`.
 
-### Target API Endpoints
+### Core API Endpoints
 
-```python
-# FastAPI Contract Preview
-from fastapi import FastAPI, UploadFile, File
-from pydantic import BaseModel
-from typing import List, Optional
+- `POST /api/v1/prescriptions/analyze`: Ingests a prescription image (`multipart/form-data`) or evaluation `sample_id`, applies preprocessing, executes the pipeline, and returns the unified dual-contract response (Section 6 contract + Phase 1 UI envelope).
+- `GET /api/v1/prescriptions/{prescription_id}`: Retrieves an analyzed prescription record by accession ID.
+- `GET /api/v1/health`: Returns API service health, uptime, version, and active pipeline mode.
 
-class MedicationEntity(BaseModel):
-    id: str
-    brand_name: str
-    generic_name: str
-    dosage: str
-    form: str
-    frequency: str
-    timing: str
-    duration: str
-    confidence_score: float
-    confidence_status: str
-    rxnorm_cui: Optional[str]
-    cdsco_approved: bool
-
-class AnalysisResponse(BaseModel):
-    id: str
-    processing_time_ms: int
-    document_confidence: float
-    extracted_medications: List[MedicationEntity]
-    summary: dict
-
-@app.post("/api/v1/prescriptions/analyze", response_model=AnalysisResponse)
-async def analyze_prescription(
-    file: UploadFile = File(...),
-    threshold: float = 0.65,
-    enable_lasa: bool = True
-):
-    ...
-```
-
-To switch from the mock data provider to the live backend, simply update the `analyzePrescription` method in `src/services/prescriptionService.ts` to dispatch `fetch('/api/v1/prescriptions/analyze')`. **No UI components require modification.**
+The frontend client in `src/services/api/` can seamlessly toggle between the local mock adapter and the live FastAPI backend via `apiConfig.useMock` or runtime configuration (`VITE_USE_MOCK_API=false`).
 
 ---
 
-## 7. Research Methodology & Evaluation
+## 7. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
-The system architecture is benchmarked against the **IndoRx-1200** dataset (1,200 outpatient prescriptions collected across multi-specialty OPDs in India with ground-truth clinician annotations):
+> [!NOTE]
+> The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
 
-| Metric | Traditional OCR (Tesseract 5.3) | Zero-Shot VLM | AURA-Rx (Proposed Grounded Pipeline) |
+| Metric | Traditional OCR Baseline (Phase 5 Target) | Zero-Shot VLM (Baseline Target) | AURA-Rx (Phase 12 Design Target) |
 | :--- | :---: | :---: | :---: |
 | **Word Error Rate (WER)** | 58.4% | 34.2% | **8.7%** (-74.6%) |
 | **Character Error Rate (CER)** | 39.8% | 21.5% | **4.9%** (-77.2%) |
@@ -211,10 +208,9 @@ The system architecture is benchmarked against the **IndoRx-1200** dataset (1,20
 
 ---
 
-## 9. Team & Project Information
+## 9. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
-- **Lead Frontend Architect & UI/UX Engineer:** Pair Programming with Antigravity AI
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---

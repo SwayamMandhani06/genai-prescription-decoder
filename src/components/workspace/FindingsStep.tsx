@@ -32,10 +32,18 @@ export interface FindingsStepProps {
 
 export const FindingsStep: React.FC<FindingsStepProps> = ({
   uploadedData,
+  initialResult,
   onNewPrescription,
 }) => {
-  // Determine state based on sample ID
+  // Determine state based on initialResult or sample ID
   const determineInitialState = (): ResultsDemoStateId => {
+    if (initialResult) {
+      if (initialResult.overallStatus === 'ABSTAINED') return 'state-abstained';
+      if (initialResult.overallStatus === 'SAFETY_ALERT') return 'state-lasa';
+      if (initialResult.overallStatus === 'SELECTIVE_ABSTAIN') return 'state-flagged';
+      if (initialResult.overallStatus === 'NEEDS_VERIFICATION') return 'state-uncertain';
+      if (initialResult.overallStatus === 'VERIFIED') return 'state-confident';
+    }
     if (uploadedData?.sampleId === 'rx-sample-2') return 'state-lasa';
     if (uploadedData?.sampleId === 'rx-sample-3') return 'state-flagged';
     return 'state-confident';
