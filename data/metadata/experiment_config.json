@@ -1,0 +1,29 @@
+{
+  "experiment_id": "EXP-P03-BASELINE-DATASET",
+  "description": "Prospective experiment configuration specifying prospective evaluation protocols for Phase 12; models are NOT implemented in Phase 3.",
+  "configuration_status": "prospective",
+  "implementation_status": "not_implemented",
+  "planned_phase": "Phase 12 (Evaluation & Ablation)",
+  "dataset_version": "1.0.0",
+  "split_version": "1.0.0",
+  "random_seed": 42,
+  "preprocessing_version": "p04_standard_dewarp (planned)",
+  "model_identifier": "trocr_swin_multimodal_hybrid_v1 (planned)",
+  "evaluation_protocol": {
+    "protocol_status": "prospective_target",
+    "metrics": [
+      "wer",
+      "cer",
+      "entity_f1",
+      "posology_f1",
+      "abstention_auroc",
+      "lasa_accuracy"
+    ],
+    "confidence_threshold": 0.85,
+    "abstention_entropy_threshold": 0.4,
+    "iou_spatial_threshold": 0.5
+  },
+  "output_directory": "experiments/results/p03_baseline",
+  "created_at": "2026-09-27T08:09:12.578619+00:00",
+  "config_hash": "9042e3f5a4d57b7de8c230b279907c8c97c038357df49f80fca6de2af0ace4ae"
+}

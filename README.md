@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-0EA5E9)](#technology-stack)
-[![Evaluation Dataset](https://img.shields.io/badge/Dataset-IndoRx--1200%20(Curated)-10B981)](#research-methodology--evaluation)
+[![Dataset Infrastructure](https://img.shields.io/badge/Dataset%20Infrastructure-Phase%203%20Verified-10B981)](#7-research-datasets--experimental-infrastructure-phase-3)
 [![Safety Protocol](https://img.shields.io/badge/Safety-Selective%20Abstention%20%7C%20LASA%20Detection-F59E0B)](#clinical-safety--uncertainty-abstention)
 
 > **Academic Capstone Engineering Project**  
@@ -69,21 +69,34 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── backend/                     # FastAPI backend service (Phase 2)
+├── backend/                     # FastAPI backend service (Phase 2 & Phase 3)
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
 │   │   ├── api/v1/routes/       # /analyze, /{id}, /health route definitions
 │   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
-│   │   └── services/            # Mock pipeline synthesizer & image storage
-│   ├── tests/                   # Pytest test suite (unit, contract, error handling)
-│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Uvicorn)
+│   │   ├── services/            # Mock pipeline synthesizer & image storage
+│   │   └── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
+│   ├── tests/                   # Pytest test suite (Phase 2 & Phase 3 test suites)
+│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, etc.)
 │   └── run.py                   # Development server runner (port 8000)
+├── data/                        # Dataset & experimental infrastructure (Phase 3)
+│   ├── README.md                # Dataset architecture and reproduction protocol
+│   ├── SOURCES.md               # Legal, licensing, and provenance inventory
+│   ├── manifests/               # Machine-readable inventory with cryptographic checksums
+│   ├── annotations/             # Gold-standard ground truth annotations & schema
+│   ├── splits/                  # Group-aware zero-leakage train/val/test partitions
+│   ├── samples/                 # Calibration & integration sample set (N=7)
+│   └── metadata/                # Version info and prospective experiment configurations
 ├── docs/
-│   └── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
+│   ├── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
+│   └── phase-03-completion.md   # Formal Phase 3 exit gate verification report
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
-│   └── test_live_backend.py     # Live HTTP end-to-end socket verification
+│   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
+│   ├── validate_dataset.py      # Automated dataset integrity & validation CLI
+│   ├── build_dataset_manifest.py# Automated manifest and schema builder
+│   └── build_metadata.py        # Dataset metadata and experiment config generator
 ├── src/
 │   ├── main.tsx                 # Application DOM mounting
 │   ├── App.tsx                  # Root component shell
@@ -146,8 +159,11 @@ python backend/run.py
 
 ### 3. Verification & Testing
 ```bash
-# Run backend pytest test suite
+# Run backend pytest test suite (Phase 2 & Phase 3)
 python -m pytest backend/tests -v
+
+# Run dataset validation CLI (Phase 3 integrity audit)
+python scripts/validate_dataset.py
 
 # Run live FastAPI HTTP verification suite
 python scripts/test_live_backend.py
@@ -181,7 +197,23 @@ The frontend client in `src/services/api/` can seamlessly toggle between the loc
 
 ---
 
-## 7. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 7. Research Datasets & Experimental Infrastructure (Phase 3)
+
+Phase 3 establishes an audit-verified, legally traceable, and experimentally reproducible dataset infrastructure for handwritten prescription decoding without premature AI modeling:
+
+- **Legal Licensing & Provenance Inventory (`data/SOURCES.md`, `data/manifests/dataset_manifest.json`):** Documents verified public sources, distinguishing dataset licenses (CC BY 4.0), academic database access (CC BY-NC 4.0), statutory government open data (NDSAP / OGD India), clinical terminology agreements (UMLS Metathesaurus), and clinical safety guidance (ISMP TALL MAN), while quarantining unverified sources (`candidate_unverified`).
+- **Strict 4-Tier Annotation Architecture (`backend/app/dataset/schema.py`):** Rigidly isolates `ground_truth` (immutable transcription), `derived` (standardized posology & RxNorm codes), `model_prediction` (strictly deferred to Phase 6+), and `human_review` (pharmacist verification).
+- **Immutable Raw Text & Deterministic Normalization (`backend/app/dataset/normalization.py`):** Normalizes Unicode NFKC, whitespace, dosage units, and Latin frequencies (`BD`, `TDS`, `OD`, `HS`, `SOS`, `PC`, `AC`) as derived attributes while preserving the raw handwritten tokens permanently un-overwritten.
+- **Group-Aware Splitting (`backend/app/dataset/splitter.py`):** Implements indivisible patient-cluster partitioning strictly by `patient_group_id` with static leakage verification (`detect_split_leakage()`) across train/val/test splits and image SHA-256 hashes.
+- **AURA-Rx Calibration & Integration Sample Set (`data/samples/`, N=7):** Classified strictly as a development, continuous integration, and test suite sample set; not represented as a statistically sufficient final research benchmark.
+- **Prospective Evaluation Configurations (`data/metadata/experiment_config.json`):** Downstream model configurations are explicitly marked with `configuration_status="prospective"` and `implementation_status="not_implemented"`.
+- **Validation CLI (`scripts/validate_dataset.py`):** Standalone integrity checker validating manifest schemas, annotation conformance, image header readability, dimensions, and cryptographic hashes.
+
+For detailed documentation, refer to [`data/README.md`](data/README.md), [`data/SOURCES.md`](data/SOURCES.md), and [`docs/phase-03-completion.md`](docs/phase-03-completion.md).
+
+---
+
+## 8. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -197,7 +229,7 @@ The frontend client in `src/services/api/` can seamlessly toggle between the loc
 
 ---
 
-## 8. Clinical Safety & Regulatory Disclaimer
+## 9. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -208,13 +240,14 @@ The frontend client in `src/services/api/` can seamlessly toggle between the loc
 
 ---
 
-## 9. Project Information
+## 10. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 10. License
+## 11. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
+

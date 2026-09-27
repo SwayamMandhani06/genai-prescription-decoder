@@ -1,0 +1,243 @@
+{
+  "$defs": {
+    "DatasetSourceEntry": {
+      "description": "Inventory entry for a discrete dataset or regulatory reference corpus.",
+      "properties": {
+        "dataset_id": {
+          "description": "Canonical internal slug (e.g. 'bd-handwritten-rx')",
+          "minLength": 3,
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Official dataset title",
+          "minLength": 3,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Detailed description of clinical scope and content",
+          "title": "Description",
+          "type": "string"
+        },
+        "document_type": {
+          "description": "Prescription pad scan, synthetic form, or vocabulary lexicon",
+          "title": "Document Type",
+          "type": "string"
+        },
+        "handwriting_characteristics": {
+          "description": "Cursive doctor hand, semi-print, stroke variation",
+          "title": "Handwriting Characteristics",
+          "type": "string"
+        },
+        "language_script": {
+          "description": "Writing script (e.g. 'Latin cursive with Bengali notes')",
+          "title": "Language Script",
+          "type": "string"
+        },
+        "available_annotations": {
+          "description": "Document-level, token bounding box, or transcription text",
+          "title": "Available Annotations",
+          "type": "string"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/SourceVerificationStatus",
+          "description": "Licensing and authenticity verification status"
+        },
+        "access_method": {
+          "description": "Public download URL, portal registration, or API query",
+          "title": "Access Method",
+          "type": "string"
+        },
+        "known_limitations": {
+          "description": "Explicit catalog of limitations",
+          "items": {
+            "type": "string"
+          },
+          "title": "Known Limitations",
+          "type": "array"
+        },
+        "relevance": {
+          "description": "Functional role in AURA-Rx research pipeline",
+          "title": "Relevance",
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/ProvenanceRecord",
+          "description": "Detailed provenance and licensing documentation"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "description",
+        "document_type",
+        "handwriting_characteristics",
+        "language_script",
+        "available_annotations",
+        "verification_status",
+        "access_method",
+        "relevance",
+        "provenance"
+      ],
+      "title": "DatasetSourceEntry",
+      "type": "object"
+    },
+    "LicenseCategory": {
+      "description": "Specific legal instrument category governing data or reference assets.",
+      "enum": [
+        "open_dataset_license",
+        "academic_research_license",
+        "statutory_government_open_data",
+        "clinical_terminology_license",
+        "clinical_safety_guidance",
+        "open_source_software_data_license",
+        "unverified_pending_audit"
+      ],
+      "title": "LicenseCategory",
+      "type": "string"
+    },
+    "ProvenanceRecord": {
+      "description": "Provenance tracking record for legal traceability and auditability.",
+      "properties": {
+        "source_url": {
+          "description": "Canonical URL or DOI reference",
+          "title": "Source Url",
+          "type": "string"
+        },
+        "provider_organization": {
+          "description": "Publishing university, agency, or research group",
+          "title": "Provider Organization",
+          "type": "string"
+        },
+        "retrieval_date": {
+          "description": "ISO 8601 date of retrieval or inspection",
+          "title": "Retrieval Date",
+          "type": "string"
+        },
+        "license": {
+          "description": "Software/Data license (e.g. 'CC-BY-4.0', 'Open Government Data')",
+          "title": "License",
+          "type": "string"
+        },
+        "license_category": {
+          "$ref": "#/$defs/LicenseCategory",
+          "description": "Legal instrument classification"
+        },
+        "permitted_usage": {
+          "description": "Summary of legal permitted scope (e.g. 'Academic Research & Evaluation')",
+          "title": "Permitted Usage",
+          "type": "string"
+        },
+        "attribution_requirements": {
+          "description": "Specific citation or attribution string required",
+          "title": "Attribution Requirements",
+          "type": "string"
+        },
+        "citation": {
+          "description": "Formal academic citation or technical publication reference",
+          "title": "Citation",
+          "type": "string"
+        },
+        "dataset_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1.0",
+          "description": "Upstream provider version or release tag",
+          "title": "Dataset Version"
+        },
+        "archive_checksum": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA-256 hash of downloaded raw archive if applicable",
+          "title": "Archive Checksum"
+        }
+      },
+      "required": [
+        "source_url",
+        "provider_organization",
+        "retrieval_date",
+        "license",
+        "license_category",
+        "permitted_usage",
+        "attribution_requirements",
+        "citation"
+      ],
+      "title": "ProvenanceRecord",
+      "type": "object"
+    },
+    "SourceVerificationStatus": {
+      "description": "Verification grade of candidate data source.",
+      "enum": [
+        "verified_public",
+        "verified_regulatory",
+        "candidate_unverified"
+      ],
+      "title": "SourceVerificationStatus",
+      "type": "string"
+    }
+  },
+  "description": "Machine-readable dataset manifest cataloging all approved, candidate,\nand reference data sources used in the project.",
+  "properties": {
+    "manifest_version": {
+      "default": "1.0.0",
+      "description": "Semantic version of manifest schema",
+      "title": "Manifest Version",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "ISO 8601 generation timestamp",
+      "title": "Created At",
+      "type": "string"
+    },
+    "project_identifier": {
+      "default": "AURA-Rx-GenAI-Prescription-Decoder",
+      "description": "Project slug",
+      "title": "Project Identifier",
+      "type": "string"
+    },
+    "sources": {
+      "description": "Cataloged dataset sources",
+      "items": {
+        "$ref": "#/$defs/DatasetSourceEntry"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "local_sample_count": {
+      "default": 0,
+      "description": "Number of verified local evaluation samples",
+      "minimum": 0,
+      "title": "Local Sample Count",
+      "type": "integer"
+    },
+    "checksum": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "SHA-256 checksum of the manifest contents",
+      "title": "Checksum"
+    }
+  },
+  "title": "DatasetManifest",
+  "type": "object"
+}

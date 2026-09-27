@@ -1,0 +1,459 @@
+[
+  {
+    "document_id": "DOC-RX-001",
+    "patient_group_id": "PATIENT-GRP-A",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-001",
+      "image_rel_path": "samples/sample_01_clear.png",
+      "image_sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Augmentin 625 mg 1-0-1 (BD) 5 days After food",
+          "medicine_name": "Augmentin",
+          "dosage_strength": "625 mg",
+          "frequency": "1-0-1",
+          "duration": "5 days",
+          "route": "Oral",
+          "instructions": "After food",
+          "abbreviations": [
+            "BD"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 2,
+          "raw_text": "Paracetamol 500 mg SOS 3 days For fever/body pain",
+          "medicine_name": "Paracetamol",
+          "dosage_strength": "500 mg",
+          "frequency": "SOS",
+          "duration": "3 days",
+          "route": "Oral",
+          "instructions": "For fever/body pain",
+          "abbreviations": [
+            "SOS"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.33,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 3,
+          "raw_text": "Pantocid 40 mg 1-0-0 (OD) 5 days Before breakfast",
+          "medicine_name": "Pantocid",
+          "dosage_strength": "40 mg",
+          "frequency": "1-0-0",
+          "duration": "5 days",
+          "route": "Oral",
+          "instructions": "Before breakfast",
+          "abbreviations": [
+            "OD"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.42,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "General Medicine",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [
+      {
+        "tier": "derived",
+        "document_id": "DOC-RX-001",
+        "medication_index": 1,
+        "canonical_rxnorm_cui": "RxCUI-105267",
+        "canonical_cdsco_name": "Amoxicillin and Potassium Clavulanate Tablet IP",
+        "expanded_instructions_en": "Take one tablet twice daily after meals.",
+        "expanded_instructions_hi": "भोजन के बाद दिन में दो बार एक गोली लें।",
+        "expanded_instructions_mr": "जेवणानंतर दिवसातून दोनदा एक गोळी घ्यावी.",
+        "enrichment_method": "deterministic_rule_based"
+      }
+    ],
+    "metadata": {
+      "scenario": "clear_outpatient_prescription",
+      "quality_grade": "high"
+    }
+  },
+  {
+    "document_id": "DOC-RX-002",
+    "patient_group_id": "PATIENT-GRP-B",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-002",
+      "image_rel_path": "samples/sample_02_cursive.png",
+      "image_sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Metformin 500 mg 1-0-1 (BD) 30 days Take with meals",
+          "medicine_name": "Metformin",
+          "dosage_strength": "500 mg",
+          "frequency": "1-0-1",
+          "duration": "30 days",
+          "route": "Oral",
+          "instructions": "Take with meals",
+          "abbreviations": [
+            "BD"
+          ],
+          "ambiguity_level": "minor",
+          "is_lasa_risk": true,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 2,
+          "raw_text": "Atorvastatin 10 mg 0-0-1 (HS) 30 days At bedtime",
+          "medicine_name": "Atorvastatin",
+          "dosage_strength": "10 mg",
+          "frequency": "0-0-1",
+          "duration": "30 days",
+          "route": "Oral",
+          "instructions": "At bedtime",
+          "abbreviations": [
+            "HS"
+          ],
+          "ambiguity_level": "minor",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.33,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "Endocrinology",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "cursive_handwriting",
+      "quality_grade": "medium"
+    }
+  },
+  {
+    "document_id": "DOC-RX-003",
+    "patient_group_id": "PATIENT-GRP-C",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-003",
+      "image_rel_path": "samples/sample_03_blurred.png",
+      "image_sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Azithromycin 500 mg 1-0-0 (OD) 3 days 1 hr before meals",
+          "medicine_name": "Azithromycin",
+          "dosage_strength": "500 mg",
+          "frequency": "1-0-0",
+          "duration": "3 days",
+          "route": "Oral",
+          "instructions": "1 hr before meals",
+          "abbreviations": [
+            "OD"
+          ],
+          "ambiguity_level": "minor",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 2,
+          "raw_text": "Cetirizine 10 mg 0-0-1 (HS) 5 days At bedtime",
+          "medicine_name": "Cetirizine",
+          "dosage_strength": "10 mg",
+          "frequency": "0-0-1",
+          "duration": "5 days",
+          "route": "Oral",
+          "instructions": "At bedtime",
+          "abbreviations": [
+            "HS"
+          ],
+          "ambiguity_level": "minor",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.33,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "General Medicine",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "defocus_blurred",
+      "quality_grade": "degraded"
+    }
+  },
+  {
+    "document_id": "DOC-RX-004",
+    "patient_group_id": "PATIENT-GRP-D",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-004",
+      "image_rel_path": "samples/sample_04_lowlight.png",
+      "image_sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Amoxicillin 500 mg 1-1-1 (TDS) 7 days Every 8 hours with water",
+          "medicine_name": "Amoxicillin",
+          "dosage_strength": "500 mg",
+          "frequency": "1-1-1",
+          "duration": "7 days",
+          "route": "Oral",
+          "instructions": "Every 8 hours with water",
+          "abbreviations": [
+            "TDS"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "Internal Medicine",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "low_light_shadow",
+      "quality_grade": "degraded"
+    }
+  },
+  {
+    "document_id": "DOC-RX-005",
+    "patient_group_id": "PATIENT-GRP-E",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-005",
+      "image_rel_path": "samples/sample_05_abbreviations.png",
+      "image_sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Tab Cifran 500 mg BD PC 5 days Post cibum",
+          "medicine_name": "Cifran",
+          "dosage_strength": "500 mg",
+          "frequency": "BD",
+          "duration": "5 days",
+          "route": "Oral",
+          "instructions": "Post cibum",
+          "abbreviations": [
+            "Tab",
+            "BD",
+            "PC"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 2,
+          "raw_text": "Tab Dolo 650 mg TDS SOS 3 days When pain occurs",
+          "medicine_name": "Dolo",
+          "dosage_strength": "650 mg",
+          "frequency": "TDS",
+          "duration": "3 days",
+          "route": "Oral",
+          "instructions": "When pain occurs",
+          "abbreviations": [
+            "Tab",
+            "TDS",
+            "SOS"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.33,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 3,
+          "raw_text": "Cap Omeprazole 20 mg OD AC 7 days Ante cibum",
+          "medicine_name": "Omeprazole",
+          "dosage_strength": "20 mg",
+          "frequency": "OD",
+          "duration": "7 days",
+          "route": "Oral",
+          "instructions": "Ante cibum",
+          "abbreviations": [
+            "Cap",
+            "OD",
+            "AC"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.42,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "Consultant Physician",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "posology_abbreviations",
+      "quality_grade": "medium"
+    }
+  },
+  {
+    "document_id": "DOC-RX-006",
+    "patient_group_id": "PATIENT-GRP-F",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-006",
+      "image_rel_path": "samples/sample_06_lasa_pair.png",
+      "image_sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "Metformin 500 mg BD 14 days Oral antidiabetic",
+          "medicine_name": "Metformin",
+          "dosage_strength": "500 mg",
+          "frequency": "BD",
+          "duration": "14 days",
+          "route": "Oral",
+          "instructions": "Oral antidiabetic",
+          "abbreviations": [
+            "BD"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": true,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        },
+        {
+          "item_index": 2,
+          "raw_text": "Metronidazole 400 mg TDS 5 days Antimicrobial therapy",
+          "medicine_name": "Metronidazole",
+          "dosage_strength": "400 mg",
+          "frequency": "TDS",
+          "duration": "5 days",
+          "route": "Oral",
+          "instructions": "Antimicrobial therapy",
+          "abbreviations": [
+            "TDS"
+          ],
+          "ambiguity_level": "none",
+          "is_lasa_risk": true,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.33,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "General Medicine",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "lasa_confusable_pair",
+      "quality_grade": "high"
+    }
+  },
+  {
+    "document_id": "DOC-RX-007",
+    "patient_group_id": "PATIENT-GRP-G",
+    "ground_truth": {
+      "tier": "ground_truth",
+      "document_id": "DOC-RX-007",
+      "image_rel_path": "samples/sample_07_ambiguous_abstain.png",
+      "image_sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "patient_deidentified": true,
+      "language_script": "Latin",
+      "medications": [
+        {
+          "item_index": 1,
+          "raw_text": "AmbiguousIllegibleStroke ??? mg 1-?-1 Unknown Unreadable cursive ligature",
+          "medicine_name": "Unknown_Ambiguous_Stroke",
+          "dosage_strength": null,
+          "frequency": "1-?-1",
+          "duration": null,
+          "route": "Oral",
+          "instructions": "Unreadable cursive ligature",
+          "abbreviations": [],
+          "ambiguity_level": "severe_illegible",
+          "is_lasa_risk": false,
+          "bounding_box": {
+            "x": 0.08,
+            "y": 0.24,
+            "width": 0.8,
+            "height": 0.08
+          }
+        }
+      ],
+      "clinical_department": "Consultant Physician",
+      "source_dataset_id": "aura-rx-curated-evaluation"
+    },
+    "derived_annotations": [],
+    "metadata": {
+      "scenario": "abstention_ambiguity",
+      "quality_grade": "illegible"
+    }
+  }
+]

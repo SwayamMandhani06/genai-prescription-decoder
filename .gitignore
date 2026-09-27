@@ -51,7 +51,13 @@ logs/
 backend/uploads/*
 !backend/uploads/.gitkeep
 
-# Test scripts artifacts
+# Data directories: exclude heavy external downloads but track structure
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Temporary test image fixture
 scripts/test_prescription.png
 
 plan.md 

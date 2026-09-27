@@ -1,0 +1,403 @@
+{
+  "$defs": {
+    "AmbiguityLevel": {
+      "description": "Assessment of cursive or stroke legibility in handwriting.",
+      "enum": [
+        "none",
+        "minor",
+        "severe_illegible"
+      ],
+      "title": "AmbiguityLevel",
+      "type": "string"
+    },
+    "AnnotationTier": {
+      "description": "Tier of annotation indicating provenance and authority.",
+      "enum": [
+        "ground_truth",
+        "derived",
+        "model_prediction",
+        "human_review"
+      ],
+      "title": "AnnotationTier",
+      "type": "string"
+    },
+    "BoundingBox": {
+      "description": "Normalized spatial coordinates [0.0 - 1.0] referencing the prescription image.",
+      "properties": {
+        "x": {
+          "description": "Top-left X coordinate normalized",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "description": "Top-left Y coordinate normalized",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Y",
+          "type": "number"
+        },
+        "width": {
+          "description": "Bounding box width normalized",
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "title": "Width",
+          "type": "number"
+        },
+        "height": {
+          "description": "Bounding box height normalized",
+          "exclusiveMinimum": 0.0,
+          "maximum": 1.0,
+          "title": "Height",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "BoundingBox",
+      "type": "object"
+    },
+    "DerivedAnnotation": {
+      "description": "Derived posology and ontological enrichment data linked to a ground truth record.\nClearly decoupled from raw ground truth ink transcription.",
+      "properties": {
+        "tier": {
+          "$ref": "#/$defs/AnnotationTier",
+          "default": "derived",
+          "description": "Must be 'derived'"
+        },
+        "document_id": {
+          "description": "Foreign key to GroundTruthAnnotation.document_id",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "medication_index": {
+          "description": "Reference to MedicationEntityAnnotation.item_index",
+          "minimum": 1,
+          "title": "Medication Index",
+          "type": "integer"
+        },
+        "canonical_rxnorm_cui": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RxNorm Concept Unique Identifier",
+          "title": "Canonical Rxnorm Cui"
+        },
+        "canonical_cdsco_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Standard CDSCO gazette active substance name",
+          "title": "Canonical Cdsco Name"
+        },
+        "expanded_instructions_en": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Normalized English posology instructions",
+          "title": "Expanded Instructions En"
+        },
+        "expanded_instructions_hi": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hindi vernacular translation",
+          "title": "Expanded Instructions Hi"
+        },
+        "expanded_instructions_mr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Marathi vernacular translation",
+          "title": "Expanded Instructions Mr"
+        },
+        "enrichment_method": {
+          "default": "deterministic_rule_based",
+          "description": "Methodology used to derive fields",
+          "title": "Enrichment Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "medication_index"
+      ],
+      "title": "DerivedAnnotation",
+      "type": "object"
+    },
+    "GroundTruthAnnotation": {
+      "description": "Gold-standard ground truth annotation for a complete prescription document.\nMust never be mixed with model predictions.",
+      "properties": {
+        "tier": {
+          "$ref": "#/$defs/AnnotationTier",
+          "default": "ground_truth",
+          "description": "Must be 'ground_truth'"
+        },
+        "document_id": {
+          "description": "Canonical document identifier (e.g. 'DOC-RX-001')",
+          "minLength": 3,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "image_rel_path": {
+          "description": "Relative path from data root to image",
+          "minLength": 3,
+          "title": "Image Rel Path",
+          "type": "string"
+        },
+        "image_sha256": {
+          "description": "SHA-256 cryptographic checksum of image",
+          "maxLength": 64,
+          "minLength": 64,
+          "title": "Image Sha256",
+          "type": "string"
+        },
+        "patient_deidentified": {
+          "description": "Certification that no real patient PII is contained",
+          "title": "Patient Deidentified",
+          "type": "boolean"
+        },
+        "language_script": {
+          "default": "Latin",
+          "description": "Primary writing script ('Latin', 'Devanagari', etc.)",
+          "title": "Language Script",
+          "type": "string"
+        },
+        "medications": {
+          "description": "Prescribed medications list",
+          "items": {
+            "$ref": "#/$defs/MedicationEntityAnnotation"
+          },
+          "title": "Medications",
+          "type": "array"
+        },
+        "clinical_department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "General Medicine",
+          "description": "Specialty department of prescription",
+          "title": "Clinical Department"
+        },
+        "source_dataset_id": {
+          "description": "ID referencing dataset manifest source entry",
+          "title": "Source Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "image_rel_path",
+        "image_sha256",
+        "patient_deidentified",
+        "source_dataset_id"
+      ],
+      "title": "GroundTruthAnnotation",
+      "type": "object"
+    },
+    "MedicationEntityAnnotation": {
+      "description": "Ground truth annotation for a single prescribed medication line item.",
+      "properties": {
+        "item_index": {
+          "description": "1-based index of medication on the prescription pad",
+          "minimum": 1,
+          "title": "Item Index",
+          "type": "integer"
+        },
+        "raw_text": {
+          "description": "Exact transcription of handwritten doctor ink",
+          "minLength": 1,
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "medicine_name": {
+          "description": "Standardized trade or generic medicine name",
+          "minLength": 1,
+          "title": "Medicine Name",
+          "type": "string"
+        },
+        "dosage_strength": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dosage and strength (e.g. '625 mg', '500 mg')",
+          "title": "Dosage Strength"
+        },
+        "frequency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prescribed frequency notation (e.g. '1-0-1', 'TDS', 'OD')",
+          "title": "Frequency"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration of therapy (e.g. '5 days', '1 month')",
+          "title": "Duration"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Oral",
+          "description": "Route of administration (e.g. 'Oral', 'Topical', 'IV')",
+          "title": "Route"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Patient posology instructions (e.g. 'After food')",
+          "title": "Instructions"
+        },
+        "abbreviations": {
+          "description": "Clinical shorthand tokens present (e.g. ['BD', 'PC'])",
+          "items": {
+            "type": "string"
+          },
+          "title": "Abbreviations",
+          "type": "array"
+        },
+        "ambiguity_level": {
+          "$ref": "#/$defs/AmbiguityLevel",
+          "default": "none",
+          "description": "Visual ambiguity classification"
+        },
+        "is_lasa_risk": {
+          "default": false,
+          "description": "True if drug belongs to an ISMP/FDA confusable pair",
+          "title": "Is Lasa Risk",
+          "type": "boolean"
+        },
+        "bounding_box": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Spatial coordinates on document canvas"
+        }
+      },
+      "required": [
+        "item_index",
+        "raw_text",
+        "medicine_name"
+      ],
+      "title": "MedicationEntityAnnotation",
+      "type": "object"
+    }
+  },
+  "description": "Master record encapsulating a prescription document, ground truth, and derived annotations.",
+  "properties": {
+    "document_id": {
+      "description": "Unique document ID",
+      "title": "Document Id",
+      "type": "string"
+    },
+    "patient_group_id": {
+      "description": "Patient or physician grouping key to prevent split leakage",
+      "title": "Patient Group Id",
+      "type": "string"
+    },
+    "ground_truth": {
+      "$ref": "#/$defs/GroundTruthAnnotation",
+      "description": "Gold-standard ground truth"
+    },
+    "derived_annotations": {
+      "description": "Associated derived data",
+      "items": {
+        "$ref": "#/$defs/DerivedAnnotation"
+      },
+      "title": "Derived Annotations",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "description": "Heuristic, split, and provenance metadata",
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "document_id",
+    "patient_group_id",
+    "ground_truth"
+  ],
+  "title": "PrescriptionDocumentRecord",
+  "type": "object"
+}
