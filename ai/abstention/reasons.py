@@ -35,12 +35,19 @@ class AbstentionReasonCode(str, Enum):
     VALIDATION_CONFLICT = "VALIDATION_CONFLICT"
     UNSUPPORTED_FIELD = "UNSUPPORTED_FIELD"
 
+    # LASA medicine-name conflict reasons (Phase 10)
+    LASA_CONFUSION_RISK = "LASA_CONFUSION_RISK"
+
     # Pipeline & system reasons
     PROCESSING_UNCERTAIN = "PROCESSING_UNCERTAIN"
 
 
 # Human-readable documentation for each standardized reason code
 REASON_DESCRIPTIONS: Dict[AbstentionReasonCode, str] = {
+    AbstentionReasonCode.LASA_CONFUSION_RISK: (
+        "Potential look-alike / sound-alike (LASA) medicine-name conflict detected against formulary "
+        "or known confusable drug pairs. Autonomous acceptance is withheld; human clinical verification is mandated."
+    ),
     AbstentionReasonCode.CALIBRATION_UNAVAILABLE: (
         "Empirical probability calibration is unperformed or unavailable for this field score. "
         "The system conservatively refrains from treating raw model scores as calibrated certainty."

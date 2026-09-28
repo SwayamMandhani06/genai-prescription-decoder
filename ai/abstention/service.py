@@ -8,7 +8,7 @@ Provides singleton dependency injection for:
 
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import threading
 
 from backend.app.multimodal.schemas import PrescriptionExtractionResult
@@ -56,9 +56,10 @@ class AbstentionService:
         confidence_assessment: Optional[PrescriptionConfidenceAssessment] = None,
         validation_results: Optional[List[MedicineValidationResult]] = None,
         original_image_url: Optional[str] = None,
+        lasa_detection: Optional[Any] = None,
     ) -> PrescriptionAbstentionDecision:
         """
-        Executes Phase 9 abstention policy evaluation over Phase 6, 7, and 8 artifacts.
+        Executes Phase 9 abstention policy evaluation over Phase 6, 7, 8, and Phase 10 artifacts.
         """
         return evaluate_prescription_abstention(
             prescription_id=prescription_id,
@@ -67,6 +68,7 @@ class AbstentionService:
             validation_results=validation_results,
             config=self._config,
             original_image_url=original_image_url,
+            lasa_detection=lasa_detection,
         )
 
     # ==========================================================================

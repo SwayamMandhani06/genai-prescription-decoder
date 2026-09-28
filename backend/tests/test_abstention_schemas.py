@@ -36,8 +36,8 @@ class TestAbstentionSchemas:
         assert "MODEL_OUTPUT_INCOMPLETE" in codes
         assert "PROCESSING_UNCERTAIN" in codes
 
-        # Verify no LASA reason codes (reserved for Phase 10)
-        assert not any("LASA" in c for c in codes)
+        # Phase 10 introduces LASA_CONFUSION_RISK to reason codes
+        assert "LASA_CONFUSION_RISK" in codes
 
         # Check description retrieval
         desc = get_reason_description(AbstentionReasonCode.DOSAGE_FORMULATION_MISMATCH)

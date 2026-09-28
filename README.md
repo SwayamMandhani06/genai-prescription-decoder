@@ -6,7 +6,9 @@
 [![Image Preprocessing](https://img.shields.io/badge/Preprocessing%20%26%20Quality-Phase%204%20Verified-10B981)](#8-image-preprocessing--quality-assessment-phase-4)
 [![Multimodal Extraction](https://img.shields.io/badge/Multimodal%20Extraction-Phase%206%20Verified-10B981)](#10-multimodal-vision-language-extraction-phase-6)
 [![RAG Medicine Validation](https://img.shields.io/badge/RAG%20Validation-Phase%207%20Verified-10B981)](#11-rag-based-medicine-validation-phase-7)
-[![Safety Protocol](https://img.shields.io/badge/Safety-Selective%20Abstention%20%7C%20LASA%20Detection-F59E0B)](#clinical-safety--uncertainty-abstention)
+[![Confidence Calibration](https://img.shields.io/badge/Confidence%20Calibration-Phase%208%20Verified-10B981)](#12-confidence-estimation--calibration-layer-phase-8)
+[![Abstention & Verification](https://img.shields.io/badge/Abstention%20%26%20Verification-Phase%209%20Verified-10B981)](#13-abstention--human-verification-layer-phase-9)
+[![LASA Detection](https://img.shields.io/badge/LASA%20Detection-Phase%2010%20Verified-10B981)](#14-look-alike--sound-alike-lasa-conflict-detection-phase-10)
 
 
 > **Academic Capstone Engineering Project**  
@@ -73,18 +75,23 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── backend/                     # FastAPI backend service (Phases 2-6)
+├── ai/                          # Core AI Intelligence & Clinical Safety Modules (Phases 7-10)
+│   ├── rag/                     # Phase 7 CDSCO & RxNorm authoritative medicine validation
+│   ├── confidence/              # Phase 8 calibration (ECE, MCE, Brier, Platt, Isotonic)
+│   ├── abstention/              # Phase 9 uncertainty-aware selective abstention & human verification
+│   └── lasa/                    # Phase 10 Look-Alike / Sound-Alike similarity conflict detector
+├── backend/                     # FastAPI backend service (Phases 2-10)
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
-│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal/*
+│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal, /validation, /confidence, /abstention, /lasa
 │   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
-│   │   ├── services/            # Mock & multimodal pipelines, image storage
+│   │   ├── services/            # Mock & 10-stage multimodal pipelines, image storage
 │   │   ├── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
 │   │   ├── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
 │   │   ├── ocr/                 # Phase 5 Tesseract OCR baseline engine & metrics
 │   │   └── multimodal/          # Phase 6 vision-language adapters, parser, schemas, service
-│   ├── tests/                   # Pytest test suite (Phases 2-6 unit & integration suites)
+│   ├── tests/                   # Pytest test suite (443 unit & integration tests)
 │   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
 │   └── run.py                   # Development server runner (port 8000)
 ├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
@@ -104,6 +111,8 @@ genai-prescription-decoder/
 │   ├── phase-06-completion.md   # Formal Phase 6 exit gate verification report
 │   ├── phase-07-completion.md   # Formal Phase 7 exit gate verification report
 │   ├── phase-08-completion.md   # Formal Phase 8 exit gate verification report
+│   ├── phase-09-completion.md   # Formal Phase 9 exit gate verification report
+│   ├── phase-10-completion.md   # Formal Phase 10 exit gate verification report
 │   └── confidence_design.md     # Phase 8 Confidence & Calibration Design Specification
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
@@ -361,7 +370,54 @@ For complete design specifications and verification logs, refer to [`docs/confid
 
 ---
 
-## 13. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 13. Abstention & Human Verification Layer (Phase 9)
+
+Phase 9 implements an uncertainty-aware selective abstention and human-verification layer deciding: *"Do I have sufficient empirical evidence to present this extracted field as automatically usable?"*
+
+- **Binary Decision States:**
+  - `accepted`: Sufficient calibrated empirical evidence exists (`requires_human_verification = False`).
+  - `abstained`: Evidence is insufficient, conflicting, ambiguous, uncalibrated, or unsafe (`requires_human_verification = True`).
+- **Standardized Reason Code Taxonomy:** 14 distinct machine-readable reasons including `CALIBRATION_INSUFFICIENT_DATA`, `LOW_CALIBRATED_CONFIDENCE`, `EXTRACTION_UNCERTAIN`, `DOSAGE_FORMULATION_MISMATCH`, and `LASA_CONFUSION_RISK`.
+- **Human Verification Workflow:**
+  - `[Confirm]`: Preserves verbatim original extraction as human-verified.
+  - `[Correct]`: Captures human correction while strictly preserving original model output in an immutable audit trail.
+  - `[Mark Unreadable]`: Explicitly marks field as unreadable without forcing an arbitrary guess.
+- **Dedicated Endpoints:**
+  - `GET /api/v1/abstention/config`: Active policy configuration, thresholds, and fingerprint hash.
+  - `POST /api/v1/abstention/evaluate`: Evaluates field-level and prescription-level abstention.
+  - `POST /api/v1/verification/{prescription_id}/{field_id}`: Records human verification action.
+  - `GET /api/v1/verification/{prescription_id}`: Retrieves complete verification audit trail.
+  - `GET /api/v1/abstention/fixtures`: Returns 15 deterministic Phase 9 evaluation scenarios.
+
+For complete design specifications and verification logs, refer to [`docs/phase-09-completion.md`](docs/phase-09-completion.md).
+
+---
+
+## 14. Look-Alike / Sound-Alike (LASA) Conflict Detection (Phase 10)
+
+Phase 10 implements an explainable, deterministic, and safety-oriented Look-Alike / Sound-Alike (LASA) conflict detection subsystem for handwritten medicine candidates.
+
+- **Deterministic Multi-Dimensional Similarity Engine:**
+  - **Orthographic Similarity:** SequenceMatcher ratio on normalized drug names.
+  - **Phonetic Similarity:** Double Metaphone phonetic encoding comparing primary and secondary codes.
+  - **Combined Weighted Score:** Weighted lexical and phonetic similarity score ($0.50 \times \text{ortho} + 0.50 \times \text{phon}$).
+  - **Base Stem & Formulation Exclusion:** Prevents self-collision across dosage strengths (e.g., `Metformin 500` vs `Metformin`) and formulation stopwords (`SR`, `ER`, `Tab`, `Capsule`).
+  - **Curated ISMP Tall Man Lettering:** Evaluates 20 high-frequency confusion pairs from the ISMP 2024 edition (e.g., `metFORMIN` / `metRONIDAZOLE`, `vinBLAStine` / `vinCRIStine`).
+- **Strict Non-Clinical Safety-Review Semantics:**
+  - Similarity scores represent lexical and phonetic proximity, never clinical risk or adverse drug event probability.
+  - `overall_status = "SAFETY_ALERT"` is an application safety-review state requiring human verification, not a clinical risk assessment.
+- **Three-State Execution Semantics:** Explicit non-overlapping states (`"completed"`, `"failed"`, `"unavailable"`). Clean screening yields `conflict_detected = False`; failure or vocabulary unavailability yields `conflict_detected = None`.
+- **Phase 9 Integration:** Phase 10 detects similarity conflicts $\rightarrow$ Phase 9 consumes evidence $\rightarrow$ Phase 9 flags verification with `LASA_CONFUSION_RISK`. Extracted candidates are strictly preserved byte-for-byte and never altered.
+- **Dedicated Endpoints:**
+  - `GET /api/v1/lasa/config`: Reports thresholds, weights, configuration hash, and complete ISMP provenance metadata.
+  - `POST /api/v1/lasa/detect`: Performs deterministic LASA screening for input medicine names.
+  - `GET /api/v1/lasa/fixtures`: Returns all 15 deterministic benchmark fixtures.
+
+For complete audit logs and verification records, refer to [`docs/phase-10-completion.md`](docs/phase-10-completion.md).
+
+---
+
+## 15. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -377,7 +433,7 @@ For complete design specifications and verification logs, refer to [`docs/confid
 
 ---
 
-## 14. Clinical Safety & Regulatory Disclaimer
+## 16. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -388,15 +444,15 @@ For complete design specifications and verification logs, refer to [`docs/confid
 
 ---
 
-## 15. Project Information
+## 17. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 16. License
-
+## 18. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
+
 

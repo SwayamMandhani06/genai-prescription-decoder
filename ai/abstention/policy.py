@@ -46,6 +46,7 @@ def evaluate_field_abstention(
     confidence_assessment: Optional[FieldConfidenceAssessment] = None,
     validation_result: Optional[MedicineValidationResult] = None,
     config: Optional[AbstentionPolicyConfig] = None,
+    lasa_result: Optional[Any] = None,
 ) -> FieldAbstentionDecision:
     """
     Evaluates whether an individual posology field can be safely accepted
@@ -202,6 +203,23 @@ def evaluate_field_abstention(
                     reasons_detail.append("Candidate entity has no matching entry in CDSCO or RxNorm reference formularies.")
 
     # ------------------------------------------------------------------
+    # 3.1 Inspect LASA Name Conflict Evidence (Phase 10)
+    # ------------------------------------------------------------------
+    if field_name == "medicine_name" and lasa_result is not None:
+        has_conflict = getattr(lasa_result, "has_lasa_conflict", False)
+        if has_conflict:
+            conflicts.append("LASA_CONFUSION_RISK")
+            if AbstentionReasonCode.LASA_CONFUSION_RISK.value not in reason_codes:
+                reason_codes.append(AbstentionReasonCode.LASA_CONFUSION_RISK.value)
+                top_name = getattr(lasa_result, "top_confusable_name", None) or "confusable drug entity"
+                top_score = getattr(lasa_result, "top_confusable_score", None)
+                score_str = f" ({top_score * 100:.1f}% similarity)" if top_score is not None else ""
+                reasons_detail.append(
+                    f"Look-Alike Sound-Alike (LASA) similarity conflict detected with {top_name}{score_str}. "
+                    "Autonomous acceptance withheld; human clinical verification of medicine identity is mandated."
+                )
+
+    # ------------------------------------------------------------------
     # 4. Final Determination
     # ------------------------------------------------------------------
     decision = "abstained" if len(reason_codes) > 0 else "accepted"
@@ -242,6 +260,7 @@ def evaluate_medicine_abstention(
     confidence_assessment: Optional[MedicineConfidenceAssessment] = None,
     validation_result: Optional[MedicineValidationResult] = None,
     config: Optional[AbstentionPolicyConfig] = None,
+    lasa_result: Optional[Any] = None,
 ) -> MedicineAbstentionDecision:
     """
     Evaluates abstention decisions for all posology fields of an individual medication item.
@@ -265,6 +284,7 @@ def evaluate_medicine_abstention(
         confidence_assessment=confidence_assessment.medicine_name if confidence_assessment else None,
         validation_result=validation_result,
         config=config,
+        lasa_result=lasa_result,
     )
 
     # 2. dosage
@@ -316,10 +336,12 @@ def evaluate_prescription_abstention(
     validation_results: Optional[List[MedicineValidationResult]] = None,
     config: Optional[AbstentionPolicyConfig] = None,
     original_image_url: Optional[str] = None,
+    lasa_detection: Optional[Any] = None,
 ) -> PrescriptionAbstentionDecision:
     """
     Consolidates field-level and medicine-level abstention evaluations into a complete
     document-level determination conforming to PLAN.md Section 18.
+    Consumes Phase 10 LASA detection evidence to enforce safety abstention.
     """
     if config is None:
         config = get_default_abstention_config()
@@ -341,12 +363,17 @@ def evaluate_prescription_abstention(
                 med_conf = confidence_assessment.medicines[idx]
 
             med_val = val_map.get(idx)
+            med_lasa = None
+            if lasa_detection and hasattr(lasa_detection, "medicines") and idx < len(lasa_detection.medicines):
+                med_lasa = lasa_detection.medicines[idx]
+
             med_dec = evaluate_medicine_abstention(
                 med=med,
                 item_index=idx + 1,
                 confidence_assessment=med_conf,
                 validation_result=med_val,
                 config=config,
+                lasa_result=med_lasa,
             )
             medicine_decisions.append(med_dec)
 

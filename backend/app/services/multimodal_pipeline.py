@@ -19,6 +19,7 @@ from ..schemas.prescription import (
     AlternativeCandidate,
     ValidationEvidence,
     ValidationItem,
+    LasaFlagItem,
     LasaScreening,
     PosologyTimingSlot,
     PosologyLanguagePack,
@@ -341,8 +342,27 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 f_item.calibration_method = f_conf.calibrated.calibration_method
 
         # ------------------------------------------------------------------
+        # Phase 10: LASA (Look-Alike / Sound-Alike) Conflict Detection (PLAN.md Section 19)
+        # ------------------------------------------------------------------
+        # Phase 10 detects potential medicine-name conflicts against reference pool & ISMP pairs.
+        # It does NOT decide abstention or confirm/reject medicines; it passes evidence to Phase 9.
+        from ai.lasa.service import get_lasa_detection_service
+        lasa_service = get_lasa_detection_service()
+        medicine_names_for_lasa = [
+            med.medicine_name.value or ""
+            for med in extraction_result.medicines
+            if med.medicine_name.value
+        ]
+        lasa_result = lasa_service.detect_prescription(
+            prescription_id=prescription_id,
+            medicine_names=medicine_names_for_lasa,
+        )
+
+        # ------------------------------------------------------------------
         # Phase 9: Abstention & Human Verification (PLAN.md Section 18)
         # ------------------------------------------------------------------
+        # Phase 9 consumes Phase 6 (extraction), Phase 7 (validation), Phase 8 (confidence),
+        # and Phase 10 (LASA) evidence. Phase 9 owns the abstention and human verification decision.
         from ai.abstention.service import get_abstention_service
         abstention_service = get_abstention_service()
         abstention_decision = abstention_service.evaluate_prescription(
@@ -351,6 +371,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             confidence_assessment=confidence_assessment,
             validation_results=raw_val_results,
             original_image_url=public_image_url,
+            lasa_detection=lasa_result,
         )
 
         # Enrich Section 6 field extraction items with Phase 9 abstention decisions
@@ -368,12 +389,92 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             pending_fields=abstention_decision.fields_requiring_verification,
         )
 
+        # Build Section 6 lasa_flags from canonical Phase 10 detection results
+        lasa_flags_list: List[LasaFlagItem] = []
+        for med_lasa in lasa_result.medicines:
+            for confusable in med_lasa.confusables:
+                lasa_flags_list.append(LasaFlagItem(
+                    field="medicine_name",
+                    conflict_with=confusable.confusable_name,
+                    risk=confusable.risk_level,
+                    similarity_score=round(confusable.combined_score * 100, 1),
+                    tall_man_prescribed=confusable.tall_man_prescribed,
+                    tall_man_confused=confusable.tall_man_confused,
+                    details=confusable.clinical_context,
+                ))
+
+        # Build LasaScreening for Phase 1 UI envelope from primary medicine result
+        primary_lasa = lasa_result.medicines[0] if lasa_result.medicines else None
+        if lasa_result.status != "completed":
+            # Detection unavailable or failed: explicit non-completion semantics
+            ui_lasa_screening = LasaScreening(
+                has_warning=False,
+                prescribed_candidate=primary_med_name,
+                confusable_counterpart="Screening Unavailable",
+                tall_man_prescribed=primary_med_name,
+                tall_man_confused="",
+                similarity_score=0.0,
+                similarity_type="Orthographic & Phonetic",
+                metaphone_match=False,
+                clinical_risk_summary=(
+                    f"LASA conflict detection is {lasa_result.status}. "
+                    "Manual clinical verification of medicine identity is required."
+                ),
+                mandated_action="Manual identity verification required before dispensing.",
+            )
+        elif primary_lasa and primary_lasa.has_lasa_conflict and primary_lasa.confusables:
+            top_conf = primary_lasa.confusables[0]
+            ui_lasa_screening = LasaScreening(
+                has_warning=True,
+                prescribed_candidate=primary_lasa.prescribed_candidate,
+                confusable_counterpart=top_conf.confusable_name,
+                tall_man_prescribed=top_conf.tall_man_prescribed or primary_lasa.prescribed_candidate,
+                tall_man_confused=top_conf.tall_man_confused or top_conf.confusable_name,
+                similarity_score=top_conf.combined_score,
+                similarity_type=(
+                    "Orthographic & Phonetic" if top_conf.similarity_type in ("combined", "known_pair")
+                    else ("Phonetic" if top_conf.similarity_type == "phonetic" else "Orthographic")
+                ),
+                metaphone_match=top_conf.metaphone_match,
+                clinical_risk_summary=top_conf.clinical_context,
+                mandated_action="Verify correct medicine identity before dispensing.",
+            )
+        else:
+            ui_lasa_screening = LasaScreening(
+                has_warning=False,
+                prescribed_candidate=primary_med_name,
+                confusable_counterpart="None Identified",
+                tall_man_prescribed=primary_med_name,
+                tall_man_confused="",
+                similarity_score=0.0,
+                similarity_type="Orthographic & Phonetic",
+                metaphone_match=False,
+                clinical_risk_summary="No high-risk orthographic collision flagged at extraction stage.",
+                mandated_action="Routine clinical verification before dispensing.",
+            )
+
+        # Application safety-review state determination:
+        # SAFETY_ALERT is an application safety-review state indicating that a potential
+        # medicine-name conflict requires attention/verification.
+        # It does NOT mean: clinical danger, adverse drug event, wrong medicine,
+        # medical risk probability, diagnosis, or prescribing recommendation.
         effective_human_review = (
             extraction_result.requires_human_review
             or rag_requires_human_review
             or abstention_decision.requires_human_verification
+            or (lasa_result.status == "completed" and bool(lasa_result.conflict_detected))
+            or (lasa_result.status != "completed")
         )
-        overall_status_str = "NEEDS_VERIFICATION" if effective_human_review else "VERIFIED"
+        has_lasa_alert = (
+            lasa_result.status == "completed"
+            and bool(lasa_result.conflict_detected)
+            and lasa_result.highest_risk in ("high", "medium")
+        )
+        lasa_status_override = has_lasa_alert
+        overall_status_str = (
+            "SAFETY_ALERT" if has_lasa_alert
+            else ("NEEDS_VERIFICATION" if effective_human_review else "VERIFIED")
+        )
 
         if primary_ui_evidence:
             ui_val_evidence = ValidationEvidence(
@@ -419,7 +520,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             prescription_id=prescription_id,
             original_image_url=public_image_url,
             fields=fields_dict,
-            lasa_flags=[],
+            lasa_flags=lasa_flags_list,
             validation=validation_dict,
             explanation=MultilingualSummary(
                 en=posology_summary_en,
@@ -433,7 +534,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 timestamp=extraction_result.created_at,
                 processing_time_ms=int(extraction_result.duration_seconds * 1000),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
-                pipeline_stages_completed=9,
+                pipeline_stages_completed=10,
             ),
             document_telemetry=DocumentTelemetry(
                 estimated_dpi=200,
@@ -447,7 +548,10 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 script_sample_key="multimodal_v1",
                 scenario_title=f"Multimodal Extraction: {primary_med_name}",
                 scenario_subtitle="Multimodal Vision-Language Extraction Pipeline",
-                difficulty_tag="Moderate Cursive" if effective_human_review else "Clear Handwriting",
+                difficulty_tag=(
+                    "LASA Similarity" if lasa_status_override
+                    else ("Moderate Cursive" if effective_human_review else "Clear Handwriting")
+                ),
                 overall_status=overall_status_str,  # type: ignore
                 document_confidence=0.70 if effective_human_review else 0.94,
                 patient_info=PatientInfo(name="Anonymized Patient", age_gender="Adult"),
@@ -461,18 +565,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 extracted_entities=ui_entities,
                 validation_evidence=ui_val_evidence,
 
-                lasa_screening=LasaScreening(
-                    has_warning=False,
-                    prescribed_candidate=primary_med_name,
-                    confusable_counterpart="None Identified",
-                    tall_man_prescribed=primary_med_name,
-                    tall_man_confused="",
-                    similarity_score=0.0,
-                    similarity_type="Orthographic & Phonetic",
-                    metaphone_match=False,
-                    clinical_risk_summary="No high-risk orthographic collision flagged at extraction stage.",
-                    mandated_action="Routine clinical verification before dispensing.",
-                ),
+                lasa_screening=ui_lasa_screening,
                 posology_explanation=MultilingualPosology(
                     en=PosologyLanguagePack(
                         summary=posology_summary_en,
@@ -523,6 +616,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             medicine_validations=medicine_validations_list,
             confidence_assessment=confidence_assessment.model_dump(),
             abstention=abstention_decision.model_dump(),
+            lasa_detection=lasa_result.model_dump(),
         )
 
 

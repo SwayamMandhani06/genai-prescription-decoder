@@ -41,11 +41,17 @@ class LasaFlagItem(BaseModel):
     """
     field: str = Field(..., description="Target field key (e.g. medicine_name)")
     conflict_with: str = Field(..., description="Conflicting drug entity (e.g. Metronidazole)")
-    risk: Literal["low", "medium", "high"] = Field(..., description="Calibrated clinical risk level")
+    risk: Literal["low", "medium", "high"] = Field(
+        ...,
+        description="Calibrated similarity conflict severity level (not a clinical risk assessment)",
+    )
     similarity_score: Optional[float] = Field(None, description="Similarity percentage score [0 - 100]")
     tall_man_prescribed: Optional[str] = Field(None, description="ISMP Tall Man prescribed name")
     tall_man_confused: Optional[str] = Field(None, description="ISMP Tall Man confused counterpart")
-    details: Optional[str] = Field(None, description="Clinical explanation of pharmacological consequence")
+    details: Optional[str] = Field(
+        None,
+        description="Explanation of name similarity and why verification is mandated. Does not constitute clinical advice.",
+    )
 
 
 class ValidationItem(BaseModel):
@@ -186,7 +192,15 @@ class PrescriptionData(BaseModel):
     scenario_title: str
     scenario_subtitle: str
     difficulty_tag: Literal["Clear Handwriting", "Moderate Cursive", "LASA Similarity", "Severe Ambiguity"]
-    overall_status: Literal["VERIFIED", "NEEDS_VERIFICATION", "SAFETY_ALERT", "SELECTIVE_ABSTAIN", "ABSTAINED"]
+    overall_status: Literal["VERIFIED", "NEEDS_VERIFICATION", "SAFETY_ALERT", "SELECTIVE_ABSTAIN", "ABSTAINED"] = Field(
+        ...,
+        description=(
+            "Application verification state. SAFETY_ALERT indicates an application safety-review state "
+            "indicating that a potential medicine-name conflict requires attention/verification. "
+            "It does NOT mean clinical danger, adverse drug event, wrong medicine, medical risk probability, "
+            "diagnosis, or prescribing recommendation."
+        ),
+    )
     document_confidence: float
     patient_info: PatientInfo
     prescriber_info: PrescriberInfo
@@ -261,6 +275,12 @@ class PrescriptionAnalyzeResponse(BaseModel):
     abstention: Optional[Dict[str, Any]] = Field(
         None,
         description="Phase 9 uncertainty-aware abstention determination, machine-readable reason codes, and verification flags"
+    )
+
+    # Phase 10 LASA Detection Extensions (PLAN.md Section 19):
+    lasa_detection: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 10 LASA (Look-Alike / Sound-Alike) conflict detection results, similarity scores, and provenance"
     )
 
 

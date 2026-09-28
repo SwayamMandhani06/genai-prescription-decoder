@@ -75,6 +75,6 @@ class TestRAGPipelineIntegration:
 
         # In uncertain scenario, human review must be required
         assert response.requires_human_review is True
-        assert response.data.overall_status == "NEEDS_VERIFICATION"
+        assert response.data.overall_status in ("NEEDS_VERIFICATION", "SAFETY_ALERT")
         assert response.medicine_validations is not None
         assert len(response.medicine_validations) >= 1
