@@ -9,6 +9,7 @@
 [![Confidence Calibration](https://img.shields.io/badge/Confidence%20Calibration-Phase%208%20Verified-10B981)](#12-confidence-estimation--calibration-layer-phase-8)
 [![Abstention & Verification](https://img.shields.io/badge/Abstention%20%26%20Verification-Phase%209%20Verified-10B981)](#13-abstention--human-verification-layer-phase-9)
 [![LASA Detection](https://img.shields.io/badge/LASA%20Detection-Phase%2010%20Verified-10B981)](#14-look-alike--sound-alike-lasa-conflict-detection-phase-10)
+[![Multilingual Explanation](https://img.shields.io/badge/Multilingual%20Explanation-Phase%2011%20Verified-10B981)](#15-multilingual-patient-friendly-explanation-layer-phase-11)
 
 
 > **Academic Capstone Engineering Project**  
@@ -75,23 +76,24 @@ genai-prescription-decoder/
 ├── tsconfig.json                # Strict TypeScript configuration
 ├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── ai/                          # Core AI Intelligence & Clinical Safety Modules (Phases 7-10)
+├── ai/                          # Core AI Intelligence & Clinical Safety Modules (Phases 7-11)
 │   ├── rag/                     # Phase 7 CDSCO & RxNorm authoritative medicine validation
 │   ├── confidence/              # Phase 8 calibration (ECE, MCE, Brier, Platt, Isotonic)
 │   ├── abstention/              # Phase 9 uncertainty-aware selective abstention & human verification
-│   └── lasa/                    # Phase 10 Look-Alike / Sound-Alike similarity conflict detector
-├── backend/                     # FastAPI backend service (Phases 2-10)
+│   ├── lasa/                    # Phase 10 Look-Alike / Sound-Alike similarity conflict detector
+│   └── explanation/             # Phase 11 multilingual patient-friendly explanation layer (EN, HI, MR)
+├── backend/                     # FastAPI backend service (Phases 2-11)
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
-│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal, /validation, /confidence, /abstention, /lasa
+│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal, /validation, /confidence, /abstention, /lasa, /explanation
 │   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
-│   │   ├── services/            # Mock & 10-stage multimodal pipelines, image storage
+│   │   ├── services/            # Mock & 11-stage multimodal pipelines, image storage
 │   │   ├── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
 │   │   ├── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
 │   │   ├── ocr/                 # Phase 5 Tesseract OCR baseline engine & metrics
 │   │   └── multimodal/          # Phase 6 vision-language adapters, parser, schemas, service
-│   ├── tests/                   # Pytest test suite (443 unit & integration tests)
+│   ├── tests/                   # Pytest test suite (513 unit & integration tests)
 │   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
 │   └── run.py                   # Development server runner (port 8000)
 ├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
@@ -113,6 +115,7 @@ genai-prescription-decoder/
 │   ├── phase-08-completion.md   # Formal Phase 8 exit gate verification report
 │   ├── phase-09-completion.md   # Formal Phase 9 exit gate verification report
 │   ├── phase-10-completion.md   # Formal Phase 10 exit gate verification report
+│   ├── phase-11-completion.md   # Formal Phase 11 exit gate verification report
 │   └── confidence_design.md     # Phase 8 Confidence & Calibration Design Specification
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
@@ -417,7 +420,36 @@ For complete audit logs and verification records, refer to [`docs/phase-10-compl
 
 ---
 
-## 15. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
+## 15. Multilingual Patient-Friendly Explanation Layer (Phase 11)
+
+Phase 11 implements a deterministic, clinical safety-gated, patient-friendly explanation layer translating verified downstream structured prescription data into clear posology instructions in **English (`en`)**, **Hindi (`hi` / हिन्दी)**, and **Marathi (`mr` / मराठी)**:
+
+- **Assistive Scope Boundary:** The explanation layer consumes structured prescription results only. It never performs OCR, independent handwriting reinterpretation, or ungrounded generative inference, and never diagnoses or recommends changes to medications or dosages.
+- **Explanation Eligibility Gate (`ExplanationEligibilityGate`):**
+  - `eligible`: Source facts are validated and confident; full posology translation is generated.
+  - `restricted`: Facts are ambiguous, incomplete, or trigger a LASA collision; conservative statements preserve ambiguity.
+  - `abstained`: Phase 9 abstention is active; automated medication posology is strictly blocked and clinical verification instructions are issued.
+  - `unavailable`: Pipeline or service failure; standard diagnostic error response is returned.
+- **Strict Information & Identity Fidelity:**
+  - **Roman Script Medicine Invariant:** Medicine brand and generic identities are preserved verbatim in Roman script across all languages (e.g., `Augmentin 625 Duo` in English, Hindi, and Marathi) to prevent orthographic dispensing ambiguities.
+  - **Numeric & Unit Fidelity Validator (`NumericFidelityValidator`):** Extracts numerical tokens, decimals, and metric units (e.g., `625 mg`, `5 days`, `2.5 mL`), rejecting any output that modifies or drops values.
+  - **Unsupported Fact Validator (`UnsupportedFactValidator`):** Rejects unauthorized diagnostic claims (e.g., `"fever"`, `"मधुमेह"`, `"ताप"`), prognostic promises, or altered dosages.
+- **Controlled Terminology Mapping (`ExplanationTerminologyService`):** Deterministic clinical lexicons mapping frequencies (OD, BD, TDS, QID, SOS/PRN), meal relations (PC, AC, CC), timing slots, and duration units across all three languages.
+- **Interactive Dual-Pane Findings UX:**
+  - Pinned left pane keeps the original handwritten prescription image visible at all times.
+  - Instant language switcher buttons (**English**, **हिन्दी**, **मराठी**) toggle representation without re-running interpretation.
+  - Side-by-side debug comparison drawer (`[data-testid="toggle-side-by-side"]`) for clinical audit of multi-language alignment.
+  - Statutory provenance notice declaring policy `explanation_policy_v1` and template `explanation_template_v1`.
+- **Dedicated Endpoints:**
+  - `GET /api/v1/explanation/config`: Reports policy version, template version, and 64-character SHA-256 configuration hash.
+  - `POST /api/v1/explanation/generate`: Generates multilingual explanations from structured prescription facts.
+  - `GET /api/v1/explanation/fixtures`: Returns 22 deterministic benchmark and edge-case evaluation fixtures.
+
+For complete audit logs and verification records, refer to [`docs/phase-11-completion.md`](docs/phase-11-completion.md).
+
+---
+
+## 16. Research Methodology & Planned Evaluation Framework (Phase 12 Protocol)
 
 > [!NOTE]
 > The performance metrics and comparative baselines below represent the **planned evaluation protocol and design target criteria** to be empirically evaluated in Phase 12 against experimental datasets (Phase 3). Current numbers represent target research benchmarks, not claimed real model results.
@@ -433,7 +465,7 @@ For complete audit logs and verification records, refer to [`docs/phase-10-compl
 
 ---
 
-## 16. Clinical Safety & Regulatory Disclaimer
+## 17. Clinical Safety & Regulatory Disclaimer
 
 > [!CAUTION]
 > **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
@@ -444,14 +476,14 @@ For complete audit logs and verification records, refer to [`docs/phase-10-compl
 
 ---
 
-## 17. Project Information
+## 18. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 18. License
+## 19. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
 

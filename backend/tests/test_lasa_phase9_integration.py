@@ -195,8 +195,8 @@ class TestPhase9LasaIntegration:
             options=options,
         )
 
-        # Must have completed all 10 stages
-        assert res.meta.pipeline_stages_completed == 10
+        # Must have completed all stages through Phase 10 / 11
+        assert res.meta.pipeline_stages_completed >= 10
 
         # Phase 9 field should reflect verification requirement
         med_field = res.fields.get("medicine_name")

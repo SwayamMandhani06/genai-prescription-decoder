@@ -334,7 +334,85 @@ async function runBrowserAudit() {
       () => document.body.innerText.includes('UNREADABLE') || document.body.innerText.includes('Marked Unreadable'),
       { timeout: 5000 }
     );
-    check(true, 'Field marked as unreadable without forcing arbitrary guess');
+    // -------------------------------------------------------------------------
+    // 8c. Phase 11: Multilingual Explanation & Language Switching E2E Tests
+    // -------------------------------------------------------------------------
+    console.log('\n--- 8c. Verifying Phase 11 Multilingual Explanation & Language Switching ---');
+
+    // Switch back to Confident state to inspect full posology explanation
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const confidentTab = buttons.find(b => b.textContent?.includes('Confident') || b.textContent?.includes('1. Confident'));
+      if (confidentTab) confidentTab.click();
+    });
+
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="explanation-card"]') !== null,
+      { timeout: 8000 }
+    );
+    check(true, 'Phase 11 Patient-Friendly Explanation card rendered in Findings');
+
+    // 1. Verify English Explanation
+    await page.evaluate(() => {
+      const enTab = document.querySelector('[data-testid="lang-tab-en"]') as HTMLButtonElement;
+      if (enTab) enTab.click();
+    });
+    await new Promise(r => setTimeout(r, 300));
+
+    const enText = await page.evaluate(() => {
+      const summaryEl = document.querySelector('[data-testid="explanation-summary"]');
+      return summaryEl ? summaryEl.textContent || '' : '';
+    });
+    check(enText.length > 0, 'English posology summary displayed');
+    check(enText.includes('Augmentin') || enText.includes('Paracetamol') || enText.includes('listed'), 'English summary contains Roman medicine name');
+
+    // 2. Switch to Hindi (हिन्दी)
+    await page.evaluate(() => {
+      const hiTab = document.querySelector('[data-testid="lang-tab-hi"]') as HTMLButtonElement;
+      if (hiTab) hiTab.click();
+    });
+    await new Promise(r => setTimeout(r, 300));
+
+    const hiText = await page.evaluate(() => {
+      const summaryEl = document.querySelector('[data-testid="explanation-summary"]');
+      return summaryEl ? summaryEl.textContent || '' : '';
+    });
+    check(hiText.length > 0, 'Hindi posology summary displayed after language switch');
+    check(hiText.includes('Augmentin') || hiText.includes('Paracetamol') || hiText.includes('प्रिस्क्रिप्शन में'), 'Hindi summary preserves Roman script medicine name');
+
+    // 3. Switch to Marathi (मराठी)
+    await page.evaluate(() => {
+      const mrTab = document.querySelector('[data-testid="lang-tab-mr"]') as HTMLButtonElement;
+      if (mrTab) mrTab.click();
+    });
+    await new Promise(r => setTimeout(r, 300));
+
+    const mrText = await page.evaluate(() => {
+      const summaryEl = document.querySelector('[data-testid="explanation-summary"]');
+      return summaryEl ? summaryEl.textContent || '' : '';
+    });
+    check(mrText.length > 0, 'Marathi posology summary displayed after language switch');
+    check(mrText.includes('Augmentin') || mrText.includes('Paracetamol') || mrText.includes('प्रिस्क्रिप्शनमध्ये'), 'Marathi summary preserves Roman script medicine name');
+
+    // 4. Test Side-by-Side Debug Comparison Drawer (Section 30)
+    await page.evaluate(() => {
+      const toggle = document.querySelector('[data-testid="toggle-side-by-side"]') as HTMLButtonElement;
+      if (toggle) toggle.click();
+    });
+    await new Promise(r => setTimeout(r, 300));
+
+    const hasSideBySide = await page.evaluate(() => {
+      const panel = document.querySelector('[data-testid="side-by-side-panel"]');
+      return panel !== null && document.body.innerText.includes('Deterministic Multilingual Factual Alignment');
+    });
+    check(hasSideBySide, 'Side-by-side cross-language comparison drawer expanded (Section 30)');
+
+    // 5. Verify Provenance and Safety Notice
+    const hasProvenance = await page.evaluate(() => {
+      return document.body.innerText.includes('Source: Extracted & verified prescription data') &&
+             document.body.innerText.includes('explanation_policy_v1');
+    });
+    check(hasProvenance, 'Statutory provenance and safety disclosure visible in explanation card');
 
     // -------------------------------------------------------------------------
     // 9. Physical Prescription File Upload E2E Test

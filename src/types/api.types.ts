@@ -168,6 +168,33 @@ export interface PrescriptionAnalyzeResponseDto {
     summary: string;
     config_hash?: string;
   } | null;
+  lasa_detection?: Record<string, unknown> | null;
+  multilingual_explanation?: {
+    prescription_id: string;
+    overall_eligibility: 'eligible' | 'restricted' | 'abstained' | 'unavailable';
+    explanations: Record<string, {
+      status: 'eligible' | 'restricted' | 'abstained' | 'unavailable';
+      language: 'en' | 'hi' | 'mr';
+      summary: string;
+      instructions: string;
+      daily_schedule: Array<{
+        time_slot: string;
+        icon_key: string;
+        dosage_label: string;
+        food_instruction: string;
+      }>;
+      precautions: string[];
+      validation: {
+        medicine_fidelity: boolean;
+        numeric_fidelity: boolean;
+        unsupported_fact_check: boolean;
+        details?: string[];
+      };
+    }>;
+    policy_version: string;
+    template_version: string;
+    config_hash: string;
+  } | null;
 }
 
 export interface HumanVerificationRecordDto {

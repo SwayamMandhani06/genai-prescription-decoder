@@ -40,6 +40,7 @@ from ..multimodal import (
     GeminiMultimodalAdapter,
 )
 from ai.rag import get_medicine_validation_service
+from ai.explanation import get_explanation_service
 
 
 class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
@@ -267,6 +268,11 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         primary_freq = (
             extraction_result.medicines[0].frequency.value
             if extraction_result.medicines and extraction_result.medicines[0].frequency.value
+            else ""
+        )
+        primary_duration = (
+            extraction_result.medicines[0].duration.value
+            if extraction_result.medicines and extraction_result.medicines[0].duration.value
             else ""
         )
 
@@ -515,6 +521,32 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 evidence_source="Reference Validation Service",
             )
 
+        # ------------------------------------------------------------------
+        # Phase 11: Multilingual Patient-Friendly Explanation (PLAN.md Section 20)
+        # ------------------------------------------------------------------
+        has_lasa_conflict_flag = bool(lasa_result.status == "completed" and lasa_result.conflict_detected)
+        confusable_name = (
+            ui_lasa_screening.confusable_counterpart
+            if ui_lasa_screening and ui_lasa_screening.has_warning
+            else None
+        )
+        val_status_str = primary_ui_evidence.get("validation_status", "validated") if primary_ui_evidence else "validated"
+
+        exp_summary, exp_posology, exp_full = get_explanation_service().generate_prescription_bundle(
+            prescription_id=prescription_id,
+            medicine_name=primary_med_name,
+            dosage=primary_dosage,
+            frequency=primary_freq,
+            duration=primary_duration,
+            candidate_status="uncertain" if effective_human_review and not has_lasa_conflict_flag else "confident",
+            validation_status=val_status_str,
+            abstention_decision=abstention_decision.decision if hasattr(abstention_decision, "decision") else "accepted",
+            requires_human_verification=effective_human_review,
+            has_lasa_conflict=has_lasa_conflict_flag,
+            confusable_counterpart=confusable_name,
+            is_service_healthy=True,
+        )
+
         # Build response
         response = PrescriptionAnalyzeResponse(
             prescription_id=prescription_id,
@@ -522,11 +554,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             fields=fields_dict,
             lasa_flags=lasa_flags_list,
             validation=validation_dict,
-            explanation=MultilingualSummary(
-                en=posology_summary_en,
-                hi=posology_summary_hi,
-                mr=posology_summary_mr,
-            ),
+            explanation=exp_summary,
             requires_human_review=effective_human_review,
             status="abstain" if overall_status_str == "NEEDS_VERIFICATION" and scenario in ("abstained", "flagged") else "success",
             meta=PrescriptionMetadata(
@@ -534,7 +562,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 timestamp=extraction_result.created_at,
                 processing_time_ms=int(extraction_result.duration_seconds * 1000),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
-                pipeline_stages_completed=10,
+                pipeline_stages_completed=11,
             ),
             document_telemetry=DocumentTelemetry(
                 estimated_dpi=200,
@@ -564,49 +592,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 ),
                 extracted_entities=ui_entities,
                 validation_evidence=ui_val_evidence,
-
                 lasa_screening=ui_lasa_screening,
-                posology_explanation=MultilingualPosology(
-                    en=PosologyLanguagePack(
-                        summary=posology_summary_en,
-                        patient_instructions="Take exactly as prescribed on document.",
-                        daily_schedule=[
-                            PosologyTimingSlot(
-                                time_slot="Morning",
-                                icon_key="sun",
-                                dosage_label=primary_dosage or "1 Dose",
-                                food_instruction="After meals",
-                            )
-                        ],
-                        precautions=["Complete prescribed course.", "Consult physician if symptoms persist."],
-                    ),
-                    hi=PosologyLanguagePack(
-                        summary=posology_summary_hi,
-                        patient_instructions="दवा केवल डॉक्टर के निर्देशानुसार ही लें।",
-                        daily_schedule=[
-                            PosologyTimingSlot(
-                                time_slot="सुबह",
-                                icon_key="sun",
-                                dosage_label=primary_dosage or "1 खुराक",
-                                food_instruction="भोजन के बाद",
-                            )
-                        ],
-                        precautions=["पूरा कोर्स पूरा करें।", "यदि लक्षण बने रहें तो डॉक्टर से संपर्क करें।"],
-                    ),
-                    mr=PosologyLanguagePack(
-                        summary=posology_summary_mr,
-                        patient_instructions="डॉक्टरांच्या सल्ल्यानुसारच औषध घ्या.",
-                        daily_schedule=[
-                            PosologyTimingSlot(
-                                time_slot="सकाळ",
-                                icon_key="sun",
-                                dosage_label=primary_dosage or "१ डोस",
-                                food_instruction="जेवणानंतर",
-                            )
-                        ],
-                        precautions=["औषधांचा कोर्स पूर्ण करा.", "काही अडचण आल्यास डॉक्टरांशी संपर्क साधा."],
-                    ),
-                ),
+                posology_explanation=exp_posology,
             ),
             processed_image_url=processed_image_url,
             quality_report=quality_report_dict,
@@ -617,7 +604,9 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             confidence_assessment=confidence_assessment.model_dump(),
             abstention=abstention_decision.model_dump(),
             lasa_detection=lasa_result.model_dump(),
+            multilingual_explanation=exp_full.model_dump(),
         )
+
 
 
         # Attach telemetry from Phase 4 if available

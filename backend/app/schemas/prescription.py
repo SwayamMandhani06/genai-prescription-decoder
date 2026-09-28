@@ -283,4 +283,10 @@ class PrescriptionAnalyzeResponse(BaseModel):
         description="Phase 10 LASA (Look-Alike / Sound-Alike) conflict detection results, similarity scores, and provenance"
     )
 
+    # Phase 11 Multilingual Patient Explanation Extensions (PLAN.md Section 20):
+    multilingual_explanation: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Phase 11 verified patient explanation report with fidelity audits in EN, HI, and MR"
+    )
+
 

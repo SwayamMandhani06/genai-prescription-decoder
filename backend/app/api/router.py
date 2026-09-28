@@ -12,6 +12,7 @@ from .v1.validation import router as validation_router
 from .v1.confidence import router as confidence_router
 from .v1.abstention import abstention_router, verification_router
 from .v1.lasa import router as lasa_router
+from .v1.explanation import router as explanation_router
 
 api_v1_router = APIRouter()
 api_v1_router.include_router(health_router)
@@ -23,6 +24,7 @@ api_v1_router.include_router(confidence_router)
 api_v1_router.include_router(abstention_router)
 api_v1_router.include_router(verification_router)
 api_v1_router.include_router(lasa_router)
+api_v1_router.include_router(explanation_router)
 
 
 

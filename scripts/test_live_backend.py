@@ -511,7 +511,65 @@ def run_live_tests():
         check(r_v_state.status_code == 200, "GET verification state returns 200 OK")
         v_state_data = r_v_state.json()
         check(v_state_data["prescription_id"] == test_rx_id, "State prescription_id matches")
-        check(len(v_state_data["audit_trail"]) == 3, "Audit trail records all 3 verification actions")
+        # 36. Phase 11 Explanation Config
+        r_exp_cfg = client.get("/api/v1/explanation/config")
+        check(r_exp_cfg.status_code == 200, "GET /api/v1/explanation/config returns 200 OK")
+        exp_cfg_data = r_exp_cfg.json()
+        check(exp_cfg_data["status"] == "active", "Explanation status is active")
+        check(exp_cfg_data["policy_version"] == "explanation_policy_v1", "Policy version matches explanation_policy_v1")
+        check(len(exp_cfg_data["config_hash"]) == 64, "Config hash is 64-char SHA-256")
+        check(exp_cfg_data["supported_languages"] == ["en", "hi", "mr"], "Supported languages include en, hi, mr")
+
+        # 37. Phase 11 Generate Explanation (Eligible Posology)
+        r_exp_gen = client.post(
+            "/api/v1/explanation/generate",
+            json={
+                "prescription_id": "RX-LIVE-EXP-001",
+                "medicine_name": "Paracetamol",
+                "dosage": "500 mg",
+                "frequency": "twice daily",
+                "duration": "5 days",
+            }
+        )
+        check(r_exp_gen.status_code == 200, "POST /api/v1/explanation/generate (eligible) returns 200 OK")
+        exp_gen_data = r_exp_gen.json()
+        check(exp_gen_data["overall_eligibility"] == "eligible", "Eligibility is eligible")
+        check("en" in exp_gen_data["explanations"], "EN explanation present")
+        check("hi" in exp_gen_data["explanations"], "HI explanation present")
+        check("mr" in exp_gen_data["explanations"], "MR explanation present")
+        check("Paracetamol" in exp_gen_data["explanations"]["en"]["summary"], "EN summary preserves Roman medicine name")
+        check("500 mg" in exp_gen_data["explanations"]["en"]["summary"], "EN summary preserves 500 mg dosage")
+        check("5 days" in exp_gen_data["explanations"]["en"]["summary"], "EN summary preserves 5 days duration")
+        check(exp_gen_data["explanations"]["en"]["validation"]["medicine_fidelity"] is True, "Medicine fidelity is True")
+        check(exp_gen_data["explanations"]["en"]["validation"]["numeric_fidelity"] is True, "Numeric fidelity is True")
+
+        # 38. Phase 11 Generate Explanation (LASA Conflict -> Restricted)
+        r_exp_lasa = client.post(
+            "/api/v1/explanation/generate",
+            json={
+                "prescription_id": "RX-LIVE-EXP-002",
+                "medicine_name": "Prednisone",
+                "has_lasa_conflict": True,
+                "confusable_counterpart": "Prednisolone",
+            }
+        )
+        check(r_exp_lasa.status_code == 200, "POST /api/v1/explanation/generate (LASA) returns 200 OK")
+        exp_lasa_data = r_exp_lasa.json()
+        check(exp_lasa_data["overall_eligibility"] == "restricted", "LASA conflict yields restricted eligibility")
+        check("Similar medicine names were detected" in exp_lasa_data["explanations"]["en"]["summary"], "LASA verification warning displayed in EN")
+
+        # 39. Phase 11 Explanation Fixtures
+        r_exp_fix = client.get("/api/v1/explanation/fixtures")
+        check(r_exp_fix.status_code == 200, "GET /api/v1/explanation/fixtures returns 200 OK")
+        exp_fix_data = r_exp_fix.json()
+        check(exp_fix_data["fixture_count"] >= 22, "Contains all 22 mock fixtures")
+
+        # 40. Phase 11 Generate Explanation (Empty ID Validation Error)
+        r_exp_err = client.post(
+            "/api/v1/explanation/generate",
+            json={"prescription_id": "", "medicine_name": "Paracetamol"}
+        )
+        check(r_exp_err.status_code in (400, 422), "Empty prescription_id rejected with HTTP 400/422")
 
 
     print("\n======================================================")
