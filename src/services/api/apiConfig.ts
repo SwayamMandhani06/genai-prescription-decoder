@@ -9,6 +9,7 @@ export interface ApiConfiguration {
   requestTimeoutMs: number;
   endpoints: {
     analyze: string;
+    process: string;
     health: string;
   };
 }
@@ -21,6 +22,7 @@ export const apiConfig: ApiConfiguration = {
   requestTimeoutMs: 15000,
   endpoints: {
     analyze: '/api/v1/prescriptions/analyze',
+    process: '/api/v1/prescriptions/process',
     health: '/api/v1/health',
   },
 };

@@ -85,7 +85,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         if scenario in ("image_quality_insufficient", "low_quality", "insufficient_quality"):
             raise PipelineProcessingError(
                 code=ErrorCode.IMAGE_QUALITY_INSUFFICIENT,
-                message="Prescription image quality is insufficient for clinical interpretation (effective resolution below 150 DPI threshold or severe optical degradation).",
+                message="Prescription image quality is insufficient for reliable automated processing (effective resolution below 150 DPI threshold or severe optical degradation).",
                 stage="image_quality_assessment",
                 status_code=422,
                 retryable=True,

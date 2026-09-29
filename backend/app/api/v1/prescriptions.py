@@ -59,6 +59,21 @@ def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPip
     summary="Analyze Handwritten Prescription Document",
     description="Ingests an uploaded prescription image or sample ID, runs preprocessing and posology extraction, and returns evidence-grounded findings.",
 )
+@router.post(
+    "/process",
+    response_model=PrescriptionAnalyzeResponse,
+    responses={
+        400: {"model": ErrorResponse, "description": "Invalid Request or Malformed Input"},
+        413: {"model": ErrorResponse, "description": "Uploaded File Exceeds Allowed Size"},
+        415: {"model": ErrorResponse, "description": "Unsupported Media File Type"},
+        422: {"model": ErrorResponse, "description": "Diagnostic Pre-flight Validation Failure"},
+        500: {"model": ErrorResponse, "description": "Internal Inference Processing Error"},
+        503: {"model": ErrorResponse, "description": "Inference Worker Service Unavailable"},
+        504: {"model": ErrorResponse, "description": "Upstream Drug Formulary Gateway Timeout"},
+    },
+    summary="Process Handwritten Prescription Document (Canonical Alias to /analyze)",
+    description="Ingests an uploaded prescription image or sample ID, runs preprocessing and posology extraction, and returns evidence-grounded findings.",
+)
 async def analyze_prescription(
     file: Optional[UploadFile] = File(None, description="Handwritten prescription image file (JPEG, PNG, WebP, TIFF)"),
     sample_id: Optional[str] = Form(None, description="Pre-loaded academic evaluation sample ID (e.g. 'rx-sample-1')"),

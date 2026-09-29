@@ -5,15 +5,16 @@ Explainable Multimodal AI for Handwritten Prescription Understanding
 
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 
-from .config import get_settings
+from .config import Settings, get_settings
 from .api.router import api_v1_router
 from .schemas.error import ErrorCode, ErrorDetail, ErrorResponse
+from .schemas.health import HealthResponse
 from .services.pipeline_interface import PipelineProcessingError
 
 # Configure application logging
@@ -159,8 +160,20 @@ def create_app() -> FastAPI:
             "docs": "/docs",
             "redoc": "/redoc",
             "health": f"{settings.API_V1_PREFIX}/health",
+            "root_health": "/health",
             "status": "operational",
         }
+
+    @app.get(
+        "/health",
+        response_model=HealthResponse,
+        tags=["Health & Diagnostics"],
+        summary="Root Health Check",
+        description="Alias for /api/v1/health providing standard container orchestrator health checks.",
+    )
+    async def root_health(settings: Settings = Depends(get_settings)) -> HealthResponse:
+        from .api.v1.health import check_health
+        return await check_health(settings=settings)
 
     return app
 

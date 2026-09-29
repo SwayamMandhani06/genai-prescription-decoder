@@ -44,9 +44,18 @@ ENV/
 .venv/
 .pytest_cache/
 
-# Logs & Caches
-logs/
-*.log
+# Secrets and Credentials Protection
+*.pem
+*.key
+*.secret
+credentials.json
+client_secrets*.json
+
+# Test Coverage & Type Checking
+.coverage
+htmlcov/
+.mypy_cache/
+
 # Backend temporary uploads (keep directory via .gitkeep)
 backend/uploads/*
 !backend/uploads/.gitkeep
@@ -59,5 +68,3 @@ data/processed/*
 
 # Temporary test image fixture
 scripts/test_prescription.png
-
-plan.md 

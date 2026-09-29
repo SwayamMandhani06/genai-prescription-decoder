@@ -5,7 +5,7 @@ Uses Pydantic BaseSettings to read environment variables with strict typing.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # Server Network Binding
     HOST: str = "127.0.0.1"
     PORT: int = 8000
+
+    # Model Credentials (Optional in mock/evaluation mode)
+    GEMINI_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key")
 
     # CORS Settings
     CORS_ORIGINS: Union[List[str], str] = [

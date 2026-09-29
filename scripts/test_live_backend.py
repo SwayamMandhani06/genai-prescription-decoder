@@ -35,12 +35,19 @@ def run_live_tests():
             print(f"  [FAIL] {name} -> {detail}")
 
     with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
-        # 1. Health Endpoint
+        # 1. Health Endpoints
         r = client.get("/api/v1/health")
         check(r.status_code == 200, "GET /api/v1/health returns 200 OK")
         data = r.json()
         check(data["status"] == "healthy", "Health status is 'healthy'")
         check(data["mock_mode"] is True, "Mock mode is True")
+
+        # 1b. Root Health Endpoint (Phase 13 Container / Load-Balancer contract)
+        r_root = client.get("/health")
+        check(r_root.status_code == 200, "GET /health (root alias) returns 200 OK")
+        root_data = r_root.json()
+        check(root_data["status"] == "healthy", "Root health status is 'healthy'")
+        check("dependencies" in root_data["system_info"], "Dependency diagnostics present in system_info")
 
         # 2. Analyze Sample 1 (Confident)
         r = client.post("/api/v1/prescriptions/analyze", data={"sample_id": "rx-sample-1"})
@@ -50,6 +57,12 @@ def run_live_tests():
         check(data["original_image_url"] == "/uploads/samples/rx-sample-1.svg", "original_image_url preserved")
         check(data["fields"]["medicine_name"]["status"] == "confident", "medicine_name is confident")
         check(data["requires_human_review"] is False, "requires_human_review is False")
+
+        # 2b. Canonical Process Endpoint (Phase 13 /process alias)
+        r_proc = client.post("/api/v1/prescriptions/process", data={"sample_id": "rx-sample-1"})
+        check(r_proc.status_code == 200, "POST process (sample-1) returns 200 OK")
+        proc_data = r_proc.json()
+        check(proc_data["prescription_id"] is not None, "process prescription_id present")
 
         # 3. Analyze Sample 2 (LASA Conflict)
         r = client.post("/api/v1/prescriptions/analyze", data={"sample_id": "rx-sample-2"})
