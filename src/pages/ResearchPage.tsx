@@ -58,8 +58,10 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
             <span className="text-theme-muted hidden sm:inline">|</span>
 
             <div className="hidden sm:flex items-center gap-2">
+              <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
+              <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                AURA-Rx
+                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">
                 / Research Methodology &amp; Evaluation
@@ -72,7 +74,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
             {onOpenUpload && (
               <button
                 onClick={onOpenUpload}
-                className="px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
+                className="px-3.5 py-1.5 rounded-lg bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] text-white dark:text-[#2E2233] text-xs font-semibold transition-all cursor-pointer shadow-xs"
               >
                 Analyze a Prescription
               </button>
@@ -85,9 +87,9 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 space-y-14">
         {/* Research Title & Abstract */}
         <section className="space-y-5">
-          <div className="text-xs sm:text-sm font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-2">
+          <div className="text-xs sm:text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-2">
             <FileText className="w-4 h-4" />
-            <span>Academic Capstone Research Prototype</span>
+            <span>Academic Research Prototype</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
@@ -105,7 +107,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
               <span>Research Transparency &amp; Evaluation Protocol Notice</span>
             </div>
             <p className="text-sm text-theme-secondary leading-relaxed">
-              AURA-Rx is an academic research prototype. The metrics, performance comparisons, and dataset profiles presented below outline the <strong>planned evaluation framework and design target criteria</strong> for the research pipeline. Empirical benchmark numbers will be published upon completion of formal institutional ethics review and multi-center clinical validation trials. Values labeled as <em>Simulated</em> or <em>Design Target</em> are illustrative engineering references and must not be cited as finalized clinical validation results.
+              DawaAI is an assistive research prototype. The metrics, performance comparisons, and dataset profiles presented below outline the <strong>planned evaluation framework and design target criteria</strong> for the research pipeline. Empirical benchmark numbers will be published upon completion of formal institutional ethics review and multi-center clinical validation trials. Values labeled as <em>Simulated</em> or <em>Design Target</em> are illustrative engineering references and must not be cited as finalized clinical validation results.
             </p>
           </div>
 
@@ -131,7 +133,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
         {/* 1. Quantitative Benchmark Comparison Table */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+            <BarChart3 className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
             <h2 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-theme-primary tracking-tight leading-[1.1]">
               Comparative Benchmark Protocol (Illustrative Targets)
             </h2>
@@ -147,8 +149,8 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
                   <th className="py-4 px-4 sm:px-6">Evaluation Metric</th>
                   <th className="py-4 px-4 text-theme-secondary">Conventional OCR (Simulated Baseline)</th>
                   <th className="py-4 px-4 text-theme-secondary">Zero-Shot VLM (Simulated Baseline)</th>
-                  <th className="py-4 px-4 text-teal-700 dark:text-teal-300 font-bold bg-teal-50/50 dark:bg-teal-950/20">
-                    AURA-Rx (Design Target)
+                  <th className="py-4 px-4 text-[#4A2E4D] dark:text-[#FFD6DA] font-bold bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                    DawaAI (Design Target)
                   </th>
                   <th className="py-4 px-4 sm:px-6 text-emerald-600 dark:text-emerald-400">Target Objective</th>
                 </tr>
@@ -162,7 +164,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
                     </td>
                     <td className="py-4 px-4 text-xs sm:text-sm font-mono">{metric.traditionalOcr}</td>
                     <td className="py-4 px-4 text-xs sm:text-sm font-mono">{metric.generalVlm}</td>
-                    <td className="py-4 px-4 text-xs sm:text-sm font-mono font-bold text-teal-700 dark:text-teal-300 bg-teal-50/50 dark:bg-teal-950/20">
+                    <td className="py-4 px-4 text-xs sm:text-sm font-mono font-bold text-[#4A2E4D] dark:text-[#FFD6DA] bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
                       {metric.auraRxModel}
                     </td>
                     <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400">
@@ -184,7 +186,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
             </h2>
           </div>
           <p className="text-base sm:text-lg text-theme-secondary leading-relaxed">
-            In clinical decision support, making a confident error is catastrophic. AURA-Rx computes posterior token entropy across handwriting interpretations. When epistemic uncertainty crosses the calibrated decision threshold (&tau; = 0.65), the system explicitly flags the field for human clinician verification rather than emitting an unverified candidate.
+            In clinical decision support, making a confident error is catastrophic. DawaAI computes posterior token entropy across handwriting interpretations. When epistemic uncertainty crosses the calibrated decision threshold (&tau; = 0.65), the system explicitly flags the field for human clinician verification rather than emitting an unverified candidate.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -284,7 +286,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
             Academic Scope &amp; Assistive Nature
           </h3>
           <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
-            AURA-Rx is developed as an academic research prototype. It is explicitly designed as an assistive document understanding tool to help patients and healthcare staff read ambiguous handwriting. It does not replace registered pharmacists or physicians, does not diagnose medical conditions, and does not alter prescribed medications.
+            DawaAI is developed as an assistive research prototype for explainable handwritten prescription understanding. It is explicitly designed as an assistive document understanding tool to help patients and healthcare staff read ambiguous handwriting. It does not replace registered pharmacists or physicians, does not diagnose medical conditions, and does not alter prescribed medications.
           </p>
         </section>
       </main>

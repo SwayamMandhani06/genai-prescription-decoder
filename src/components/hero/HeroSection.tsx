@@ -316,7 +316,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.25] dark:opacity-[0.12]"
         style={{
-          backgroundImage: 'radial-gradient(rgba(13, 148, 136, 0.20) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(rgba(124, 90, 139, 0.20) 1px, transparent 1px)',
           backgroundSize: '32px 32px',
         }}
         aria-hidden="true"
@@ -325,7 +325,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         className="absolute top-0 right-1/4 w-[600px] h-[400px] pointer-events-none opacity-30 dark:opacity-20"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 30%, rgba(13, 148, 136, 0.22) 0%, transparent 70%)',
+            'radial-gradient(ellipse at 50% 30%, rgba(244, 114, 182, 0.18) 0%, transparent 70%)',
         }}
         aria-hidden="true"
       />
@@ -334,41 +334,41 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* ========================================================= */}
           {/* LEFT: Balanced Headline, Subcopy, CTA & Trust Line         */}
-          {/* Preserved without modifying typography scale or navigation */}
+          {/* DawaAI Single Source of Truth Brand Integration            */}
           {/* ========================================================= */}
           <div className="lg:col-span-5 space-y-6 text-left order-1">
-            {/* Eyebrow (14-15px) */}
-            <div className="inline-flex items-center gap-2 text-sm font-semibold text-teal-800 dark:text-teal-300">
-              <span className="w-2 h-2 rounded-full bg-teal-600 dark:bg-teal-400" />
-              <span>Assistive prescription understanding</span>
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 border border-[#F472B6]/30 text-xs font-semibold text-[#4A2E4D] dark:text-[#FFD6DA]">
+              <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
+              <span>Explainable Multimodal Prescription AI</span>
             </div>
 
-            {/* Headline: Responsive 56-72px desktop / 42-50px mobile */}
-            <div className="space-y-1">
-              <h1 className="text-[clamp(2.5rem,4.2vw,4.25rem)] font-extrabold tracking-[-0.035em] text-theme-primary leading-[1.04]">
-                Some prescriptions are clear.<br />
-                <span className="text-teal-700 dark:text-teal-400">Some are not.</span>
+            {/* Headline: DawaAI Brand Hierarchy */}
+            <div className="space-y-2">
+              <h1 className="text-[clamp(2.75rem,5vw,4.75rem)] font-extrabold tracking-[-0.035em] leading-[1.02]">
+                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span>
+                <span className="text-[#F472B6]">AI</span>
               </h1>
+              <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#7C5A8B] dark:text-[#FFD6DA]">
+                Your Prescription, Made Clear.
+              </p>
             </div>
 
-            {/* Supporting Copy (18-20px subhead, 16px body) */}
+            {/* Supporting Copy */}
             <div className="space-y-2.5 max-w-lg">
-              <p className="text-lg sm:text-xl font-medium text-theme-primary leading-snug">
-                Understand difficult handwriting &mdash; and see when the system isn&rsquo;t sure.
-              </p>
               <p className="text-sm sm:text-base text-theme-secondary leading-relaxed">
-                Transcribes physician cursive into structured medication posology, cross-referenced with standard formularies &mdash; with transparent selective abstention when strokes are ambiguous.
+                Understand handwritten prescriptions with multimodal AI, evidence-grounded medicine validation, uncertainty awareness, and human verification.
               </p>
             </div>
 
-            {/* Desktop Actions (Hidden on mobile; mobile displays CTA after document) */}
+            {/* Desktop Actions */}
             <div className="hidden sm:flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
               {onOpenUpload && (
                 <button
                   onClick={onOpenUpload}
-                  className="px-7 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg cursor-pointer group"
+                  className="px-7 py-3.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg cursor-pointer group"
                 >
-                  <span>Analyze a prescription</span>
+                  <span>Upload &amp; Understand</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               )}
@@ -385,8 +385,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Concise Trust Line */}
             <div className="hidden sm:flex items-center gap-2 pt-1 text-xs sm:text-sm text-theme-muted">
-              <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
-              <span>Original prescription remains the primary reference.</span>
+              <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
+              <span>Assistive research prototype &middot; Original prescription is primary</span>
             </div>
           </div>
 
@@ -405,7 +405,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   className={`w-2 h-2 rounded-full ${
                     phase === 'interpret_line2' || (isUserInteracting && activeLineIdx === 1)
                       ? 'bg-amber-600 animate-pulse'
-                      : 'bg-teal-600 animate-pulse'
+                      : 'bg-[#7C5A8B] animate-pulse'
                   }`}
                 />
                 <span>
@@ -433,7 +433,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         isActive
                           ? line.isAmbiguous
                             ? 'bg-amber-600 text-white font-semibold shadow-xs'
-                            : 'bg-teal-700 text-white font-semibold shadow-xs'
+                            : 'bg-[#4A2E4D] text-white font-semibold shadow-xs'
                           : 'bg-surface hover:bg-surface-subtle border border-theme text-theme-secondary hover:text-theme-primary'
                       }`}
                       title={`Inspect ${line.shortTitle}`}
@@ -452,7 +452,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {isAutoPlaying ? (
                     <Pause className="w-3.5 h-3.5 text-theme-muted" />
                   ) : (
-                    <Play className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                    <Play className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                   )}
                 </button>
               </div>
@@ -477,12 +477,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <linearGradient id="connectorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop
                           offset="0%"
-                          stopColor={currentLine.isAmbiguous ? '#D97706' : '#0D9488'}
+                          stopColor={currentLine.isAmbiguous ? '#D97706' : '#7C5A8B'}
                           stopOpacity="0.85"
                         />
                         <stop
                           offset="100%"
-                          stopColor={currentLine.isAmbiguous ? '#B45309' : '#0F766E'}
+                          stopColor={currentLine.isAmbiguous ? '#B45309' : '#4A2E4D'}
                           stopOpacity="0.95"
                         />
                       </linearGradient>
@@ -514,7 +514,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       cx={connectorLine.x1}
                       cy={connectorLine.y1}
                       r="3.5"
-                      fill={currentLine.isAmbiguous ? '#D97706' : '#0D9488'}
+                      fill={currentLine.isAmbiguous ? '#D97706' : '#7C5A8B'}
                       stroke="#FFFFFF"
                       strokeWidth="1.5"
                     />
@@ -524,7 +524,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       cx={connectorLine.x2}
                       cy={connectorLine.y2}
                       r="3.5"
-                      fill={currentLine.isAmbiguous ? '#D97706' : '#0D9488'}
+                      fill={currentLine.isAmbiguous ? '#D97706' : '#7C5A8B'}
                       stroke="#FFFFFF"
                       strokeWidth="1.5"
                     />
@@ -583,7 +583,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           duration: 1.05,
                           ease: [0.25, 1, 0.5, 1],
                         }}
-                        className="absolute inset-x-0 h-7 -translate-y-1/2 pointer-events-none z-20 bg-gradient-to-b from-teal-700/0 via-teal-700/10 to-teal-700/20 border-b-2 border-teal-700/70 dark:border-teal-400/70 shadow-[0_1px_4px_rgba(13,148,136,0.12)]"
+                        className="absolute inset-x-0 h-7 -translate-y-1/2 pointer-events-none z-20 bg-gradient-to-b from-[#7C5A8B]/0 via-[#7C5A8B]/10 to-[#F472B6]/20 border-b-2 border-[#F472B6]/80 shadow-[0_1px_4px_rgba(244,114,182,0.25)]"
                       />
                     )}
                   </AnimatePresence>
@@ -591,7 +591,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Printed Document Structure: Fictional Clinic Header */}
                   <div className="border-b border-slate-300 pb-2.5 mb-2.5 flex justify-between items-start text-xs">
                     <div>
-                      <div className="text-[10px] font-bold tracking-wider uppercase text-teal-900 font-mono">
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-[#4A2E4D] font-mono">
                         {canvasData.doctorHeader.clinicName}
                       </div>
                       <div className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight">
@@ -613,7 +613,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Traditional Printed Rx Symbol & Pre-printed Ruled Table Header */}
                   <div className="flex items-center justify-between py-1 border-b border-slate-200 text-[10px] text-slate-500 font-medium">
                     <div className="flex items-center gap-3">
-                      <span className="text-[#1E3A8A] font-serif italic text-2xl sm:text-3xl font-black select-none leading-none">
+                      <span className="text-[#4A2E4D] font-serif italic text-2xl sm:text-3xl font-black select-none leading-none">
                         ℞
                       </span>
                       <span className="uppercase tracking-wider font-semibold text-[9px] text-slate-400">
@@ -645,7 +645,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                             isHighlighted
                               ? line.isAmbiguous
                                 ? 'bg-amber-500/10 border border-amber-600/50 ring-1 ring-amber-600/20'
-                                : 'bg-teal-600/10 border border-teal-700/50 ring-1 ring-teal-700/20'
+                                : 'bg-[#FFD6DA]/30 border border-[#7C5A8B]/50 ring-1 ring-[#7C5A8B]/20'
                               : 'bg-transparent border border-transparent hover:bg-slate-200/40'
                           }`}
                         >
@@ -659,7 +659,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                                 className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
                                   line.isAmbiguous
                                     ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                                    : 'bg-teal-100 text-teal-900 border border-teal-300'
+                                    : 'bg-[#FFD6DA] text-[#4A2E4D] border border-[#F472B6]/40 font-semibold'
                                 }`}
                               >
                                 {line.isAmbiguous ? 'Needs Verification' : 'Detected'}
@@ -667,7 +667,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                             )}
                           </div>
 
-                          {/* SVG Cursive Ink Stroke Path (Phase 3: Ink becomes slightly emphasized) */}
+                          {/* SVG Cursive Ink Stroke Path */}
                           <div className="py-0.5 overflow-hidden">
                             <svg
                               viewBox="0 0 650 35"
@@ -681,7 +681,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                                   isHighlighted
                                     ? line.isAmbiguous
                                       ? '#92400E' // Rich amber ink
-                                      : '#1E3A8A' // Deep Prussian blue ink
+                                      : '#4A2E4D' // DawaAI Deep Purple ink
                                     : '#334155'
                                 }
                                 strokeWidth={isHighlighted ? '3.4' : '2.8'}
@@ -704,7 +704,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                               isHighlighted
                                 ? line.isAmbiguous
                                   ? 'border-amber-600 ring-2 ring-amber-400/30'
-                                  : 'border-teal-600 ring-2 ring-teal-400/30'
+                                  : 'border-[#7C5A8B] ring-2 ring-[#F472B6]/30'
                                 : 'opacity-0'
                             }`}
                           />
@@ -724,7 +724,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         <path
                           d={canvasData.doctorSignaturePath}
                           fill="none"
-                          stroke="#1E3A8A"
+                          stroke="#4A2E4D"
                           strokeWidth="2.2"
                           strokeLinecap="round"
                         />
@@ -747,7 +747,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     className={`hidden xl:block absolute -left-1.5 top-8 w-3 h-3 rounded-full border-2 bg-white shadow-xs z-30 ${
                       currentLine.isAmbiguous
                         ? 'border-amber-600 ring-2 ring-amber-400/30'
-                        : 'border-teal-600 ring-2 ring-teal-400/30'
+                        : 'border-[#7C5A8B] ring-2 ring-[#F472B6]/30'
                     }`}
                   />
 
@@ -799,7 +799,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           transition={{ duration: 0.25 }}
                           className="space-y-1"
                         >
-                          <div className="text-[11px] font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider">
+                          <div className="text-[11px] font-semibold text-[#7C5A8B] dark:text-[#F472B6] uppercase tracking-wider">
                             Interpreted Medicine
                           </div>
                           <h3 className="text-xl sm:text-2xl font-extrabold text-theme-primary tracking-tight leading-tight">
@@ -827,7 +827,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           className="p-3.5 rounded-xl bg-surface-subtle/80 border border-theme space-y-1.5 text-xs"
                         >
                           <div className="font-semibold text-theme-primary flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                            <Clock className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                             <span>Prescribed Posology:</span>
                           </div>
                           <p className="text-theme-secondary leading-relaxed">
@@ -862,11 +862,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Standard Formulary Grounding & Confidence Citation */}
                   <div className="pt-3.5 mt-3 border-t border-theme flex items-center justify-between text-[11px] text-theme-muted">
                     <div className="flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
                       <span>{currentLine.evidenceCitation}</span>
                     </div>
 
-                    <div className="font-mono text-teal-700 dark:text-teal-400 font-semibold">
+                    <div className="font-mono text-[#4A2E4D] dark:text-[#F472B6] font-semibold">
                       {currentLine.confidenceScore}%
                     </div>
                   </div>
@@ -879,7 +879,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {onOpenUpload && (
                 <button
                   onClick={onOpenUpload}
-                  className="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-base font-semibold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                  className="w-full py-3.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
                 >
                   <UploadCloud className="w-5 h-5" />
                   <span>Analyze a prescription</span>

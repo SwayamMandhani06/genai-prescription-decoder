@@ -1,5 +1,5 @@
 """
-Configuration and Environment Management for AURA-Rx Backend
+Configuration and Environment Management for DawaAI Backend
 Uses Pydantic BaseSettings to read environment variables with strict typing.
 """
 
@@ -12,7 +12,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # API Metadata
-    PROJECT_NAME: str = "AURA-Rx Backend - Explainable Multimodal AI for Handwritten Prescription Understanding"
+    PROJECT_NAME: str = "DawaAI Backend - Explainable Multimodal AI for Handwritten Prescription Understanding"
     VERSION: str = "1.0.0"
     API_V1_PREFIX: str = "/api/v1"
     DEBUG: bool = False

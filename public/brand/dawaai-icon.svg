@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
+  <defs>
+    <!-- Cross vertical gradient -->
+    <linearGradient id="crossVertGrad" x1="100" y1="15" x2="100" y2="185" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#674570" />
+      <stop offset="45%" stop-color="#4A2E4D" />
+      <stop offset="100%" stop-color="#361C39" />
+    </linearGradient>
+
+    <!-- Cross horizontal gradient -->
+    <linearGradient id="crossHorizGrad" x1="15" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C5A8B" />
+      <stop offset="50%" stop-color="#A56E9B" />
+      <stop offset="100%" stop-color="#F472B6" />
+    </linearGradient>
+
+    <!-- Right lobe warm glow -->
+    <linearGradient id="rightLobeGrad" x1="110" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E86299" />
+      <stop offset="100%" stop-color="#FF97B7" />
+    </linearGradient>
+
+    <!-- Pill top-right half gradient -->
+    <linearGradient id="pillPinkGrad" x1="90" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F472B6" />
+      <stop offset="50%" stop-color="#FB7185" />
+      <stop offset="100%" stop-color="#FDA4AF" />
+    </linearGradient>
+
+    <!-- Pill bottom-left half gradient -->
+    <linearGradient id="pillWhiteGrad" x1="60" y1="130" x2="110" y2="130" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#FFF0F3" />
+      <stop offset="100%" stop-color="#FFD6DA" />
+    </linearGradient>
+
+    <!-- Subtle drop shadow -->
+    <filter id="pillShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="5" stdDeviation="5" flood-color="#2E1E33" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Medical Cross Geometry -->
+  <!-- Horizontal arm -->
+  <rect x="18" y="70" width="164" height="60" rx="30" fill="url(#crossHorizGrad)" />
+  <!-- Right lobe accent glow -->
+  <path d="M 120,70 h 32 a 30,30 0 0 1 30,30 v 0 a 30,30 0 0 1 -30,30 h -32 Z" fill="url(#rightLobeGrad)" />
+
+  <!-- Vertical arm -->
+  <rect x="70" y="18" width="60" height="164" rx="30" fill="url(#crossVertGrad)" />
+
+  <!-- Center blend intersection -->
+  <rect x="70" y="70" width="60" height="60" fill="#5A375E" opacity="0.35" />
+
+  <!-- Angled Pill/Capsule Element (tilted at -45 deg around center 100,100) -->
+  <g transform="rotate(-42 100 100)" filter="url(#pillShadow)">
+    <!-- Pill Outer Shell with soft highlight stroke -->
+    <rect x="52" y="77" width="96" height="46" rx="23" fill="#FFFFFF" />
+    
+    <!-- Left Half (Soft White/Pink) -->
+    <path d="M 75,80 h 24 v 40 h -24 a 20,20 0 0 1 -20,-20 v 0 a 20,20 0 0 1 20,-20 Z" fill="url(#pillWhiteGrad)" />
+    
+    <!-- Right Half (Accent Pink) -->
+    <path d="M 101,80 h 24 a 20,20 0 0 1 20,20 v 0 a 20,20 0 0 1 -20,20 h -24 Z" fill="url(#pillPinkGrad)" />
+
+    <!-- Center Separation Band -->
+    <line x1="100" y1="80" x2="100" y2="120" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Subtle Glass Reflection Sheen on Top Edge -->
+    <path d="M 68,84 h 64 a 14,14 0 0 1 12,6 h -88 a 14,14 0 0 1 12,-6 Z" fill="#FFFFFF" opacity="0.45" />
+  </g>
+</svg>

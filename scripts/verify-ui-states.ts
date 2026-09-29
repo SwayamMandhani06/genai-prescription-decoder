@@ -1,5 +1,5 @@
 /**
- * Automated Verification Test Suite for AURA-Rx Prescription Decoder
+ * Automated Verification Test Suite for DawaAI Prescription Decoder
  * Verifies:
  * 1. Mock API Client scenarios and Fault Injections
  * 2. DTO Mapper transformations and clinical safety integrity
@@ -37,7 +37,7 @@ function assert(condition: boolean, testName: string, detail?: string) {
 
 async function runTests() {
   console.log('\n======================================================');
-  console.log('AURA-Rx FRONTEND VERIFICATION SUITE');
+  console.log('DawaAI FRONTEND VERIFICATION SUITE');
   console.log('======================================================\n');
 
   const client = new MockPrescriptionApiClient();

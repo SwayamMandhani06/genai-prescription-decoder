@@ -41,8 +41,8 @@ export const ResearchBenchmarkSection: React.FC = () => {
                 <th className="py-3.5 px-4 sm:px-6 font-semibold">Evaluation Metric</th>
                 <th className="py-3.5 px-4 font-semibold">Traditional OCR (Tesseract 5.3)</th>
                 <th className="py-3.5 px-4 font-semibold">Zero-Shot VLM (General)</th>
-                <th className="py-3.5 px-4 text-teal-800 dark:text-cyan-300 font-bold bg-teal-50/60 dark:bg-cyan-950/20">
-                  AURA-Rx (Proposed Grounded Pipeline)
+                <th className="py-3.5 px-4 text-[#4A2E4D] dark:text-[#FFD6DA] font-bold bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                  DawaAI (Proposed Grounded Pipeline)
                 </th>
                 <th className="py-3.5 px-4 sm:px-6 text-emerald-700 dark:text-emerald-400 font-semibold">Improvement Margin</th>
               </tr>

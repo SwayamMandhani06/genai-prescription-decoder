@@ -23,7 +23,7 @@ export const SafetyPhilosophySection: React.FC = () => {
           </h2>
 
           <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
-            In medical artificial intelligence, false confidence is dangerous. When physician handwriting is legible, AURA-Rx resolves the regimen. When ink is degraded or ambiguous, the system intentionally abstains from guessing and requests human verification.
+            In medical artificial intelligence, false confidence is dangerous. When physician handwriting is legible, DawaAI resolves the regimen. When ink is degraded or ambiguous, the system intentionally abstains from guessing and requests human verification.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export const SafetyPhilosophySection: React.FC = () => {
         {/* Ground Truth Reassurance */}
         <div className="mt-10 p-5 rounded-2xl bg-surface-subtle border border-theme flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-surface border border-theme flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-surface border border-theme flex items-center justify-center text-[#7C5A8B] dark:text-[#F472B6] shrink-0 shadow-xs">
               <FileCheck2 className="w-4 h-4" />
             </div>
             <div>
@@ -141,7 +141,7 @@ export const SafetyPhilosophySection: React.FC = () => {
                 The original prescription is always preserved.
               </h4>
               <p className="text-sm text-theme-secondary">
-                AURA-Rx never obscures the doctor&rsquo;s physical ink. Every interpretation links back to spatial pixel coordinates.
+                DawaAI never obscures the doctor&rsquo;s physical ink. Every interpretation links back to spatial pixel coordinates.
               </p>
             </div>
           </div>

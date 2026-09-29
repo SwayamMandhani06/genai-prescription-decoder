@@ -1,22 +1,17 @@
-# AURA-Rx: Explainable Multimodal AI for Handwritten Prescription Understanding
+# DawaAI: Explainable Multimodal AI for Handwritten Prescription Understanding
+### *Your Prescription, Made Clear.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-0EA5E9)](#technology-stack)
-[![Dataset Infrastructure](https://img.shields.io/badge/Dataset%20Infrastructure-Phase%203%20Verified-10B981)](#7-research-datasets--experimental-infrastructure-phase-3)
-[![Image Preprocessing](https://img.shields.io/badge/Preprocessing%20%26%20Quality-Phase%204%20Verified-10B981)](#8-image-preprocessing--quality-assessment-phase-4)
-[![Multimodal Extraction](https://img.shields.io/badge/Multimodal%20Extraction-Phase%206%20Verified-10B981)](#10-multimodal-vision-language-extraction-phase-6)
-[![RAG Medicine Validation](https://img.shields.io/badge/RAG%20Validation-Phase%207%20Verified-10B981)](#11-rag-based-medicine-validation-phase-7)
-[![Confidence Calibration](https://img.shields.io/badge/Confidence%20Calibration-Phase%208%20Verified-10B981)](#12-confidence-estimation--calibration-layer-phase-8)
-[![Abstention & Verification](https://img.shields.io/badge/Abstention%20%26%20Verification-Phase%209%20Verified-10B981)](#13-abstention--human-verification-layer-phase-9)
-[![LASA Detection](https://img.shields.io/badge/LASA%20Detection-Phase%2010%20Verified-10B981)](#14-look-alike--sound-alike-lasa-conflict-detection-phase-10)
-[![Multilingual Explanation](https://img.shields.io/badge/Multilingual%20Explanation-Phase%2011%20Verified-10B981)](#15-multilingual-patient-friendly-explanation-layer-phase-11)
-[![Evaluation & Ablation](https://img.shields.io/badge/Evaluation%20%26%20Ablation-Phase%2012%20Verified-10B981)](#16-empirical-evaluation-metrics--ablation-study-phase-12)
-[![Full E2E Integration](https://img.shields.io/badge/Full%20E2E%20Integration-Phase%2013%20Verified-10B981)](#17-full-end-to-end-integration--deployment-readiness-phase-13)
-
+[![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-4A2E4D)](#technology-stack)
+[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-552%2F552%20Passing-10B981)](#174-verification-evidence--test-execution)
+[![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-123%2F123%20Passing-10B981)](#174-verification-evidence--test-execution)
+[![Phase 14 Brand & Research](https://img.shields.io/badge/Phase%2014-Verified%20%26%20Frozen-F472B6)](#18-dawaai-brand-kit--phase-14-research-artifacts)
 
 > **Academic Capstone Engineering Project**  
 > Multimodal Medical Informatics & Vision-Language Artificial Intelligence  
-> *Explainable Multimodal AI for Handwritten Prescription Understanding*
+> **Formal Title:** *Explainable Multimodal AI for Handwritten Prescription Understanding*  
+> **Application / Brand Identity:** **DawaAI** (*Your Prescription, Made Clear.*)  
+> *(Historical Note: Referenced during development milestones 1–13 under the working project code AURA-Rx)*
 
 ---
 
@@ -33,11 +28,11 @@ Illegible physician handwriting is a historic and persistent hazard in healthcar
 
 ## 2. Proposed Architecture & Solution
 
-**AURA-Rx** introduces an **evidence-grounded, uncertainty-calibrated multimodal pipeline** tailored for handwritten clinical scripts. The system bridges the gap between raw doctor handwriting and vernacular patient understanding while enforcing strict clinical safeguards.
+**DawaAI** (developed under working project code *AURA-Rx*) introduces an **evidence-grounded, uncertainty-calibrated multimodal pipeline** tailored for handwritten clinical scripts. The system bridges the gap between raw doctor handwriting and vernacular patient understanding while enforcing strict clinical safeguards.
 
 ```mermaid
 flowchart LR
-    A["Raw Prescription Image"] --> B["Multimodal Ingestion<br/>(Swin-Doc Backbone)"]
+    A["Raw Prescription Image"] --> B["Multimodal Ingestion<br/>(Vision-Language Adapter)"]
     B --> C["Clinical Entity Tokenizer<br/>(Brand, Dose, Route, Freq)"]
     C --> D["Knowledge Graph Grounding<br/>(CDSCO & RxNorm Link)"]
     D --> E{"Selective Abstention Gate<br/>(Entropy Threshold)"}
@@ -62,7 +57,8 @@ flowchart LR
 | :--- | :--- | :--- |
 | **UI Framework** | React 19 + TypeScript (Strict) | High-performance component-driven interface with compile-time safety |
 | **Bundler & Tooling** | Vite 8 + `@tailwindcss/vite` | Sub-second HMR and optimized production bundles |
-| **Styling System** | Tailwind CSS v4 + Bespoke Clinical Tokens | Surgical obsidian slate (`#060911`), clinical cyan, fine 1px hairlines |
+| **Styling System** | Tailwind CSS v4 + DawaAI Brand Kit | Plum (`#4A2E4D`), Rose (`#F472B6`), Soft Pink (`#FFD6DA`), Canvas (`#F8F2F6`) |
+| **Typography System** | Google Fonts (`DM Serif Display`, `Inter`, `DM Sans`, `JetBrains Mono`) | Display serif branding, modern UI readability, and monospace data representation |
 | **Animation Engine** | CSS Keyframes & Choreographed Motion | Laser scanning beams, stroke highlights, and `prefers-reduced-motion` |
 | **Iconography** | Lucide React | Consistent, accessible clinical and scientific iconography |
 | **Service Contract** | `prescriptionService.ts` | Decoupled abstraction mirroring future FastAPI Pydantic schema |
@@ -95,7 +91,7 @@ genai-prescription-decoder/
 │   │   ├── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
 │   │   ├── ocr/                 # Phase 5 Tesseract OCR baseline engine & metrics
 │   │   └── multimodal/          # Phase 6 vision-language adapters, parser, schemas, service
-│   ├── tests/                   # Pytest test suite (532 unit & integration tests)
+│   ├── tests/                   # Pytest test suite (552 unit & integration tests)
 │   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
 │   └── run.py                   # Development server runner (port 8000)
 ├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
@@ -107,18 +103,16 @@ genai-prescription-decoder/
 │   ├── samples/                 # Calibration & integration sample set (N=7)
 │   ├── processed/               # Isolated derived artifacts (data/processed/preprocessing_runs/)
 │   └── metadata/                # Version info and prospective experiment configurations
-├── docs/
-│   ├── PHASE_2_COMPLETION_REPORT.md # Formal Phase 2 exit gate verification report
-│   ├── phase-03-completion.md   # Formal Phase 3 exit gate verification report
-│   ├── phase-04-completion.md   # Formal Phase 4 exit gate verification report
-│   ├── phase-05-completion.md   # Formal Phase 5 exit gate verification report
-│   ├── phase-06-completion.md   # Formal Phase 6 exit gate verification report
-│   ├── phase-07-completion.md   # Formal Phase 7 exit gate verification report
-│   ├── phase-08-completion.md   # Formal Phase 8 exit gate verification report
-│   ├── phase-09-completion.md   # Formal Phase 9 exit gate verification report
-│   ├── phase-10-completion.md   # Formal Phase 10 exit gate verification report
-│   ├── phase-11-completion.md   # Formal Phase 11 exit gate verification report
-│   ├── phase-12-completion.md   # Formal Phase 12 exit gate verification report
+├── docs/                        # Formal academic reports, specifications & phase completions
+│   ├── capstone-final-report.md # 14-Phase Capstone Thesis Final Report
+│   ├── research-paper-draft.md  # IEEE/ACM styled research paper draft
+│   ├── architecture-dfd.md      # Level 0, Level 1, Level 2 System Data Flow Diagrams
+│   ├── error-analysis.md        # Evidence-based 14-category error taxonomy & risk analysis
+│   ├── defense-viva-presentation.md # 18-slide viva presentation deck + 10 examiner Q&As
+│   ├── demo-script.md           # 10-minute live demonstration walkthrough across 6 acts
+│   ├── api-documentation.md     # REST API reference manual & verification contracts
+│   ├── phase-14-completion.md   # Phase 14 exit gate verification report
+│   ├── phase-03-completion.md to phase-13-completion.md # Frozen phase exit reports
 │   └── confidence_design.md     # Phase 8 Confidence & Calibration Design Specification
 ├── eval/                        # Phase 12 Reproducible Evaluation & Ablation Suite
 │   ├── config/                  # Master manifest (aura_rx_eval_v1, seed 42)
@@ -135,6 +129,8 @@ genai-prescription-decoder/
 │   ├── plots/                   # 6 high-resolution research visualizations (300 DPI)
 │   ├── reports/                 # Aggregate JSON, per-sample JSONL, error taxonomy
 │   └── scripts/                 # run_all_evaluations.py master pipeline
+├── public/                      # Static client assets & official brand vectors
+│   └── brand/                   # DawaAI icons, dark mode variants, and logo marks
 ├── scripts/
 │   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
 │   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
@@ -593,27 +589,59 @@ curl -f http://localhost:8000/health
 
 ---
 
-## 18. Clinical Safety & Regulatory Disclaimer
+## 18. DawaAI Brand Kit & Phase 14 Research Artifacts
+
+Phase 14 finalizes the research documentation, viva defense readiness, and brand migration to the official **DawaAI** brand kit.
+
+### 18.1 Official Brand Assets & Geometry
+- **Primary Mark:** Plum rounded clinical cross interlocked with a tilted rose pill emblem.
+- **Palette (Source of Truth):**
+  - **PRIMARY PURPLE:** `#4A2E4D` (WCAG AAA compliant on `#F8F2F6`, contrast > 13:1)
+  - **SECONDARY PURPLE:** `#7C5A8B`
+  - **ACCENT PINK:** `#F472B6`
+  - **SOFT PINK:** `#FFD6DA`
+  - **CANVAS BACKGROUND:** `#F8F2F6`
+  - **TEXT ON LIGHT:** `#2E2233`
+- **Typography:**
+  - Display Wordmark: `DM Serif Display` ("Dawa" in `#4A2E4D`)
+  - Tech Accent: `Inter` ("AI" in `#F472B6`)
+  - Body & UI: `Inter` / `DM Sans`
+  - Monospace Data / RxCUI: `JetBrains Mono`
+
+### 18.2 Complete Academic & Viva Defense Deliverables
+1. **[Capstone Final Report](docs/capstone-final-report.md):** 14-phase comprehensive capstone thesis report covering problem epidemiology, multimodal architecture, empirical results, and Section 42 regulatory considerations.
+2. **[Research Paper Draft](docs/research-paper-draft.md):** Formal academic journal/conference manuscript with IEEE/ACM styling.
+3. **[Architecture & DFD Specification](docs/architecture-dfd.md):** Complete Level 0, Level 1, and Level 2 Data Flow Diagrams with Mermaid flowcharts, data dictionaries, and boundary contracts.
+4. **[Evidence-Based Error Analysis](docs/error-analysis.md):** Standardized 14-category error taxonomy, deep dive on Sample 5 edge case, and qualitative risk mitigation matrix.
+5. **[Viva Defense Presentation Guide](docs/defense-viva-presentation.md):** 18-slide viva presentation deck with complete speaker notes and 10 bulletproof examiner defense Q&As.
+6. **[Interactive Demonstration Script](docs/demo-script.md):** 10-minute live demonstration walkthrough script across 6 acts.
+7. **[REST API Reference Manual](docs/api-documentation.md):** Endpoint contracts, Pydantic schemas, and cURL/Fetch examples.
+8. **[Phase 14 Completion Report](docs/phase-14-completion.md):** Verification audit matrix covering all 32 acceptance criteria and research-integrity compliance.
+
+---
+
+## 19. Clinical Safety & Statutory Regulatory Disclaimer
 
 > [!CAUTION]
-> **STATUTORY NOTICE**: AURA-Rx is an **academic capstone research prototype** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
+> **STATUTORY NOTICE**: DawaAI is a **deployment-ready assistive research prototype for academic demonstration** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
 > 
+> - **Under Section 42 of the Indian Pharmacy Act (1948), dispensing prescription medicines without verification by a Registered Pharmacist is an offence.**
 > - **The physical handwritten prescription signed by a Registered Medical Practitioner (RMP) is the sole legally binding document.**
 > - This software is an assistive explanatory tool and **must not be used as an autonomous dispensing authority or clinical diagnostic device**.
 > - Patients must never initiate, alter, or terminate medication regimens without direct consultation with a qualified medical practitioner or licensed clinical pharmacist.
 
 ---
 
-## 19. Project Information
+## 20. Project Information
 
 - **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
+- **Product Identity:** DawaAI (*Your Prescription, Made Clear.*)
+- **Author:** Swayam Mandhani
 - **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
 
 ---
 
-## 20. License
+## 21. License
 
 Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
-
-
 

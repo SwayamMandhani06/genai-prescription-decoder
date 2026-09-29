@@ -10,84 +10,110 @@
   --color-theme-primary: var(--text-primary);
   --color-theme-secondary: var(--text-secondary);
   --color-theme-muted: var(--text-muted);
+
+  --color-dawaai-primary: #4A2E4D;
+  --color-dawaai-secondary: #7C5A8B;
+  --color-dawaai-accent: #F472B6;
+  --color-dawaai-soft: #FFD6DA;
+  --color-dawaai-background: #F8F2F6;
+  --color-dawaai-text: #2E2233;
 }
 
 @layer base {
   :root {
-    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* DawaAI Official Design Tokens (Source of Truth) */
+    --dawaai-primary: #4A2E4D;
+    --dawaai-secondary: #7C5A8B;
+    --dawaai-accent: #F472B6;
+    --dawaai-soft: #FFD6DA;
+    --dawaai-background: #F8F2F6;
+    --dawaai-text: #2E2233;
+
+    --font-sans: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'DM Serif Display', 'Playfair Display', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Light Theme: Semantic Surface Hierarchy (Crisp, Designed, High Contrast) */
-    /* Background: Warm neutral ivory */
-    --bg-canvas: #F2ECE1;
-    /* Surface 1: Clean warm white (primary containers pop from ivory) */
+    /* Light Theme: DawaAI Calm Healthcare Identity */
+    /* Background: DawaAI Official Background #F8F2F6 */
+    --bg-canvas: #F8F2F6;
+    /* Surface 1: Clean crisp white for primary cards */
     --bg-surface: #FFFFFF;
-    /* Surface 2: Warm neutral gray-white (secondary / nested panels) */
-    --bg-surface-subtle: #E9E1D2;
-    /* Surface 3: Slightly deeper warm neutral (elevated / hover / toolbars) */
-    --bg-surface-elevated: #DDD2C0;
+    /* Surface 2: Subtle plum-tinted neutral for nested panels */
+    --bg-surface-subtle: #F2EBF1;
+    /* Surface 3: Slightly elevated plum/soft container */
+    --bg-surface-elevated: #EADEE8;
 
-    /* Border: Visible warm neutral */
-    --border-subtle: #D2C7B3;
-    --border-hover: #B7A890;
-    --border-focus: #0D9488;
+    /* Border: Harmonized with DawaAI plum palette */
+    --border-subtle: #E2D3E0;
+    --border-hover: #C5B0C2;
+    --border-focus: #7C5A8B;
     
-    /* Typography: Deep charcoal & slate for maximum legibility */
-    --text-primary: #111827;    /* Very dark charcoal (contrast > 15:1) */
-    --text-secondary: #374151;  /* Deep slate (contrast > 8.5:1) */
-    --text-muted: #5B6B82;      /* Medium slate (contrast > 5.2:1) */
+    /* Typography: DawaAI Primary Text #2E2233 */
+    --text-primary: #2E2233;    /* Deep plum-charcoal (contrast > 13:1) */
+    --text-secondary: #58445E;  /* Secondary plum (contrast > 7:1) */
+    --text-muted: #826E88;      /* Muted plum (contrast > 4.5:1) */
 
-    /* Accent: Restrained clinical teal/cyan */
-    --accent-teal: #0D9488;
-    --accent-cyan: #0284C7;
-    --accent-emerald: #059669;
-    --accent-amber: #D97706;
-    --accent-rose: #DC2626;
+    /* DawaAI Accents & Brand Moments */
+    --accent-primary: #4A2E4D;
+    --accent-secondary: #7C5A8B;
+    --accent-pink: #F472B6;
+    --accent-soft: #FFD6DA;
 
-    /* Document: Paper white with physical depth */
+    /* Harmonized Semantic Colors */
+    --accent-teal: #7C5A8B;     /* Secondary purple for calm clinical accents */
+    --accent-cyan: #8F559C;
+    --accent-emerald: #15803D;  /* Semantic Confirmed/Verified */
+    --accent-amber: #D97706;    /* Semantic Needs Verification */
+    --accent-rose: #E11D48;     /* Semantic Flagged / LASA Screened */
+
+    /* Document / Prescription Surface */
     --paper-bg: #FFFFFF;
-    --paper-line: rgba(180, 160, 130, 0.25);
-    --paper-shadow: 0 3px 12px -2px rgba(35, 28, 20, 0.09), 0 20px 45px -6px rgba(35, 28, 20, 0.12);
-    --paper-border: #D2C7B3;
-    --ink-primary: #1E3A8A;
-    --ink-secondary: #111827;
+    --paper-line: rgba(74, 46, 77, 0.08);
+    --paper-shadow: 0 4px 16px -2px rgba(46, 34, 51, 0.08), 0 16px 36px -6px rgba(46, 34, 51, 0.1);
+    --paper-border: #E2D3E0;
+    --ink-primary: #4A2E4D;
+    --ink-secondary: #2E2233;
   }
 
   .dark {
-    /* Dark Theme: Semantic Surface Hierarchy */
-    /* Background: Deep charcoal/navy */
-    --bg-canvas: #0A0E17;
-    /* Surface 1: Dark slate (primary containers) */
-    --bg-surface: #131926;
-    /* Surface 2: Slightly lighter slate (secondary / nested panels) */
-    --bg-surface-subtle: #1B2335;
-    /* Surface 3: Elevated panel (dropdowns / hovers / popovers) */
-    --bg-surface-elevated: #242E44;
+    /* Dark Theme: DawaAI Plum Family (#4A2E4D / #2E1E33) */
+    /* Background: Deep plum canvas */
+    --bg-canvas: #1E1322;
+    /* Surface 1: Deep plum container */
+    --bg-surface: #2A1B2F;
+    /* Surface 2: Secondary plum panel */
+    --bg-surface-subtle: #36233B;
+    /* Surface 3: Elevated plum card */
+    --bg-surface-elevated: #442C4B;
 
-    /* Border: Subtle slate */
-    --border-subtle: rgba(148, 163, 184, 0.18);
-    --border-hover: rgba(148, 163, 184, 0.32);
-    --border-focus: #2DD4BF;
+    /* Border: Subtle pink/plum border */
+    --border-subtle: rgba(244, 114, 182, 0.16);
+    --border-hover: rgba(244, 114, 182, 0.32);
+    --border-focus: #F472B6;
 
     /* Typography */
-    --text-primary: #F8FAFC;    /* Warm white */
-    --text-secondary: #94A3B8;  /* Muted but readable slate (contrast > 5.5:1) */
-    --text-muted: #7B8B9F;      /* Readable slate (contrast > 4.6:1) */
+    --text-primary: #FDFBFE;    /* Pure crisp white */
+    --text-secondary: #D8CADC;  /* Readable plum-white */
+    --text-muted: #A895AC;      /* Lilac slate */
 
-    /* Accent: Restrained clinical teal/cyan */
-    --accent-teal: #14B8A6;
-    --accent-cyan: #38BDF8;
-    --accent-emerald: #10B981;
-    --accent-amber: #F59E0B;
-    --accent-rose: #F43F5E;
+    /* Brand Accents */
+    --accent-primary: #FFD6DA;
+    --accent-secondary: #C498D4;
+    --accent-pink: #F472B6;
+    --accent-soft: #4A2E4D;
+    --accent-teal: #C498D4;
+    --accent-cyan: #E879F9;
+    --accent-emerald: #34D399;
+    --accent-amber: #FBBF24;
+    --accent-rose: #FB7185;
 
-    /* Document: Warm paper surface (Physical sheet resting on dark desk) */
-    --paper-bg: #FAF7F2;
-    --paper-line: rgba(180, 160, 130, 0.22);
+    /* Document */
+    --paper-bg: #2A1B2F;
+    --paper-line: rgba(244, 114, 182, 0.1);
     --paper-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 24px 60px -8px rgba(0, 0, 0, 0.75);
-    --paper-border: rgba(255, 255, 255, 0.12);
-    --ink-primary: #1E3A8A;
-    --ink-secondary: #0F172A;
+    --paper-border: rgba(244, 114, 182, 0.18);
+    --ink-primary: #FDFBFE;
+    --ink-secondary: #D8CADC;
   }
 
   html {
@@ -223,6 +249,48 @@ html.theme-transitioning *::after {
   line-height: 1.4;
   font-weight: 500;
 }
+
+/* DawaAI Brand Utilities */
+.font-brand-serif {
+  font-family: var(--font-serif);
+}
+
+.text-dawaai-primary {
+  color: var(--dawaai-primary);
+}
+
+.text-dawaai-secondary {
+  color: var(--dawaai-secondary);
+}
+
+.text-dawaai-accent {
+  color: var(--dawaai-accent);
+}
+
+.bg-dawaai-primary {
+  background-color: var(--dawaai-primary);
+}
+
+.bg-dawaai-secondary {
+  background-color: var(--dawaai-secondary);
+}
+
+.bg-dawaai-accent {
+  background-color: var(--dawaai-accent);
+}
+
+.bg-dawaai-soft {
+  background-color: var(--dawaai-soft);
+}
+
+.border-dawaai-primary {
+  border-color: var(--dawaai-primary);
+}
+
+.border-dawaai-accent {
+  border-color: var(--dawaai-accent);
+}
+
 
 /* Authentic Prescription Paper Surface */
 .prescription-paper {

@@ -24,7 +24,7 @@ export const SafetyDisclaimer: React.FC = () => {
                   Explainable Decision Support &mdash; Not an Autonomous Prescriber
                 </h3>
                 <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed max-w-3xl">
-                  AURA-Rx is designed strictly as an assistive medical intelligence tool to demystify complex handwritten prescription tokens for patients and healthcare workers. In compliance with statutory pharmaceutical guidelines, the <strong>physical handwritten prescription signed by a registered medical practitioner (RMP)</strong> remains the sole legal reference. Never alter medication regimens without direct consultation with a qualified physician or licensed clinical pharmacist.
+                  DawaAI is an assistive research prototype. It does not diagnose conditions, prescribe medicines, or modify prescribed dosages. In compliance with statutory pharmaceutical guidelines, the <strong>physical handwritten prescription signed by a registered medical practitioner (RMP)</strong> remains the sole legal reference. Always verify prescription details against the original prescription and consult an appropriate healthcare professional or licensed clinical pharmacist before taking medications.
                 </p>
               </div>
             </div>

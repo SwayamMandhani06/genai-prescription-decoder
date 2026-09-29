@@ -43,7 +43,7 @@ export const OriginalPrescriptionReference: React.FC = () => {
             </h2>
 
             <p className="text-sm sm:text-base text-theme-secondary leading-relaxed font-sans">
-              Artificial intelligence in pharmacy must assist human expertise, not replace accountability. AURA-Rx operates under a strict statutory protocol: the physician&rsquo;s physical handwriting is legally binding, and the software serves as an explainable assistive bridge.
+              Artificial intelligence in pharmacy must assist human expertise, not replace accountability. DawaAI operates under a strict statutory protocol: the physician&rsquo;s physical handwriting is legally binding, and the software serves as an explainable assistive bridge.
             </p>
 
             <div className="space-y-4 pt-2 font-sans">
@@ -122,7 +122,7 @@ export const OriginalPrescriptionReference: React.FC = () => {
                 <strong className="text-theme-primary font-mono block text-[11px] mb-0.5">
                   Statutory Healthcare Clause:
                 </strong>
-                Under Section 42 of the Pharmacy Act, dispensing prescription medicines without verification by a Registered Pharmacist is an offence. AURA-Rx is engineered with physical safeguards to uphold this legal mandate.
+                Under Section 42 of the Pharmacy Act, dispensing prescription medicines without verification by a Registered Pharmacist is an offence. DawaAI is engineered with physical safeguards to uphold this legal mandate.
               </div>
             </Card>
           </div>

@@ -23,7 +23,7 @@ export const FinalCtaSection: React.FC<FinalCtaSectionProps> = ({ onOpenUpload }
           {onOpenUpload && (
             <button
               onClick={onOpenUpload}
-              className="px-9 py-4.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-base sm:text-lg font-semibold transition-all inline-flex items-center gap-3 shadow-md hover:shadow-lg cursor-pointer group"
+              className="px-9 py-4.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base sm:text-lg font-semibold transition-all inline-flex items-center gap-3 shadow-md hover:shadow-lg cursor-pointer group"
             >
               <UploadCloud className="w-5 h-5" />
               <span>Analyze a prescription</span>

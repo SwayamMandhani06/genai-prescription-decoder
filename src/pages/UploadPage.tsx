@@ -189,8 +189,10 @@ export const UploadPage: React.FC<UploadPageProps> = ({
             <span className="text-theme-muted hidden sm:inline">|</span>
 
             <div className="hidden sm:flex items-center gap-2">
+              <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
+              <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                AURA-Rx
+                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">/ Prescription Intake</span>
             </div>
@@ -198,8 +200,8 @@ export const UploadPage: React.FC<UploadPageProps> = ({
 
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800">
-              <span className="w-2 h-2 rounded-full bg-teal-500" />
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#7C5A8B] dark:text-[#F472B6] bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 px-3 py-1 rounded-full border border-[#F472B6]/30">
+              <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
               <span>Intake Pipeline Ready</span>
             </div>
           </div>
@@ -210,8 +212,8 @@ export const UploadPage: React.FC<UploadPageProps> = ({
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Page Header */}
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
-            <FileCheck2 className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
+            <FileCheck2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Stage 01: Document Intake</span>
           </div>
 

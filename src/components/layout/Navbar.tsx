@@ -81,20 +81,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onHomeClick}
             className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
+            aria-label="DawaAI Home"
           >
-            <div className="w-8 h-8 rounded-lg bg-teal-600/10 dark:bg-teal-400/10 border border-teal-600/20 dark:border-teal-400/20 flex items-center justify-center text-teal-700 dark:text-teal-300">
-              <FileText className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-base tracking-tight text-theme-primary">
-                  AURA<span className="text-teal-600 dark:text-teal-400">-Rx</span>
-                </span>
-              </div>
-              <p className="text-[10px] text-theme-muted tracking-tight font-medium hidden sm:block">
-                Prescription Understanding Workspace
-              </p>
-            </div>
+            <img
+              src="/brand/dawaai-logo.svg"
+              alt="DawaAI — Your Prescription, Made Clear."
+              className="h-8 sm:h-9 w-auto dark:hidden object-contain"
+            />
+            <img
+              src="/brand/dawaai-logo-dark.svg"
+              alt="DawaAI — Your Prescription, Made Clear."
+              className="h-8 sm:h-9 w-auto hidden dark:block object-contain"
+            />
           </button>
 
           {/* Primary Navigation (Desktop) */}
@@ -142,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenResultsClick}
                 className="px-3 py-1.5 rounded-lg border border-theme bg-surface hover:bg-surface-subtle text-xs font-medium text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                <FileCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <FileCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <span>Findings</span>
               </button>
             )}
@@ -152,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <UploadCloud className="w-3.5 h-3.5" />
                 <span>Upload Script</span>
@@ -167,7 +165,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="px-2.5 py-1 rounded-md bg-teal-600 text-white text-xs font-medium"
+                className="px-2.5 py-1 rounded-md bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] text-xs font-semibold"
               >
                 Upload
               </button>
@@ -195,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
           >
-            <ScanLine className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <ScanLine className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Analyze</span>
           </a>
 
@@ -207,7 +205,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
           >
-            <HelpCircle className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <HelpCircle className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>How It Works</span>
           </a>
 
@@ -219,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
           >
-            <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Safety Philosophy</span>
           </a>
 
@@ -230,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
             className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg cursor-pointer"
           >
-            <FileText className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <FileText className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Research & Methodology</span>
           </button>
 
@@ -240,9 +238,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenResultsClick();
               }}
-              className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-teal-700 dark:text-teal-300 hover:bg-surface-subtle rounded-lg cursor-pointer"
+              className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-[#4A2E4D] dark:text-[#F472B6] hover:bg-surface-subtle rounded-lg cursor-pointer font-medium"
             >
-              <FileCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              <FileCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
               <span>Prescription Findings</span>
             </button>
           )}

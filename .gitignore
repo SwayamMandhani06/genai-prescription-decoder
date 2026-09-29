@@ -1,4 +1,6 @@
-# Node dependencies
+# ==============================================================================
+# Node dependencies & package managers
+# ==============================================================================
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -6,19 +8,36 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Production build artifacts
+# ==============================================================================
+# Production build artifacts & bundler cache
+# ==============================================================================
 dist/
 dist-ssr/
 *.local
+.vite/
 
-# Environment variables
+# ==============================================================================
+# TypeScript & Linter caches
+# ==============================================================================
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# ==============================================================================
+# Environment variables & secrets protection
+# ==============================================================================
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
+*.pem
+*.key
+*.secret
+credentials.json
+client_secrets*.json
 
+# ==============================================================================
 # Editor & IDE artifacts
+# ==============================================================================
 .vscode/*
 !.vscode/extensions.json
 .idea/
@@ -27,12 +46,19 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+*.swo
 
+# ==============================================================================
 # OS temporary files
+# ==============================================================================
 .DS_Store
 Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
 
-# Python & Backend temporary files (for Phase 2 FastAPI)
+# ==============================================================================
+# Python & Backend temporary files
+# ==============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -43,28 +69,33 @@ venv/
 ENV/
 .venv/
 .pytest_cache/
-
-# Secrets and Credentials Protection
-*.pem
-*.key
-*.secret
-credentials.json
-client_secrets*.json
-
-# Test Coverage & Type Checking
 .coverage
 htmlcov/
 .mypy_cache/
+.ruff_cache/
 
+# ==============================================================================
+# Test outputs & browser evaluation artifacts
+# ==============================================================================
+test-results/
+playwright-report/
+blob-report/
+
+# ==============================================================================
 # Backend temporary uploads (keep directory via .gitkeep)
+# ==============================================================================
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# ==============================================================================
 # Data directories: exclude heavy external downloads but track structure
+# ==============================================================================
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
 
-# Temporary test image fixture
+# ==============================================================================
+# Temporary test fixtures
+# ==============================================================================
 scripts/test_prescription.png

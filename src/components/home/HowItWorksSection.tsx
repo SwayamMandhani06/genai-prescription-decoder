@@ -5,26 +5,26 @@ export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       num: '01',
-      title: 'Prescription Intake',
-      desc: 'The physical prescription image is brought into focus. Document orientation, stroke contrast, and paper conditions are verified.',
+      title: '1. Upload',
+      desc: 'High-resolution prescription intake with automated image quality inspection, stroke contrast checks, and blur screening.',
       icon: Camera,
     },
     {
       num: '02',
-      title: 'Handwriting Interpretation',
-      desc: 'Multimodal vision models analyze cursive pen trajectories, separating letterhead context from handwritten drug posology.',
+      title: '2. Understand',
+      desc: 'Multimodal AI extracts localized cursive pen strokes into structured medication name, strength, frequency, and duration slots.',
       icon: FileSearch,
     },
     {
       num: '03',
-      title: 'Formulary Verification',
-      desc: 'Extracted candidates are matched against official CDSCO and RxNorm databases. Ambiguous or high-risk entries are flagged.',
+      title: '3. Verify',
+      desc: 'Candidates are cross-referenced with CDSCO and RxNorm databases, triggering selective abstention and LASA alerts when ambiguous.',
       icon: ShieldCheck,
     },
     {
       num: '04',
-      title: 'Plain-Language Guidance',
-      desc: 'Instructions are formulated in patient-friendly English, Hindi, and Marathi, clarifying meal schedules and warnings.',
+      title: '4. Explain',
+      desc: 'Empathetic, clear patient guidance generated in English, Hindi, and Marathi with meal schedules and safety precautions.',
       icon: Languages,
     },
   ];
@@ -34,14 +34,14 @@ export const HowItWorksSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
-            Methodology
+          <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
+            Transparent Methodology
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-theme-primary">
-            How the prescription is processed.
+            How DawaAI processes your prescription.
           </h2>
           <p className="text-base text-theme-secondary leading-relaxed">
-            A transparent four-stage pipeline that prioritizes medical evidence over blind guesswork.
+            A transparent four-stage pipeline: Upload &rarr; Understand &rarr; Verify &rarr; Explain.
           </p>
         </div>
 
@@ -52,11 +52,11 @@ export const HowItWorksSection: React.FC = () => {
             return (
               <div
                 key={step.num}
-                className="relative p-6 rounded-2xl bg-surface border border-theme flex flex-col justify-between space-y-4 shadow-xs hover:border-theme-hover transition-colors"
+                className="relative p-6 rounded-2xl bg-surface border border-theme flex flex-col justify-between space-y-4 shadow-xs hover:border-[#F472B6]/40 transition-colors"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-bold text-teal-700 dark:text-teal-400">
+                    <span className="text-sm font-bold text-[#7C5A8B] dark:text-[#F472B6]">
                       Stage {step.num}
                     </span>
                     <Icon className="w-5 h-5 text-theme-muted" />

@@ -51,7 +51,7 @@ export const UncertaintyAbstentionSection: React.FC = () => {
             The System Knows When It Is Uncertain
           </h2>
           <p className="text-sm sm:text-base text-theme-secondary">
-            In medicine, guessing is dangerous. When clinical cursive strokes are ambiguous, AURA-Rx activates calibrated selective prediction: deliberately refusing to transcribe rather than guessing on ambiguous medication strength.
+            In medicine, guessing is dangerous. When clinical cursive strokes are ambiguous, DawaAI activates calibrated selective prediction: deliberately refusing to transcribe rather than guessing on ambiguous medication strength.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export const UncertaintyAbstentionSection: React.FC = () => {
             </div>
           </Card>
 
-          {/* Card 2: AURA-Rx Calibrated Abstention */}
+          {/* Card 2: DawaAI Calibrated Abstention */}
           <Card variant="cyan" padding="lg">
             <div className="flex items-start gap-3.5 mb-4">
               <div className="p-2.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30 shrink-0">
@@ -88,7 +88,7 @@ export const UncertaintyAbstentionSection: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-base font-bold text-theme-primary">
-                  AURA-Rx Selective Prediction Gate
+                  DawaAI Selective Prediction Gate
                 </h3>
                 <p className="text-xs text-emerald-800 dark:text-emerald-300 font-mono mt-0.5">
                   Cost-Sensitive Abstention &amp; Escalation

@@ -29,7 +29,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-theme-primary flex flex-col font-sans selection:bg-teal-500/20 selection:text-teal-800 dark:selection:text-teal-200">
+    <div className="min-h-screen bg-canvas text-theme-primary flex flex-col font-sans selection:bg-[#F472B6]/30 selection:text-[#4A2E4D] dark:selection:text-[#FFD6DA]">
       {/* Top Navigation */}
       <Navbar
         onNavigateToAnalyze={onOpenUpload}

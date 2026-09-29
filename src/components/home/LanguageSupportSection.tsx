@@ -5,15 +5,16 @@ export const LanguageSupportSection: React.FC = () => {
   const [activeLang, setActiveLang] = useState<'en' | 'hi' | 'mr'>('en');
 
   const languages = [
-    { id: 'en' as const, label: 'English', script: 'English' },
-    { id: 'hi' as const, label: 'Hindi', script: 'हिन्दी' },
-    { id: 'mr' as const, label: 'Marathi', script: 'मराठी' },
+    { id: 'en' as const, label: 'English', script: 'English', brandTagline: 'Your Prescription, Made Clear.' },
+    { id: 'hi' as const, label: 'Hindi', script: 'हिंदी', brandTagline: 'आपकी दवा की जानकारी' },
+    { id: 'mr' as const, label: 'Marathi', script: 'मराठी', brandTagline: 'तुमच्या औषधाची माहिती' },
   ];
 
   const content = {
     en: {
       headline: 'Medical guidance in the patient’s language.',
       subhead: 'Converting clinical shorthand into clear, unambiguous directions.',
+      brandMotto: 'Your Prescription, Made Clear.',
       drug: 'Augmentin 625 Duo Tablet',
       generic: 'Amoxicillin (500mg) + Clavulanic Acid (125mg)',
       schedule: 'Take 1 tablet twice a day (morning and night), strictly after meals.',
@@ -25,19 +26,21 @@ export const LanguageSupportSection: React.FC = () => {
     hi: {
       headline: 'मरीज़ की अपनी भाषा में स्पष्ट चिकित्सकीय मार्गदर्शन।',
       subhead: 'कठिन डॉक्टरी संक्षिप्त अक्षरों को सरल और समझने योग्य निर्देशों में बदलना।',
-      drug: 'ऑगमेंटिन 625 डुओ टैबलेट (Augmentin 625 Duo)',
-      generic: 'एमोक्सिसिलिन (500 मि.ग्रा.) + क्लैवुलैनिक एसिड (125 मि.ग्रा.)',
+      brandMotto: 'आपकी दवा की जानकारी',
+      drug: 'Augmentin 625 Duo Tablet (ऑगमेंटिन 625)',
+      generic: 'Amoxicillin (500mg) + Clavulanic Acid (125mg)',
       schedule: 'दिन में 2 बार 1 गोली लें (सुबह और रात), हमेशा भोजन के बाद।',
       timing: 'सुबह (9:00 बजे) और रात (9:00 बजे)',
       meals: 'पेट की ख़राबी से बचने के लिए हमेशा भोजन के साथ या तुरंत बाद लें।',
       precaution: 'बुखार या दर्द ठीक होने पर भी पूरे 5 दिनों की खुराक समाप्त करें।',
-      audioLabel: 'हिन्दी में निर्देश सुनें',
+      audioLabel: 'हिंदी में निर्देश सुनें',
     },
     mr: {
       headline: 'रुग्णाच्या स्वतःच्या भाषेत स्पष्ट वैद्यकीय मार्गदर्शन.',
       subhead: 'क्लिष्ट डॉक्टरी संक्षेप सोप्या आणि समजण्याजोग्या सूचनांमध्ये रूपांतरित करणे.',
-      drug: 'ऑगमेंटिन ६२५ ड्युओ टॅबलेट (Augmentin 625 Duo)',
-      generic: 'अमोक्सिसिलिन (५०० मि.ग्रॅ.) + क्लॅव्हुलेनिक ॲसिड (१२५ मि.ग्रॅ.)',
+      brandMotto: 'तुमच्या औषधाची माहिती',
+      drug: 'Augmentin 625 Duo Tablet (ऑगमेंटिन ६२५)',
+      generic: 'Amoxicillin (500mg) + Clavulanic Acid (125mg)',
       schedule: 'दिवसातून २ वेळा १ गोळी घ्या (सकाळी आणि रात्री), नेहमी जेवणानंतर.',
       timing: 'सकाळी (९:०० वाजता) आणि रात्री (९:०० वाजता)',
       meals: 'पोट खराब होऊ नये म्हणून नेहमी जेवणासोबत किंवा जेवणानंतर लगेच घ्या.',
@@ -54,7 +57,7 @@ export const LanguageSupportSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Context & Controls */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="text-sm font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-2">
+            <div className="text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-2">
               <Languages className="w-4 h-4" />
               <span>Multilingual Posology</span>
             </div>
@@ -64,11 +67,24 @@ export const LanguageSupportSection: React.FC = () => {
             </h2>
 
             <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
-              Prescriptions in India are written in Latin abbreviations like <em>1-0-1 PC</em> or <em>TDS AC</em>. AURA-Rx converts shorthand into actionable, patient-friendly guidance in English, Hindi, and Marathi.
+              Prescriptions in India are written in Latin abbreviations like <em>1-0-1 PC</em> or <em>TDS AC</em>. DawaAI converts shorthand into actionable, patient-friendly guidance in English, Hindi, and Marathi.
             </p>
 
+            {/* Official DawaAI Brand Language Banner */}
+            <div className="p-3.5 rounded-xl bg-surface border border-theme shadow-xs flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-brand-serif font-bold text-base text-[#4A2E4D] dark:text-white">Dawa</span>
+                <span className="font-bold text-base text-[#F472B6]">AI</span>
+                <span className="text-xs text-theme-muted">&bull;</span>
+                <span className="text-xs font-semibold text-theme-primary">{active.brandMotto}</span>
+              </div>
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
+                {activeLang.toUpperCase()}
+              </span>
+            </div>
+
             {/* Interactive Language Selector Tabs */}
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 pt-1">
               <div className="text-xs font-semibold uppercase tracking-wider text-theme-muted">
                 Switch Language:
               </div>
@@ -79,7 +95,7 @@ export const LanguageSupportSection: React.FC = () => {
                     onClick={() => setActiveLang(lang.id)}
                     className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                       activeLang === lang.id
-                        ? 'bg-teal-600 text-white shadow-xs'
+                        ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] shadow-xs'
                         : 'text-theme-secondary hover:text-theme-primary'
                     }`}
                   >
@@ -90,7 +106,7 @@ export const LanguageSupportSection: React.FC = () => {
             </div>
 
             <div className="pt-2 flex items-center gap-2 text-xs sm:text-sm text-theme-muted">
-              <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
               <span>Standardized medical glossaries validated for Indian vernaculars</span>
             </div>
           </div>
@@ -101,7 +117,7 @@ export const LanguageSupportSection: React.FC = () => {
               {/* Header with Drug Name and Audio Button */}
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-theme pb-4">
                 <div>
-                  <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
+                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
                     Patient guidance card &middot; {languages.find((l) => l.id === activeLang)?.label}
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-theme-primary mt-1">
@@ -113,7 +129,7 @@ export const LanguageSupportSection: React.FC = () => {
                 </div>
 
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-surface-subtle text-xs font-semibold text-theme-primary border border-theme">
-                  <Volume2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                  <Volume2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
                   <span>{active.audioLabel}</span>
                 </div>
               </div>
@@ -125,7 +141,7 @@ export const LanguageSupportSection: React.FC = () => {
               >
                 {/* Primary Schedule Instruction */}
                 <div className="p-4 sm:p-5 rounded-xl bg-surface-subtle/70 space-y-1.5">
-                  <div className="text-xs font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-1.5">
+                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     <span>How &amp; when to take</span>
                   </div>
@@ -141,7 +157,7 @@ export const LanguageSupportSection: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                   <div className="p-3.5 rounded-xl bg-surface-subtle/50 space-y-1">
                     <div className="font-semibold text-theme-primary flex items-center gap-1.5">
-                      <Utensils className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      <Utensils className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                       <span>Meal relationship</span>
                     </div>
                     <p className="text-theme-secondary leading-[1.6]">

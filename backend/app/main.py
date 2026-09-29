@@ -1,5 +1,5 @@
 """
-AURA-Rx FastAPI Main Application
+DawaAI FastAPI Main Application
 Explainable Multimodal AI for Handwritten Prescription Understanding
 """
 
@@ -22,16 +22,16 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("aura_rx")
+logger = logging.getLogger("dawaai")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
     settings.ensure_upload_dir_exists()
-    logger.info("AURA-Rx FastAPI Backend started on %s:%s (Mock Mode: %s)", settings.HOST, settings.PORT, settings.USE_MOCK_PIPELINE)
+    logger.info("DawaAI FastAPI Backend started on %s:%s (Mock Mode: %s)", settings.HOST, settings.PORT, settings.USE_MOCK_PIPELINE)
     yield
-    logger.info("AURA-Rx FastAPI Backend shutting down.")
+    logger.info("DawaAI FastAPI Backend shutting down.")
 
 
 def create_app() -> FastAPI:

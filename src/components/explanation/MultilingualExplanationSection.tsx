@@ -41,7 +41,7 @@ export const MultilingualExplanationSection: React.FC = () => {
             Patient-Centric Multilingual Posology
           </h2>
           <p className="text-sm sm:text-base text-theme-secondary">
-            Medical compliance fails when patients cannot decipher instructions. AURA-Rx translates cryptic clinical abbreviations into clear posology schedules and spoken audio guidance in English, Hindi, and Marathi.
+            Medical compliance fails when patients cannot decipher instructions. DawaAI translates cryptic clinical abbreviations into clear posology schedules and spoken audio guidance in English, Hindi, and Marathi.
           </p>
         </div>
 

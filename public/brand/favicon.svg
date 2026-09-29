@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <defs>
+    <linearGradient id="favCrossV" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C5A8B" />
+      <stop offset="100%" stop-color="#4A2E4D" />
+    </linearGradient>
+    <linearGradient id="favCrossH" x1="2" y1="16" x2="30" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C5A8B" />
+      <stop offset="100%" stop-color="#F472B6" />
+    </linearGradient>
+    <linearGradient id="favPillPink" x1="16" y1="11" x2="23" y2="11" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F472B6" />
+      <stop offset="100%" stop-color="#FDA4AF" />
+    </linearGradient>
+  </defs>
+
+  <!-- Horizontal arm -->
+  <rect x="3" y="11" width="26" height="10" rx="5" fill="url(#favCrossH)" />
+  <!-- Vertical arm -->
+  <rect x="11" y="3" width="10" height="26" rx="5" fill="url(#favCrossV)" />
+
+  <!-- Diagonal capsule at -42 deg -->
+  <g transform="rotate(-42 16 16)">
+    <rect x="7" y="12" width="18" height="8" rx="4" fill="#FFFFFF" />
+    <!-- Left Half (white/soft) -->
+    <path d="M 11,13 h 4 v 6 h -4 a 3,3 0 0 1 -3,-3 v 0 a 3,3 0 0 1 3,-3 Z" fill="#FFE4E8" />
+    <!-- Right Half (pink) -->
+    <path d="M 16,13 h 5 a 3,3 0 0 1 3,3 v 0 a 3,3 0 0 1 -3,3 h -5 Z" fill="url(#favPillPink)" />
+    <!-- Center line -->
+    <line x1="15.5" y1="13" x2="15.5" y2="19" stroke="#FFFFFF" stroke-width="0.8" />
+  </g>
+</svg>

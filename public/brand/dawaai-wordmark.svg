@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 70" width="260" height="70" fill="none">
+  <defs>
+    <style>
+      .wm-serif {
+        font-family: 'DM Serif Display', 'Playfair Display', 'Georgia', serif;
+        font-weight: 700;
+        font-size: 50px;
+        fill: #4A2E4D;
+      }
+      .wm-sans {
+        font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+        font-weight: 800;
+        font-size: 50px;
+        fill: #F472B6;
+      }
+      .wm-tag {
+        font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+        font-size: 8.5px;
+        font-weight: 600;
+        letter-spacing: 2.6px;
+        fill: #7C5A8B;
+      }
+    </style>
+  </defs>
+  <text x="0" y="44">
+    <tspan class="wm-serif">Dawa</tspan><tspan class="wm-sans">AI</tspan>
+  </text>
+  <text x="2" y="62" class="wm-tag">YOUR PRESCRIPTION, MADE CLEAR.</text>
+</svg>

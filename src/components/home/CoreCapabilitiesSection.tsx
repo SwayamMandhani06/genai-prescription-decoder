@@ -34,14 +34,14 @@ export const CoreCapabilitiesSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Intro */}
         <div className="max-w-3xl mb-16 sm:mb-20 space-y-3">
-          <div className="text-sm font-semibold text-teal-700 dark:text-teal-400">
+          <div className="text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
             Core Architecture
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
             Designed for medical clarity, safety, and evidence.
           </h2>
           <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
-            Three foundational capabilities ensure that AURA-Rx operates with clinical accountability.
+            Three foundational capabilities ensure that DawaAI operates with clinical accountability.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
           {/* Capability 01: UNDERSTAND */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
                 1. Understanding Handwriting
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
@@ -60,7 +60,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 Rather than treating cursive scrawl as unconstrained text, our vision pipeline isolates localized ink stroke paths, disentangles clinical shorthands (such as 1-0-1, PC, AC, and TDS), and maps them into rigorous clinical slots.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
                 <span>Extracts drug, strength, frequency, timing &amp; duration</span>
               </div>
             </div>
@@ -126,7 +126,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 <span className="font-semibold text-xs text-theme-primary">
                   Clinical formulary &amp; sound-alike safety
                 </span>
-                <span className="text-xs text-teal-700 dark:text-teal-400 font-medium">CDSCO / RxNorm</span>
+                <span className="text-xs text-[#7C5A8B] dark:text-[#F472B6] font-medium">CDSCO / RxNorm</span>
               </div>
 
               {/* Verified Item */}
@@ -168,7 +168,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
             </div>
 
             <div className="order-1 lg:order-2 lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold text-teal-700 dark:text-teal-400">
+              <span className="text-xs font-bold text-[#7C5A8B] dark:text-[#F472B6]">
                 2. Verifying candidates
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
@@ -178,7 +178,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 Every extracted candidate is cross-referenced against authoritative clinical databases. When severe Look-Alike Sound-Alike (LASA) pairs or low-confidence strokes appear, the system applies TALL MAN lettering and flags them rather than guessing.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
                 <span>CDSCO India &amp; US NLM RxNorm ontological verification</span>
               </div>
             </div>
@@ -187,17 +187,17 @@ export const CoreCapabilitiesSection: React.FC = () => {
           {/* Capability 03: EXPLAIN */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold text-teal-700 dark:text-teal-400">
+              <span className="text-xs font-bold text-[#7C5A8B] dark:text-[#F472B6]">
                 3. Explaining posology
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
                 Patient-friendly English, Hindi and Marathi explanations.
               </h3>
               <p className="text-base sm:text-lg text-theme-secondary leading-[1.65]">
-                Medical prescriptions are often written using Latin abbreviations that confuse patients. AURA-Rx converts complicated regimens into empathetic, plain-language guidance in regional languages while preserving the original signed prescription.
+                Medical prescriptions are often written using Latin abbreviations that confuse patients. DawaAI converts complicated regimens into empathetic, plain-language guidance in regional languages while preserving the original signed prescription.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
                 <span>Native Devanagari script for Hindi and Marathi</span>
               </div>
             </div>
@@ -217,7 +217,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                       onClick={() => setExplainLang(lang)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                         explainLang === lang
-                          ? 'bg-teal-600 text-white shadow-xs font-semibold'
+                          ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] shadow-xs font-semibold'
                           : 'bg-surface-subtle hover:bg-surface border border-theme text-theme-secondary hover:text-theme-primary'
                       }`}
                     >
@@ -233,13 +233,13 @@ export const CoreCapabilitiesSection: React.FC = () => {
                   <div className="text-sm font-bold text-theme-primary">
                     Augmentin 625 Duo &middot; Oral Tablet
                   </div>
-                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-medium">
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#FFD6DA]/60 dark:bg-[#4A2E4D]/60 text-[#4A2E4D] dark:text-[#FFD6DA] border border-[#F472B6]/40 font-medium">
                     {explanationPhrases[explainLang].badge}
                   </span>
                 </div>
 
                 <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-2">
-                  <div className="text-xs font-semibold text-teal-700 dark:text-teal-400">
+                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
                     Dosing Schedule &amp; Timing
                   </div>
                   <p className="text-sm sm:text-base font-medium text-theme-primary leading-relaxed">

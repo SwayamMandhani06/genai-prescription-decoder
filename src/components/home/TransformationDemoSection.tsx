@@ -66,7 +66,7 @@ export const TransformationDemoSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <div className="max-w-3xl mb-12 sm:mb-16 space-y-3">
-          <div className="text-sm font-semibold text-teal-700 dark:text-teal-400">
+          <div className="text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
             Visual Transformation
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
@@ -84,7 +84,7 @@ export const TransformationDemoSection: React.FC = () => {
                 onClick={() => setSelectedDemoIdx(idx)}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   selectedDemoIdx === idx
-                    ? 'bg-teal-600 text-white shadow-sm font-semibold'
+                    ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] shadow-sm font-semibold'
                     : 'bg-surface hover:bg-surface-subtle border border-theme text-theme-secondary hover:text-theme-primary'
                 }`}
               >
@@ -123,7 +123,7 @@ export const TransformationDemoSection: React.FC = () => {
                     d={activeStroke.svgPath}
                     fill="none"
                     stroke="currentColor"
-                    className="text-blue-900 stroke-[2.8]"
+                    className="text-[#4A2E4D] stroke-[2.8]"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -143,7 +143,7 @@ export const TransformationDemoSection: React.FC = () => {
           {/* Arrow / Bridge Indicator (Desktop Only) */}
           <div className="hidden lg:flex lg:col-span-1 items-center justify-center">
             <div className="w-10 h-10 rounded-full bg-surface border border-theme flex items-center justify-center text-theme-muted shadow-xs">
-              <ArrowRight className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              <ArrowRight className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             </div>
           </div>
 
@@ -151,7 +151,7 @@ export const TransformationDemoSection: React.FC = () => {
           <div className="lg:col-span-6 p-7 sm:p-8 rounded-3xl bg-surface shadow-elevated-card border border-theme flex flex-col justify-between space-y-6">
             <div className="space-y-2.5">
               <div className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="font-semibold text-teal-700 dark:text-teal-400">
+                <span className="font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
                   Interpreted medication
                 </span>
                 {activeItem.status === 'ambiguous' ? (

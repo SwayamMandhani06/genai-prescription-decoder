@@ -38,14 +38,14 @@ export const LasaSafetySection: React.FC = () => {
             LASA (Look-Alike Sound-Alike) Collision Defense
           </h2>
           <p className="text-sm sm:text-base text-theme-secondary font-sans">
-            Handwritten cursive silhouettes frequently merge characters into ambiguous ligatures. AURA-Rx computes dual string distances—Levenshtein orthographic and Double Metaphone acoustic—to mitigate critical dispensing errors.
+            Handwritten cursive silhouettes frequently merge characters into ambiguous ligatures. DawaAI computes dual string distances—Levenshtein orthographic and Double Metaphone acoustic—to screen potential look-alike / sound-alike matches.
           </p>
         </div>
 
         {/* Top Controls: TALL MAN Lettering Toggle */}
         <div className="flex items-center justify-between p-3.5 rounded-xl bg-surface border border-theme mb-6 shadow-xs">
           <div className="flex items-center gap-2.5">
-            <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <Eye className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span className="text-xs sm:text-sm font-bold text-theme-primary font-sans">
               FDA / ISMP TALL MAN Lettering Standard:
             </span>
@@ -54,7 +54,7 @@ export const LasaSafetySection: React.FC = () => {
             onClick={() => setUseTallManLettering(!useTallManLettering)}
             className={`px-3 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
               useTallManLettering
-                ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-700 shadow-xs font-semibold'
+                ? 'bg-[#FFD6DA]/60 dark:bg-[#4A2E4D]/60 text-[#4A2E4D] dark:text-[#FFD6DA] border-[#F472B6]/40 shadow-xs font-semibold'
                 : 'bg-surface-subtle text-theme-muted border-theme'
             }`}
           >

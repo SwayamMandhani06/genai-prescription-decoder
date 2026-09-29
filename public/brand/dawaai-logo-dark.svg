@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 96" width="380" height="96" fill="none">
+  <defs>
+    <!-- Cross vertical gradient for dark -->
+    <linearGradient id="logoDarkCrossVert" x1="42" y1="12" x2="42" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8F6B9F" />
+      <stop offset="50%" stop-color="#674570" />
+      <stop offset="100%" stop-color="#4A2E4D" />
+    </linearGradient>
+
+    <!-- Cross horizontal gradient for dark -->
+    <linearGradient id="logoDarkCrossHoriz" x1="10" y1="48" x2="74" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C5A8B" />
+      <stop offset="50%" stop-color="#B274A4" />
+      <stop offset="100%" stop-color="#F472B6" />
+    </linearGradient>
+
+    <!-- Pill top-right half gradient -->
+    <linearGradient id="logoDarkPillPink" x1="38" y1="36" x2="60" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F472B6" />
+      <stop offset="60%" stop-color="#FB7185" />
+      <stop offset="100%" stop-color="#FDA4AF" />
+    </linearGradient>
+
+    <!-- Pill bottom-left half gradient -->
+    <linearGradient id="logoDarkPillWhite" x1="24" y1="60" x2="46" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#FFF0F3" />
+      <stop offset="100%" stop-color="#FFD6DA" />
+    </linearGradient>
+
+    <filter id="logoDarkPillShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+
+    <style>
+      .wordmark-serif-dark {
+        font-family: 'DM Serif Display', 'Playfair Display', 'Georgia', serif;
+        font-weight: 700;
+        font-size: 46px;
+        fill: #FFFFFF;
+      }
+      .wordmark-sans-dark {
+        font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+        font-weight: 800;
+        font-size: 46px;
+        fill: #F472B6;
+      }
+      .tagline-dark {
+        font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+        font-size: 9.5px;
+        font-weight: 600;
+        letter-spacing: 2.8px;
+        fill: #FFD6DA;
+        opacity: 0.9;
+      }
+    </style>
+  </defs>
+
+  <!-- Left Emblem (Centered at x=45, y=48) -->
+  <g transform="translate(4, 2)">
+    <!-- Horizontal arm -->
+    <rect x="10" y="34" width="70" height="26" rx="13" fill="url(#logoDarkCrossHoriz)" />
+    <!-- Vertical arm -->
+    <rect x="32" y="12" width="26" height="70" rx="13" fill="url(#logoDarkCrossVert)" />
+    <!-- Center blend -->
+    <rect x="32" y="34" width="26" height="26" fill="#4A2E4D" opacity="0.4" />
+
+    <!-- Overlaid angled capsule -->
+    <g transform="rotate(-42 45 47)" filter="url(#logoDarkPillShadow)">
+      <rect x="23" y="37" width="44" height="20" rx="10" fill="#FFFFFF" />
+      <!-- Left Half -->
+      <path d="M 33,38 h 11 v 18 h -11 a 9,9 0 0 1 -9,-9 v 0 a 9,9 0 0 1 9,-9 Z" fill="url(#logoDarkPillWhite)" />
+      <!-- Right Half -->
+      <path d="M 46,38 h 11 a 9,9 0 0 1 9,9 v 0 a 9,9 0 0 1 -9,9 h -11 Z" fill="url(#logoDarkPillPink)" />
+      <!-- Separation Line -->
+      <line x1="45" y1="38" x2="45" y2="56" stroke="#FFFFFF" stroke-width="1.2" />
+    </g>
+  </g>
+
+  <!-- Right Typography: Wordmark + Tagline -->
+  <g transform="translate(104, 0)">
+    <text x="0" y="54">
+      <tspan class="wordmark-serif-dark">Dawa</tspan><tspan class="wordmark-sans-dark">AI</tspan>
+    </text>
+    <text x="3" y="73" class="tagline-dark">YOUR PRESCRIPTION, MADE CLEAR.</text>
+  </g>
+</svg>

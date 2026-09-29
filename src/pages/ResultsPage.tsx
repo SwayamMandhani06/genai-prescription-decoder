@@ -125,8 +125,10 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <span className="text-theme-muted hidden sm:inline">|</span>
 
             <div className="hidden sm:flex items-center gap-2">
+              <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
+              <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                AURA-Rx
+                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">
                 / Prescription Findings

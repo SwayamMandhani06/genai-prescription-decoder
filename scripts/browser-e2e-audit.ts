@@ -79,7 +79,7 @@ async function runBrowserAudit() {
     console.log('--- 1. Testing Home Page & Navigation ---');
     await page.goto('http://localhost:5173/', { waitUntil: 'networkidle2', timeout: 15000 });
     const title = await page.title();
-    check(title.includes('AURA-Rx'), 'Page title contains AURA-Rx');
+    check(title.includes('DawaAI'), 'Page title contains DawaAI');
 
     await page.waitForFunction(
       () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.includes('Upload Prescription') || b.textContent?.includes('Analyze a Prescription')),
