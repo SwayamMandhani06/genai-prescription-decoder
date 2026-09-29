@@ -1,0 +1,5 @@
+Source / Category,Total Samples,Matched / Validated,Accuracy,Precision,Recall,F1,Dosage Preservation Rate
+CDSCO Approved Drug Formulations,24,24,-,-,-,-,1.0000
+US NLM RxNorm Clinical Nomenclature,10,10,-,-,-,-,1.0000
+Unlisted / Unknown Formulations,9,0,-,-,-,-,-
+OVERALL (All Evaluated Fixtures),43,1.0,1.0000,1.0000,1.0000,1.0000,1.0000

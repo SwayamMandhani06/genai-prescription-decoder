@@ -1,0 +1,7 @@
+Field,Ground Truth N,Predictions N,TP (Exact),TP (Normalized),FP,FN,Precision,Recall,F1,Exact Match Rate,Missing N,Uncertain N
+medicine_name,14,7,0,0,7,14,0.0000,0.0000,0.0000,0.0000,7,0
+dosage,14,7,3,3,4,10,0.4286,0.2308,0.3000,0.2143,7,0
+frequency,14,7,2,2,5,12,0.2857,0.1429,0.1905,0.1429,7,0
+duration,14,7,3,3,4,10,0.4286,0.2308,0.3000,0.2143,7,0
+MACRO AVERAGE,14,14,-,-,-,-,0.2857,0.1511,0.1976,-,-,-
+MICRO AVERAGE,56,56,-,-,-,-,0.2857,0.1481,0.1951,-,-,-

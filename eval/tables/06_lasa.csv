@@ -1,0 +1,4 @@
+Cohort,Pairs (N),TP,FP,FN,TN,Precision,Recall,F1,Accuracy
+Curated ISMP 2024 High-Risk Pairs,20,20,-,0,-,-,1.0000,-,-
+Negative Control Pairs,20,-,2,-,18,-,-,-,-
+COMBINED EVALUATION,40,20,2,0,18,0.9091,1.0000,0.9524,0.9500

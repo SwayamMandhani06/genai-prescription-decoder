@@ -1,0 +1,61 @@
+{
+  "taxonomy_version": "error_taxonomy_v1",
+  "categories": [
+    {
+      "code": "OCR_ERROR",
+      "description": "Failure in conventional character or word recognition."
+    },
+    {
+      "code": "MEDICINE_EXTRACTION_ERROR",
+      "description": "Discrepancy in extracted candidate drug identity."
+    },
+    {
+      "code": "DOSAGE_EXTRACTION_ERROR",
+      "description": "Discrepancy in extracted numerical strength or unit."
+    },
+    {
+      "code": "FREQUENCY_EXTRACTION_ERROR",
+      "description": "Discrepancy in extracted posology schedule or Latin shorthand."
+    },
+    {
+      "code": "DURATION_EXTRACTION_ERROR",
+      "description": "Discrepancy in extracted course length or interval."
+    },
+    {
+      "code": "RAG_VALIDATION_ERROR",
+      "description": "Candidate formulation failed reference correspondence or exhibited dosage mismatch."
+    },
+    {
+      "code": "CALIBRATION_ERROR",
+      "description": "Confidence score divergence from empirical accuracy or insufficient data for fitting."
+    },
+    {
+      "code": "ABSTENTION_ERROR",
+      "description": "Failure to selectively halt autonomous inference on degraded handwriting."
+    },
+    {
+      "code": "LASA_FALSE_POSITIVE",
+      "description": "Non-confusable pair incorrectly flagged as a LASA hazard."
+    },
+    {
+      "code": "LASA_FALSE_NEGATIVE",
+      "description": "High-risk confusable drug pair missed by screening filter."
+    },
+    {
+      "code": "EXPLANATION_NUMERIC_ERROR",
+      "description": "Numerical digit or metric unit mutated during explanation generation."
+    },
+    {
+      "code": "EXPLANATION_MEDICINE_ERROR",
+      "description": "Medicine name transliterated or altered from Roman script canonical form."
+    },
+    {
+      "code": "EXPLANATION_UNSUPPORTED_FACT",
+      "description": "Hallucinated clinical indication, prognosis, or dosage modification."
+    },
+    {
+      "code": "SYSTEM_FAILURE",
+      "description": "Pipeline execution exception or service unavailable error."
+    }
+  ]
+}

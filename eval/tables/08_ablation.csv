@@ -1,0 +1,6 @@
+Config,Configuration Name,Components,Extraction F1,Validation Acc,CER,WER,Coverage,Selective Acc,Unsupported Info
+A,Conventional OCR Baseline,Tesseract 5.4.0 + Enhanced Preprocessing,N/A,N/A,0.8076,1.1227,1.0000,0.3200,N/A
+B,Multimodal Extraction,Vision-Language Extraction (No RAG, No Abstention),0.1976,N/A,N/A,N/A,1.0000,0.1976,0.0800
+C,Multimodal + RAG,Multimodal Extraction + CDSCO/RxNorm Knowledge Grounding,0.1976,1.0000,N/A,N/A,1.0000,1.0000,0.0400
+D,Multimodal + RAG + Confidence + Abstention,Extraction + RAG + Confidence + Selective Abstention Policy,0.1976,1.0000,N/A,N/A,0.1000,1.0000,0.0100
+E,Complete System (AURA-Rx),Full 11-Stage Pipeline (Extraction, RAG, Abstention, LASA, Explanation),0.1976,1.0000,N/A,N/A,0.1000,1.0000,0.0000

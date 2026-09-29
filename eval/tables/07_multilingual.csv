@@ -1,0 +1,4 @@
+Language,Evaluated Sentences,Medicine Name Preservation,Numeric Fidelity,Unsupported Information Rate,Cross-Language Consistency
+English (en),19,1.0000,0.8421,0.0000,0.7895
+Hindi (hi),19,1.0000,0.8421,0.0000,0.7895
+Marathi (mr),19,1.0000,0.8421,0.0000,0.7895

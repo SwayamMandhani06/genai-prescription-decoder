@@ -1,0 +1,29 @@
+{
+  "evaluation_id": "aura_rx_eval_v1",
+  "code_version": "1.0.0",
+  "config_version": "evaluation_config_v1",
+  "random_seed": 42,
+  "created_at": "2026-09-29T03:40:40.125799+00:00",
+  "dataset_metadata": {
+    "annotations_file": "data\\annotations\\sample_annotations.json",
+    "annotations_sha256": "3775cdfa002261833ba94368716bb1bc2c5881b29c7cdd2c212cf95ae840e37d",
+    "splits_file": "data\\splits\\sample_splits.json",
+    "splits_sha256": "19f99576eab1d096377c9d4175e29e6c63a75442b50d83a52b4fc7caa13b09d2",
+    "reference_manifest_file": "data\\reference\\reference_manifest.json",
+    "reference_manifest_sha256": "71d0c13032be021aa414c2ef4740757eec28c66e005f16730130805af96f7a39",
+    "sample_count": 7,
+    "sample_role": "development_and_calibration_fixtures",
+    "statistically_sufficient_clinical_benchmark": false
+  },
+  "experiments": [
+    "EXP-01",
+    "EXP-02",
+    "EXP-03",
+    "EXP-04",
+    "EXP-05",
+    "EXP-06",
+    "EXP-07",
+    "EXP-08",
+    "EXP-09"
+  ]
+}

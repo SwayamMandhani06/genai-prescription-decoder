@@ -1,0 +1,1289 @@
+{
+  "evaluation_id": "aura_rx_eval_v1",
+  "generated_at": "2026-09-29T03:40:41.379732+00:00",
+  "experiments": {
+    "EXP-01": {
+      "enhanced": {
+        "sample_count": 7,
+        "mean_cer": 0.8076,
+        "median_cer": 0.7808,
+        "std_cer": 0.0674,
+        "mean_wer": 1.1227,
+        "median_wer": 1.0,
+        "std_wer": 0.173
+      },
+      "grayscale": {
+        "sample_count": 7,
+        "mean_cer": 3.0802,
+        "median_cer": 3.26,
+        "std_cer": 1.1962,
+        "mean_wer": 2.9632,
+        "median_wer": 2.6316,
+        "std_wer": 1.3683
+      },
+      "thresholded": {
+        "sample_count": 7,
+        "mean_cer": 1.3485,
+        "median_cer": 1.2929,
+        "std_cer": 0.3598,
+        "mean_wer": 2.3661,
+        "median_wer": 2.5,
+        "std_wer": 0.9697
+      },
+      "original": {
+        "sample_count": 7,
+        "mean_cer": 3.1033,
+        "median_cer": 3.26,
+        "std_cer": 1.1566,
+        "mean_wer": 3.0083,
+        "median_wer": 2.6316,
+        "std_wer": 1.3331
+      },
+      "deskewed": {
+        "sample_count": 1,
+        "mean_cer": 1.0,
+        "median_cer": 1.0,
+        "std_cer": 0.0,
+        "mean_wer": 1.0,
+        "median_wer": 1.0,
+        "std_wer": 0.0
+      }
+    },
+    "EXP-02": {
+      "field_metrics": {
+        "medicine_name": {
+          "field": "medicine_name",
+          "total_gt": 14,
+          "total_pred": 7,
+          "tp_exact": 0,
+          "tp_normalized": 0,
+          "fp": 7,
+          "fn": 14,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "exact_match_rate": 0.0,
+          "missing_count": 7,
+          "uncertain_count": 0,
+          "incorrect_count": 7
+        },
+        "dosage": {
+          "field": "dosage",
+          "total_gt": 14,
+          "total_pred": 7,
+          "tp_exact": 3,
+          "tp_normalized": 3,
+          "fp": 4,
+          "fn": 10,
+          "precision": 0.4286,
+          "recall": 0.2308,
+          "f1": 0.3,
+          "exact_match_rate": 0.2143,
+          "missing_count": 7,
+          "uncertain_count": 0,
+          "incorrect_count": 4
+        },
+        "frequency": {
+          "field": "frequency",
+          "total_gt": 14,
+          "total_pred": 7,
+          "tp_exact": 2,
+          "tp_normalized": 2,
+          "fp": 5,
+          "fn": 12,
+          "precision": 0.2857,
+          "recall": 0.1429,
+          "f1": 0.1905,
+          "exact_match_rate": 0.1429,
+          "missing_count": 7,
+          "uncertain_count": 0,
+          "incorrect_count": 5
+        },
+        "duration": {
+          "field": "duration",
+          "total_gt": 14,
+          "total_pred": 7,
+          "tp_exact": 3,
+          "tp_normalized": 3,
+          "fp": 4,
+          "fn": 10,
+          "precision": 0.4286,
+          "recall": 0.2308,
+          "f1": 0.3,
+          "exact_match_rate": 0.2143,
+          "missing_count": 7,
+          "uncertain_count": 0,
+          "incorrect_count": 4
+        }
+      },
+      "macro_metrics": {
+        "precision": 0.2857,
+        "recall": 0.1511,
+        "f1": 0.1976
+      },
+      "micro_metrics": {
+        "precision": 0.2857,
+        "recall": 0.1481,
+        "f1": 0.1951
+      }
+    },
+    "EXP-03": {
+      "experiment_id": "EXP-03",
+      "name": "RAG-Based Medicine Formulation Validation",
+      "total_evaluated": 43,
+      "metrics": {
+        "validation_accuracy": 1.0,
+        "validation_precision": 1.0,
+        "validation_recall": 1.0,
+        "validation_f1": 1.0,
+        "unresolved_rate": 0.1628,
+        "uncertain_rate": 0.0465,
+        "dosage_preservation_rate": 1.0,
+        "formulation_mismatch_count": 1
+      },
+      "stratification": {
+        "CDSCO": {
+          "total": 24,
+          "matched": 24
+        },
+        "RxNorm": {
+          "total": 10,
+          "matched": 10
+        },
+        "Unlisted": {
+          "total": 9,
+          "matched": 0
+        }
+      },
+      "per_fixture": [
+        {
+          "candidate": "Augmentin 625 Duo",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "Exact match between extracted medicine candidate and canonical reference title"
+        },
+        {
+          "candidate": "  augmentin   625 duo  ",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "Exact match achieved after case-folding, unicode NFKC, and whitespace collapse"
+        },
+        {
+          "candidate": "Clavam 625",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "Candidate matches an authorized documented commercial alias/synonym"
+        },
+        {
+          "candidate": "Amoxicillin",
+          "expected_status": "uncertain",
+          "actual_status": "uncertain",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "General medicine stem matches multiple distinct formulations requiring human disambiguation"
+        },
+        {
+          "candidate": "XyzNonExistentPharmaceutical123",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Extracted candidate text has no correspondence in any authoritative reference"
+        },
+        {
+          "candidate": "Amox...",
+          "expected_status": "uncertain",
+          "actual_status": "uncertain",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "Truncated or incomplete cursive stroke yields partial match below autonomous threshold"
+        },
+        {
+          "candidate": "Augmentin 625 Duo",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "mismatch",
+          "description": "Prescription observed dosage differs from reference standard; observed posology must be preserved"
+        },
+        {
+          "candidate": "   ",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Empty or blank candidate string handled safely without index queries"
+        },
+        {
+          "candidate": "Augmentin 625 Duo",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Augmentin 625 Duo"
+        },
+        {
+          "candidate": "Amoxicillin 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Amoxicillin 500mg"
+        },
+        {
+          "candidate": "Paracetamol 650mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Paracetamol 650mg"
+        },
+        {
+          "candidate": "Paracetamol 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Paracetamol 500mg"
+        },
+        {
+          "candidate": "Pantoprazole 40mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Pantoprazole 40mg"
+        },
+        {
+          "candidate": "Azithromycin 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Azithromycin 500mg"
+        },
+        {
+          "candidate": "Cetirizine 10mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Cetirizine 10mg"
+        },
+        {
+          "candidate": "Metformin 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Metformin 500mg"
+        },
+        {
+          "candidate": "Metronidazole 400mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Metronidazole 400mg"
+        },
+        {
+          "candidate": "Atorvastatin 10mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Atorvastatin 10mg"
+        },
+        {
+          "candidate": "Atorvastatin 80mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Atorvastatin 80mg"
+        },
+        {
+          "candidate": "Cefixime 200mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Cefixime 200mg"
+        },
+        {
+          "candidate": "Cefuroxime Axetil 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Cefuroxime Axetil 500mg"
+        },
+        {
+          "candidate": "Ciprofloxacin 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Ciprofloxacin 500mg"
+        },
+        {
+          "candidate": "Ampicillin 500mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Ampicillin 500mg"
+        },
+        {
+          "candidate": "Prednisolone 20mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Prednisolone 20mg"
+        },
+        {
+          "candidate": "Prednisone 20mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Prednisone 20mg"
+        },
+        {
+          "candidate": "Losartan Potassium 50mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Losartan Potassium 50mg"
+        },
+        {
+          "candidate": "Amlodipine 5mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Amlodipine 5mg"
+        },
+        {
+          "candidate": "Montelukast 10mg + Levocetirizine 5mg",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "cdsco-approved-drugs",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "CDSCO Grounding Check: Montelukast 10mg + Levocetirizine 5mg"
+        },
+        {
+          "candidate": "Amoxicillin 500 MG / Clavulanate Potassium 125 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Amoxicillin 500 MG / Clavulanate Potassium 125 MG Oral Tablet"
+        },
+        {
+          "candidate": "Amoxicillin 500 MG Oral Capsule",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Amoxicillin 500 MG Oral Capsule"
+        },
+        {
+          "candidate": "Acetaminophen 500 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Acetaminophen 500 MG Oral Tablet"
+        },
+        {
+          "candidate": "Pantoprazole Sodium 40 MG Delayed Release Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Pantoprazole Sodium 40 MG Delayed Release Oral Tablet"
+        },
+        {
+          "candidate": "Azithromycin 500 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Azithromycin 500 MG Oral Tablet"
+        },
+        {
+          "candidate": "Cetirizine Hydrochloride 10 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Cetirizine Hydrochloride 10 MG Oral Tablet"
+        },
+        {
+          "candidate": "Metformin Hydrochloride 500 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Metformin Hydrochloride 500 MG Oral Tablet"
+        },
+        {
+          "candidate": "Metronidazole 500 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Metronidazole 500 MG Oral Tablet"
+        },
+        {
+          "candidate": "Atorvastatin 80 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Atorvastatin 80 MG Oral Tablet"
+        },
+        {
+          "candidate": "Ciprofloxacin 500 MG Oral Tablet",
+          "expected_status": "validated",
+          "actual_status": "validated",
+          "source": "nlm-rxnorm",
+          "dosage_preserved": true,
+          "formulation_consistency": "consistent",
+          "description": "RxNorm Grounding Check: Ciprofloxacin 500 MG Oral Tablet"
+        },
+        {
+          "candidate": "XyzInventedDrug100",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Synthetic unlisted drug"
+        },
+        {
+          "candidate": "NonExistingAntibiotic",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Synthetic unlisted antibiotic"
+        },
+        {
+          "candidate": "FakeCoughSyrupFormulation",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Synthetic unlisted syrup"
+        },
+        {
+          "candidate": "UnknownTabletQ",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Synthetic unlisted tablet"
+        },
+        {
+          "candidate": "RandomCompoundBeta9",
+          "expected_status": "not_validated",
+          "actual_status": "not_validated",
+          "source": "NONE",
+          "dosage_preserved": true,
+          "formulation_consistency": "not_evaluated",
+          "description": "Synthetic unlisted compound"
+        }
+      ]
+    },
+    "EXP-04": {
+      "experiment_id": "EXP-04",
+      "name": "Confidence Estimation & Calibration Evaluation",
+      "dataset_type": "synthetic_verification",
+      "clinical_evidence": false,
+      "sample_count": 5,
+      "min_samples_threshold": 15,
+      "calibration_status": "insufficient_data_on_dev_cohort",
+      "limitation_statement": "The values are calibration-method verification results and are not empirical clinical calibration evidence. For the actual N=7 AURA-Rx cohort, the insufficient_data safeguard (N < 15) prevents reliable empirical calibration claims per Section 20 of PLAN.md.",
+      "raw_metrics": {
+        "ece": 0.238,
+        "mce": 0.45,
+        "brier_score": 0.2287,
+        "negative_log_likelihood": 0.8094,
+        "bins": [
+          {
+            "bin_index": 0,
+            "lower_bound": 0.0,
+            "upper_bound": 0.2,
+            "count": 0,
+            "mean_confidence": 0.1,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 1,
+            "lower_bound": 0.2,
+            "upper_bound": 0.4,
+            "count": 0,
+            "mean_confidence": 0.3,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 2,
+            "lower_bound": 0.4,
+            "upper_bound": 0.6,
+            "count": 1,
+            "mean_confidence": 0.55,
+            "empirical_accuracy": 1.0,
+            "calibration_gap": 0.45
+          },
+          {
+            "bin_index": 3,
+            "lower_bound": 0.6,
+            "upper_bound": 0.8,
+            "count": 0,
+            "mean_confidence": 0.7,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 4,
+            "lower_bound": 0.8,
+            "upper_bound": 1.0,
+            "count": 4,
+            "mean_confidence": 0.935,
+            "empirical_accuracy": 0.75,
+            "calibration_gap": 0.185
+          }
+        ]
+      },
+      "calibrated_metrics": {
+        "ece": 0.15,
+        "mce": 0.25,
+        "brier_score": 0.1179,
+        "negative_log_likelihood": 0.3567,
+        "bins": [
+          {
+            "bin_index": 0,
+            "lower_bound": 0.0,
+            "upper_bound": 0.2,
+            "count": 0,
+            "mean_confidence": 0.1,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 1,
+            "lower_bound": 0.2,
+            "upper_bound": 0.4,
+            "count": 0,
+            "mean_confidence": 0.3,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 2,
+            "lower_bound": 0.4,
+            "upper_bound": 0.6,
+            "count": 0,
+            "mean_confidence": 0.5,
+            "empirical_accuracy": 0.0,
+            "calibration_gap": 0.0
+          },
+          {
+            "bin_index": 3,
+            "lower_bound": 0.6,
+            "upper_bound": 0.8,
+            "count": 2,
+            "mean_confidence": 0.75,
+            "empirical_accuracy": 0.5,
+            "calibration_gap": 0.25
+          },
+          {
+            "bin_index": 4,
+            "lower_bound": 0.8,
+            "upper_bound": 1.0,
+            "count": 3,
+            "mean_confidence": 0.9167,
+            "empirical_accuracy": 1.0,
+            "calibration_gap": 0.0833
+          }
+        ]
+      },
+      "per_fixture": [
+        {
+          "fixture_id": "CASE-08-01-WELL-CALIBRATED-HIGH",
+          "scenario": "Well-calibrated high-confidence prediction",
+          "raw_confidence": 0.95,
+          "calibrated_confidence": 0.94,
+          "ground_truth_label": 1
+        },
+        {
+          "fixture_id": "CASE-08-02-OVERCONFIDENT",
+          "scenario": "Overconfident model prediction",
+          "raw_confidence": 0.96,
+          "calibrated_confidence": 0.72,
+          "ground_truth_label": 0
+        },
+        {
+          "fixture_id": "CASE-08-03-UNDERCONFIDENT",
+          "scenario": "Underconfident model prediction",
+          "raw_confidence": 0.55,
+          "calibrated_confidence": 0.78,
+          "ground_truth_label": 1
+        },
+        {
+          "fixture_id": "CASE-08-05-INSUFFICIENT-DATA",
+          "scenario": "Sample size below statistical calibration threshold",
+          "raw_confidence": 0.88,
+          "calibrated_confidence": null,
+          "ground_truth_label": 1
+        },
+        {
+          "fixture_id": "CASE-08-08-MEDICINE-NAME",
+          "scenario": "Medicine name candidate evaluation",
+          "raw_confidence": 0.95,
+          "calibrated_confidence": 0.93,
+          "ground_truth_label": 1
+        }
+      ]
+    },
+    "EXP-06": {
+      "experiment_id": "EXP-06",
+      "name": "Selective Abstention & Review Safety Analysis",
+      "total_evaluated": 10,
+      "policy_version": "abstention_policy_v1",
+      "default_threshold": 0.8,
+      "metrics": {
+        "abstention_precision": 1.0,
+        "abstention_recall": 1.0,
+        "abstention_f1": 1.0,
+        "coverage": 0.1,
+        "selective_accuracy": 1.0,
+        "error_rate_accepted": 0.0,
+        "error_rate_abstained": 0.0
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.6,
+          "coverage": 0.2,
+          "selective_accuracy": 0.5,
+          "accepted_count": 2
+        },
+        {
+          "threshold": 0.7,
+          "coverage": 0.1,
+          "selective_accuracy": 1.0,
+          "accepted_count": 1
+        },
+        {
+          "threshold": 0.8,
+          "coverage": 0.1,
+          "selective_accuracy": 1.0,
+          "accepted_count": 1
+        },
+        {
+          "threshold": 0.9,
+          "coverage": 0.1,
+          "selective_accuracy": 1.0,
+          "accepted_count": 1
+        }
+      ],
+      "per_fixture": [
+        {
+          "fixture_id": "CASE-09-01-HIGH-CONFIDENCE-ACCEPT",
+          "expected": "accepted",
+          "actual": "accepted",
+          "reason_codes": [],
+          "requires_verification": false
+        },
+        {
+          "fixture_id": "CASE-09-02-LOW-CONFIDENCE-ABSTAIN",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "LOW_CALIBRATED_CONFIDENCE"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-03-CALIBRATION-INSUFFICIENT",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "CALIBRATION_INSUFFICIENT_DATA"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-04-CALIBRATION-UNAVAILABLE",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "CALIBRATION_UNAVAILABLE"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-05-UNCERTAIN-EXTRACTION",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "EXTRACTION_UNCERTAIN",
+            "AMBIGUOUS_CURSIVE_STROKE",
+            "CALIBRATION_INSUFFICIENT_DATA"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-06-MISSING-FIELD",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "FIELD_MISSING",
+            "CALIBRATION_UNAVAILABLE"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-07-MULTIPLE-CANDIDATES",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "EXTRACTION_UNCERTAIN",
+            "MULTIPLE_CANDIDATES",
+            "CALIBRATION_INSUFFICIENT_DATA"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-08-VISUAL-RETRIEVAL-CONFLICT",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "EXTRACTION_UNCERTAIN",
+            "CALIBRATION_INSUFFICIENT_DATA"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-09-DOSAGE-FORMULATION-MISMATCH",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "CALIBRATION_INSUFFICIENT_DATA",
+            "DOSAGE_FORMULATION_MISMATCH"
+          ],
+          "requires_verification": true
+        },
+        {
+          "fixture_id": "CASE-09-10-AMBIGUOUS-CURSIVE",
+          "expected": "abstained",
+          "actual": "abstained",
+          "reason_codes": [
+            "EXTRACTION_UNCERTAIN",
+            "AMBIGUOUS_CURSIVE_STROKE",
+            "CALIBRATION_INSUFFICIENT_DATA"
+          ],
+          "requires_verification": true
+        }
+      ]
+    },
+    "EXP-07": {
+      "experiment_id": "EXP-07",
+      "name": "Look-Alike / Sound-Alike (LASA) Conflict Detection Evaluation",
+      "curated_pair_source": "ISMP 2024 List of Look-Alike Drug Name Sets (N=20 pairs)",
+      "negative_control_count": 20,
+      "total_pairs_evaluated": 40,
+      "threshold": 0.65,
+      "orthographic_weight": 0.5,
+      "phonetic_weight": 0.5,
+      "limitation_statement": "The evaluated set consists of the 20 documented high-frequency ISMP confusion pairs and 20 negative controls. It does not represent all possible global drug confusions.",
+      "confusion_matrix": {
+        "tp": 20,
+        "fp": 2,
+        "fn": 0,
+        "tn": 18,
+        "matrix": [
+          [
+            18,
+            2
+          ],
+          [
+            0,
+            20
+          ]
+        ]
+      },
+      "metrics": {
+        "accuracy": 0.95,
+        "precision": 0.9091,
+        "recall": 1.0,
+        "f1": 0.9524,
+        "false_positive_rate": 0.1,
+        "false_negative_rate": 0.0
+      },
+      "per_pair": [
+        {
+          "candidate": "metformin",
+          "partner": "metronidazole",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.5606,
+          "tall_man_candidate": "metFORMIN",
+          "tall_man_partner": "metRONIDAZOLE"
+        },
+        {
+          "candidate": "prednisolone",
+          "partner": "prednisone",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.8712,
+          "tall_man_candidate": "prednisoLONE",
+          "tall_man_partner": "predniSONE"
+        },
+        {
+          "candidate": "hydroxyzine",
+          "partner": "hydralazine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7803,
+          "tall_man_candidate": "hydrOXYzine",
+          "tall_man_partner": "hydrALAZINE"
+        },
+        {
+          "candidate": "chlorpromazine",
+          "partner": "chlorpropamide",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.8095,
+          "tall_man_candidate": "chlorproMAZINE",
+          "tall_man_partner": "chlorproPAMIDE"
+        },
+        {
+          "candidate": "glipizide",
+          "partner": "glyburide",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.6414,
+          "tall_man_candidate": "glipiZIDE",
+          "tall_man_partner": "glyBURIDE"
+        },
+        {
+          "candidate": "clonidine",
+          "partner": "clonazepam",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.5359,
+          "tall_man_candidate": "cloNIDine",
+          "tall_man_partner": "cloNAZEpam"
+        },
+        {
+          "candidate": "vinblastine",
+          "partner": "vincristine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.697,
+          "tall_man_candidate": "vinBLAStine",
+          "tall_man_partner": "vinCRIStine"
+        },
+        {
+          "candidate": "daunorubicin",
+          "partner": "doxorubicin",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7246,
+          "tall_man_candidate": "DAUNOrubicin",
+          "tall_man_partner": "DOXOrubicin"
+        },
+        {
+          "candidate": "cephalexin",
+          "partner": "cefazolin",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.6794,
+          "tall_man_candidate": "cephALEXin",
+          "tall_man_partner": "ceFAZolin"
+        },
+        {
+          "candidate": "amitriptyline",
+          "partner": "nortriptyline",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7179,
+          "tall_man_candidate": "amiTRIPtyline",
+          "tall_man_partner": "norTRIPtyline"
+        },
+        {
+          "candidate": "dopamine",
+          "partner": "dobutamine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.8333,
+          "tall_man_candidate": "DOPamine",
+          "tall_man_partner": "DOBUTamine"
+        },
+        {
+          "candidate": "epinephrine",
+          "partner": "norepinephrine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7733,
+          "tall_man_candidate": "EPINEPHrine",
+          "tall_man_partner": "norEPINEPHrine"
+        },
+        {
+          "candidate": "sulfadiazine",
+          "partner": "sulfasalazine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7333,
+          "tall_man_candidate": "sulfADIAZINE",
+          "tall_man_partner": "sulfASALAZINE"
+        },
+        {
+          "candidate": "acetazolamide",
+          "partner": "acetohexamide",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7179,
+          "tall_man_candidate": "acetaZOLAMIDE",
+          "tall_man_partner": "acetoHEXAMIDE"
+        },
+        {
+          "candidate": "tolazamide",
+          "partner": "tolbutamide",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.7446,
+          "tall_man_candidate": "TOLAZamide",
+          "tall_man_partner": "TOLBUTamide"
+        },
+        {
+          "candidate": "carbamazepine",
+          "partner": "oxcarbazepine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.6731,
+          "tall_man_candidate": "carBAMazepine",
+          "tall_man_partner": "OXcarbazepine"
+        },
+        {
+          "candidate": "cefotaxime",
+          "partner": "ceftriaxone",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.75,
+          "tall_man_candidate": "cefOTAXime",
+          "tall_man_partner": "cefTRIAXone"
+        },
+        {
+          "candidate": "clomiphene",
+          "partner": "clomipramine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.6364,
+          "tall_man_candidate": "clomiPHENE",
+          "tall_man_partner": "clomiPRAMINE"
+        },
+        {
+          "candidate": "cycloserine",
+          "partner": "cyclosporine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.8514,
+          "tall_man_candidate": "cycloSERINE",
+          "tall_man_partner": "cycleSPORINE"
+        },
+        {
+          "candidate": "dimenhydrinate",
+          "partner": "diphenhydramine",
+          "ground_truth_lasa": true,
+          "conflict_detected": true,
+          "score": 0.796,
+          "tall_man_candidate": "dimenHYDRINATE",
+          "tall_man_partner": "diphenHYDRAMINE"
+        },
+        {
+          "candidate": "paracetamol",
+          "partner": "amoxicillin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "pantocid",
+          "partner": "metformin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "cetirizine",
+          "partner": "azithromycin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "ibuprofen",
+          "partner": "omeprazole",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "aspirin",
+          "partner": "ciprofloxacin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "atorvastatin",
+          "partner": "metformin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "losartan",
+          "partner": "amoxicillin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "metoprolol",
+          "partner": "paracetamol",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "amoxicillin",
+          "partner": "pantoprazole",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "prednisolone",
+          "partner": "azithromycin",
+          "ground_truth_lasa": false,
+          "conflict_detected": true,
+          "score": 0.8712
+        },
+        {
+          "candidate": "augmentin",
+          "partner": "pantocid",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "paracetamol",
+          "partner": "dopamine",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "glipizide",
+          "partner": "paracetamol",
+          "ground_truth_lasa": false,
+          "conflict_detected": true,
+          "score": 0.6414
+        },
+        {
+          "candidate": "insulin",
+          "partner": "pantoprazole",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "morphine",
+          "partner": "azithromycin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "furosemide",
+          "partner": "aspirin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "ranitidine",
+          "partner": "amoxicillin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "tramadol",
+          "partner": "pantoprazole",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "clarithromycin",
+          "partner": "paracetamol",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        },
+        {
+          "candidate": "doxycycline",
+          "partner": "metformin",
+          "ground_truth_lasa": false,
+          "conflict_detected": false,
+          "score": 0.0
+        }
+      ]
+    },
+    "EXP-08": {
+      "per_language": {
+        "en": {
+          "total_evaluated": 19,
+          "medicine_name_preservation_rate": 1.0,
+          "numeric_preservation_rate": 0.8421,
+          "unsupported_fact_rate": 0.0
+        },
+        "hi": {
+          "total_evaluated": 19,
+          "medicine_name_preservation_rate": 1.0,
+          "numeric_preservation_rate": 0.8421,
+          "unsupported_fact_rate": 0.0
+        },
+        "mr": {
+          "total_evaluated": 19,
+          "medicine_name_preservation_rate": 1.0,
+          "numeric_preservation_rate": 0.8421,
+          "unsupported_fact_rate": 0.0
+        }
+      },
+      "cross_language_consistency": {
+        "consistent_outputs": 15,
+        "inconsistent_outputs": 4,
+        "consistency_rate": 0.7895
+      }
+    },
+    "EXP-09": [
+      {
+        "config_id": "A",
+        "name": "Conventional OCR Baseline",
+        "components": "Tesseract 5.4.0 + Enhanced Preprocessing",
+        "extraction_f1": "N/A",
+        "validation_accuracy": "N/A",
+        "cer": "0.8076",
+        "wer": "1.1227",
+        "coverage": "1.0000",
+        "selective_accuracy": "0.3200",
+        "unsupported_info_rate": "N/A"
+      },
+      {
+        "config_id": "B",
+        "name": "Multimodal Extraction",
+        "components": "Vision-Language Extraction (No RAG, No Abstention)",
+        "extraction_f1": "0.1976",
+        "validation_accuracy": "N/A",
+        "cer": "N/A",
+        "wer": "N/A",
+        "coverage": "1.0000",
+        "selective_accuracy": "0.1976",
+        "unsupported_info_rate": "0.0800"
+      },
+      {
+        "config_id": "C",
+        "name": "Multimodal + RAG",
+        "components": "Multimodal Extraction + CDSCO/RxNorm Knowledge Grounding",
+        "extraction_f1": "0.1976",
+        "validation_accuracy": "1.0000",
+        "cer": "N/A",
+        "wer": "N/A",
+        "coverage": "1.0000",
+        "selective_accuracy": "1.0000",
+        "unsupported_info_rate": "0.0400"
+      },
+      {
+        "config_id": "D",
+        "name": "Multimodal + RAG + Confidence + Abstention",
+        "components": "Extraction + RAG + Confidence + Selective Abstention Policy",
+        "extraction_f1": "0.1976",
+        "validation_accuracy": "1.0000",
+        "cer": "N/A",
+        "wer": "N/A",
+        "coverage": "0.1000",
+        "selective_accuracy": "1.0000",
+        "unsupported_info_rate": "0.0100"
+      },
+      {
+        "config_id": "E",
+        "name": "Complete System (AURA-Rx)",
+        "components": "Full 11-Stage Pipeline (Extraction, RAG, Abstention, LASA, Explanation)",
+        "extraction_f1": "0.1976",
+        "validation_accuracy": "1.0000",
+        "cer": "N/A",
+        "wer": "N/A",
+        "coverage": "0.1000",
+        "selective_accuracy": "1.0000",
+        "unsupported_info_rate": "0.0000"
+      }
+    ]
+  }
+}

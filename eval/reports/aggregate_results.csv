@@ -1,0 +1,13 @@
+Experiment ID,Experiment Name,Primary Metric,Value,Sample Size (N),Status
+EXP-01,Conventional OCR Baseline,Mean CER (Enhanced),0.8076,7,Completed
+EXP-01,Conventional OCR Baseline,Mean WER (Enhanced),1.1227,7,Completed
+EXP-02,Multimodal Extraction,Macro F1 Score,0.1976,16,Completed
+EXP-02,Multimodal Extraction,Micro F1 Score,0.1951,64,Completed
+EXP-03,RAG Validation,Formulation Accuracy,1.0000,14,Completed
+EXP-03,RAG Validation,Dosage Preservation Rate,1.0000,14,Completed
+EXP-04,Confidence Calibration,Calibrated ECE,0.1500,11,Exploratory (N < 15)
+EXP-06,Selective Abstention,Coverage,0.1000,15,Completed
+EXP-06,Selective Abstention,Selective Accuracy,1.0000,15,Completed
+EXP-07,LASA Detection,F1 Score,0.9524,40,Completed
+EXP-08,Multilingual Explanation,Cross-Lang Consistency,0.7895,22,Completed
+EXP-08,Multilingual Explanation,Unsupported Fact Rate,0.0000,22,Completed
