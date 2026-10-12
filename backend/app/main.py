@@ -4,6 +4,7 @@ Explainable Multimodal AI for Handwritten Prescription Understanding
 """
 
 import logging
+import uuid
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,15 +50,30 @@ def create_app() -> FastAPI:
     )
 
     # --------------------------------------------------------------------------
-    # 1. CORS Middleware
+    # 1. CORS Middleware (Supports localhost & all Vercel preview/production domains)
     # --------------------------------------------------------------------------
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
+        allow_origin_regex=r"https://.*\.vercel\.app",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # --------------------------------------------------------------------------
+    # 2. Security & Request Correlation Headers Middleware
+    # --------------------------------------------------------------------------
+    @app.middleware("http")
+    async def security_and_tracing_middleware(request: Request, call_next):
+        req_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = req_id
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        return response
 
     # --------------------------------------------------------------------------
     # 2. Static File Serving for Uploaded Original Prescription Images
@@ -112,6 +128,7 @@ def create_app() -> FastAPI:
             413: ErrorCode.FILE_TOO_LARGE,
             415: ErrorCode.INVALID_FILE_TYPE,
             422: ErrorCode.VALIDATION_FAILED,
+            429: ErrorCode.RATE_LIMIT_EXCEEDED,
             500: ErrorCode.INTERNAL_ERROR,
             503: ErrorCode.MODEL_UNAVAILABLE,
             504: ErrorCode.INTERNAL_ERROR,

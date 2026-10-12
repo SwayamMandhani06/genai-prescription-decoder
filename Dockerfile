@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for AURA-Rx: Explainable Multimodal AI for Handwritten Prescription Understanding
+# Multi-stage Dockerfile for DawaAI: Explainable Multimodal AI for Handwritten Prescription Understanding
 # Stage 1: Build the React/Vite Frontend
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app
@@ -19,6 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# Create unprivileged application user for DevSecOps least-privilege runtime
+RUN groupadd -g 10001 appuser && \
+    useradd -u 10001 -g appuser -d /app -s /sbin/nologin appuser
+
 # Install Python dependencies
 COPY backend/requirements.txt ./backend/requirements.txt
 RUN pip install --no-cache-dir -r ./backend/requirements.txt
@@ -29,8 +33,12 @@ COPY ai ./ai
 COPY data ./data
 COPY --from=frontend-builder /app/dist ./dist
 
-# Create uploads directory for immutable original prescription image preservation
-RUN mkdir -p /app/backend/uploads/samples
+# Create uploads directory for immutable original prescription image preservation and set ownership
+RUN mkdir -p /app/backend/uploads/samples && \
+    chown -R appuser:appuser /app
+
+# Switch to unprivileged user
+USER appuser
 
 # Environment configuration
 ENV HOST=0.0.0.0 \

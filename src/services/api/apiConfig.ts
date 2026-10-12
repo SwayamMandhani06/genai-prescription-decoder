@@ -14,11 +14,15 @@ export interface ApiConfiguration {
   };
 }
 
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL as string)?.trim() || 'http://localhost:8000';
+const isMockExplicitlyDisabled =
+  import.meta.env.VITE_USE_MOCK_API === 'false' || import.meta.env.VITE_USE_MOCK_API === '0';
+
 export const apiConfig: ApiConfiguration = {
-  // Configured to point to future FastAPI server; default http://localhost:8000
-  baseUrl: (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:8000',
-  // Defaults to mock adapter unless VITE_USE_MOCK_API is set to 'false'
-  useMock: import.meta.env.VITE_USE_MOCK_API !== 'false',
+  // Configured to point to FastAPI server; trims any accidental trailing slashes
+  baseUrl: rawBaseUrl.replace(/\/+$/, ''),
+  // Defaults to mock adapter unless VITE_USE_MOCK_API is explicitly set to 'false'
+  useMock: !isMockExplicitlyDisabled,
   requestTimeoutMs: 15000,
   endpoints: {
     analyze: '/api/v1/prescriptions/analyze',

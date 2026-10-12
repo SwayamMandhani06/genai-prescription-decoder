@@ -23,6 +23,7 @@ from ...fixtures.mock_fixtures import (
     get_lasa_fixture,
     get_abstained_fixture,
 )
+from ...core.security import check_rate_limit
 
 router = APIRouter(prefix="/prescriptions", tags=["Prescriptions"])
 
@@ -47,11 +48,13 @@ def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPip
 @router.post(
     "/analyze",
     response_model=PrescriptionAnalyzeResponse,
+    dependencies=[Depends(check_rate_limit)],
     responses={
         400: {"model": ErrorResponse, "description": "Invalid Request or Malformed Input"},
         413: {"model": ErrorResponse, "description": "Uploaded File Exceeds Allowed Size"},
         415: {"model": ErrorResponse, "description": "Unsupported Media File Type"},
         422: {"model": ErrorResponse, "description": "Diagnostic Pre-flight Validation Failure"},
+        429: {"model": ErrorResponse, "description": "Client Sliding Window Rate Limit Exceeded"},
         500: {"model": ErrorResponse, "description": "Internal Inference Processing Error"},
         503: {"model": ErrorResponse, "description": "Inference Worker Service Unavailable"},
         504: {"model": ErrorResponse, "description": "Upstream Drug Formulary Gateway Timeout"},
@@ -62,11 +65,13 @@ def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPip
 @router.post(
     "/process",
     response_model=PrescriptionAnalyzeResponse,
+    dependencies=[Depends(check_rate_limit)],
     responses={
         400: {"model": ErrorResponse, "description": "Invalid Request or Malformed Input"},
         413: {"model": ErrorResponse, "description": "Uploaded File Exceeds Allowed Size"},
         415: {"model": ErrorResponse, "description": "Unsupported Media File Type"},
         422: {"model": ErrorResponse, "description": "Diagnostic Pre-flight Validation Failure"},
+        429: {"model": ErrorResponse, "description": "Client Sliding Window Rate Limit Exceeded"},
         500: {"model": ErrorResponse, "description": "Internal Inference Processing Error"},
         503: {"model": ErrorResponse, "description": "Inference Worker Service Unavailable"},
         504: {"model": ErrorResponse, "description": "Upstream Drug Formulary Gateway Timeout"},
@@ -105,12 +110,16 @@ async def analyze_prescription(
                 detail=f"Unable to read incoming file stream: {str(e)}",
             )
 
-        # Pre-flight validation (File size & MIME type)
+        # Pre-flight validation (File size, MIME type & binary magic byte signature)
         try:
             _storage_service.validate_file_metadata(
                 filename=filename,
                 content_type=file.content_type,
                 size=len(file_bytes),
+            )
+            _storage_service.validate_file_signature(
+                file_bytes=file_bytes,
+                filename=filename,
             )
         except FileValidationError as fve:
             raise HTTPException(

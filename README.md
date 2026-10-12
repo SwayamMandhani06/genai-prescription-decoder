@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-4A2E4D)](#technology-stack)
-[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-552%2F552%20Passing-10B981)](#174-verification-evidence--test-execution)
+[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-557%2F557%20Passing-10B981)](#174-verification-evidence--test-execution)
 [![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-123%2F123%20Passing-10B981)](#174-verification-evidence--test-execution)
 [![Phase 14 Brand & Research](https://img.shields.io/badge/Phase%2014-Verified%20%26%20Frozen-F472B6)](#18-dawaai-brand-kit--phase-14-research-artifacts)
 
@@ -617,6 +617,16 @@ Phase 14 finalizes the research documentation, viva defense readiness, and brand
 6. **[Interactive Demonstration Script](docs/demo-script.md):** 10-minute live demonstration walkthrough script across 6 acts.
 7. **[REST API Reference Manual](docs/api-documentation.md):** Endpoint contracts, Pydantic schemas, and cURL/Fetch examples.
 8. **[Phase 14 Completion Report](docs/phase-14-completion.md):** Verification audit matrix covering all 32 acceptance criteria and research-integrity compliance.
+
+### 18.3 Production Readiness, Operations & Deployment Deliverables
+1. **[Production Readiness Audit](docs/PRODUCTION_READINESS_AUDIT.md):** Formal baseline audit, risk matrix, defect remediation, and quality gate classifications.
+2. **[Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md):** Step-by-step local readiness, cloud hosting (Docker/Render/PaaS), Vercel connection, and smoke tests.
+3. **[Security & Privacy Policy](docs/SECURITY_AND_PRIVACY.md):** Ephemeral storage, zero PHI database, magic byte validation, sliding-window rate limiting, and DevSecOps controls.
+4. **[REST API Specification](docs/API.md):** Comprehensive OpenAPI-compatible schemas, standard error contracts, and status mappings.
+5. **[AI Model Card & Provenance](docs/AI_MODEL_CARD.md):** Multimodal foundation adapter provenance, RAG formulary grounding, ECE calibration, and clinical boundaries.
+6. **[Testing & Quality Gates Report](docs/TESTING_AND_EVALUATION.md):** 680 verified automated tests, test commands, execution timings, and 15 E2E safety scenarios.
+7. **[System Architecture](docs/ARCHITECTURE.md):** Component design, data flow diagrams, spatial ink tethering, and security topology.
+8. **[Datasets & Licensing Inventory](docs/DATASETS_AND_LICENCES.md):** IAM-HistDB, CDSCO, RxNorm, and ISMP licensing, ethical compliance, and writer splits.
 
 ---
 
