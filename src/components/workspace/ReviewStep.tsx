@@ -75,7 +75,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
                     <div className="space-y-4 text-slate-900">
                       <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                         <div>
-                          <div className="font-semibold text-teal-900 text-[11px]">
+                          <div className="font-semibold text-[#4A2E4D] text-[11px]">
                             {activeCanvas.doctorHeader.clinicName}
                           </div>
                           <div className="font-bold text-slate-900 text-xs">
@@ -134,7 +134,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <div className="space-y-3">
             <button
               onClick={onStartAnalysis}
-              className="w-full py-4 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm cursor-pointer group"
+              className="w-full py-4 px-6 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm cursor-pointer group"
             >
               <FileCheck2 className="w-5 h-5" />
               <span>Start Analysis</span>
@@ -158,7 +158,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
 
             <div className="space-y-2.5 text-sm text-theme-secondary leading-[1.6]">
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Document mounted:</strong>{' '}
                   {uploadedData?.fileName || 'Prescription Script'}
@@ -166,21 +166,21 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               </div>
 
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Formularies:</strong> CDSCO National List &amp; US NLM RxNorm linked
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <Languages className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <Languages className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Languages:</strong> English, हिन्दी, मराठी
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-medium">Safety barrier:</strong> Ambiguous cursive will be flagged for review
                 </p>

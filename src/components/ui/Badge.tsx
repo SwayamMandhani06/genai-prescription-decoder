@@ -24,8 +24,8 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const variantStyles = {
-    cyan: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800',
-    teal: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800',
+    cyan: 'bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/50 text-[#4A2E4D] dark:text-[#FFD6DA] border border-[#F472B6]/30',
+    teal: 'bg-[#FFD6DA]/70 dark:bg-[#4A2E4D]/70 text-[#4A2E4D] dark:text-[#F472B6] border border-[#F472B6]/40',
     emerald: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800',
     amber: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
     coral: 'bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800',
@@ -34,8 +34,8 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const dotColors = {
-    cyan: 'bg-sky-500',
-    teal: 'bg-teal-500',
+    cyan: 'bg-[#7C5A8B]',
+    teal: 'bg-[#F472B6]',
     emerald: 'bg-emerald-500',
     amber: 'bg-amber-500',
     coral: 'bg-red-500',

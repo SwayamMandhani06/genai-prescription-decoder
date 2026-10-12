@@ -75,13 +75,13 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
             onClick={handlePrint}
             className="text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-colors flex items-center gap-2 cursor-pointer py-2.5 px-3.5"
           >
-            <Printer className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <Printer className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Print</span>
           </button>
 
           <button
             onClick={onNewPrescription}
-            className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+            className="px-5 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Analyze another</span>
@@ -101,7 +101,7 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
 
       {/* Safety Reminder Note - Generous secondary typography */}
       <div className="flex items-start gap-3 text-sm sm:text-base text-theme-secondary leading-relaxed">
-        <ShieldCheck className="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+        <ShieldCheck className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
         <p>
           <strong className="text-theme-primary font-medium">Assistive tool note: </strong>
           The original physician&rsquo;s signed prescription is the permanent legal reference. Always confirm ambiguous handwriting with a pharmacist before dispensing.

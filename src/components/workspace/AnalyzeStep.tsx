@@ -129,7 +129,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                     top: `${(activeStageIdx + 1) * 18}%`,
                     transition: 'top 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
-                  className="absolute inset-x-0 h-12 bg-gradient-to-b from-teal-500/10 via-teal-500/25 to-transparent pointer-events-none border-b-2 border-teal-500/50"
+                  className="absolute inset-x-0 h-12 bg-gradient-to-b from-[#F472B6]/10 via-[#F472B6]/25 to-transparent pointer-events-none border-b-2 border-[#F472B6]/50"
                 />
               )}
 
@@ -154,7 +154,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                     <div className="space-y-4 text-slate-900">
                       <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                         <div>
-                          <div className="font-semibold text-teal-900 text-[11px]">
+                          <div className="font-semibold text-[#4A2E4D] text-[11px]">
                             {activeCanvas.doctorHeader.clinicName}
                           </div>
                           <div className="font-bold text-slate-900 text-xs">
@@ -205,7 +205,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                 </>
               ) : !isDone ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping" />
+                  <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-ping" />
                   <span>Processing handwriting trajectories...</span>
                 </>
               ) : (
@@ -243,7 +243,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
               <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
                   onClick={() => setRetryTrigger((r) => r + 1)}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Retry Analysis</span>
@@ -268,14 +268,14 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                   <span className="font-medium text-theme-secondary">
                     Progress
                   </span>
-                  <span className="font-semibold text-teal-700 dark:text-teal-400">
+                  <span className="font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
                     {progressPercent}%
                   </span>
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-surface-subtle overflow-hidden border border-theme">
                   <div
                     style={{ width: `${progressPercent}%`, transition: 'width 0.4s ease-out' }}
-                    className="h-full bg-teal-600 rounded-full"
+                    className="h-full bg-[#4A2E4D] dark:bg-[#F472B6] rounded-full"
                   />
                 </div>
               </div>
@@ -299,10 +299,10 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                     >
                       <div className="mt-0.5 shrink-0">
                         {isPassed ? (
-                          <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         ) : isCurrent ? (
                           <span className="w-4 h-4 flex items-center justify-center">
-                            <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
                           </span>
                         ) : (
                           <span className="w-4 h-4 flex items-center justify-center text-[11px] text-theme-muted">
@@ -315,7 +315,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                         <h4
                           className={`text-base sm:text-lg ${
                             isCurrent
-                              ? 'font-bold text-teal-700 dark:text-teal-300'
+                              ? 'font-bold text-[#4A2E4D] dark:text-[#F472B6]'
                               : isPassed
                               ? 'font-bold text-theme-primary'
                               : 'font-medium text-theme-secondary'
@@ -337,7 +337,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                 <div className="pt-4 border-t border-theme animate-in fade-in duration-300">
                   <button
                     onClick={handleProceed}
-                    className="w-full py-4 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm cursor-pointer group"
+                    className="w-full py-4 px-6 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm cursor-pointer group"
                   >
                     <ShieldCheck className="w-5 h-5" />
                     <span>View Findings &amp; Interpretation</span>

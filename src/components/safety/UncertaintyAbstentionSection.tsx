@@ -131,10 +131,10 @@ export const UncertaintyAbstentionSection: React.FC = () => {
                 step="0.05"
                 value={threshold}
                 onChange={(e) => setThreshold(parseFloat(e.target.value))}
-                className="w-40 sm:w-48 accent-teal-600 dark:accent-cyan-400 cursor-pointer"
+                className="w-40 sm:w-48 accent-[#4A2E4D] dark:accent-[#F472B6] cursor-pointer"
                 aria-label="Selective Abstention Gate Threshold"
               />
-              <span className="text-sm font-mono font-bold text-teal-700 dark:text-cyan-400 w-12 text-right">
+              <span className="text-sm font-mono font-bold text-[#4A2E4D] dark:text-[#F472B6] w-12 text-right">
                 {Math.round(threshold * 100)}%
               </span>
             </div>

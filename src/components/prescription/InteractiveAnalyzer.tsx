@@ -61,12 +61,12 @@ export const InteractiveAnalyzer: React.FC = () => {
                 }}
                 className={`p-3.5 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-400 dark:border-sky-600 shadow-xs'
+                    ? 'bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/40 border-[#F472B6]/60 dark:border-[#F472B6]/50 shadow-xs'
                     : 'bg-surface border-theme hover:bg-surface-subtle'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-xs font-mono font-bold text-teal-700 dark:text-cyan-400">
+                  <span className="text-xs font-mono font-bold text-[#7C5A8B] dark:text-[#F472B6]">
                     {sample.id === 'rx-sample-1'
                       ? 'SAMPLE A: MULTI-DRUG'
                       : sample.id === 'rx-sample-2'
@@ -100,7 +100,7 @@ export const InteractiveAnalyzer: React.FC = () => {
         {/* Top Control Bar: Patient Context & Vernacular Switcher */}
         <div className="p-3.5 rounded-xl bg-surface border border-theme mb-6 flex flex-wrap items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-cyan-400 border border-teal-200 dark:border-teal-800">
+            <div className="p-2 rounded-lg bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/60 text-[#4A2E4D] dark:text-[#F472B6] border border-[#F472B6]/40">
               <FileCheck2 className="w-4 h-4" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export const InteractiveAnalyzer: React.FC = () => {
           {/* Vernacular Language Selector */}
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono text-theme-secondary flex items-center gap-1">
-              <Languages className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
+              <Languages className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
               <span>Vernacular Posology:</span>
             </span>
             <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg border border-theme">
@@ -126,7 +126,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                   onClick={() => setActiveLanguage(lang)}
                   className={`px-3 py-1 text-xs font-mono rounded-md transition-all cursor-pointer ${
                     activeLanguage === lang
-                      ? 'bg-teal-600 text-white font-bold shadow-xs'
+                      ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] font-bold shadow-xs'
                       : 'text-theme-secondary hover:text-theme-primary'
                   }`}
                 >
@@ -143,7 +143,7 @@ export const InteractiveAnalyzer: React.FC = () => {
           <div className="lg:col-span-6 rounded-2xl overflow-hidden border border-theme shadow-sm bg-surface">
             {/* Window Telemetry Strip */}
             <div className="bg-surface-subtle px-4 py-2.5 border-b border-theme flex items-center justify-between text-[11px] font-mono">
-              <div className="flex items-center gap-2 text-teal-700 dark:text-cyan-400 font-semibold">
+              <div className="flex items-center gap-2 text-[#4A2E4D] dark:text-[#F472B6] font-semibold">
                 <Crosshair className="w-3.5 h-3.5" />
                 <span>ORIGINAL SCRIPT CANVAS · {canvasData.accessionId}</span>
               </div>
@@ -204,14 +204,14 @@ export const InteractiveAnalyzer: React.FC = () => {
                       onMouseLeave={() => setHoveredMedicineId(null)}
                       className={`relative p-2 rounded transition-all cursor-pointer ${
                         isHovered
-                          ? 'bg-cyan-500/15 ring-2 ring-cyan-600 shadow-md'
+                          ? 'bg-[#F472B6]/15 ring-2 ring-[#F472B6] shadow-md'
                           : 'hover:bg-slate-200/40'
                       }`}
                     >
                       {/* Precise Coordinate Overlay */}
                       {isHovered && (
                         <div className="absolute -top-3 left-2 flex items-center gap-1.5 z-30">
-                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface text-teal-800 dark:text-cyan-300 border border-theme shadow-xs">
+                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-surface text-[#4A2E4D] dark:text-[#F472B6] border border-theme shadow-xs">
                             TARGET INK POLYGON
                           </span>
                           <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-surface-subtle text-theme-muted border border-theme">
@@ -240,7 +240,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                       <div className="mt-0.5 text-[10px] font-mono text-slate-700 flex justify-between">
                         <span className="font-semibold">{stroke.label}</span>
                         {isHovered && (
-                          <span className="text-cyan-800 font-bold">Synchronized Active Focus</span>
+                          <span className="text-[#4A2E4D] dark:text-[#F472B6] font-bold">Synchronized Active Focus</span>
                         )}
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export const InteractiveAnalyzer: React.FC = () => {
           <div className="lg:col-span-6 space-y-3.5">
             <div className="flex items-center justify-between text-xs font-mono px-1">
               <span className="text-theme-primary font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
+                <Sparkles className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <span>EXTRACTED &amp; GROUNDED ENTITIES ({currentSample.medications.length})</span>
               </span>
               <span className="text-theme-muted text-[10px]">CLICK FOR MONOGRAPH</span>
@@ -300,7 +300,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                     padding="md"
                     className={`transition-all cursor-pointer border rounded-xl shadow-xs ${
                       isHovered
-                        ? 'border-teal-500 dark:border-cyan-400 bg-sky-50 dark:bg-sky-950/30'
+                        ? 'border-[#F472B6] dark:border-[#F472B6]/70 bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/40'
                         : med.confidenceLevel === 'ABSTAIN_FLAGGED'
                         ? 'border-red-300 dark:border-red-500/40 bg-red-50/40 dark:bg-red-950/15'
                         : med.confidenceLevel === 'BORDERLINE'
@@ -344,7 +344,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                     {/* Vernacular posology translation */}
                     {localized && (
                       <div className="my-2 p-2.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                        <div className="flex items-center justify-between text-xs font-bold text-teal-800 dark:text-cyan-300 font-mono">
+                        <div className="flex items-center justify-between text-xs font-bold text-[#4A2E4D] dark:text-[#F472B6] font-mono">
                           <span>{localized.localizedName}</span>
                           <span className="text-[10px] text-theme-muted uppercase">
                             {activeLanguage === 'en' ? 'Posology' : 'डोस वेळापत्रक'}
@@ -383,7 +383,7 @@ export const InteractiveAnalyzer: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <span className="text-teal-700 dark:text-cyan-400 hover:underline flex items-center gap-1 text-[10px]">
+                      <span className="text-[#7C5A8B] dark:text-[#F472B6] hover:underline flex items-center gap-1 text-[10px]">
                         <span>View Clinical Monograph</span>
                         <ExternalLink className="w-3 h-3" />
                       </span>
@@ -396,7 +396,7 @@ export const InteractiveAnalyzer: React.FC = () => {
             {/* Overall Advice Box */}
             {languageExplanation && (
               <div className="p-4 rounded-xl bg-surface border border-theme text-xs text-theme-secondary space-y-1.5 shadow-xs">
-                <span className="font-mono font-bold text-teal-700 dark:text-cyan-400 uppercase text-[11px] block">
+                <span className="font-mono font-bold text-[#7C5A8B] dark:text-[#F472B6] uppercase text-[11px] block">
                   Patient Guidance ({languageExplanation.nativeLabel}):
                 </span>
                 <p className="leading-relaxed font-sans">{languageExplanation.overallPatientAdvice}</p>
@@ -423,7 +423,7 @@ export const InteractiveAnalyzer: React.FC = () => {
               </div>
               <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
                 <span className="text-theme-muted block text-[10px]">FREQUENCY</span>
-                <span className="text-teal-700 dark:text-cyan-400 font-bold">{selectedMedicineForModal.frequency}</span>
+                <span className="text-[#7C5A8B] dark:text-[#F472B6] font-bold">{selectedMedicineForModal.frequency}</span>
               </div>
               <div className="p-2.5 rounded-xl bg-surface-subtle border border-theme">
                 <span className="text-theme-muted block text-[10px]">DURATION</span>
@@ -446,8 +446,8 @@ export const InteractiveAnalyzer: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-sky-50/60 dark:bg-cyan-950/20 border border-sky-200 dark:border-cyan-500/20 space-y-1.5 font-mono text-xs">
-              <div className="text-teal-800 dark:text-cyan-400 font-bold">ONTOLOGY VERIFICATION RECORD</div>
+            <div className="p-3.5 rounded-xl bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30 border border-[#F472B6]/30 dark:border-[#F472B6]/30 space-y-1.5 font-mono text-xs">
+              <div className="text-[#4A2E4D] dark:text-[#F472B6] font-bold">ONTOLOGY VERIFICATION RECORD</div>
               <div className="flex justify-between text-theme-secondary">
                 <span>RxNorm Concept Unique Identifier (CUI):</span>
                 <span className="text-theme-primary font-semibold">{selectedMedicineForModal.rxNormCui || 'N/A'}</span>

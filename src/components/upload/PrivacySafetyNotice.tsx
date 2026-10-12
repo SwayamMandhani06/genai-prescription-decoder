@@ -6,14 +6,14 @@ export const PrivacySafetyNotice: React.FC = () => {
   return (
     <Card variant="subtle" padding="md" className="rounded-2xl space-y-3">
       <div className="flex items-center gap-2 text-xs font-semibold text-theme-primary uppercase tracking-wider">
-        <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+        <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
         <span>Privacy & Clinical Safety Principles</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-theme-secondary">
         <div className="p-3 rounded-xl bg-surface border border-theme space-y-1">
           <div className="flex items-center gap-1.5 font-semibold text-theme-primary text-xs">
-            <Lock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+            <Lock className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Session Memory Isolation</span>
           </div>
           <p className="text-[11px] text-theme-secondary leading-relaxed">
@@ -23,7 +23,7 @@ export const PrivacySafetyNotice: React.FC = () => {
 
         <div className="p-3 rounded-xl bg-surface border border-theme space-y-1">
           <div className="flex items-center gap-1.5 font-semibold text-theme-primary text-xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>Prescriber Ground Truth</span>
           </div>
           <p className="text-[11px] text-theme-secondary leading-relaxed">

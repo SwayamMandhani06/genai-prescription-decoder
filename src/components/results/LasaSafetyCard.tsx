@@ -47,7 +47,7 @@ export const LasaSafetyCard: React.FC<LasaSafetyCardProps> = ({ lasaDetail }) =>
             <span className="text-xs text-theme-muted uppercase font-medium block">
               Interpreted Candidate:
             </span>
-            <div className="text-lg sm:text-xl font-mono font-bold text-teal-800 dark:text-teal-300">
+            <div className="text-lg sm:text-xl font-mono font-bold text-[#4A2E4D] dark:text-[#F472B6]">
               {lasaDetail.tallManPrescribed}
             </div>
             <span className="text-xs text-theme-secondary block leading-relaxed">

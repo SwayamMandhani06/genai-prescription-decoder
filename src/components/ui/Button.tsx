@@ -30,15 +30,15 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-medium shadow-xs focus-visible:outline-teal-600',
+      'bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] font-semibold shadow-xs focus-visible:outline-[#4A2E4D] dark:focus-visible:outline-[#F472B6]',
     clinical:
-      'bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-medium shadow-xs focus-visible:outline-sky-600',
+      'bg-[#7C5A8B] hover:bg-[#6A4B78] active:bg-[#593E65] text-white font-medium shadow-xs focus-visible:outline-[#7C5A8B]',
     secondary:
-      'bg-surface hover:bg-surface-subtle text-theme-primary border border-theme shadow-xs focus-visible:outline-sky-500',
+      'bg-surface hover:bg-surface-subtle text-theme-primary border border-theme shadow-xs focus-visible:outline-[#7C5A8B]',
     outline:
-      'bg-transparent hover:bg-surface text-theme-primary border border-theme hover:border-theme-hover shadow-xs focus-visible:outline-sky-500',
+      'bg-transparent hover:bg-surface text-theme-primary border border-theme hover:border-theme-hover shadow-xs focus-visible:outline-[#7C5A8B]',
     ghost:
-      'bg-transparent hover:bg-surface-subtle text-theme-secondary hover:text-theme-primary focus-visible:outline-sky-500',
+      'bg-transparent hover:bg-surface-subtle text-theme-secondary hover:text-theme-primary focus-visible:outline-[#7C5A8B]',
     danger:
       'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 focus-visible:outline-red-600',
   };

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-canvas: var(--bg-canvas);
   --color-surface: var(--bg-surface);
@@ -17,6 +19,23 @@
   --color-dawaai-soft: #FFD6DA;
   --color-dawaai-background: #F8F2F6;
   --color-dawaai-text: #2E2233;
+
+  --color-plum-950: #140C17;
+  --color-plum-900: #1E1322;
+  --color-plum-850: #261A2B;
+  --color-plum-800: #2E2233;
+  --color-plum-700: #4A2E4D;
+  --color-plum-600: #5C3A60;
+  --color-plum-500: #7C5A8B;
+  --color-plum-400: #9B76AA;
+  --color-plum-300: #C4A5D1;
+  --color-plum-200: #E2D3E0;
+  --color-plum-100: #F2EBF1;
+  --color-plum-50: #F8F2F6;
+
+  --font-sans: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 @layer base {
@@ -29,18 +48,14 @@
     --dawaai-background: #F8F2F6;
     --dawaai-text: #2E2233;
 
-    --font-sans: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-serif: 'DM Serif Display', 'Playfair Display', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
     /* Light Theme: DawaAI Calm Healthcare Identity */
-    /* Background: DawaAI Official Background #F8F2F6 */
     --bg-canvas: #F8F2F6;
-    /* Surface 1: Clean crisp white for primary cards */
     --bg-surface: #FFFFFF;
-    /* Surface 2: Subtle plum-tinted neutral for nested panels */
     --bg-surface-subtle: #F2EBF1;
-    /* Surface 3: Slightly elevated plum/soft container */
     --bg-surface-elevated: #EADEE8;
 
     /* Border: Harmonized with DawaAI plum palette */
@@ -60,11 +75,11 @@
     --accent-soft: #FFD6DA;
 
     /* Harmonized Semantic Colors */
-    --accent-teal: #7C5A8B;     /* Secondary purple for calm clinical accents */
+    --accent-teal: #7C5A8B;
     --accent-cyan: #8F559C;
     --accent-emerald: #15803D;  /* Semantic Confirmed/Verified */
-    --accent-amber: #D97706;    /* Semantic Needs Verification */
-    --accent-rose: #E11D48;     /* Semantic Flagged / LASA Screened */
+    --accent-amber: #B45309;    /* Semantic Needs Verification */
+    --accent-rose: #BE123C;     /* Semantic Flagged / LASA Screened */
 
     /* Document / Prescription Surface */
     --paper-bg: #FFFFFF;
@@ -76,14 +91,10 @@
   }
 
   .dark {
-    /* Dark Theme: DawaAI Plum Family (#4A2E4D / #2E1E33) */
-    /* Background: Deep plum canvas */
+    /* Dark Theme: DawaAI Plum Family (#4A2E4D / #1E1322) */
     --bg-canvas: #1E1322;
-    /* Surface 1: Deep plum container */
     --bg-surface: #2A1B2F;
-    /* Surface 2: Secondary plum panel */
     --bg-surface-subtle: #36233B;
-    /* Surface 3: Elevated plum card */
     --bg-surface-elevated: #442C4B;
 
     /* Border: Subtle pink/plum border */
@@ -184,9 +195,7 @@ html.theme-transitioning *::after {
   color: var(--text-muted);
 }
 
-/* =================================================== */
-/* Standardized Responsive Type Scale System           */
-/* =================================================== */
+/* Standardized Responsive Type Scale System */
 .type-display {
   font-size: clamp(2.5rem, 5.5vw, 5rem);
   font-weight: 800;
@@ -291,7 +300,6 @@ html.theme-transitioning *::after {
   border-color: var(--dawaai-accent);
 }
 
-
 /* Authentic Prescription Paper Surface */
 .prescription-paper {
   background-color: var(--paper-bg);
@@ -300,7 +308,7 @@ html.theme-transitioning *::after {
   background-size: 100% 28px;
   box-shadow: var(--paper-shadow);
   border: 1px solid var(--paper-border);
-  color: #0F172A;
+  color: #1E1222;
 }
 
 /* Depth and Elevation Utilities */
@@ -309,20 +317,34 @@ html.theme-transitioning *::after {
 }
 
 .shadow-elevated-card {
-  box-shadow: 0 4px 20px -2px rgba(35, 28, 20, 0.06), 0 16px 36px -6px rgba(35, 28, 20, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(46, 34, 51, 0.06), 0 16px 36px -6px rgba(46, 34, 51, 0.08);
 }
 
 .dark .shadow-elevated-card {
   box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.6), 0 16px 44px -8px rgba(0, 0, 0, 0.5);
 }
 
+/* Tactile Editorial Instrument Panel */
+.editorial-instrument {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 12px -2px rgba(46, 34, 51, 0.05), 0 8px 24px -4px rgba(46, 34, 51, 0.06);
+}
+
+.dark .editorial-instrument {
+  background: var(--bg-surface);
+  border: 1px solid rgba(244, 114, 182, 0.16);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
+}
+
 /* Subtle Ambient Lighting */
 .bg-ambient-warm {
-  background-image: radial-gradient(circle at 50% 0%, rgba(13, 148, 136, 0.04) 0%, transparent 65%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(124, 90, 139, 0.05) 0%, transparent 65%);
 }
 
 .dark .bg-ambient-warm {
-  background-image: radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.045) 0%, transparent 65%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.04) 0%, transparent 65%);
 }
 
 /* Scanning Beam Animation */

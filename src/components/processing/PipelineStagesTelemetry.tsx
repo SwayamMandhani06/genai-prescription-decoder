@@ -57,14 +57,14 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
       {/* Top Diagnostics Strip */}
       <div className="p-3.5 rounded-xl bg-surface border border-theme flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2 text-theme-primary">
-          <Activity className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          <Activity className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span className="text-theme-muted font-medium">Pipeline Focus:</span>
           <span className="font-semibold">{activeModelHead}</span>
         </div>
         <div className="flex items-center gap-3 text-theme-secondary text-xs">
           <span>Elapsed: <strong className="font-mono text-theme-primary">{(elapsedTimeMs / 1000).toFixed(1)}s</strong></span>
           <span>·</span>
-          <span>Tokens: <strong className="font-mono text-teal-700 dark:text-teal-400">{liveTokens.length}</strong></span>
+          <span>Tokens: <strong className="font-mono text-[#7C5A8B] dark:text-[#F472B6]">{liveTokens.length}</strong></span>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                 key={stage.id}
                 className={`p-3 rounded-xl border transition-all flex items-start gap-3 ${
                   isActive
-                    ? 'bg-teal-50/60 dark:bg-teal-950/30 border-teal-400 dark:border-teal-700 shadow-xs'
+                    ? 'bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/40 border-[#F472B6] shadow-xs'
                     : isCompleted
                     ? 'bg-surface border-theme text-theme-primary'
                     : isFailed
@@ -97,9 +97,9 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                 {/* Node Status Icon */}
                 <div className="mt-0.5 shrink-0">
                   {isCompleted ? (
-                    <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   ) : isActive ? (
-                    <StageIcon className="w-4 h-4 text-teal-600 dark:text-teal-400 animate-pulse" />
+                    <StageIcon className="w-4 h-4 text-[#F472B6] animate-pulse" />
                   ) : isFailed ? (
                     <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                   ) : (
@@ -117,7 +117,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                       <h4
                         className={`text-xs font-semibold tracking-tight ${
                           isActive
-                            ? 'text-teal-800 dark:text-teal-300'
+                            ? 'text-[#4A2E4D] dark:text-[#F472B6]'
                             : isCompleted
                             ? 'text-theme-primary'
                             : 'text-theme-secondary'
@@ -129,9 +129,9 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
 
                     <span className="text-[11px] font-medium">
                       {isCompleted ? (
-                        <span className="text-teal-700 dark:text-teal-400">Complete</span>
+                        <span className="text-emerald-700 dark:text-emerald-400">Complete</span>
                       ) : isActive ? (
-                        <span className="text-teal-700 dark:text-teal-400">In Progress</span>
+                        <span className="text-[#7C5A8B] dark:text-[#F472B6]">In Progress</span>
                       ) : isFailed ? (
                         <span className="text-red-700 dark:text-red-400">Failed</span>
                       ) : (
@@ -147,7 +147,7 @@ export const PipelineStagesTelemetry: React.FC<PipelineStagesTelemetryProps> = (
                   {/* Active Progress Bar */}
                   {isActive && (
                     <div className="w-full h-1 bg-surface-subtle rounded-full overflow-hidden mt-2 border border-theme">
-                      <div className="h-full bg-teal-600 w-3/4 rounded-full" />
+                      <div className="h-full bg-[#4A2E4D] dark:bg-[#F472B6] w-3/4 rounded-full" />
                     </div>
                   )}
                 </div>

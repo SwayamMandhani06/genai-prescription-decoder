@@ -47,7 +47,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-surface-subtle border-b border-theme text-xs">
         <div className="flex items-center gap-2">
-          <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          <Eye className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span className="font-semibold text-theme-primary">
             Original script · <span className="font-mono text-xs">{accessionId}</span>
           </span>
@@ -89,7 +89,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            className="p-1 rounded-lg bg-teal-50 dark:bg-teal-950/40 border border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:text-teal-800 cursor-pointer ml-1"
+            className="p-1 rounded-lg bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 text-[#4A2E4D] dark:text-[#F472B6] hover:bg-[#FFD6DA]/80 cursor-pointer ml-1"
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -123,7 +123,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
               />
               {activeBoundingBox && (
                 <div
-                  className="absolute border-2 border-sky-500 bg-sky-500/10 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-sky-500/40"
+                  className="absolute border-2 border-[#F472B6] bg-[#F472B6]/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-[#F472B6]/40"
                   style={{
                     top: `${activeBoundingBox.y}%`,
                     left: `${activeBoundingBox.x}%`,
@@ -131,7 +131,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                     height: `${activeBoundingBox.height}%`,
                   }}
                 >
-                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-teal-700 dark:text-teal-300 rounded border border-theme shadow-xs">
+                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-[#4A2E4D] dark:text-[#F472B6] rounded border border-theme shadow-xs">
                     {highlightLabel || 'Active Stroke'}
                   </span>
                 </div>
@@ -151,7 +151,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                     <p className="text-[10px] text-slate-500 font-mono">{canvas.doctorHeader.regNo}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-[11px] text-teal-800 tracking-wide">
+                    <p className="font-bold text-[11px] text-[#4A2E4D] tracking-wide">
                       {canvas.doctorHeader.clinicName}
                     </p>
                     <p className="text-[10px] text-slate-600">{canvas.doctorHeader.clinicAddress}</p>
@@ -202,7 +202,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                 {/* Dynamic Coordinate Highlight Box */}
                 {activeBoundingBox && (
                   <div
-                    className="absolute border-2 border-teal-600 bg-teal-500/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-teal-500/30"
+                    className="absolute border-2 border-[#F472B6] bg-[#F472B6]/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-[#F472B6]/40"
                     style={{
                       top: `${activeBoundingBox.y}%`,
                       left: `${activeBoundingBox.x}%`,
@@ -210,7 +210,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                       height: `${activeBoundingBox.height}%`,
                     }}
                   >
-                    <div className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-teal-700 dark:text-teal-300 rounded border border-theme flex items-center gap-1 shadow-xs">
+                    <div className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-[#4A2E4D] dark:text-[#F472B6] rounded border border-theme flex items-center gap-1 shadow-xs">
                       <Crosshair className="w-2.5 h-2.5" />
                       <span>{highlightLabel || 'Recognized Line'}</span>
                     </div>
@@ -244,7 +244,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
       {/* Bottom Notice Strip */}
       <div className="px-4 py-2 bg-surface-subtle border-t border-theme flex items-center justify-between text-xs text-theme-muted">
         <div className="flex items-center gap-1.5">
-          <FileCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <FileCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span>Original physician document preserved as primary legal record</span>
         </div>
       </div>

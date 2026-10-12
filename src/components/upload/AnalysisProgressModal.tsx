@@ -92,17 +92,17 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
                 key={step.label}
                 className={`p-3.5 rounded-xl border transition-all flex items-start gap-3.5 ${
                   isFinished
-                    ? 'bg-teal-50/60 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800 text-theme-primary'
+                    ? 'bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border-[#F472B6]/30 text-theme-primary'
                     : isCurrent
-                    ? 'bg-teal-50/60 dark:bg-teal-950/25 border-teal-400 dark:border-teal-600 text-theme-primary ring-2 ring-teal-500/20'
+                    ? 'bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/50 border-[#F472B6] text-theme-primary ring-2 ring-[#F472B6]/20'
                     : 'bg-surface-subtle border-theme text-theme-muted opacity-60'
                 }`}
               >
                 <div className="shrink-0 mt-0.5">
                   {isFinished ? (
-                    <CheckCircle2 className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   ) : isCurrent ? (
-                    <div className="w-5 h-5 rounded-full border-2 border-teal-600 border-t-transparent animate-spin" />
+                    <div className="w-5 h-5 rounded-full border-2 border-[#F472B6] border-t-transparent animate-spin" />
                   ) : (
                     <Icon className="w-5 h-5 text-theme-muted" />
                   )}
@@ -114,7 +114,7 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
                       {step.label}
                     </span>
                     {isFinished && (
-                      <span className="text-[10px] font-medium text-teal-700 dark:text-teal-300 uppercase">
+                      <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 uppercase">
                         Verified
                       </span>
                     )}
@@ -133,7 +133,7 @@ export const AnalysisProgressModal: React.FC<AnalysisProgressModalProps> = ({
           <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-3 animate-in fade-in duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span className="text-xs font-bold text-theme-primary">
                   Analysis Complete
                 </span>

@@ -257,7 +257,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
               <div className="space-y-1 text-center sm:text-left">
                 <div className="text-base sm:text-lg font-bold text-theme-primary flex items-center justify-center sm:justify-start gap-2">
                   <span>Prescription:</span>
-                  <span className="font-mono text-teal-700 dark:text-teal-400">{uploadedData.fileName}</span>
+                  <span className="font-mono text-[#7C5A8B] dark:text-[#F472B6]">{uploadedData.fileName}</span>
                   <Badge variant="emerald" size="sm">
                     Ready
                   </Badge>

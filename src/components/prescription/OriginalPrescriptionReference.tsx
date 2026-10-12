@@ -63,7 +63,7 @@ export const OriginalPrescriptionReference: React.FC = () => {
           <div className="lg:col-span-6">
             <Card variant="glass" padding="lg" className="border-theme shadow-xs">
               <div className="flex items-center justify-between pb-3.5 border-b border-theme mb-5 font-mono text-xs">
-                <div className="flex items-center gap-2 text-teal-700 dark:text-teal-400 font-bold">
+                <div className="flex items-center gap-2 text-[#4A2E4D] dark:text-[#F472B6] font-bold">
                   <UserCheck className="w-4 h-4" />
                   <span>DISPENSING DECISION STATE MACHINE</span>
                 </div>
@@ -75,7 +75,7 @@ export const OriginalPrescriptionReference: React.FC = () => {
                 {/* Node 1 */}
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-teal-500" />
+                    <span className="w-2 h-2 rounded-full bg-[#F472B6]" />
                     <span className="text-theme-primary">Intake Scan Ingested</span>
                   </div>
                   <span className="text-[10px] text-theme-muted">Polygon Mesh Parsed</span>

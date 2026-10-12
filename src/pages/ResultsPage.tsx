@@ -164,7 +164,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
             <button
               onClick={onBackToHome}
-              className="px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/40 border border-teal-300 dark:border-teal-700 text-teal-800 dark:text-teal-300 text-xs font-medium transition-all cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 text-[#4A2E4D] dark:text-[#F472B6] text-xs font-medium transition-all cursor-pointer"
             >
               Overview
             </button>
@@ -187,10 +187,10 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
         {/* Prescription Metadata */}
         <div className="p-6 sm:p-7 rounded-3xl bg-surface border border-theme flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/50 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
               <Stethoscope className="w-4 h-4" />
               <span>Accession: <strong className="font-mono">{currentState.accessionId}</strong></span>
-              <span className="text-teal-400">|</span>
+              <span className="text-[#F472B6]">|</span>
               <span>{currentState.difficultyTag}</span>
             </div>
 
@@ -210,14 +210,14 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             </div>
             <div>
               <span className="text-theme-muted mr-2">Physician:</span>
-              <span className="text-teal-700 dark:text-teal-300 font-medium">{currentState.doctorName}</span>
+              <span className="text-[#4A2E4D] dark:text-[#F472B6] font-medium">{currentState.doctorName}</span>
             </div>
           </div>
         </div>
 
         {/* Statutory Assistive Tool Disclaimer Banner */}
         <div className="p-4 sm:p-5 rounded-2xl bg-surface-subtle border border-theme flex items-start gap-3.5 text-sm sm:text-base text-theme-secondary leading-relaxed">
-          <Info className="w-5 h-5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
           <div>
             <strong className="text-theme-primary uppercase text-xs sm:text-sm font-semibold block mb-1">
               Assistive Prescription Interpretation Notice:
@@ -265,7 +265,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
                 <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight flex items-center gap-2">
-                  <FileSpreadsheet className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                  <FileSpreadsheet className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
                   <span>Interpreted Posology ({currentState.fields.length} Fields)</span>
                 </h2>
                 <span className="text-xs sm:text-sm text-theme-muted">
@@ -310,7 +310,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-theme space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                <ShieldCheck className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">Verification Checklist</h2>
               </div>
               <span className="text-xs sm:text-sm text-theme-muted font-medium">Pharmacist Oversight</span>
@@ -319,7 +319,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
               <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
                 <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>1. Script Validation</span>
                 </div>
                 <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
@@ -329,7 +329,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
               <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
                 <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>2. Molecule &amp; Strength</span>
                 </div>
                 <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
@@ -339,7 +339,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
               <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
                 <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>3. Drug Interaction</span>
                 </div>
                 <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
@@ -349,7 +349,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
               <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-1.5">
                 <div className="flex items-center gap-2 font-bold text-theme-primary text-sm sm:text-base">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>4. Patient Posology</span>
                 </div>
                 <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed">
@@ -366,7 +366,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
                 onClick={onBackToUpload}
                 className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <UploadCloud className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <UploadCloud className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <span>Upload Another Prescription</span>
               </button>
 
@@ -374,14 +374,14 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
                 onClick={handlePrint}
                 className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <Printer className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <Printer className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <span>Print Findings</span>
               </button>
             </div>
 
             <button
               onClick={onBackToHome}
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+              className="px-5 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
             >
               <span>Return to Workspace Overview</span>
               <ArrowRight className="w-4 h-4" />

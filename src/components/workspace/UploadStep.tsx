@@ -196,7 +196,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             onDrop={handleDrop}
             className={`relative rounded-3xl border-2 transition-all overflow-hidden flex flex-col items-center justify-center min-h-[460px] p-6 sm:p-10 ${
               isDragging
-                ? 'border-teal-500 bg-teal-50/20 dark:bg-teal-950/30'
+                ? 'border-[#F472B6] bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30'
                 : 'border-dashed border-theme bg-surface/40'
             }`}
           >
@@ -230,7 +230,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                           <div className="space-y-4 text-slate-900">
                             <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                               <div>
-                                <div className="font-semibold text-teal-900 text-[11px]">
+                                <div className="font-semibold text-[#4A2E4D] text-[11px]">
                                   {activeCanvas.doctorHeader.clinicName}
                                 </div>
                                 <div className="font-bold text-slate-900 text-xs">
@@ -285,7 +285,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     className="px-3 py-1.5 rounded-xl bg-surface-subtle hover:bg-surface border border-theme text-xs font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer"
                     title="Replace Document"
                   >
-                    <UploadCloud className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                    <UploadCloud className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                     <span>Replace</span>
                   </button>
 
@@ -334,7 +334,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             ) : (
               /* Empty State: Dropzone & Upload Action */
               <div className="space-y-5 text-center max-w-md">
-                <div className="w-16 h-16 rounded-3xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300 mx-auto shadow-xs">
+                <div className="w-16 h-16 rounded-3xl bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 flex items-center justify-center text-[#4A2E4D] dark:text-[#F472B6] mx-auto shadow-xs">
                   <UploadCloud className="w-8 h-8" />
                 </div>
 
@@ -350,7 +350,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                 <div className="pt-2 flex justify-center">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-7 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-base font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm"
+                    className="px-7 py-3.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm"
                   >
                     <Camera className="w-4 h-4" />
                     <span>Choose a prescription file</span>
@@ -369,7 +369,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
 
               <button
                 onClick={onContinueToReview}
-                className="px-7 py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm group"
+                className="px-7 py-3 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm group"
               >
                 <span>Continue to Review</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -383,7 +383,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
           {/* Curated Samples */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <Sparkles className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
               <span>Or choose a clinical sample:</span>
             </h3>
 
@@ -394,13 +394,13 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                   onClick={() => handleSelectCuratedSample(sample.id)}
                   className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer ${
                     uploadedData?.sampleId === sample.id
-                      ? 'bg-surface border-teal-500 shadow-sm ring-1 ring-teal-500/20'
+                      ? 'bg-surface border-[#4A2E4D] dark:border-[#F472B6] shadow-sm ring-1 ring-[#4A2E4D]/20 dark:ring-[#F472B6]/30'
                       : 'bg-surface-subtle/70 hover:bg-surface border-theme'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="font-bold text-theme-primary text-sm sm:text-base">{sample.title}</span>
-                    <span className="text-xs text-teal-700 dark:text-teal-400 font-semibold">
+                    <span className="text-xs text-[#7C5A8B] dark:text-[#F472B6] font-semibold">
                       {sample.difficulty}
                     </span>
                   </div>
@@ -413,27 +413,27 @@ export const UploadStep: React.FC<UploadStepProps> = ({
           {/* Document Quality Guidance - Quiet inline checklist without card wrapper */}
           <div className="space-y-3 pt-4 border-t border-theme">
             <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
-              <FileCheck2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <FileCheck2 className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
               <span>Document quality guidelines</span>
             </h3>
 
             <div className="space-y-2.5 text-sm text-theme-secondary leading-[1.6]">
               <div className="flex items-start gap-2.5">
-                <Sun className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <Sun className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Even lighting:</strong> Minimal shadow over cursive handwriting.
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <RotateCw className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <RotateCw className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Upright orientation:</strong> Rotate so physician header is at top.
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Sharp focus:</strong> Avoid motion blur for clear stroke tracing.
                 </p>

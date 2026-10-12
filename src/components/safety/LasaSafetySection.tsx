@@ -121,7 +121,7 @@ export const LasaSafetySection: React.FC = () => {
               {/* Side by side comparison pills */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 font-sans">
                 <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                  <span className="text-[10px] font-mono text-teal-700 dark:text-teal-400 uppercase tracking-wider block font-bold">
+                  <span className="text-[10px] font-mono text-[#7C5A8B] dark:text-[#F472B6] uppercase tracking-wider block font-bold">
                     Prescribed Drug Candidate
                   </span>
                   <div className="text-base font-bold text-theme-primary">
@@ -149,7 +149,7 @@ export const LasaSafetySection: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 mb-5 font-mono text-xs">
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
                   <div className="text-theme-secondary text-[11px]">Levenshtein String Overlap:</div>
-                  <div className="text-base font-bold text-teal-700 dark:text-teal-300">
+                  <div className="text-base font-bold text-[#4A2E4D] dark:text-[#F472B6]">
                     {Math.round(activePair.orthographicSimilarity * 100)}%
                   </div>
                   <div className="text-[10px] text-theme-muted">
@@ -159,7 +159,7 @@ export const LasaSafetySection: React.FC = () => {
 
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
                   <div className="text-theme-secondary text-[11px]">Acoustic Phonetic Distance:</div>
-                  <div className="text-base font-bold text-teal-700 dark:text-teal-300">
+                  <div className="text-base font-bold text-[#4A2E4D] dark:text-[#F472B6]">
                     {Math.round(activePair.phoneticSimilarity * 100)}%
                   </div>
                   <div className="text-[10px] text-theme-muted">

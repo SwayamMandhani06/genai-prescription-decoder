@@ -98,7 +98,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       {/* Header with Language Segmented Switcher */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-theme pb-4">
         <div className="flex items-center gap-3">
-          <Globe className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+          <Globe className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
           <div>
             <h3 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">
               Patient-Friendly Explanation
@@ -122,7 +122,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 data-testid={`lang-tab-${lang.code}`}
                 className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-teal-600 text-white font-semibold shadow-xs'
+                    ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] font-semibold shadow-xs'
                     : 'text-theme-secondary hover:text-theme-primary'
                 }`}
               >
@@ -135,10 +135,10 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       </div>
 
       {/* Summary Card with Audio Support */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 space-y-3">
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border border-[#F472B6]/30 space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-teal-800 dark:text-teal-300 font-semibold">
-            <FileText className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-[#4A2E4D] dark:text-[#FFD6DA] font-semibold">
+            <FileText className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
             <span>PATIENT POSOLOGY GUIDANCE</span>
           </div>
 
@@ -148,7 +148,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
             aria-label={isPlayingAudio ? 'Stop spoken audio explanation' : 'Listen to spoken audio explanation'}
             className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer border font-medium ${
               isPlayingAudio
-                ? 'bg-teal-700 text-white border-teal-800'
+                ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] border-transparent'
                 : 'bg-surface text-theme-secondary hover:text-theme-primary border-theme'
             }`}
           >
@@ -159,7 +159,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
               </>
             ) : (
               <>
-                <Volume2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <Volume2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
                 <span>Listen Audio</span>
               </>
             )}
@@ -175,18 +175,18 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
 
         {/* Detailed Instructions if distinct from summary */}
         {currentContent.instructions && currentContent.instructions !== currentContent.summary && (
-          <p className="text-sm sm:text-base text-theme-secondary leading-relaxed font-normal whitespace-pre-line pt-2 border-t border-teal-200/50 dark:border-teal-800/50" data-testid="explanation-instructions">
+          <p className="text-sm sm:text-base text-theme-secondary leading-relaxed font-normal whitespace-pre-line pt-2 border-t border-[#F472B6]/30" data-testid="explanation-instructions">
             {currentContent.instructions}
           </p>
         )}
 
         {isPlayingAudio && (
-          <div className="p-3 rounded-lg bg-surface border border-theme flex items-center gap-3 text-xs sm:text-sm text-teal-700 dark:text-teal-300 animate-in fade-in">
+          <div className="p-3 rounded-lg bg-surface border border-theme flex items-center gap-3 text-xs sm:text-sm text-[#4A2E4D] dark:text-[#FFD6DA] animate-in fade-in">
             <div className="flex items-end gap-0.5 h-4">
-              <span className="w-1 bg-teal-500 h-2.5 animate-bounce" />
-              <span className="w-1 bg-teal-500 h-4 animate-bounce delay-75" />
-              <span className="w-1 bg-teal-500 h-3 animate-bounce delay-150" />
-              <span className="w-1 bg-teal-500 h-1.5 animate-bounce" />
+              <span className="w-1 bg-[#F472B6] h-2.5 animate-bounce" />
+              <span className="w-1 bg-[#F472B6] h-4 animate-bounce delay-75" />
+              <span className="w-1 bg-[#F472B6] h-3 animate-bounce delay-150" />
+              <span className="w-1 bg-[#F472B6] h-1.5 animate-bounce" />
             </div>
             <span>Playing {activeLang.toUpperCase()} Vernacular Audio Explanation...</span>
           </div>
@@ -216,11 +216,11 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs sm:text-sm font-semibold text-theme-primary">{item.slot}</span>
-                    <SlotIcon className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <SlotIcon className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
                   </div>
                   <div
                     className={`text-base sm:text-lg font-bold font-mono ${
-                      isSkip ? 'text-theme-muted' : 'text-teal-700 dark:text-teal-400'
+                      isSkip ? 'text-theme-muted' : 'text-[#4A2E4D] dark:text-[#F472B6]'
                     }`}
                   >
                     {item.dose}
@@ -256,7 +256,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
           className="flex items-center gap-1.5 text-xs text-theme-secondary hover:text-theme-primary font-medium py-1 cursor-pointer transition-colors"
           data-testid="toggle-side-by-side"
         >
-          <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <ShieldCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span>Factual Invariance Audit (Cross-Language Comparison)</span>
           {showSideBySideDebug ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
@@ -271,15 +271,15 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1.5">
-                <span className="font-bold text-teal-700 dark:text-teal-400 block">English (en)</span>
+                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">English (en)</span>
                 <p className="text-theme-primary font-medium">{multilingual.en.summary || multilingual.en.instructions}</p>
               </div>
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1.5">
-                <span className="font-bold text-teal-700 dark:text-teal-400 block">हिन्दी (hi)</span>
+                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">हिन्दी (hi)</span>
                 <p className="text-theme-primary font-medium">{multilingual.hi.summary || multilingual.hi.instructions}</p>
               </div>
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1.5">
-                <span className="font-bold text-teal-700 dark:text-teal-400 block">मराठी (mr)</span>
+                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">मराठी (mr)</span>
                 <p className="text-theme-primary font-medium">{multilingual.mr.summary || multilingual.mr.instructions}</p>
               </div>
             </div>

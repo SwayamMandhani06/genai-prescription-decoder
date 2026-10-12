@@ -70,7 +70,7 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
       {/* Top Viewfinder Control Bar */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-surface-subtle border-b border-theme text-xs gap-2">
         <div className="flex items-center gap-2">
-          <FileCheck2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          <FileCheck2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span className="font-semibold text-theme-primary">
             {uploadedData ? 'Prescription Document Mounted' : 'Prescription Viewfinder'}
           </span>
@@ -130,7 +130,7 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
         onDrop={handleDrop}
         className={`relative min-h-[420px] sm:min-h-[480px] flex items-center justify-center p-6 sm:p-8 transition-all overflow-hidden ${
           isDragging
-            ? 'bg-teal-50/50 dark:bg-teal-950/20 border-2 border-teal-500'
+            ? 'bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30 border-2 border-[#F472B6]'
             : 'bg-canvas'
         }`}
       >
@@ -149,8 +149,8 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
               style={{ transform: `scale(${zoomLevel})` }}
             >
               {isAnalyzing && (
-                <div className="absolute inset-0 bg-teal-500/10 pointer-events-none z-20 flex items-center justify-center">
-                  <div className="h-0.5 w-full bg-teal-500 shadow-sm animate-pulse" />
+                <div className="absolute inset-0 bg-[#F472B6]/10 pointer-events-none z-20 flex items-center justify-center">
+                  <div className="h-0.5 w-full bg-[#F472B6] shadow-sm animate-pulse" />
                 </div>
               )}
               <img
@@ -163,7 +163,7 @@ export const OpticalViewfinderCanvas: React.FC<OpticalViewfinderCanvasProps> = (
         ) : (
           /* State B: Empty Optical Focal Zone ("Bring the prescription into focus") */
           <div className="text-center max-w-md mx-auto space-y-4 z-10 py-6">
-            <div className="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 flex items-center justify-center mx-auto text-teal-700 dark:text-teal-300">
+            <div className="w-14 h-14 rounded-2xl bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 flex items-center justify-center mx-auto text-[#4A2E4D] dark:text-[#F472B6]">
               <UploadCloud className="w-7 h-7" />
             </div>
 

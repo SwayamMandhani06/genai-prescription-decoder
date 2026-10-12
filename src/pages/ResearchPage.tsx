@@ -214,7 +214,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
         {/* 3. Look-Alike Sound-Alike (LASA) Safety */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+            <ShieldCheck className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
             <h2 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-theme-primary tracking-tight leading-[1.1]">
               Phonological &amp; Orthographic LASA Differentiation
             </h2>

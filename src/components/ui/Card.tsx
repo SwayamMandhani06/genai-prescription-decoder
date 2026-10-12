@@ -21,7 +21,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       glass: 'bg-surface/90 border-theme shadow-xs',
       subtle: 'bg-surface-subtle border-theme',
       elevated: 'bg-surface border-theme shadow-md',
-      cyan: 'bg-sky-50/70 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800/80',
+      cyan: 'bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border-[#F472B6]/40 dark:border-[#F472B6]/40',
       amber: 'bg-amber-50/70 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/80',
       coral: 'bg-red-50/70 dark:bg-red-950/20 border-red-200 dark:border-red-800/80',
       interactive:

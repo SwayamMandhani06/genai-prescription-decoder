@@ -25,7 +25,7 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-theme pb-4">
         <div className="flex items-center gap-3">
-          <Database className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+          <Database className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
           <div>
             <h3 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">
               Clinical Formulary &amp; Grounding Evidence
@@ -58,7 +58,7 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
           <span className="text-xs sm:text-sm text-theme-muted uppercase tracking-wider block font-medium">
             Extracted Vision Candidate:
           </span>
-          <div className="text-base sm:text-lg font-bold text-teal-700 dark:text-teal-300">
+          <div className="text-base sm:text-lg font-bold text-[#4A2E4D] dark:text-[#F472B6]">
             {evidence.extractedCandidate}
           </div>
           <span className="text-xs sm:text-sm text-theme-secondary block leading-relaxed">
@@ -87,7 +87,7 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
         </div>
         <div className="space-y-1">
           <span className="text-xs text-theme-muted uppercase font-medium block">RxNorm Concept</span>
-          <div className="flex items-center gap-1.5 text-teal-700 dark:text-teal-400 font-bold font-mono text-sm sm:text-base">
+          <div className="flex items-center gap-1.5 text-[#7C5A8B] dark:text-[#F472B6] font-bold font-mono text-sm sm:text-base">
             <span>RxCUI: {evidence.rxNormCui}</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </div>
@@ -116,7 +116,7 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
         <div className="space-y-3 pt-3 border-t border-theme">
           <div className="flex items-center justify-between text-sm sm:text-base text-theme-secondary">
             <span className="font-bold text-theme-primary flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              <HelpCircle className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
               Bioequivalent Formulations Evaluated
             </span>
           </div>
@@ -129,7 +129,7 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-theme-primary text-sm sm:text-base">{alt.name}</span>
-                  <span className="text-xs font-mono text-teal-700 dark:text-teal-400 font-semibold">
+                  <span className="text-xs font-mono text-[#7C5A8B] dark:text-[#F472B6] font-semibold">
                     {Math.round(alt.similarityScore * 100)}% Match
                   </span>
                 </div>
@@ -142,10 +142,10 @@ export const MedicineValidationSection: React.FC<MedicineValidationSectionProps>
       )}
 
       {/* Statutory Primacy Reminder */}
-      <div className="p-4 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 flex items-start gap-3 text-sm text-teal-900 dark:text-teal-200 leading-relaxed">
-        <FileCheck2 className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+      <div className="p-4 rounded-xl bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border border-[#F472B6]/30 flex items-start gap-3 text-sm text-[#4A2E4D] dark:text-[#FFD6DA] leading-relaxed">
+        <FileCheck2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
         <div>
-          <strong className="text-teal-950 dark:text-teal-100 uppercase text-xs font-semibold block mb-0.5">
+          <strong className="text-[#4A2E4D] dark:text-white uppercase text-xs font-semibold block mb-0.5">
             Original Prescription Primacy:
           </strong>
           Pharmacopeial cross-referencing is assistive. The prescriber&rsquo;s signed

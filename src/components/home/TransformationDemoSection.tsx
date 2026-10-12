@@ -206,7 +206,7 @@ export const TransformationDemoSection: React.FC = () => {
 
               <div className="flex items-center justify-between text-xs text-theme-muted pt-1">
                 <div className="flex items-center gap-1">
-                  <CornerDownRight className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <CornerDownRight className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
                   <span>{activeItem.formularyRef}</span>
                 </div>
               </div>

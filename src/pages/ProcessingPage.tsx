@@ -262,7 +262,7 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
 
             <div className="hidden md:flex items-center gap-1.5 text-xs text-theme-secondary bg-surface-subtle px-3 py-1 rounded-lg border border-theme">
               <span>Progress:</span>
-              <span className="text-teal-700 dark:text-teal-400 font-bold font-mono">{overallPercent}%</span>
+              <span className="text-[#7C5A8B] dark:text-[#F472B6] font-bold font-mono">{overallPercent}%</span>
             </div>
           </div>
         </div>
@@ -280,8 +280,8 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
         <div className="space-y-3.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs sm:text-sm font-medium">
-                <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/50 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
+                <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
                 <span>
                   Stage 0{currentStageDef.stepNumber}: {currentStageDef.label}
                 </span>

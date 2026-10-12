@@ -293,25 +293,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       ? '56%'
       : '16%';
 
-  // Interpretation panel visibility
-  const isInterpretationVisible =
-    isUserInteracting ||
-    phase === 'interpret_line1' ||
-    phase === 'scan_line2' ||
-    phase === 'detect_line2' ||
-    phase === 'interpret_line2' ||
-    prefersReducedMotion;
+  // Interpretation panel visibility: Always keep interpretation data visible as a living instrument
+  const isInterpretationVisible = true;
 
   // Connector line visibility
   const isConnectorVisible =
     (isUserInteracting ||
       phase === 'interpret_line1' ||
+      phase === 'detect_line1' ||
+      phase === 'detect_line2' ||
       phase === 'interpret_line2' ||
+      phase === 'idle' ||
       prefersReducedMotion) &&
     connectorLine !== null;
 
   return (
-    <section className="relative pt-16 pb-16 sm:pt-24 sm:pb-24 overflow-hidden bg-canvas border-b border-theme">
+    <section className="relative pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden bg-canvas border-b border-theme">
       {/* Subtle Environmental Depth: Gentle ambient illumination & faint ruling grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.25] dark:opacity-[0.12]"
@@ -338,15 +335,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* ========================================================= */}
           <div className="lg:col-span-5 space-y-6 text-left order-1">
             {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 border border-[#F472B6]/30 text-xs font-semibold text-[#4A2E4D] dark:text-[#FFD6DA]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/60 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 text-xs font-semibold text-[#4A2E4D] dark:text-[#FFD6DA]">
               <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
               <span>Explainable Multimodal Prescription AI</span>
             </div>
 
             {/* Headline: DawaAI Brand Hierarchy */}
             <div className="space-y-2">
-              <h1 className="text-[clamp(2.75rem,5vw,4.75rem)] font-extrabold tracking-[-0.035em] leading-[1.02]">
-                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span>
+              <h1 className="text-[clamp(2.75rem,5.2vw,4.75rem)] font-extrabold tracking-[-0.035em] leading-[1.02]">
+                <span className="font-brand-serif text-[#4A2E4D] dark:text-[#FDFBFE]">Dawa</span>
                 <span className="text-[#F472B6]">AI</span>
               </h1>
               <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#7C5A8B] dark:text-[#FFD6DA]">
@@ -361,14 +358,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </p>
             </div>
 
-            {/* Desktop Actions */}
-            <div className="hidden sm:flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+            {/* Action Buttons: Responsive across Mobile & Desktop */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
               {onOpenUpload && (
                 <button
                   onClick={onOpenUpload}
                   className="px-7 py-3.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg cursor-pointer group"
                 >
-                  <span>Upload &amp; Understand</span>
+                  <span>Analyze a prescription</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               )}
@@ -378,13 +375,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   onClick={onScrollToHowItWorks}
                   className="px-5 py-3.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-theme-secondary hover:text-theme-primary text-base font-medium transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
-                  <span>How it works</span>
+                  <span>Explore how it works</span>
                 </button>
               )}
             </div>
 
             {/* Concise Trust Line */}
-            <div className="hidden sm:flex items-center gap-2 pt-1 text-xs sm:text-sm text-theme-muted">
+            <div className="flex items-center gap-2 pt-1 text-xs sm:text-sm text-theme-muted">
               <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
               <span>Assistive research prototype &middot; Original prescription is primary</span>
             </div>

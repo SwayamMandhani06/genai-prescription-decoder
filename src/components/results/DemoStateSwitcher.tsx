@@ -58,7 +58,7 @@ export const DemoStateSwitcher: React.FC<DemoStateSwitcherProps> = ({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs py-2 border-b border-theme">
       <div className="flex items-center gap-2 text-theme-secondary font-medium">
-        <Layers className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+        <Layers className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
         <span className="font-semibold text-theme-primary">Demo scenarios:</span>
         <span className="text-theme-muted hidden md:inline text-xs">
           Inspect safety responses
@@ -76,7 +76,7 @@ export const DemoStateSwitcher: React.FC<DemoStateSwitcherProps> = ({
               onClick={() => onSelectState(st.id)}
               className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 text-xs ${
                 isSelected
-                  ? 'bg-teal-600 text-white font-semibold shadow-xs'
+                  ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] font-semibold shadow-xs'
                   : 'text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle'
               }`}
               title={st.tag}

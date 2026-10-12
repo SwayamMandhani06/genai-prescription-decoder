@@ -39,7 +39,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       case 'confident':
         return (
           <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-theme-muted font-medium">
-            <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Grounded</span>
           </div>
         );
@@ -68,7 +68,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       return 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800';
     }
     if (isActive) {
-      return 'bg-teal-50/60 dark:bg-teal-950/30 border-teal-500 dark:border-teal-500 shadow-sm ring-1 ring-teal-500/20';
+      return 'bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30 border-[#F472B6] dark:border-[#F472B6] shadow-sm ring-1 ring-[#F472B6]/30';
     }
     return 'bg-surface border-theme hover:border-theme-hover shadow-xs';
   };
@@ -99,11 +99,11 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
               <>
                 <span
                   title="Calibrated confidence estimate grounded in empirical validation distribution"
-                  className="text-sm font-bold font-mono text-teal-700 dark:text-teal-400"
+                  className="text-sm font-bold font-mono text-[#7C5A8B] dark:text-[#F472B6]"
                 >
                   {Math.round(field.calibratedConfidence * 100)}%
                 </span>
-                <span className="text-[11px] text-teal-600 dark:text-teal-400 block font-medium">
+                <span className="text-[11px] text-[#7C5A8B] dark:text-[#F472B6] block font-medium">
                   Calibrated Confidence
                 </span>
               </>
@@ -205,7 +205,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
               <span
                 className={`px-2 py-0.5 rounded text-xs font-semibold ${
                   verificationStatus === 'confirmed'
-                    ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-200'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                     : verificationStatus === 'corrected'
                     ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
                     : 'bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200'
@@ -232,7 +232,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
 
           {/* Dosage Invariant Notice */}
           {field.fieldKey === 'dosage' && (
-            <div className="p-2.5 rounded-lg bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-xs text-teal-900 dark:text-teal-200 leading-relaxed">
+            <div className="p-2.5 rounded-lg bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border border-[#F472B6]/30 text-xs text-[#4A2E4D] dark:text-[#FFD6DA] leading-relaxed">
               <strong>IMPORTANT:</strong> The system has NOT changed the observed dosage. Reference data matches never alter prescribed dosage.
             </div>
           )}
@@ -262,7 +262,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                   type="text"
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg text-sm border border-theme bg-surface text-theme-primary focus:outline-none focus:ring-1 focus:ring-teal-500"
+                  className="flex-1 px-3 py-1.5 rounded-lg text-sm border border-theme bg-surface text-theme-primary focus:outline-none focus:ring-1 focus:ring-[#F472B6]"
                   placeholder="Corrected clinical text..."
                 />
                 <button
@@ -274,7 +274,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                       setIsEditing(false);
                     }
                   }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white hover:bg-teal-700 transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] hover:bg-[#5C3A60] transition-colors cursor-pointer"
                 >
                   Save
                 </button>
@@ -295,10 +295,10 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                   setVerifiedValue(field.value);
                   setVerificationStatus('confirmed');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer ${
                   verificationStatus === 'confirmed'
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-surface-subtle text-theme-primary hover:bg-teal-50 dark:hover:bg-teal-950/40 border border-theme'
+                    ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233]'
+                    : 'bg-surface-subtle text-theme-primary hover:bg-[#FFD6DA]/30 dark:hover:bg-[#4A2E4D]/30 border border-theme'
                 }`}
               >
                 <Check className="w-3.5 h-3.5" />
@@ -342,10 +342,10 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       {/* Card Footer */}
       <div className="pt-3 border-t border-theme flex items-center justify-between text-xs text-theme-muted">
         <div className="flex items-center gap-1.5">
-          <FileSearch className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+          <FileSearch className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
           <span>Source: {field.source}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-teal-700 dark:text-teal-400 hover:underline font-medium">
+        <div className="flex items-center gap-1.5 text-[#7C5A8B] dark:text-[#F472B6] hover:underline font-medium">
           <span>Highlight On Script</span>
           <ExternalLink className="w-3 h-3" />
         </div>
