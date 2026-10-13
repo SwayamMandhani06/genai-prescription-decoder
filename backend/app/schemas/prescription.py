@@ -174,16 +174,16 @@ class PrescriptionMetadata(BaseModel):
 
 
 class PatientInfo(BaseModel):
-    name: str
-    age_gender: str
+    name: str = Field(default="Not present in prescription")
+    age_gender: str = Field(default="Not present in prescription")
 
 
 class PrescriberInfo(BaseModel):
-    name: str
-    qualifications: str
-    registration_no: str
-    clinic_name: str
-    clinic_address: str
+    name: str = Field(default="Not present in prescription")
+    qualifications: str = Field(default="Not present in prescription")
+    registration_no: str = Field(default="Not present in prescription")
+    clinic_name: str = Field(default="Not present in prescription")
+    clinic_address: str = Field(default="Not present in prescription")
 
 
 class PrescriptionData(BaseModel):
@@ -287,6 +287,20 @@ class PrescriptionAnalyzeResponse(BaseModel):
     multilingual_explanation: Optional[Dict[str, Any]] = Field(
         None,
         description="Phase 11 verified patient explanation report with fidelity audits in EN, HI, and MR"
+    )
+
+    # Clinical Transcription Summary & Details (Grounded in Visual Evidence)
+    prescription_summary: Optional[str] = Field(
+        None,
+        description="2-4 sentence plain-language clinical summary of the prescription"
+    )
+    patient_details: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Extracted patient details (name, age_or_dob, sex_gender, patient_id, prescription_date)"
+    )
+    doctor_details: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Extracted doctor and facility details (doctor_name, qualifications, clinic_or_hospital, contact, registration_no)"
     )
 
 

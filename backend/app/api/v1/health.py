@@ -9,6 +9,8 @@ from fastapi import APIRouter, Depends
 from ...config import Settings, get_settings
 from ...schemas.health import HealthResponse
 
+from ...multimodal.config import MultimodalConfig
+
 router = APIRouter(prefix="", tags=["Health & Diagnostics"])
 START_TIME = time.time()
 
@@ -22,11 +24,25 @@ START_TIME = time.time()
 async def check_health(settings: Settings = Depends(get_settings)) -> HealthResponse:
     uptime = time.time() - START_TIME
     now_iso = datetime.now(timezone.utc).isoformat()
-    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or settings.GEMINI_API_KEY
-    has_gemini_key = bool(gemini_key and len(gemini_key.strip()) > 5)
+    raw_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or settings.GEMINI_API_KEY
+    has_gemini_key = MultimodalConfig.is_valid_key(raw_key)
+
+    is_live_pipeline = not settings.USE_MOCK_PIPELINE
+    mm_cfg = MultimodalConfig()
+
+    if is_live_pipeline:
+        if has_gemini_key:
+            overall_status = "healthy"
+            adapter_status = "ready_configured"
+        else:
+            overall_status = "degraded"
+            adapter_status = "missing_or_invalid_api_key"
+    else:
+        overall_status = "healthy"
+        adapter_status = "mock_ready"
 
     return HealthResponse(
-        status="healthy",
+        status=overall_status,
         service=settings.PROJECT_NAME,
         version=settings.VERSION,
         timestamp=now_iso,
@@ -39,7 +55,9 @@ async def check_health(settings: Settings = Depends(get_settings)) -> HealthResp
             "pipeline_mode": "mock" if settings.USE_MOCK_PIPELINE else "multimodal",
             "dependencies": {
                 "multimodal_model_provider": "gemini" if not settings.USE_MOCK_PIPELINE else "mock",
+                "configured_model": mm_cfg.model_id,
                 "gemini_api_key_configured": has_gemini_key,
+                "model_adapter_status": adapter_status,
                 "rag_formulary_status": "ready",
                 "lasa_service_status": "ready",
                 "explanation_service_status": "ready",
@@ -47,3 +65,4 @@ async def check_health(settings: Settings = Depends(get_settings)) -> HealthResp
             },
         },
     )
+

@@ -32,13 +32,13 @@ _preprocessing_service = ImagePreprocessingService()
 
 def get_multimodal_service(settings: Settings = Depends(get_settings)) -> MultimodalExtractionService:
     """Dependency injector providing configured MultimodalExtractionService."""
-    gemini_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-    if gemini_key and len(gemini_key.strip()) > 5:
+    if not settings.USE_MOCK_PIPELINE:
         cfg = MultimodalConfig(provider="gemini", configuration_status="implemented")
         adapter = GeminiMultimodalAdapter(config=cfg)
-    else:
-        cfg = MultimodalConfig(provider="mock", configuration_status="mock")
-        adapter = MockMultimodalModelAdapter()
+        return MultimodalExtractionService(adapter=adapter, config=cfg)
+
+    cfg = MultimodalConfig(provider="mock", configuration_status="mock")
+    adapter = MockMultimodalModelAdapter()
     return MultimodalExtractionService(adapter=adapter, config=cfg)
 
 

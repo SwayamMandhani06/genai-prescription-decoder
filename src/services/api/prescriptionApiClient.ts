@@ -154,7 +154,8 @@ export class HttpPrescriptionApiClient implements IPrescriptionApiClient {
       apiConfig.endpoints.analyze,
       formData,
       {
-        timeoutMs: apiConfig.requestTimeoutMs,
+        timeoutMs: options.timeoutMs ?? apiConfig.requestTimeoutMs,
+        signal: options.signal,
       }
     );
   }

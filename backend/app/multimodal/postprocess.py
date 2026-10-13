@@ -7,7 +7,7 @@ Performs non-interpretive normalization on parsed multimodal extractions:
 - Strict avoidance of medical inference, drug name mutation, or clinical alteration.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from .schemas import (
     ExtractedField,
     ExtractedMedicine,
@@ -176,6 +176,9 @@ def finalize_extraction_result(
     preprocessed_image_url: Optional[str] = None,
     preprocessed_image_sha256: Optional[str] = None,
     model_demands_review: bool = False,
+    prescription_summary: Optional[str] = None,
+    patient_details: Optional[Dict[str, Any]] = None,
+    doctor_details: Optional[Dict[str, Any]] = None,
 ) -> PrescriptionExtractionResult:
     """
     Finalizes the complete PrescriptionExtractionResult with conservative post-processing:
@@ -214,6 +217,9 @@ def finalize_extraction_result(
         model=model_metadata,
         medicines=processed_medicines,
         fields=fields,
+        prescription_summary=prescription_summary,
+        patient_details=patient_details,
+        doctor_details=doctor_details,
         requires_human_review=requires_review,
         raw_model_response=raw_model_response,
         duration_seconds=round(duration_seconds, 3),

@@ -30,6 +30,21 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
     onSetRotation((rotation + 90) % 360);
   };
 
+  if (!uploadedData) {
+    return (
+      <div className="max-w-4xl mx-auto w-full px-4 py-12 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-theme-primary">No Prescription Mounted</h2>
+        <p className="text-theme-secondary text-sm">Please select or upload a prescription file to review.</p>
+        <button
+          onClick={onBackToUpload}
+          className="px-5 py-2.5 rounded-xl bg-primary text-primary-contrast font-medium text-sm cursor-pointer"
+        >
+          Go to Upload
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Step Header */}

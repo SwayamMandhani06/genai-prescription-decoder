@@ -154,6 +154,21 @@ export interface PrescriptionAnalyzeResponseDto {
   quality_report?: Record<string, unknown> | null;
   preprocessing_manifest?: Record<string, unknown> | null;
   medicines?: Array<Record<string, unknown>>;
+  prescription_summary?: string | null;
+  patient_details?: {
+    name?: string | null;
+    age_or_dob?: string | null;
+    sex_gender?: string | null;
+    patient_id?: string | null;
+    prescription_date?: string | null;
+  } | null;
+  doctor_details?: {
+    doctor_name?: string | null;
+    qualifications?: string | null;
+    clinic_or_hospital?: string | null;
+    contact?: string | null;
+    registration_no?: string | null;
+  } | null;
   multimodal_result?: Record<string, unknown> | null;
   confidence_assessment?: Record<string, unknown> | null;
   abstention?: {
@@ -262,6 +277,8 @@ export interface PrescriptionAnalyzeOptionsDto {
     | 'timeout'
     | 'malformed'
     | 'empty';
+  signal?: AbortSignal;
+  timeoutMs?: number;
 }
 
 /**

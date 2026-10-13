@@ -6,8 +6,12 @@ Ensures the original prescription image is preserved as primary visual evidence 
 providing full multi-medicine, field uncertainty, and visual grounding support.
 """
 
+import logging
+import time
 import uuid
 from typing import Optional, Dict, Any, List
+
+logger = logging.getLogger(__name__)
 
 from .pipeline_interface import IPrescriptionPipeline, PipelineOptions, PipelineProcessingError
 from ..schemas.prescription import (
@@ -78,6 +82,15 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
     ) -> PrescriptionAnalyzeResponse:
         scenario = options.mock_scenario
         prescription_id = f"RX-{uuid.uuid4().hex[:8].upper()}"
+        t_pipeline_start = time.perf_counter()
+        t_preprocess_ms = 0.0
+        t_inference_ms = 0.0
+        t_entity_mapping_ms = 0.0
+        t_rag_ms = 0.0
+        t_conf_ms = 0.0
+        t_lasa_ms = 0.0
+        t_abstention_ms = 0.0
+        t_explanation_ms = 0.0
 
         # ------------------------------------------------------------------
         # 1. Fault Injection / Error Scenarios (PLAN.md Section 6 & 11)
@@ -144,7 +157,24 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         preprocessing_manifest_dict: Optional[dict] = None
         preprocessed_bytes: Optional[bytes] = None
 
-        if image_bytes and len(image_bytes) > 0 and image_bytes != b"dummy":
+        t_pre_start = time.perf_counter()
+        # Resolve real sample bytes if sample_id is provided without direct file upload
+        if (not image_bytes or len(image_bytes) < 10) and options.sample_id:
+            sample_map = {
+                "rx-sample-1": "data/samples/sample_01_clear.png",
+                "rx-sample-2": "data/samples/sample_06_lasa_pair.png",
+                "rx-sample-3": "data/samples/sample_07_ambiguous_abstain.png",
+                "sample-standard": "data/samples/sample_01_clear.png",
+            }
+            sample_file = sample_map.get(options.sample_id.lower())
+            if sample_file:
+                from pathlib import Path as _Path
+                p = _Path(sample_file)
+                if p.exists():
+                    image_bytes = p.read_bytes()
+                    filename = p.name
+
+        if image_bytes and len(image_bytes) > 0 and image_bytes != b"dummy" and image_bytes != b"VALID_IMAGE_MOCK_STREAM":
             try:
                 res, manifest, derived_url = self.preprocessing_service.process_and_store(
                     image_bytes=image_bytes,
@@ -171,11 +201,13 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     prescription_id=prescription_id,
                     original_image_url=public_image_url,
                 )
+        t_preprocess_ms = (time.perf_counter() - t_pre_start) * 1000.0
 
         # ------------------------------------------------------------------
         # 3. Phase 6 Multimodal Vision-Language Extraction
         # Ingests untouched original prescription image as primary visual evidence
         # ------------------------------------------------------------------
+        t_inf_start = time.perf_counter()
         effective_bytes = image_bytes if (image_bytes and len(image_bytes) >= 10) else b"VALID_IMAGE_MOCK_STREAM"
         
         extraction_result: PrescriptionExtractionResult = await self.service.extract_prescription(
@@ -187,10 +219,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             preprocessed_image_url=processed_image_url,
             scenario=scenario,
         )
+        t_inference_ms = (time.perf_counter() - t_inf_start) * 1000.0
 
         # ------------------------------------------------------------------
         # 4. Map Extraction Result to Canonical PLAN.md & UI Contracts
         # ------------------------------------------------------------------
+        t_map_start = time.perf_counter()
         # Map primary fields
         fields_dict: Dict[str, FieldExtractionItem] = {}
         for key, field in extraction_result.fields.items():
@@ -228,8 +262,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                         height=f_obj.evidence.region.height,
                     )
                 else:
-                    # Deterministic default box for UI layout if image-level
-                    ui_box = UI_BoundingBox(x=15.0, y=25.0 + (med_idx * 15.0), width=35.0, height=8.0)
+                    # No fabricated coordinates: set zero box to indicate ungrounded
+                    ui_box = UI_BoundingBox(x=0.0, y=0.0, width=0.0, height=0.0)
 
                 conf_score = (
                     med.overall_confidence
@@ -279,10 +313,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         posology_summary_en = f"Take {primary_med_name} {primary_dosage} {primary_freq}."
         posology_summary_hi = f"{primary_med_name} {primary_dosage} {primary_freq} लें।"
         posology_summary_mr = f"{primary_med_name} {primary_dosage} {primary_freq} घ्या."
+        t_entity_mapping_ms = (time.perf_counter() - t_map_start) * 1000.0
 
         # ------------------------------------------------------------------
         # Phase 7: RAG-Based Medicine Validation (PLAN.md Section 16)
         # ------------------------------------------------------------------
+        t_rag_start = time.perf_counter()
         validation_dict: Dict[str, ValidationItem] = {}
         medicine_validations_list: List[Dict[str, Any]] = []
         primary_ui_evidence: Optional[Dict[str, Any]] = None
@@ -327,10 +363,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
 
             if idx == 0:
                 primary_ui_evidence = val_res.to_ui_validation_evidence()
+        t_rag_ms = (time.perf_counter() - t_rag_start) * 1000.0
 
         # ------------------------------------------------------------------
         # Phase 8: Confidence Estimation & Calibration (PLAN.md Section 17)
         # ------------------------------------------------------------------
+        t_conf_start = time.perf_counter()
         from ai.confidence.service import get_confidence_service
         confidence_service = get_confidence_service()
         confidence_assessment = confidence_service.evaluate_prescription_confidence(
@@ -346,10 +384,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 f_item.calibrated_confidence = f_conf.calibrated.value
                 f_item.calibration_status = f_conf.calibrated.calibration_status
                 f_item.calibration_method = f_conf.calibrated.calibration_method
+        t_conf_ms = (time.perf_counter() - t_conf_start) * 1000.0
 
         # ------------------------------------------------------------------
         # Phase 10: LASA (Look-Alike / Sound-Alike) Conflict Detection (PLAN.md Section 19)
         # ------------------------------------------------------------------
+        t_lasa_start = time.perf_counter()
         # Phase 10 detects potential medicine-name conflicts against reference pool & ISMP pairs.
         # It does NOT decide abstention or confirm/reject medicines; it passes evidence to Phase 9.
         from ai.lasa.service import get_lasa_detection_service
@@ -363,10 +403,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             prescription_id=prescription_id,
             medicine_names=medicine_names_for_lasa,
         )
+        t_lasa_ms = (time.perf_counter() - t_lasa_start) * 1000.0
 
         # ------------------------------------------------------------------
         # Phase 9: Abstention & Human Verification (PLAN.md Section 18)
         # ------------------------------------------------------------------
+        t_abs_start = time.perf_counter()
         # Phase 9 consumes Phase 6 (extraction), Phase 7 (validation), Phase 8 (confidence),
         # and Phase 10 (LASA) evidence. Phase 9 owns the abstention and human verification decision.
         from ai.abstention.service import get_abstention_service
@@ -520,10 +562,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 indications="Clinical Posology Recorded",
                 evidence_source="Reference Validation Service",
             )
+        t_abstention_ms = (time.perf_counter() - t_abs_start) * 1000.0
 
         # ------------------------------------------------------------------
         # Phase 11: Multilingual Patient-Friendly Explanation (PLAN.md Section 20)
         # ------------------------------------------------------------------
+        t_exp_start = time.perf_counter()
         has_lasa_conflict_flag = bool(lasa_result.status == "completed" and lasa_result.conflict_detected)
         confusable_name = (
             ui_lasa_screening.confusable_counterpart
@@ -546,8 +590,65 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             confusable_counterpart=confusable_name,
             is_service_healthy=True,
         )
+        t_explanation_ms = (time.perf_counter() - t_exp_start) * 1000.0
+        t_total_ms = (time.perf_counter() - t_pipeline_start) * 1000.0
 
-        # Build response
+        logger.info(
+            "Prescription [%s] processing timings: total=%.1fms (preprocessing=%.1fms, inference=%.1fms, entity_mapping=%.1fms, rag=%.1fms, confidence=%.1fms, lasa=%.1fms, abstention=%.1fms, explanation=%.1fms)",
+            prescription_id,
+            t_total_ms,
+            t_preprocess_ms,
+            t_inference_ms,
+            t_entity_mapping_ms,
+            t_rag_ms,
+            t_conf_ms,
+            t_lasa_ms,
+            t_abstention_ms,
+            t_explanation_ms,
+        )
+        # Resolve patient and prescriber info from actual extraction (no fabrication)
+        pat_details = extraction_result.patient_details or {}
+        p_name = pat_details.get("name") or "Not present in prescription"
+        p_age = pat_details.get("age_or_dob") or ""
+        p_sex = pat_details.get("sex_gender") or ""
+        p_age_gender = f"{p_age} {p_sex}".strip() or "Not present in prescription"
+
+        doc_details = extraction_result.doctor_details or {}
+        d_name = doc_details.get("doctor_name") or "Not present in prescription"
+        d_qual = doc_details.get("qualifications") or "Not present in prescription"
+        d_reg = doc_details.get("registration_no") or "Not present in prescription"
+        d_clinic = doc_details.get("clinic_or_hospital") or "Not present in prescription"
+        d_addr = doc_details.get("contact") or "Not present in prescription"
+
+        # Use model-extracted prescription summary if available
+        if extraction_result.prescription_summary:
+            exp_summary.en = extraction_result.prescription_summary
+
+        data_block = PrescriptionData(
+            accession_id=f"ACC-{prescription_id}",
+            script_sample_key="multimodal_v1",
+            scenario_title=f"Multimodal Extraction: {primary_med_name}",
+            scenario_subtitle="Multimodal Vision-Language Extraction Pipeline",
+            difficulty_tag=(
+                "LASA Similarity" if lasa_status_override
+                else ("Moderate Cursive" if effective_human_review else "Clear Handwriting")
+            ),
+            overall_status=overall_status_str,  # type: ignore
+            document_confidence=0.70 if effective_human_review else 0.94,
+            patient_info=PatientInfo(name=p_name, age_gender=p_age_gender),
+            prescriber_info=PrescriberInfo(
+                name=d_name,
+                qualifications=d_qual,
+                registration_no=d_reg,
+                clinic_name=d_clinic,
+                clinic_address=d_addr,
+            ),
+            extracted_entities=ui_entities,
+            validation_evidence=ui_val_evidence,
+            lasa_screening=ui_lasa_screening,
+            posology_explanation=exp_posology,
+        )
+
         response = PrescriptionAnalyzeResponse(
             prescription_id=prescription_id,
             original_image_url=public_image_url,
@@ -560,7 +661,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             meta=PrescriptionMetadata(
                 request_id=f"REQ-{uuid.uuid4().hex[:12].upper()}",
                 timestamp=extraction_result.created_at,
-                processing_time_ms=int(extraction_result.duration_seconds * 1000),
+                processing_time_ms=int(t_total_ms),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
                 pipeline_stages_completed=11,
             ),
@@ -571,30 +672,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 illegibility_score=0.15 if not effective_human_review else 0.45,
                 orientation="Portrait",
             ),
-            data=PrescriptionData(
-                accession_id=f"ACC-{prescription_id}",
-                script_sample_key="multimodal_v1",
-                scenario_title=f"Multimodal Extraction: {primary_med_name}",
-                scenario_subtitle="Multimodal Vision-Language Extraction Pipeline",
-                difficulty_tag=(
-                    "LASA Similarity" if lasa_status_override
-                    else ("Moderate Cursive" if effective_human_review else "Clear Handwriting")
-                ),
-                overall_status=overall_status_str,  # type: ignore
-                document_confidence=0.70 if effective_human_review else 0.94,
-                patient_info=PatientInfo(name="Anonymized Patient", age_gender="Adult"),
-                prescriber_info=PrescriberInfo(
-                    name="Consulting Physician",
-                    qualifications="MBBS, MD",
-                    registration_no="MCI-REG-VERIFIED",
-                    clinic_name="Clinical Care Center",
-                    clinic_address="Medical Outpatient Facility",
-                ),
-                extracted_entities=ui_entities,
-                validation_evidence=ui_val_evidence,
-                lasa_screening=ui_lasa_screening,
-                posology_explanation=exp_posology,
-            ),
+            data=data_block,
             processed_image_url=processed_image_url,
             quality_report=quality_report_dict,
             preprocessing_manifest=preprocessing_manifest_dict,
@@ -605,6 +683,9 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             abstention=abstention_decision.model_dump(),
             lasa_detection=lasa_result.model_dump(),
             multilingual_explanation=exp_full.model_dump(),
+            prescription_summary=extraction_result.prescription_summary,
+            patient_details=extraction_result.patient_details,
+            doctor_details=extraction_result.doctor_details,
         )
 
 

@@ -5,9 +5,7 @@ import { ReviewStep } from '../components/workspace/ReviewStep';
 import { AnalyzeStep } from '../components/workspace/AnalyzeStep';
 import { FindingsStep } from '../components/workspace/FindingsStep';
 import { WorkspaceStep, UploadedPrescriptionFile } from '../types/navigation.types';
-import { PrescriptionAnalysisResult } from '../types/prescription.types';
-import { SAMPLE_PRESCRIPTION_CANVASES } from '../data/sampleHandwrittenSvg';
-import { computeImageHeuristics } from '../utils/imageHeuristics';
+import { PrescriptionAnalysisResult, ResultsDemoState } from '../types/prescription.types';
 
 export interface WorkspacePageProps {
   onBackToHome: () => void;
@@ -20,22 +18,12 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
 }) => {
   const [currentStep, setCurrentStep] = useState<WorkspaceStep>(initialStep);
 
-  // Initialize with curated sample 1 as a baseline fallback so review/analyze/findings are instantly interactive even if user directly opens workspace
-  const defaultSampleCanvas = SAMPLE_PRESCRIPTION_CANVASES['rx-sample-1'];
-  const defaultSampleMetrics = computeImageHeuristics(2480, 3508, 1024 * 1024 * 1.8, 'image/svg+xml');
-
-  const [uploadedData, setUploadedData] = useState<UploadedPrescriptionFile | null>({
-    file: null,
-    previewUrl: '/assets/sample-standard.svg',
-    fileName: `${defaultSampleCanvas.accessionId}.svg`,
-    source: 'curated_sample',
-    sampleId: 'rx-sample-1',
-    metrics: defaultSampleMetrics,
-  });
+  const [uploadedData, setUploadedData] = useState<UploadedPrescriptionFile | null>(null);
 
   const [rotation, setRotation] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(100);
   const [analysisResult, setAnalysisResult] = useState<PrescriptionAnalysisResult | null>(null);
+  const [liveDemoState, setLiveDemoState] = useState<ResultsDemoState | null>(null);
 
   const handleContinueToReview = () => {
     setCurrentStep('review');
@@ -45,14 +33,16 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
     setCurrentStep('analyze');
   };
 
-  const handleAnalysisCompleted = (result: PrescriptionAnalysisResult) => {
+  const handleAnalysisCompleted = (result: PrescriptionAnalysisResult, demoState?: ResultsDemoState) => {
     setAnalysisResult(result);
+    setLiveDemoState(demoState || null);
     setCurrentStep('findings');
   };
 
   const handleNewPrescription = () => {
     setUploadedData(null);
     setAnalysisResult(null);
+    setLiveDemoState(null);
     setRotation(0);
     setZoom(100);
     setCurrentStep('upload');
@@ -99,6 +89,7 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
         <FindingsStep
           uploadedData={uploadedData}
           initialResult={analysisResult}
+          liveDemoState={liveDemoState}
           rotation={rotation}
           onNewPrescription={handleNewPrescription}
         />

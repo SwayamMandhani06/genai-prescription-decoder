@@ -96,6 +96,9 @@ data/processed/*
 !data/processed/.gitkeep
 
 # ==============================================================================
-# Temporary test fixtures
+# Temporary test fixtures & diagnostic scratch
 # ==============================================================================
 scripts/test_prescription.png
+scratch/
+data/samples/user_*
+*.log

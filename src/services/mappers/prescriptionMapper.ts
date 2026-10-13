@@ -169,6 +169,43 @@ export function mapApiResponseToResultsState(
 
   const stateId = deriveStateId();
 
+  const patDetails = response.patient_details || null;
+  const docDetails = response.doctor_details || null;
+
+  const patientName = patDetails?.name || data.patient_info?.name || 'Not present in prescription';
+  const patientAgeGender =
+    [patDetails?.age_or_dob, patDetails?.sex_gender].filter(Boolean).join(' ') ||
+    data.patient_info?.age_gender ||
+    'Not present in prescription';
+
+  const doctorName = docDetails?.doctor_name || data.prescriber_info?.name || 'Not present in prescription';
+  const clinicName = docDetails?.clinic_or_hospital || data.prescriber_info?.clinic_name || 'Not present in prescription';
+
+  // Map rich multi-medicines list if available from multimodal extraction
+  const rawMeds = (response.medicines as any[]) || [];
+  const medicinesList = rawMeds.map((m: any) => {
+    const medName = typeof m.medicine_name === 'object' ? m.medicine_name?.value : m.medicine_name;
+    const medDosage = typeof m.dosage === 'object' ? m.dosage?.value : m.dosage;
+    const medFreq = typeof m.frequency === 'object' ? m.frequency?.value : m.frequency;
+    const medDur = typeof m.duration === 'object' ? m.duration?.value : m.duration;
+    return {
+      name: medName || 'Medication',
+      strength: m.strength || medDosage || null,
+      formulation: m.formulation || null,
+      dosageAmount: m.dosage_amount || null,
+      frequency: medFreq || null,
+      frequencyPlain: m.frequency_plain || null,
+      timingAndFood: m.timing_and_food || null,
+      duration: medDur || null,
+      route: m.route || null,
+      specialInstructions: m.special_instructions || null,
+      patientExplanation: m.patient_explanation || null,
+      requiresVerification: Boolean(m.requires_verification),
+      status: m.status || (m.requires_verification ? 'uncertain' : 'confident'),
+      candidates: m.candidates || (medName ? [medName] : []),
+    };
+  });
+
   return {
     id: stateId,
     tabLabel: data.scenario_title,
@@ -177,16 +214,36 @@ export function mapApiResponseToResultsState(
     accessionId: data.accession_id,
     difficultyTag: data.difficulty_tag,
     rawScriptKey: data.script_sample_key,
-    patientName: data.patient_info.name,
-    patientAgeGender: data.patient_info.age_gender,
-    doctorName: data.prescriber_info.name,
-    clinicName: data.prescriber_info.clinic_name,
+    patientName,
+    patientAgeGender,
+    doctorName,
+    clinicName,
     overallStatus: data.overall_status,
     documentConfidence: data.document_confidence,
     fields: data.extracted_entities.map(mapEntityDtoToFieldItem),
     validationEvidence: mapValidationEvidenceDtoToDomain(data.validation_evidence),
     lasaDetail: mapLasaScreeningDtoToDomain(data.lasa_screening),
     multilingual: mapMultilingualPosologyDtoToDomain(data.posology_explanation),
+    prescriptionSummary: response.prescription_summary || response.data?.posology_explanation?.en?.summary,
+    patientDetails: patDetails
+      ? {
+          name: patDetails.name,
+          ageOrDob: patDetails.age_or_dob,
+          sexGender: patDetails.sex_gender,
+          patientId: patDetails.patient_id,
+          prescriptionDate: patDetails.prescription_date,
+        }
+      : undefined,
+    doctorDetails: docDetails
+      ? {
+          doctorName: docDetails.doctor_name,
+          qualifications: docDetails.qualifications,
+          clinicOrHospital: docDetails.clinic_or_hospital,
+          contact: docDetails.contact,
+          registrationNo: docDetails.registration_no,
+        }
+      : undefined,
+    medicinesList: medicinesList.length > 0 ? medicinesList : undefined,
   };
 }
 

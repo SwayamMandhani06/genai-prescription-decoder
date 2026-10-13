@@ -5,7 +5,7 @@ visual evidence grounding, and multi-medicine representations.
 """
 
 from datetime import datetime, timezone
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, Any
 from pydantic import BaseModel, Field
 
 FieldStatus = Literal["confident", "uncertain", "flagged"]
@@ -133,6 +133,15 @@ class ExtractedMedicine(BaseModel):
         default_factory=list,
         description="Alternative candidate drug names observed in cursive ink strokes",
     )
+    strength: Optional[str] = Field(None, description="Extracted strength (e.g. '625 mg')")
+    formulation: Optional[str] = Field(None, description="Dosage formulation (e.g. 'Tablet', 'Syrup')")
+    dosage_amount: Optional[str] = Field(None, description="Dose per administration (e.g. '1 tablet')")
+    frequency_plain: Optional[str] = Field(None, description="Plain language frequency (e.g. 'Twice daily')")
+    timing_and_food: Optional[str] = Field(None, description="Food-related instructions (e.g. 'After food')")
+    route: Optional[str] = Field(None, description="Route of administration (e.g. 'Oral')")
+    special_instructions: Optional[str] = Field(None, description="Special instructions or indications")
+    patient_explanation: Optional[str] = Field(None, description="Grounded 1-sentence patient explanation")
+    requires_verification: bool = Field(False, description="True if this specific medicine requires pharmacist review")
 
 
 class ModelMetadata(BaseModel):
@@ -163,6 +172,18 @@ class PrescriptionExtractionResult(BaseModel):
     fields: Dict[str, ExtractedField] = Field(
         default_factory=dict,
         description="Aggregate primary field dictionary matching PLAN.md Section 6 schema",
+    )
+    prescription_summary: Optional[str] = Field(
+        None,
+        description="Plain-language 2-4 sentence summary of the prescription document",
+    )
+    patient_details: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Extracted patient demographics (name, age, sex, id, date) when present",
+    )
+    doctor_details: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Extracted prescriber and facility details when present",
     )
     requires_human_review: bool = Field(
         False,

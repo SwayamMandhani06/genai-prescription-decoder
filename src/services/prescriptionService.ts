@@ -37,6 +37,8 @@ export interface AnalysisOptions {
     | 'timeout'
     | 'malformed'
     | 'empty';
+  signal?: AbortSignal;
+  timeoutMs?: number;
 }
 
 export const PIPELINE_STAGE_DEFINITIONS: Omit<
@@ -141,6 +143,8 @@ class PrescriptionService implements IPrescriptionService {
       enable_lasa_detection: options.enableLasaDetection,
       target_language: options.targetLanguage,
       mock_scenario: options.mockScenario,
+      signal: options.signal,
+      timeoutMs: options.timeoutMs,
     });
     return mapApiResponseToResultsState(responseDto);
   }
@@ -158,8 +162,32 @@ class PrescriptionService implements IPrescriptionService {
       enable_lasa_detection: options.enableLasaDetection,
       target_language: options.targetLanguage,
       mock_scenario: options.mockScenario,
+      signal: options.signal,
+      timeoutMs: options.timeoutMs,
     });
     return mapApiResponseToAnalysisResult(responseDto);
+  }
+
+  /**
+   * Complete dual-contract endpoint: Analyzes prescription and returns both legacy result and full UI ResultsDemoState
+   */
+  async analyzeWithFullState(
+    input: File | string,
+    options: AnalysisOptions = {}
+  ): Promise<{ result: PrescriptionAnalysisResult; demoState: ResultsDemoState }> {
+    const client = getPrescriptionApiClient();
+    const responseDto = await client.analyzePrescription(input, {
+      confidence_threshold: options.confidenceThreshold,
+      enable_lasa_detection: options.enableLasaDetection,
+      target_language: options.targetLanguage,
+      mock_scenario: options.mockScenario,
+      signal: options.signal,
+      timeoutMs: options.timeoutMs,
+    });
+    return {
+      result: mapApiResponseToAnalysisResult(responseDto),
+      demoState: mapApiResponseToResultsState(responseDto),
+    };
   }
 
   /**

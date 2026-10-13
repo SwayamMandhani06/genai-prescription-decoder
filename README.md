@@ -179,8 +179,21 @@ genai-prescription-decoder/
 - **Node.js**: `v20.x` or later (tested on v24.18)
 - **npm**: `v10.x` or later
 - **Python**: `3.10` or later (tested on Python 3.12)
+- **Google AI Studio API Key**: Configured in `.env` as `GEMINI_API_KEY` for live multimodal vision extraction
 
-### 1. Frontend Setup
+### 1. Environment Configuration
+Copy `.env.example` to `.env` and set your Google AI Studio key:
+```bash
+cp .env.example .env
+# Edit .env:
+# GEMINI_API_KEY=AIzaSy...
+# MULTIMODAL_MODEL_ID=gemini-3.6-flash
+# USE_MOCK_PIPELINE=false
+# VITE_USE_MOCK_API=false
+# PORT=8001
+```
+
+### 2. Frontend Setup
 ```bash
 # Install frontend dependencies
 npm install
@@ -189,19 +202,22 @@ npm install
 npm run dev
 ```
 
-### 2. Backend Setup
+### 3. Backend Setup
 ```bash
 # Install Python dependencies
 pip install -r backend/requirements.txt
 
-# Start FastAPI development server (port 8000)
+# Start FastAPI development server (port 8001)
 python backend/run.py
 ```
 
-### 3. Verification & Testing
+### 4. Verification & Testing
 ```bash
-# Run backend pytest test suite (Phase 2 & Phase 3)
+# Run backend pytest test suite (571 passing tests)
 python -m pytest backend/tests -v
+
+# Run sample-image live regression test suite (verifies zero-mock policy)
+python scripts/verify_sample_regressions.py
 
 # Run dataset validation CLI (Phase 3 integrity audit)
 python scripts/validate_dataset.py
@@ -209,13 +225,13 @@ python scripts/validate_dataset.py
 # Run live FastAPI HTTP verification suite
 python scripts/test_live_backend.py
 
-# Run frontend unit & integration tests
+# Run frontend unit & integration tests (123 passing tests)
 npm test
 
-# Run TypeScript type check
+# Run TypeScript static type check (0 errors)
 npm run lint
 
-# Run genuine browser E2E audit (Chrome)
+# Run genuine browser E2E audit
 npx vite-node scripts/browser-e2e-audit.ts
 
 # Production build
@@ -579,13 +595,16 @@ curl -f http://localhost:8000/health
 
 ### 17.4 Verification Evidence & Test Execution
 
-- **Phase 13 Integration E2E Matrix (E2E-01 - E2E-20):** 20 passed (100%)
-- **Backend Full Pytest Suite:** 552 passed, 0 failed (100%)
-- **Live HTTP Backend Verification:** 190 passed, 0 failed (100%)
-- **Frontend Unit Tests:** 123 passed, 0 failed (100%)
+- **Backend Full Pytest Suite:** 571 passed, 1 skipped, 0 failed (100%)
+- **Frontend Verification Suite:** 123 passed, 0 failed (100%)
 - **TypeScript Static Verification:** 0 errors (`npx tsc --noEmit`)
-- **Production Build:** Clean bundle in 1.13s (`npm run build`)
-- **Browser Puppeteer E2E Verification:** 40 passed, 0 failed (100%)
+- **Production Build:** Clean distribution bundle in 2.25s (`npm run build`)
+- **Live Sample-Image Regression Suite:** Passed (`python scripts/verify_sample_regressions.py`)
+- **Live Gemini Multimodal Inference:** Direct Google AI Studio API integration (`gemini-3.6-flash` / `gemini-3.8-flash`) with honest error status (503 on upstream quota/rate limit) and strict zero mock fallback
+- **Timeout Management:** 60,000ms client request timeout preventing premature 504 aborts on dense cursive handwriting
+- **Vercel & Production Deployment:**
+  - Frontend: Deployed on Vercel. Set `VITE_API_BASE_URL=https://<your-backend-service>.com` in Vercel project environment variables (never point to localhost in production).
+  - Backend: Run on Render / Cloud Run / VPS with `PORT=8001` or standard `$PORT`, with `GEMINI_API_KEY` configured server-side.
 
 ---
 

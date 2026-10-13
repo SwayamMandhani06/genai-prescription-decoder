@@ -4,13 +4,17 @@ Usage:
     python backend/run.py
 """
 
+import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Add project root directory to sys.path
+# Add project root directory to sys.path and load environment variables early
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+
+load_dotenv(ROOT_DIR / ".env")
 
 import uvicorn
 from backend.app.config import get_settings
@@ -23,3 +27,4 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=settings.DEBUG,
     )
+

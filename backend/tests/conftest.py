@@ -12,6 +12,16 @@ from backend.app.main import app
 from backend.app.config import get_settings
 
 
+@pytest.fixture(scope="session", autouse=True)
+def configure_test_environment():
+    """Ensures automated unit tests default to mock mode to prevent unexpected API costs and ensure reproducibility."""
+    settings = get_settings()
+    original_mock = settings.USE_MOCK_PIPELINE
+    settings.USE_MOCK_PIPELINE = True
+    yield
+    settings.USE_MOCK_PIPELINE = original_mock
+
+
 @pytest.fixture(scope="session")
 def client():
     """Returns a TestClient instance for API integration testing."""

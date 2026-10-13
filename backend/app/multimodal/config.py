@@ -25,11 +25,11 @@ class MultimodalConfig(BaseModel):
         description="Multimodal model provider ('gemini' or 'mock')",
     )
     model_id: str = Field(
-        "gemini-3.8-flash",
+        default_factory=lambda: os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
         description="Canonical model identifier",
     )
     model_version: str = Field(
-        "gemini-3.8-flash",
+        default_factory=lambda: os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
         description="Exact provider model release version",
     )
     temperature: float = Field(
@@ -39,12 +39,20 @@ class MultimodalConfig(BaseModel):
         description="Sampling temperature (low temperature enforces deterministic extraction)",
     )
     max_tokens: int = Field(
-        2048,
+        default_factory=lambda: int(
+            os.environ.get("MULTIMODAL_MAX_TOKENS")
+            or os.environ.get("GEMINI_MAX_TOKENS")
+            or 4096
+        ),
         gt=0,
         description="Maximum generation token budget",
     )
     timeout_seconds: float = Field(
-        30.0,
+        default_factory=lambda: float(
+            os.environ.get("MULTIMODAL_TIMEOUT_SECONDS")
+            or os.environ.get("GEMINI_TIMEOUT_SECONDS")
+            or 50.0
+        ),
         gt=0.0,
         description="Subprocess or HTTP request timeout in seconds",
     )
@@ -65,9 +73,38 @@ class MultimodalConfig(BaseModel):
         description="Operational readiness status of configuration",
     )
 
+    @classmethod
+    def is_valid_key(cls, key: Optional[str]) -> bool:
+        """Validates that an API key is present, non-empty, and not a known placeholder."""
+        if not key:
+            return False
+        clean = key.strip().strip("'\"")
+        if len(clean) < 10:
+            return False
+        lower = clean.lower()
+        if lower.startswith("your_") or lower.startswith("placeholder"):
+            return False
+        placeholders = {
+            "your_gemini_api_key_here",
+            "your_api_key_here",
+            "your_key_here",
+            "your_key",
+            "placeholder",
+            "xxx",
+            "test_key",
+            "fake_key",
+            "gemini_api_key",
+            "my_gemini_api_key",
+            "sample_key",
+        }
+        return lower not in placeholders
+
     def get_api_key(self) -> Optional[str]:
         """Resolves API key from environment variables without hardcoding secrets."""
-        return os.environ.get(self.api_key_env_var) or os.environ.get("GOOGLE_API_KEY")
+        key = os.environ.get(self.api_key_env_var) or os.environ.get("GOOGLE_API_KEY")
+        if key and self.is_valid_key(key):
+            return key.strip().strip("'\"")
+        return None
 
     def compute_config_hash(self) -> str:
         """

@@ -47,6 +47,7 @@ export interface PrescriptionSample {
 
 export interface PrescriptionAnalysisResult {
   id: string;
+  originalImageUrl?: string;
   timestamp: string;
   processingTimeMs: number;
   documentConfidence: number;
@@ -173,5 +174,36 @@ export interface ResultsDemoState {
     hi: MultilingualExplanationContent;
     mr: MultilingualExplanationContent;
   };
+  prescriptionSummary?: string;
+  patientDetails?: {
+    name?: string | null;
+    ageOrDob?: string | null;
+    sexGender?: string | null;
+    patientId?: string | null;
+    prescriptionDate?: string | null;
+  };
+  doctorDetails?: {
+    doctorName?: string | null;
+    qualifications?: string | null;
+    clinicOrHospital?: string | null;
+    contact?: string | null;
+    registrationNo?: string | null;
+  };
+  medicinesList?: Array<{
+    name: string;
+    strength?: string | null;
+    formulation?: string | null;
+    dosageAmount?: string | null;
+    frequency?: string | null;
+    frequencyPlain?: string | null;
+    timingAndFood?: string | null;
+    duration?: string | null;
+    route?: string | null;
+    specialInstructions?: string | null;
+    patientExplanation?: string | null;
+    requiresVerification?: boolean;
+    status: 'confident' | 'uncertain' | 'flagged';
+    candidates?: string[];
+  }>;
 }
 

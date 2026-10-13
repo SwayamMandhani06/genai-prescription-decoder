@@ -51,7 +51,7 @@ export const LasaSafetyCard: React.FC<LasaSafetyCardProps> = ({ lasaDetail }) =>
               {lasaDetail.tallManPrescribed}
             </div>
             <span className="text-xs text-theme-secondary block leading-relaxed">
-              Prescribed oral biguanide for glycaemic control.
+              Extracted from uploaded prescription ink strokes.
             </span>
           </div>
 
@@ -68,7 +68,7 @@ export const LasaSafetyCard: React.FC<LasaSafetyCardProps> = ({ lasaDetail }) =>
               {lasaDetail.tallManConfused}
             </div>
             <span className="text-xs text-amber-800/90 dark:text-amber-300/90 block leading-relaxed">
-              Distinct therapeutic class; separate dosing and clinical indications.
+              Screened from reference pharmacopeia catalog for name collision.
             </span>
           </div>
         </div>

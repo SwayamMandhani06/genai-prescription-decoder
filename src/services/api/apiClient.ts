@@ -33,9 +33,31 @@ export class ApiClient {
     }
 
     const controller = new AbortController();
+    let didTimeout = false;
     const timeoutId = setTimeout(() => {
+      didTimeout = true;
       controller.abort();
     }, timeoutMs);
+
+    const callerSignal = customInit.signal;
+    const onCallerAbort = () => {
+      controller.abort(callerSignal?.reason);
+    };
+
+    if (callerSignal) {
+      if (callerSignal.aborted) {
+        controller.abort(callerSignal.reason);
+      } else {
+        callerSignal.addEventListener('abort', onCallerAbort, { once: true });
+      }
+    }
+
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      if (callerSignal) {
+        callerSignal.removeEventListener('abort', onCallerAbort);
+      }
+    };
 
     try {
       const response = await fetch(url, {
@@ -47,7 +69,7 @@ export class ApiClient {
         },
       });
 
-      clearTimeout(timeoutId);
+      cleanup();
 
       // Handle HTTP 204 No Content
       if (response.status === 204) {
@@ -86,7 +108,7 @@ export class ApiClient {
 
       return parsedJson as T;
     } catch (err: unknown) {
-      clearTimeout(timeoutId);
+      cleanup();
 
       if (err instanceof ApiError) {
         throw err;
@@ -94,10 +116,13 @@ export class ApiClient {
 
       // Handle DOMException from AbortController
       if (err instanceof DOMException && err.name === 'AbortError') {
-        throw new ApiTimeoutError(
-          `API request to ${endpoint} timed out after ${timeoutMs}ms.`,
-          timeoutMs
-        );
+        if (didTimeout) {
+          throw new ApiTimeoutError(
+            `API request to ${endpoint} timed out after ${timeoutMs}ms.`,
+            timeoutMs
+          );
+        }
+        throw new ApiError('API request was aborted by client.', 0);
       }
 
       if (err instanceof TypeError && err.message.includes('fetch')) {

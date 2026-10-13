@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { UploadedPrescriptionFile } from '../../types/navigation.types';
-import { PrescriptionAnalysisResult } from '../../types/prescription.types';
+import { PrescriptionAnalysisResult, ResultsDemoState } from '../../types/prescription.types';
 import { prescriptionService } from '../../services/prescriptionService';
+import { apiConfig } from '../../services/api/apiConfig';
+import { ApiTimeoutError } from '../../services/api/apiErrors';
 import { SAMPLE_PRESCRIPTION_CANVASES } from '../../data/sampleHandwrittenSvg';
 import {
   CheckCircle2,
@@ -16,7 +18,7 @@ import {
 export interface AnalyzeStepProps {
   uploadedData: UploadedPrescriptionFile | null;
   rotation: number;
-  onAnalysisCompleted: (result: PrescriptionAnalysisResult) => void;
+  onAnalysisCompleted: (result: PrescriptionAnalysisResult, demoState?: ResultsDemoState) => void;
   onBackToReview?: () => void;
 }
 
@@ -37,76 +39,180 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
 
   const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
   const [progressPercent, setProgressPercent] = useState<number>(15);
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
   const [isDone, setIsDone] = useState<boolean>(false);
   const [resultData, setResultData] = useState<PrescriptionAnalysisResult | null>(null);
+  const [demoState, setDemoState] = useState<ResultsDemoState | null>(null);
   const [errorState, setErrorState] = useState<{
     title: string;
     message: string;
     code?: string;
+    isTimeout?: boolean;
+    isOverloaded?: boolean;
   } | null>(null);
   const [retryTrigger, setRetryTrigger] = useState<number>(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
+    if (!uploadedData) return;
+
+    // Abort any existing in-flight request before starting a new run
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setErrorState(null);
     setIsDone(false);
     setProgressPercent(15);
     setActiveStageIdx(0);
+    setElapsedSeconds(0);
 
-    let currentIdx = 0;
+    const startTime = Date.now();
 
-    // Advance through the 5 human-readable stages smoothly
-    const stageInterval = setInterval(() => {
-      currentIdx += 1;
-      if (currentIdx < humanStages.length) {
-        setActiveStageIdx(currentIdx);
-        setProgressPercent(Math.round(((currentIdx + 1) / humanStages.length) * 90));
+    // Advance stages and progress smoothly across realistic multimodal analysis duration
+    const timer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setElapsedSeconds(elapsed);
+
+      if (elapsed < 4) {
+        setActiveStageIdx(0);
+        setProgressPercent(Math.min(25, Math.round(15 + elapsed * 2.5)));
+      } else if (elapsed < 12) {
+        setActiveStageIdx(1);
+        setProgressPercent(Math.min(48, Math.round(26 + (elapsed - 4) * 2.8)));
+      } else if (elapsed < 24) {
+        setActiveStageIdx(2);
+        setProgressPercent(Math.min(70, Math.round(50 + (elapsed - 12) * 1.7)));
+      } else if (elapsed < 38) {
+        setActiveStageIdx(3);
+        setProgressPercent(Math.min(85, Math.round(71 + (elapsed - 24) * 1.0)));
       } else {
-        clearInterval(stageInterval);
+        setActiveStageIdx(4);
+        // Asymptotically approach 94% until the real response arrives
+        setProgressPercent(Math.min(94, Math.round(86 + (elapsed - 38) * 0.4)));
       }
     }, 1000);
 
-    // Call service to get typed analysis result
+    // Call service to get typed analysis result and UI domain state
     const sampleKey = uploadedData?.sampleId || 'rx-sample-1';
     const payload = uploadedData?.file || sampleKey;
 
     prescriptionService
-      .analyzePrescription(payload, { confidenceThreshold: 0.65 })
-      .then((res) => {
-        setResultData(res);
+      .analyzeWithFullState(payload, {
+        confidenceThreshold: 0.65,
+        signal: controller.signal,
+      })
+      .then(({ result, demoState: fullState }) => {
+        if (controller.signal.aborted) return;
+        clearInterval(timer);
+        setResultData(result);
+        setDemoState(fullState);
         setActiveStageIdx(humanStages.length - 1);
         setProgressPercent(100);
         setIsDone(true);
       })
       .catch((err) => {
-        clearInterval(stageInterval);
-        setErrorState({
-          title: 'Prescription Interpretation Gateway Notice',
-          message:
-            err?.message ||
-            'The clinical interpretation gateway could not complete the request. Please inspect image clarity or verify network connectivity.',
-          code: err?.code || 'PIPELINE_ERROR',
-        });
+        if (controller.signal.aborted) return;
+        clearInterval(timer);
+
+        const isTimeout =
+          err instanceof ApiTimeoutError ||
+          err?.statusCode === 504 ||
+          (typeof err?.message === 'string' &&
+            (err.message.toLowerCase().includes('timed out') ||
+              err.message.toLowerCase().includes('timeout') ||
+              err.message.includes('504')));
+
+        const isOverloaded =
+          err?.statusCode === 503 ||
+          (typeof err?.message === 'string' &&
+            (err.message.includes('503') ||
+              err.message.toLowerCase().includes('high demand') ||
+              err.message.toLowerCase().includes('temporarily unavailable')));
+
+        if (isTimeout) {
+          setErrorState({
+            title: 'Prescription Analysis Timed Out (Gateway 504)',
+            message:
+              'The live Gemini multimodal vision model took longer than the configured 60-second limit to decode the handwriting. This can occur during temporary upstream demand spikes or for complex cursive scripts. The original document has been preserved.',
+            code: 'GATEWAY_TIMEOUT_504',
+            isTimeout: true,
+          });
+        } else if (isOverloaded) {
+          setErrorState({
+            title: 'Multimodal AI Model Under High Demand (503)',
+            message:
+              'Google Gemini is currently experiencing temporary high demand spikes. Your prescription document has been securely kept in memory. Please click Retry Analysis to reconnect.',
+            code: 'MODEL_UNAVAILABLE_503',
+            isOverloaded: true,
+          });
+        } else {
+          setErrorState({
+            title: 'Prescription Interpretation Gateway Notice',
+            message:
+              err?.message ||
+              'The clinical interpretation gateway could not complete the request. Please inspect image clarity or verify network connectivity.',
+            code: err?.code || 'PIPELINE_ERROR',
+          });
+        }
       });
 
-    return () => clearInterval(stageInterval);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+    };
   }, [uploadedData, retryTrigger]);
+
+  const handleRetry = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setErrorState(null);
+    setRetryTrigger((r) => r + 1);
+  };
 
   const handleProceed = () => {
     if (resultData) {
-      onAnalysisCompleted(resultData);
+      onAnalysisCompleted(resultData, demoState || undefined);
     }
   };
+
+  if (!uploadedData) {
+    return (
+      <div className="max-w-4xl mx-auto w-full px-4 py-12 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-theme-primary">No Prescription Mounted</h2>
+        <p className="text-theme-secondary text-sm">Please select or upload a prescription file to analyze.</p>
+        <button
+          onClick={onBackToReview}
+          className="px-5 py-2.5 rounded-xl bg-primary text-primary-contrast font-medium text-sm cursor-pointer"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Step Header */}
-      <div className="max-w-3xl space-y-2.5">
-        <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
-          Analyzing the prescription.
-        </h1>
-        <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
-          Interpreting cursive handwriting, verifying medicine entities against official formularies, and screening for ambiguity.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="max-w-3xl space-y-2.5">
+          <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-theme-primary leading-[1.05]">
+            Analyzing the prescription.
+          </h1>
+          <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
+            Interpreting cursive handwriting, verifying medicine entities against official formularies, and screening for ambiguity.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium border border-theme bg-surface shrink-0 self-start sm:self-auto shadow-xs">
+          <span className={`w-2.5 h-2.5 rounded-full ${apiConfig.useMock ? 'bg-purple-500' : 'bg-emerald-500 animate-pulse'}`} />
+          <span className="text-theme-secondary">
+            {apiConfig.useMock ? 'Demonstration Mock Mode' : 'Live FastAPI Backend (Port 8001)'}
+          </span>
+        </div>
       </div>
 
       {/* Main Analysis Cockpit */}
@@ -195,26 +301,46 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
             </div>
 
             {/* Reassuring Status Indicator */}
-            <div className="mt-5 flex items-center gap-2 text-xs text-theme-secondary">
-              {errorState ? (
-                <>
-                  <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span className="font-semibold text-amber-800 dark:text-amber-300">
-                    Analysis interrupted &middot; Diagnostic check required
-                  </span>
-                </>
-              ) : !isDone ? (
-                <>
-                  <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-ping" />
-                  <span>Processing handwriting trajectories...</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span className="font-semibold text-emerald-800 dark:text-emerald-300">
-                    Interpretation complete &middot; Ready for findings
-                  </span>
-                </>
+            <div className="mt-5 flex items-center justify-between w-full max-w-md text-xs text-theme-secondary px-2">
+              <div className="flex items-center gap-2">
+                {errorState ? (
+                  <>
+                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <span className="font-semibold text-amber-800 dark:text-amber-300">
+                      {errorState.isTimeout
+                        ? 'Gateway timeout (504) · Retry available'
+                        : errorState.isOverloaded
+                        ? 'High demand spike (503) · Retry available'
+                        : 'Analysis interrupted · Diagnostic check required'}
+                    </span>
+                  </>
+                ) : !isDone ? (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-ping shrink-0" />
+                    <span className="truncate">
+                      {elapsedSeconds < 10
+                        ? 'Scanning handwriting ink trajectories...'
+                        : elapsedSeconds < 25
+                        ? 'Deciphering cursive script with Gemini 3.8 Flash...'
+                        : elapsedSeconds < 40
+                        ? 'Grounding medicines against CDSCO & RxNorm...'
+                        : 'Synthesizing verified posology explanation...'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span className="font-semibold text-emerald-800 dark:text-emerald-300">
+                      Interpretation complete &middot; Ready for findings
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {!errorState && !isDone && (
+                <span className="text-[11px] font-mono text-theme-muted shrink-0 ml-2">
+                  {elapsedSeconds}s / 60s
+                </span>
               )}
             </div>
           </div>
@@ -236,13 +362,27 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
 
               <div className="p-3 rounded-lg bg-surface/70 border border-theme text-xs text-theme-secondary space-y-1">
                 <strong className="text-theme-primary block">Recommended next steps:</strong>
-                <p>1. Check that the prescription document has adequate contrast and lighting.</p>
-                <p>2. Retry analysis to reconnect to the clinical grounding engine.</p>
+                {errorState.isTimeout ? (
+                  <>
+                    <p>1. Click &ldquo;Retry Analysis&rdquo; below to send a fresh request to the multimodal inference worker.</p>
+                    <p>2. If handwriting is heavily smudged or faint, click &ldquo;Back to Review&rdquo; to adjust contrast or rotation.</p>
+                  </>
+                ) : errorState.isOverloaded ? (
+                  <>
+                    <p>1. Google Gemini experienced a brief demand spike; waiting a moment and clicking &ldquo;Retry Analysis&rdquo; usually succeeds.</p>
+                    <p>2. Your prescription image remains loaded in your browser session.</p>
+                  </>
+                ) : (
+                  <>
+                    <p>1. Check that the prescription document has adequate contrast and lighting.</p>
+                    <p>2. Retry analysis to reconnect to the clinical grounding engine.</p>
+                  </>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
-                  onClick={() => setRetryTrigger((r) => r + 1)}
+                  onClick={handleRetry}
                   className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />

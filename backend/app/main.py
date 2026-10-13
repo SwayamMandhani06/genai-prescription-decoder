@@ -55,7 +55,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
-        allow_origin_regex=r"https://.*\.vercel\.app",
+        allow_origin_regex=r"^(https://.*\.vercel\.app|http://(localhost|127\.0\.0\.1):(517\d|3000|800\d))$",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -131,7 +131,7 @@ def create_app() -> FastAPI:
             429: ErrorCode.RATE_LIMIT_EXCEEDED,
             500: ErrorCode.INTERNAL_ERROR,
             503: ErrorCode.MODEL_UNAVAILABLE,
-            504: ErrorCode.INTERNAL_ERROR,
+            504: ErrorCode.MODEL_UNAVAILABLE,
         }
         err_code = code_map.get(exc.status_code, ErrorCode.INTERNAL_ERROR)
         payload = ErrorResponse(

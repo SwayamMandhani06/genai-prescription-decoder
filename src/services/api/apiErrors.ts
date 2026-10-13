@@ -58,7 +58,7 @@ export class ApiServerError extends ApiError {
 export class ApiTimeoutError extends ApiError {
   public readonly timeoutMs: number;
 
-  constructor(message: string, timeoutMs: number = 15000) {
+  constructor(message: string, timeoutMs: number = 60000) {
     super(message, 504);
     this.name = 'ApiTimeoutError';
     this.timeoutMs = timeoutMs;
@@ -131,7 +131,7 @@ export function createApiErrorFromResponse(
       : fallbackMessage;
 
   if (statusCode === 504) {
-    return new ApiTimeoutError(messageText, 15000);
+    return new ApiTimeoutError(messageText, 60000);
   }
 
   if (statusCode >= 500) {

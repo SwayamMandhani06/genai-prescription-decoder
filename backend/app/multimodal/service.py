@@ -135,6 +135,9 @@ class MultimodalExtractionService:
             preprocessed_image_url=preprocessed_image_url,
             preprocessed_image_sha256=preprocessed_sha256,
             model_demands_review=parsed["requires_human_review"],
+            prescription_summary=parsed.get("prescription_summary"),
+            patient_details=parsed.get("patient_details"),
+            doctor_details=parsed.get("doctor_details"),
         )
 
         return result

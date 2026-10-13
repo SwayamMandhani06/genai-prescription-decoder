@@ -22,9 +22,20 @@ function check(condition: boolean, description: string, extra?: string) {
 }
 
 async function runBrowserAudit() {
+  let backendPort = '8001';
+  const envPath = path.resolve(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf-8');
+    const portMatch = envContent.match(/^PORT=(\d+)/m);
+    if (portMatch) {
+      backendPort = portMatch[1];
+    }
+  }
+  backendPort = process.env.PORT || backendPort;
+
   console.log('\n======================================================');
   console.log('GENUINE BROWSER-LEVEL FRONTEND -> FASTAPI E2E VERIFICATION');
-  console.log('Frontend: http://localhost:5173 | Backend: http://127.0.0.1:8000');
+  console.log(`Frontend: http://localhost:5173 | Backend: http://127.0.0.1:${backendPort}`);
   console.log('======================================================\n');
 
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
@@ -53,8 +64,11 @@ async function runBrowserAudit() {
 
   // Track network calls to FastAPI
   const apiCalls: { url: string; method: string; status?: number; postData?: string }[] = [];
+  const isApiTarget = (url: string) =>
+    url.includes(`:${backendPort}`) || url.includes(':8001') || url.includes(':8000') || url.includes('/api/v1/');
+
   page.on('request', (req) => {
-    if (req.url().includes(':8000')) {
+    if (isApiTarget(req.url())) {
       apiCalls.push({
         url: req.url(),
         method: req.method(),
@@ -64,7 +78,7 @@ async function runBrowserAudit() {
   });
 
   page.on('response', (res) => {
-    if (res.url().includes(':8000')) {
+    if (isApiTarget(res.url())) {
       const match = apiCalls.find((c) => c.url === res.url() && !c.status);
       if (match) {
         match.status = res.status();

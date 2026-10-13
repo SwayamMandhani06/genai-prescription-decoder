@@ -18,7 +18,19 @@ from .prompts import SYSTEM_INSTRUCTION_V1, USER_INSTRUCTION_V1
 from ..schemas.error import ErrorCode
 from ..services.pipeline_interface import PipelineProcessingError
 
+import re
+
 logger = logging.getLogger(__name__)
+
+
+def sanitize_secret_text(text: str) -> str:
+    """Scrubs API keys, bearer tokens, or query strings from error text to prevent log leaks."""
+    if not text:
+        return ""
+    sanitized = re.sub(r"AIza[0-9A-Za-z-_]{30,}", "[REDACTED_API_KEY]", text)
+    sanitized = re.sub(r"(key|token|secret|password)=([^& \t\n\r]+)", r"\1=[REDACTED]", sanitized, flags=re.IGNORECASE)
+    sanitized = re.sub(r"(x-goog-api-key['\":\s]+)([^'\"\s,\}]+)", r"\1[REDACTED]", sanitized, flags=re.IGNORECASE)
+    return sanitized
 
 
 class IMultimodalModelAdapter(ABC):
@@ -69,7 +81,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
 
     def is_available(self) -> bool:
         api_key = self.config.get_api_key()
-        return bool(api_key and len(api_key.strip()) > 5)
+        return bool(api_key and self.config.is_valid_key(api_key))
 
     async def extract(
         self,
@@ -86,7 +98,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                 code=ErrorCode.MODEL_UNAVAILABLE,
                 message=(
                     f"Multimodal vision model provider '{active_config.provider}' is unavailable: "
-                    f"Missing required environment variable '{active_config.api_key_env_var}'."
+                    f"GEMINI_API_KEY is missing or is an invalid placeholder in .env."
                 ),
                 stage="multimodal_inference_dispatch",
                 status_code=503,
@@ -111,7 +123,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
         b64_image = base64.b64encode(image_bytes).decode("utf-8")
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{active_config.model_id}:generateContent?key={api_key}"
+            f"{active_config.model_id}:generateContent"
         )
 
         request_body = {
@@ -138,98 +150,142 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
             },
         }
 
-        timeout = httpx.Timeout(active_config.timeout_seconds, connect=10.0)
+        timeout = httpx.Timeout(
+            timeout=active_config.timeout_seconds,
+            connect=10.0,
+            read=active_config.timeout_seconds,
+            write=15.0,
+        )
 
-        try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                response = await client.post(
-                    url,
-                    json=request_body,
-                    headers={
-                        "Content-Type": "application/json",
-                        "x-goog-api-key": api_key,
-                    },
-                )
+        max_attempts = 2
+        for attempt in range(1, max_attempts + 1):
+            try:
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    response = await client.post(
+                        url,
+                        json=request_body,
+                        headers={
+                            "Content-Type": "application/json",
+                            "x-goog-api-key": api_key,
+                        },
+                    )
 
-                if response.status_code != 200:
-                    error_text = response.text[:400]
-                    logger.error(f"Gemini API returned status {response.status_code}: {error_text}")
-                    if response.status_code in (401, 403):
+                    if response.status_code != 200:
+                        raw_err = response.text[:400]
+                        sanitized_error = sanitize_secret_text(raw_err)
+                        logger.error(f"Gemini API returned status {response.status_code}: {sanitized_error}")
+
+                        if response.status_code in (429, 503) and attempt < max_attempts:
+                            logger.info(
+                                "Transient Gemini %s encountered on attempt %d/%d; retrying once after 2.0s...",
+                                response.status_code,
+                                attempt,
+                                max_attempts,
+                            )
+                            import asyncio
+                            await asyncio.sleep(2.0)
+                            continue
+
+                        if response.status_code in (401, 403):
+                            raise PipelineProcessingError(
+                                code=ErrorCode.MODEL_UNAVAILABLE,
+                                message=f"Gemini authentication failed ({response.status_code}). Verify GEMINI_API_KEY.",
+                                stage="multimodal_inference_dispatch",
+                                status_code=503,
+                                retryable=True,
+                                details={"http_status": response.status_code, "raw_error": sanitized_error},
+                            )
+                        if response.status_code == 404:
+                            raise PipelineProcessingError(
+                                code=ErrorCode.MODEL_UNAVAILABLE,
+                                message=f"Gemini model '{active_config.model_id}' was not found or is unsupported.",
+                                stage="multimodal_inference_dispatch",
+                                status_code=503,
+                                retryable=False,
+                                details={"http_status": response.status_code, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                            )
+                        if response.status_code == 429:
+                            raise PipelineProcessingError(
+                                code=ErrorCode.MODEL_UNAVAILABLE,
+                                message=f"Gemini API rate limit or quota exceeded for model '{active_config.model_id}'. The model is temporarily unavailable; please check your Google AI Studio plan quota or retry in a few moments.",
+                                stage="multimodal_inference_dispatch",
+                                status_code=503,
+                                retryable=True,
+                                details={"http_status": 429, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                            )
+                        if response.status_code in (503, 504):
+                            raise PipelineProcessingError(
+                                code=ErrorCode.MODEL_UNAVAILABLE,
+                                message=f"Google Gemini service is temporarily unavailable or experiencing high demand ({response.status_code}). The document has been kept in memory; please retry in a few moments.",
+                                stage="multimodal_inference_dispatch",
+                                status_code=503,
+                                retryable=True,
+                                details={"http_status": response.status_code, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                            )
                         raise PipelineProcessingError(
-                            code=ErrorCode.MODEL_UNAVAILABLE,
-                            message=f"Gemini authentication failed ({response.status_code}). Verify GEMINI_API_KEY.",
+                            code=ErrorCode.PROCESSING_FAILED,
+                            message=f"Multimodal inference failed with provider error ({response.status_code}).",
                             stage="multimodal_inference_dispatch",
-                            status_code=503,
+                            status_code=500,
                             retryable=True,
-                            details={"http_status": response.status_code, "raw_error": error_text},
+                            details={"http_status": response.status_code, "raw_error": sanitized_error},
                         )
-                    if response.status_code == 404:
+
+                    data = response.json()
+                    prompt_feedback = data.get("promptFeedback", {})
+                    if prompt_feedback.get("blockReason"):
                         raise PipelineProcessingError(
-                            code=ErrorCode.MODEL_UNAVAILABLE,
-                            message=f"Gemini model '{active_config.model_id}' was not found or is unsupported.",
-                            stage="multimodal_inference_dispatch",
-                            status_code=503,
+                            code=ErrorCode.PROCESSING_FAILED,
+                            message=f"Multimodal vision model blocked request: {prompt_feedback.get('blockReason')}",
+                            stage="multimodal_extraction_decoding",
+                            status_code=422,
                             retryable=False,
-                            details={"http_status": response.status_code, "model_id": active_config.model_id, "raw_error": error_text},
+                            details={"block_reason": prompt_feedback.get("blockReason")},
                         )
-                    if response.status_code in (429, 503, 504):
+
+                    candidates = data.get("candidates", [])
+                    if not candidates:
                         raise PipelineProcessingError(
-                            code=ErrorCode.MODEL_UNAVAILABLE,
-                            message=f"Gemini multimodal service temporarily unavailable ({response.status_code}).",
-                            stage="multimodal_inference_dispatch",
-                            status_code=503,
+                            code=ErrorCode.PROCESSING_FAILED,
+                            message="Multimodal vision model returned no extraction candidates.",
+                            stage="multimodal_extraction_decoding",
+                            status_code=500,
                             retryable=True,
-                            details={"http_status": response.status_code, "raw_error": error_text},
                         )
-                    raise PipelineProcessingError(
-                        code=ErrorCode.PROCESSING_FAILED,
-                        message=f"Multimodal inference failed with provider error ({response.status_code}).",
-                        stage="multimodal_inference_dispatch",
-                        status_code=500,
-                        retryable=True,
-                        details={"http_status": response.status_code, "raw_error": error_text},
-                    )
 
-                data = response.json()
-                candidates = data.get("candidates", [])
-                if not candidates:
-                    raise PipelineProcessingError(
-                        code=ErrorCode.PROCESSING_FAILED,
-                        message="Multimodal vision model returned no extraction candidates.",
-                        stage="multimodal_extraction_decoding",
-                        status_code=500,
-                        retryable=True,
-                    )
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    if not parts or "text" not in parts[0]:
+                        raise PipelineProcessingError(
+                            code=ErrorCode.PROCESSING_FAILED,
+                            message="Multimodal vision model returned empty candidate content.",
+                            stage="multimodal_extraction_decoding",
+                            status_code=500,
+                            retryable=True,
+                        )
 
-                parts = candidates[0].get("content", {}).get("parts", [])
-                if not parts or "text" not in parts[0]:
-                    raise PipelineProcessingError(
-                        code=ErrorCode.PROCESSING_FAILED,
-                        message="Multimodal vision model returned empty candidate content.",
-                        stage="multimodal_extraction_decoding",
-                        status_code=500,
-                        retryable=True,
-                    )
+                    return parts[0]["text"]
 
-                return parts[0]["text"]
-
-        except httpx.TimeoutException as exc:
-            raise PipelineProcessingError(
-                code=ErrorCode.MODEL_UNAVAILABLE,
-                message=f"Multimodal vision model request timed out after {active_config.timeout_seconds}s.",
-                stage="multimodal_inference_dispatch",
-                status_code=504,
-                retryable=True,
-                details={"timeout_seconds": active_config.timeout_seconds},
-            ) from exc
-        except httpx.RequestError as exc:
-            raise PipelineProcessingError(
-                code=ErrorCode.MODEL_UNAVAILABLE,
-                message=f"Multimodal network request failed: {str(exc)}",
-                stage="multimodal_inference_dispatch",
-                status_code=503,
-                retryable=True,
-            ) from exc
+            except httpx.TimeoutException as exc:
+                raise PipelineProcessingError(
+                    code=ErrorCode.MODEL_UNAVAILABLE,
+                    message=f"Multimodal vision model request timed out after {active_config.timeout_seconds}s.",
+                    stage="multimodal_inference_dispatch",
+                    status_code=504,
+                    retryable=True,
+                    details={"timeout_seconds": active_config.timeout_seconds},
+                ) from exc
+            except httpx.RequestError as exc:
+                if attempt < max_attempts:
+                    import asyncio
+                    await asyncio.sleep(2.0)
+                    continue
+                raise PipelineProcessingError(
+                    code=ErrorCode.MODEL_UNAVAILABLE,
+                    message=f"Multimodal network request failed: {sanitize_secret_text(str(exc))}",
+                    stage="multimodal_inference_dispatch",
+                    status_code=503,
+                    retryable=True,
+                ) from exc
 
 
 class MockMultimodalModelAdapter(IMultimodalModelAdapter):

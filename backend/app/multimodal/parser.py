@@ -221,6 +221,15 @@ def parse_raw_medicine(
         overall_confidence=overall_conf,
         evidence=evidence,
         candidates=clean_candidates,
+        strength=med_data.get("strength"),
+        formulation=med_data.get("formulation"),
+        dosage_amount=med_data.get("dosage_amount"),
+        frequency_plain=med_data.get("frequency_plain"),
+        timing_and_food=med_data.get("timing_and_food"),
+        route=med_data.get("route"),
+        special_instructions=med_data.get("special_instructions"),
+        patient_explanation=med_data.get("patient_explanation"),
+        requires_verification=bool(med_data.get("requires_verification", False)),
     )
 
 
@@ -232,6 +241,9 @@ def parse_multimodal_response(
     Parses raw multimodal vision-language model response string into dictionary of:
     - medicines: List[ExtractedMedicine]
     - requires_human_review: bool
+    - prescription_summary: Optional[str]
+    - patient_details: Optional[Dict[str, Any]]
+    - doctor_details: Optional[Dict[str, Any]]
     - raw_response: str
     
     Raises MultimodalParseError if JSON is corrupt or unparsable.
@@ -243,10 +255,21 @@ def parse_multimodal_response(
     try:
         data = json.loads(cleaned)
     except json.JSONDecodeError as exc:
-        raise MultimodalParseError(
-            f"Failed to decode model JSON output: {str(exc)}",
-            raw_response=raw_text,
-        ) from exc
+        first_brace = cleaned.find("{")
+        last_brace = cleaned.rfind("}")
+        if first_brace != -1 and last_brace > first_brace:
+            try:
+                data = json.loads(cleaned[first_brace : last_brace + 1])
+            except Exception:
+                raise MultimodalParseError(
+                    f"Failed to decode model JSON output: {str(exc)}",
+                    raw_response=raw_text,
+                ) from exc
+        else:
+            raise MultimodalParseError(
+                f"Failed to decode model JSON output: {str(exc)}",
+                raw_response=raw_text,
+            ) from exc
 
     if not isinstance(data, dict):
         raise MultimodalParseError(
@@ -273,5 +296,8 @@ def parse_multimodal_response(
     return {
         "medicines": parsed_medicines,
         "requires_human_review": requires_review,
+        "prescription_summary": data.get("prescription_summary"),
+        "patient_details": data.get("patient_details"),
+        "doctor_details": data.get("doctor_details"),
         "raw_response": raw_text,
     }
