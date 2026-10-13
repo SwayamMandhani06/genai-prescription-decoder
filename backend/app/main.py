@@ -8,7 +8,7 @@ import uuid
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 
@@ -191,6 +191,10 @@ def create_app() -> FastAPI:
     async def root_health(settings: Settings = Depends(get_settings)) -> HealthResponse:
         from .api.v1.health import check_health
         return await check_health(settings=settings)
+
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     return app
 

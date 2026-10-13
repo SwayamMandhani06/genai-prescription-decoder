@@ -30,6 +30,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://localhost:8000",
+        "http://localhost:8001",
+        "http://127.0.0.1:8001",
     ]
 
     # File Storage (Original Prescription Image Preservation)
@@ -66,6 +68,8 @@ class Settings(BaseSettings):
             "http://127.0.0.1:5173",
             "http://localhost:3000",
             "http://localhost:8000",
+            "http://localhost:8001",
+            "http://127.0.0.1:8001",
         ]
 
     def ensure_upload_dir_exists(self) -> Path:
