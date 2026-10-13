@@ -143,7 +143,26 @@ class PosologyTemplateEngine:
             if reason_code == "LASA_SIMILARITY_CONFLICT":
                 return STATUS_MESSAGES["lasa_conflict"][language]
             if reason_code == "EXTRACTION_OR_VALIDATION_UNCERTAIN":
-                return STATUS_MESSAGES["uncertain_medicine"][language]
+                # If medicine name itself is unreadable or truncated fragment, return generic uncertain message
+                if not medicine_name or medicine_name.strip().endswith("...") or medicine_name.strip().lower() in ("unknown", "unreadable", "candidate", "medication"):
+                    return STATUS_MESSAGES["uncertain_medicine"][language]
+                # Readable medicine name with sub-field uncertainty: synthesize verified posology and append confirmation guidance
+                base = cls._render_eligible_summary(
+                    language=language,
+                    medicine_name=medicine_name,
+                    dosage=dosage,
+                    frequency_key=frequency_key,
+                    raw_frequency=raw_frequency,
+                    duration=duration,
+                    meal_relation_key=meal_relation_key,
+                )
+                if language == "en":
+                    return f"{base} Please confirm dosage schedule with your pharmacist."
+                elif language == "hi":
+                    return f"{base} कृपया लेने से पहले फार्मासिस्ट से खुराक की पुष्टि करें।"
+                elif language == "mr":
+                    return f"{base} कृपया औषध घेण्यापूर्वी फार्मासिस्टशी खात्री करा."
+                return base
             return STATUS_MESSAGES["phase9_abstained"][language]
 
         # Fully ELIGIBLE state: synthesize controlled sentence
@@ -247,6 +266,54 @@ class PosologyTemplateEngine:
         Renders detailed intake steps or verification directions.
         """
         if status in ("abstained", "restricted", "unavailable"):
+            if (
+                status == "restricted"
+                and reason_code == "EXTRACTION_OR_VALIDATION_UNCERTAIN"
+                and medicine_name
+                and not medicine_name.strip().endswith("...")
+                and medicine_name.strip().lower() not in ("unknown", "unreadable", "candidate", "medication")
+            ):
+                freq_label = get_frequency_label(frequency_key, language)
+                meal_label = get_meal_relation_label(meal_relation_key, language)
+                if language == "en":
+                    lines = [f"Take {medicine_name} according to prescription instructions:"]
+                    if dosage:
+                        lines.append(f"• Dose: {dosage}")
+                    if freq_label:
+                        lines.append(f"• Frequency: {freq_label}")
+                    if meal_label:
+                        lines.append(f"• Timing: {meal_label}")
+                    if duration:
+                        lines.append(f"• Duration: {duration}")
+                    lines.append("Note: Ambiguous handwriting flagged. Confirm with pharmacist before taking.")
+                    return "\n".join(lines)
+                elif language == "hi":
+                    lines = [f"{medicine_name} को प्रिस्क्रिप्शन के अनुसार लें:"]
+                    if dosage:
+                        lines.append(f"• मात्रा: {dosage}")
+                    if freq_label:
+                        lines.append(f"• समय: {freq_label}")
+                    if meal_label:
+                        lines.append(f"• निर्देश: {meal_label}")
+                    if duration:
+                        dur_hi = format_duration_for_lang(duration, "hi")
+                        lines.append(f"• अवधि: {dur_hi}")
+                    lines.append("सूचना: अस्पष्ट लिखावट हो सकती है। लेने से पहले फार्मासिस्ट से पुष्टि करें।")
+                    return "\n".join(lines)
+                elif language == "mr":
+                    lines = [f"{medicine_name} प्रिस्क्रिप्शननुसार घ्या:"]
+                    if dosage:
+                        lines.append(f"• मात्रा: {dosage}")
+                    if freq_label:
+                        lines.append(f"• वेळ: {freq_label}")
+                    if meal_label:
+                        lines.append(f"• निर्देश: {meal_label}")
+                    if duration:
+                        dur_mr = format_duration_for_lang(duration, "mr")
+                        lines.append(f"• कालावधी: {dur_mr}")
+                    lines.append("टीप: अस्पष्ट हस्ताक्षर असू शकते. औषध घेण्यापूर्वी फार्मासिस्टशी खात्री करा.")
+                    return "\n".join(lines)
+
             verification_prompt = STATUS_MESSAGES["verification_prompt"][language]
             status_msg = STATUS_MESSAGES.get(
                 "lasa_conflict" if reason_code == "LASA_SIMILARITY_CONFLICT"

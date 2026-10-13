@@ -130,7 +130,12 @@ class PosologyExplanationGenerator:
             )
 
             # Render daily schedule slots
-            if status == "eligible":
+            if status == "eligible" or (
+                status == "restricted"
+                and effective_name
+                and not effective_name.strip().endswith("...")
+                and effective_name.strip().lower() not in ("unknown", "unreadable", "candidate", "medication")
+            ):
                 daily_schedule = build_schedule_slots(
                     frequency_key=frequency_key,
                     language=lang,

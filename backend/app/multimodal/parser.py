@@ -257,15 +257,18 @@ def parse_multimodal_response(
     except json.JSONDecodeError as exc:
         first_brace = cleaned.find("{")
         last_brace = cleaned.rfind("}")
-        if first_brace != -1 and last_brace > first_brace:
-            try:
-                data = json.loads(cleaned[first_brace : last_brace + 1])
-            except Exception:
-                raise MultimodalParseError(
-                    f"Failed to decode model JSON output: {str(exc)}",
-                    raw_response=raw_text,
-                ) from exc
-        else:
+        candidate_json = (
+            cleaned[first_brace : last_brace + 1]
+            if (first_brace != -1 and last_brace > first_brace)
+            else cleaned
+        )
+
+        # Defensive JSON sanitization: strip trailing commas and line comments
+        sanitized = re.sub(r",\s*([\]}])", r"\1", candidate_json)
+        sanitized = re.sub(r"//.*?\n", "\n", sanitized)
+        try:
+            data = json.loads(sanitized)
+        except Exception:
             raise MultimodalParseError(
                 f"Failed to decode model JSON output: {str(exc)}",
                 raw_response=raw_text,

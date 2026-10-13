@@ -239,9 +239,28 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <p className="text-xs sm:text-sm leading-relaxed text-theme-secondary">
               The multimodal vision and confidence calibration engines determined this prescription document has severe stroke ambiguity, overlapping ink, or non-decipherable posology. Per clinical safety guidelines, automated interpretation has been halted to prevent pharmacotherapeutic misadventure.
             </p>
-            <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
-              <span>Required Action:</span>
-              <span className="font-normal text-theme-primary">Direct clinical pharmacist audit or requesting a digitized re-issue from the prescriber is required.</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-xs">
+              <div className="p-3.5 rounded-xl bg-surface border border-theme space-y-1">
+                <strong className="text-theme-primary block font-semibold">WHAT happened:</strong>
+                <span className="text-theme-secondary">
+                  {currentState.abstentionGuidance?.whatHappened ||
+                    'The system halted decoding because handwriting is severely degraded.'}
+                </span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-surface border border-theme space-y-1">
+                <strong className="text-theme-primary block font-semibold">WHY it halted:</strong>
+                <span className="text-theme-secondary">
+                  {currentState.abstentionGuidance?.why ||
+                    'Excessive ink smear, paper crease, or ambiguous stroke ligatures.'}
+                </span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-surface border border-theme space-y-1">
+                <strong className="text-amber-900 dark:text-amber-300 block font-semibold">WHAT to do:</strong>
+                <span className="text-theme-secondary">
+                  {currentState.abstentionGuidance?.whatToDo ||
+                    'Pharmacist must inspect physical prescription paper. Do not dispense without prescriber confirmation.'}
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -301,7 +320,12 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <MedicineValidationSection evidence={currentState.validationEvidence} />
 
             {/* 4. Multilingual Patient Explanation */}
-            <MultilingualExplanationCard multilingual={currentState.multilingual} />
+            <MultilingualExplanationCard
+              multilingual={currentState.multilingual}
+              medicines={currentState.medicinesList}
+              prescriptionSummary={currentState.prescriptionSummary}
+              accessionId={currentState.accessionId}
+            />
           </div>
         </div>
 

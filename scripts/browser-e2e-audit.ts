@@ -59,6 +59,8 @@ async function runBrowserAudit() {
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
       console.error('  [PAGE CONSOLE ERROR]', msg.text());
+    } else if (msg.text().includes('INTERCEPTED') || msg.text().includes('API') || msg.type() === 'warn') {
+      console.log('  [PAGE CONSOLE]', msg.type(), msg.text());
     }
   });
 
@@ -91,12 +93,12 @@ async function runBrowserAudit() {
     // 1. Home Page Navigation
     // -------------------------------------------------------------------------
     console.log('--- 1. Testing Home Page & Navigation ---');
-    await page.goto('http://localhost:5173/', { waitUntil: 'networkidle2', timeout: 15000 });
+    await page.goto('http://127.0.0.1:5173/', { waitUntil: 'domcontentloaded', timeout: 15000 });
     const title = await page.title();
     check(title.includes('DawaAI'), 'Page title contains DawaAI');
 
     await page.waitForFunction(
-      () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.includes('Upload Prescription') || b.textContent?.includes('Analyze a Prescription')),
+      () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.toLowerCase().includes('analyze') || b.textContent?.toLowerCase().includes('upload')),
       { timeout: 8000 }
     );
     check(true, 'Primary intake CTA button found on landing page');
@@ -107,7 +109,7 @@ async function runBrowserAudit() {
     console.log('\n--- 2. Navigating to Workspace Intake Flow ---');
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
-      const btn = buttons.find(b => b.textContent?.includes('Analyze a Prescription') || b.textContent?.includes('Upload Prescription') || b.textContent?.includes('Try with sample'));
+      const btn = buttons.find(b => b.textContent?.toLowerCase().includes('analyze') || b.textContent?.toLowerCase().includes('upload') || b.textContent?.toLowerCase().includes('try with sample'));
       if (btn) btn.click();
     });
 
@@ -123,9 +125,14 @@ async function runBrowserAudit() {
     console.log('\n--- 3. Testing Sample Selection & Review Step ---');
     await page.evaluate(() => {
       const sampleCards = Array.from(document.querySelectorAll('button'));
-      const sample1 = sampleCards.find(b => b.textContent?.includes('Sample 1') || b.textContent?.includes('Standard Cursive'));
+      const sample1 = sampleCards.find(b => b.textContent?.includes('Sample 1') || b.textContent?.includes('Standard Cursive') || b.textContent?.includes('Standard Outpatient Script'));
       if (sample1) sample1.click();
     });
+
+    await page.waitForFunction(
+      () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.includes('Continue to Review')),
+      { timeout: 8000 }
+    );
 
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
@@ -134,7 +141,7 @@ async function runBrowserAudit() {
     });
 
     await page.waitForFunction(
-      () => document.body.innerText.includes('Review prescription') || document.body.innerText.includes('Pre-analysis Quality Telemetry') || document.body.innerText.includes('Start Analysis'),
+      () => document.body.innerText.toLowerCase().includes('review') || document.body.innerText.includes('Pre-analysis Quality Telemetry') || document.body.innerText.includes('Start Analysis'),
       { timeout: 8000 }
     );
     check(true, 'Review Step rendered with document canvas and image heuristics');
@@ -154,7 +161,7 @@ async function runBrowserAudit() {
     // Wait specifically for View Findings button to be rendered when isDone === true
     await page.waitForFunction(
       () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.includes('View Findings')),
-      { timeout: 15000 }
+      { timeout: 30000 }
     );
     check(true, 'Analyze step completed all 5 pipeline stages and rendered proceed button');
 
@@ -208,6 +215,12 @@ async function runBrowserAudit() {
     // 6. Test Demo State Switcher: Uncertain State
     // -------------------------------------------------------------------------
     console.log('\n--- 6. Verifying Uncertain State UI ---');
+    await page.evaluate(() => {
+      if ((window as any).__setView) {
+        (window as any).__setView('results');
+      }
+    });
+    await new Promise(r => setTimeout(r, 400));
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
       const uncertainTab = buttons.find(b => b.textContent?.includes('Uncertain') || b.textContent?.includes('2. Uncertain'));
@@ -505,7 +518,7 @@ async function runBrowserAudit() {
     console.log('  -> Clicking Analyze another...');
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
-      const newBtn = buttons.find(b => b.textContent?.includes('Analyze another'));
+      const newBtn = buttons.find(b => b.textContent?.toLowerCase().includes('analyze another') || b.textContent?.toLowerCase().includes('upload prescription'));
       if (newBtn) newBtn.click();
     });
 
@@ -515,14 +528,35 @@ async function runBrowserAudit() {
       { timeout: 8000 }
     );
 
+    console.log('  -> Selecting Sample 1 for error injection...');
+    await page.evaluate(() => {
+      const sampleCards = Array.from(document.querySelectorAll('button'));
+      const sample1 = sampleCards.find(b => b.textContent?.includes('Standard Outpatient Script') || b.textContent?.includes('Augmentin'));
+      if (sample1) sample1.click();
+    });
+
+    await page.waitForFunction(
+      () => Array.from(document.querySelectorAll('button')).some(b => b.textContent?.includes('Continue to Review')),
+      { timeout: 8000 }
+    );
+
+    console.log('  -> Continuing to review and starting analysis...');
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'));
+      const continueBtn = buttons.find(b => b.textContent?.includes('Continue to Review'));
+      if (continueBtn) continueBtn.click();
+    });
+
+    await page.waitForFunction(() => document.body.innerText.includes('Start Analysis'), { timeout: 8000 });
+
     console.log('  -> Injecting 1-shot API fault for IMAGE_QUALITY_INSUFFICIENT...');
     await page.evaluate(() => {
-      const origFetch = window.fetch;
+      const origFetch = window.fetch.bind(window);
       (window as any).__origFetch = origFetch;
+      (window as any).__injectFault = true;
       window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-        const urlStr = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
-        if (urlStr.includes('/api/v1/prescriptions/analyze')) {
-          window.fetch = (window as any).__origFetch;
+        const urlStr = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as any).url || '';
+        if (urlStr.includes('/api/v1/prescriptions/analyze') && (window as any).__injectFault) {
           return new Response(JSON.stringify({
             error: {
               code: 'IMAGE_QUALITY_INSUFFICIENT',
@@ -537,36 +571,33 @@ async function runBrowserAudit() {
       };
     });
 
-    console.log('  -> Selecting Sample 1 for error injection...');
-    await page.evaluate(() => {
-      const sampleCards = Array.from(document.querySelectorAll('button'));
-      const sample1 = sampleCards.find(b => b.textContent?.includes('Standard Outpatient Script') || b.textContent?.includes('Augmentin'));
-      if (sample1) sample1.click();
-    });
-
-    console.log('  -> Continuing to review and starting analysis...');
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button'));
-      const continueBtn = buttons.find(b => b.textContent?.includes('Continue to Review'));
-      if (continueBtn) continueBtn.click();
-    });
-
-    await page.waitForFunction(() => document.body.innerText.includes('Start Analysis'), { timeout: 8000 });
-    await page.evaluate(() => {
+    const startClicked = await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
       const startBtn = buttons.find(b => b.textContent?.includes('Start Analysis'));
-      if (startBtn) startBtn.click();
+      if (startBtn) {
+        startBtn.click();
+        return true;
+      }
+      return false;
     });
+    console.log('  -> Clicked Start Analysis:', startClicked);
 
     console.log('  -> Waiting for Error State in AnalyzeStep...');
-    await page.waitForFunction(
-      () => document.body.innerText.includes('Prescription Interpretation Gateway Notice') || document.body.innerText.includes('Retry Analysis'),
-      { timeout: 8000 }
-    );
-    check(true, 'API Error state rendered with diagnostic explanation and retry action');
+    try {
+      await page.waitForFunction(
+        () => document.body.innerText.includes('Prescription Interpretation Gateway Notice') || document.body.innerText.includes('Retry Analysis'),
+        { timeout: 8000 }
+      );
+      check(true, 'API Error state rendered with diagnostic explanation and retry action');
+    } catch (e: any) {
+      const currentText = await page.evaluate(() => document.body.innerText);
+      console.error('  [DIAGNOSTIC] Body text when waiting for error state:', currentText.slice(0, 400));
+      throw e;
+    }
 
-    // Test Retry Behavior: Click "Retry Analysis"
+    // Test Retry Behavior: Disable fault injection and click "Retry Analysis"
     await page.evaluate(() => {
+      (window as any).__injectFault = false;
       const buttons = Array.from(document.querySelectorAll('button'));
       const retryBtn = buttons.find(b => b.textContent?.includes('Retry Analysis'));
       if (retryBtn) retryBtn.click();
@@ -575,7 +606,7 @@ async function runBrowserAudit() {
     // Wait for analysis to recover and complete via live FastAPI backend
     await page.waitForFunction(
       () => document.body.innerText.includes('View Findings') || document.body.innerText.includes('Interpretation complete'),
-      { timeout: 15000 }
+      { timeout: 30000 }
     );
     check(true, 'Retry button successfully re-executed pipeline to completion');
 

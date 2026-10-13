@@ -452,7 +452,12 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
           )}
 
           {/* E. Multilingual Patient Explanation & Text-to-Speech (Listen) */}
-          <MultilingualExplanationCard multilingual={currentState.multilingual} />
+          <MultilingualExplanationCard
+            multilingual={currentState.multilingual}
+            medicines={medicines}
+            prescriptionSummary={currentState.prescriptionSummary}
+            accessionId={currentState.accessionId}
+          />
 
           {/* F. Expandable Detailed Pharmacopeia Evidence & Technical Telemetry */}
           <div className="border border-theme rounded-2xl bg-surface overflow-hidden">

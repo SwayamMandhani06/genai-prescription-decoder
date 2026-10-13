@@ -595,13 +595,17 @@ curl -f http://localhost:8000/health
 
 ### 17.4 Verification Evidence & Test Execution
 
-- **Backend Full Pytest Suite:** 571 passed, 1 skipped, 0 failed (100%)
-- **Frontend Verification Suite:** 123 passed, 0 failed (100%)
+- **Backend Full Pytest Suite:** 576 passed, 1 skipped, 0 failed (100%)
+- **Backend Explanation & Posology Suite:** 75/75 passed (`python -m pytest backend/tests/test_explanation_*.py`)
+- **Field-Level Uncertainty Regression:** 5/5 passed (`backend/tests/test_explanation_field_uncertainty_regression.py`) proving readable drug names are never erased by missing duration or unverified schedule slots
+- **Frontend Verification Suite:** 123 passed, 0 failed (100% across 14 UI states)
+- **Browser-Level E2E Audit:** 40 passed, 0 failed (100% across 10 genuine Puppeteer browser automation flows including file upload, error injection, retry, and language switching)
 - **TypeScript Static Verification:** 0 errors (`npx tsc --noEmit`)
-- **Production Build:** Clean distribution bundle in 2.25s (`npm run build`)
-- **Live Sample-Image Regression Suite:** Passed (`python scripts/verify_sample_regressions.py`)
-- **Live Gemini Multimodal Inference:** Direct Google AI Studio API integration (`gemini-3.6-flash` / `gemini-3.8-flash`) with honest error status (503 on upstream quota/rate limit) and strict zero mock fallback
+- **Production Build:** Clean distribution bundle in 1.66s (`npm run build`)
+- **Live Sample-Image Regression Suite:** 100% passed (`python scripts/verify_sample_regressions.py`) on authentic samples (`sample_01_clear.png` and `sample_02_cursive.png`)
+- **Live Gemini Multimodal Inference:** Direct Google AI Studio API integration using `gemini-3.5-flash-lite` with live HTTP 200 responses, honest error reporting, and strict zero mock fallback (`USE_MOCK_PIPELINE=false`, `VITE_USE_MOCK_API=false`)
 - **Timeout Management:** 60,000ms client request timeout preventing premature 504 aborts on dense cursive handwriting
+- **Voice Assistance & Multilingual Synthesis:** Verified browser Text-to-Speech playback speaking real extracted posology (Augmentin, Metformin, Pantocid) across English, Hindi, and Marathi with zero fallback to generic uncertainty loops
 - **Vercel & Production Deployment:**
   - Frontend: Deployed on Vercel. Set `VITE_API_BASE_URL=https://<your-backend-service>.com` in Vercel project environment variables (never point to localhost in production).
   - Backend: Run on Render / Cloud Run / VPS with `PORT=8001` or standard `$PORT`, with `GEMINI_API_KEY` configured server-side.

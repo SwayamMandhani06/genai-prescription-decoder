@@ -576,16 +576,34 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         )
         val_status_str = primary_ui_evidence.get("validation_status", "validated") if primary_ui_evidence else "validated"
 
+        primary_med = extraction_result.medicines[0] if extraction_result.medicines else None
+        primary_med_status = "confident"
+        if primary_med:
+            if hasattr(primary_med, "medicine_name") and hasattr(primary_med.medicine_name, "status"):
+                primary_med_status = primary_med.medicine_name.status
+            elif getattr(primary_med, "status", None):
+                primary_med_status = primary_med.status
+
+        # A readable medicine name is not uncertain merely because another field is missing
+        candidate_status_val = "confident"
+        if not primary_med_name or primary_med_name.endswith("...") or primary_med_status in ("uncertain", "unreadable", "flagged"):
+            candidate_status_val = "uncertain"
+
+        med_requires_verification = bool(
+            (primary_med and getattr(primary_med, "requires_verification", False))
+            or candidate_status_val == "uncertain"
+        )
+
         exp_summary, exp_posology, exp_full = get_explanation_service().generate_prescription_bundle(
             prescription_id=prescription_id,
             medicine_name=primary_med_name,
             dosage=primary_dosage,
             frequency=primary_freq,
             duration=primary_duration,
-            candidate_status="uncertain" if effective_human_review and not has_lasa_conflict_flag else "confident",
+            candidate_status=candidate_status_val,
             validation_status=val_status_str,
             abstention_decision=abstention_decision.decision if hasattr(abstention_decision, "decision") else "accepted",
-            requires_human_verification=effective_human_review,
+            requires_human_verification=med_requires_verification,
             has_lasa_conflict=has_lasa_conflict_flag,
             confusable_counterpart=confusable_name,
             is_service_healthy=True,
@@ -620,9 +638,33 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         d_clinic = doc_details.get("clinic_or_hospital") or "Not present in prescription"
         d_addr = doc_details.get("contact") or "Not present in prescription"
 
-        # Use model-extracted prescription summary if available
+        # Synchronize prescription posology summary across languages and DTO models
+        all_med_names = [
+            m.medicine_name.value
+            for m in extraction_result.medicines
+            if hasattr(m, "medicine_name") and getattr(m.medicine_name, "value", None)
+        ]
+        if not all_med_names and primary_med_name:
+            all_med_names = [primary_med_name]
+
         if extraction_result.prescription_summary:
             exp_summary.en = extraction_result.prescription_summary
+            exp_posology.en.summary = extraction_result.prescription_summary
+            if len(all_med_names) > 1:
+                med_list_str = ", ".join(all_med_names)
+                exp_summary.hi = f"प्रिस्क्रिप्शन में {med_list_str} दवाएं शामिल हैं। कृपया नीचे दिए गए समय और निर्देश अनुसार लें।"
+                exp_posology.hi.summary = exp_summary.hi
+                exp_summary.mr = f"प्रिस्क्रिप्शनमध्ये {med_list_str} ही औषधे समाविष्ट आहेत. कृपया खाली दिलेल्या वेळेनुसार आणि सूचनेनुसार औषधे घ्यावीत."
+                exp_posology.mr.summary = exp_summary.mr
+        elif len(all_med_names) > 1:
+            med_list_str = ", ".join(all_med_names)
+            multi_summary_en = f"Your prescription contains {len(all_med_names)} prescribed medicines: {med_list_str}. Follow each recorded administration schedule below."
+            exp_summary.en = multi_summary_en
+            exp_posology.en.summary = multi_summary_en
+            exp_summary.hi = f"प्रिस्क्रिप्शन में {len(all_med_names)} दवाएं ({med_list_str}) लिखी हैं। कृपया नीचे दिए गए समय अनुसार लें।"
+            exp_posology.hi.summary = exp_summary.hi
+            exp_summary.mr = f"प्रिस्क्रिप्शनमध्ये {len(all_med_names)} औषधे ({med_list_str}) लिहिलेली आहेत. कृपया खाली दिलेल्या वेळेनुसार औषधे घ्यावीत."
+            exp_posology.mr.summary = exp_summary.mr
 
         data_block = PrescriptionData(
             accession_id=f"ACC-{prescription_id}",
