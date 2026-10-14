@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { UploadedPrescriptionFile } from '../../types/navigation.types';
 import { PrescriptionAnalysisResult, ResultsDemoState } from '../../types/prescription.types';
 import { prescriptionService } from '../../services/prescriptionService';
-import { apiConfig } from '../../services/api/apiConfig';
 import { ApiTimeoutError } from '../../services/api/apiErrors';
 import { SAMPLE_PRESCRIPTION_CANVASES } from '../../data/sampleHandwrittenSvg';
 import {
@@ -230,25 +229,6 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
           <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
             Interpreting cursive handwriting, verifying medicine entities against official formularies, and screening for ambiguity.
           </p>
-        </div>
-
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium border border-theme bg-surface shrink-0 self-start sm:self-auto shadow-xs">
-          <span className={`w-2.5 h-2.5 rounded-full ${apiConfig.useMock ? 'bg-[#155EEF]' : 'bg-emerald-500 animate-pulse'}`} />
-          <span className="text-theme-secondary">
-            {(() => {
-              if (apiConfig.useMock) return 'Demonstration Mode';
-              try {
-                const url = new URL(apiConfig.baseUrl);
-                const isLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-                if (isLocal) {
-                  return `Live FastAPI Backend (Local ${url.port ? `:${url.port}` : ''})`;
-                }
-                return 'Live Cloud AI Pipeline';
-              } catch {
-                return 'Live Cloud AI Pipeline';
-              }
-            })()}
-          </span>
         </div>
       </div>
 
