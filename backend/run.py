@@ -21,10 +21,12 @@ from backend.app.config import get_settings
 
 if __name__ == "__main__":
     settings = get_settings()
+    host = os.environ.get("HOST", settings.HOST)
+    port = int(os.environ.get("PORT", settings.PORT))
     uvicorn.run(
         "backend.app.main:app",
-        host=settings.HOST,
-        port=settings.PORT,
+        host=host,
+        port=port,
         reload=settings.DEBUG,
     )
 

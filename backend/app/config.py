@@ -23,20 +23,21 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     DEBUG: bool = False
 
-    # Server Network Binding - defaults to port 8001 per DawaAI local development standard
-    HOST: str = "127.0.0.1"
+    # Server Network Binding - binds to 0.0.0.0 for container/PaaS routing compatibility
+    HOST: str = "0.0.0.0"
     PORT: int = 8001
 
     # Model Credentials and Multimodal Configuration
     GEMINI_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key")
     GOOGLE_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key Fallback")
-    GEMINI_MODEL: str = Field(default="gemini-3.8-flash", description="Google Gemini Model Identifier")
-    MULTIMODAL_MODEL_ID: Optional[str] = Field(default=None, description="Multimodal Model Identifier")
+    GEMINI_MODEL: str = Field(default="gemini-3.5-flash-lite", description="Google Gemini Model Identifier")
+    MULTIMODAL_MODEL_ID: Optional[str] = Field(default="gemini-3.5-flash-lite", description="Multimodal Model Identifier")
     MULTIMODAL_MAX_TOKENS: int = Field(default=4096, description="Max Output Generation Tokens")
     MULTIMODAL_TIMEOUT_SECONDS: float = Field(default=50.0, description="Inference Timeout Seconds")
 
     # CORS Settings
     CORS_ORIGINS: Union[List[str], str] = [
+        "https://dawaai-prescription-decoder.vercel.app",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
@@ -60,7 +61,7 @@ class Settings(BaseSettings):
     ]
 
     # Pipeline Mode (Mock Pipeline vs Multimodal AI Modules)
-    USE_MOCK_PIPELINE: bool = True
+    USE_MOCK_PIPELINE: bool = False
 
     model_config = SettingsConfigDict(
         env_file=(str(ROOT_DIR / ".env"), ".env"),
@@ -73,6 +74,7 @@ class Settings(BaseSettings):
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         default_local = [
+            "https://dawaai-prescription-decoder.vercel.app",
             "http://localhost:5173",
             "http://127.0.0.1:5173",
             "http://localhost:3000",

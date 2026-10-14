@@ -40,14 +40,14 @@ class MultimodalConfig(BaseModel):
         default_factory=lambda: (
             (getattr(resolve_active_settings(), "MULTIMODAL_MODEL_ID", None) or getattr(resolve_active_settings(), "GEMINI_MODEL", None))
             if resolve_active_settings() is not None else None
-        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
+        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.5-flash-lite",
         description="Canonical model identifier",
     )
     model_version: str = Field(
         default_factory=lambda: (
             (getattr(resolve_active_settings(), "MULTIMODAL_MODEL_ID", None) or getattr(resolve_active_settings(), "GEMINI_MODEL", None))
             if resolve_active_settings() is not None else None
-        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
+        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.5-flash-lite",
         description="Exact provider model release version",
     )
     temperature: float = Field(
