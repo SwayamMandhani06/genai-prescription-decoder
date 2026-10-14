@@ -128,7 +128,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
               <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
               <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
+                <span className="font-brand-serif text-[#102A43] dark:text-white">Dawa</span><span className="text-[#155EEF]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">
                 / Prescription Findings
@@ -164,7 +164,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
 
             <button
               onClick={onBackToHome}
-              className="px-3 py-1.5 rounded-lg bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 text-[#4A2E4D] dark:text-[#F472B6] text-xs font-medium transition-all cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-white dark:bg-[#102A43]/60 hover:bg-[#F7FAFD] dark:hover:bg-[#1E3A5F]/70 border border-[#D0D5DD] dark:border-[#1E3A5F] text-[#102A43] dark:text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
             >
               Overview
             </button>
@@ -187,10 +187,10 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
         {/* Prescription Metadata */}
         <div className="p-6 sm:p-7 rounded-3xl bg-surface border border-theme flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xs">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/50 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF2FF] dark:bg-[#155EEF]/20 border border-[#155EEF]/30 text-[#155EEF] dark:text-[#4B8BFF] text-xs sm:text-sm font-medium">
               <Stethoscope className="w-4 h-4" />
               <span>Accession: <strong className="font-mono">{currentState.accessionId}</strong></span>
-              <span className="text-[#F472B6]">|</span>
+              <span className="text-[#155EEF]">|</span>
               <span>{currentState.difficultyTag}</span>
             </div>
 
@@ -210,14 +210,14 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             </div>
             <div>
               <span className="text-theme-muted mr-2">Physician:</span>
-              <span className="text-[#4A2E4D] dark:text-[#F472B6] font-medium">{currentState.doctorName}</span>
+              <span className="text-[#155EEF] dark:text-[#4B8BFF] font-medium">{currentState.doctorName}</span>
             </div>
           </div>
         </div>
 
         {/* Statutory Assistive Tool Disclaimer Banner */}
         <div className="p-4 sm:p-5 rounded-2xl bg-surface-subtle border border-theme flex items-start gap-3.5 text-sm sm:text-base text-theme-secondary leading-relaxed">
-          <Info className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
           <div>
             <strong className="text-theme-primary uppercase text-xs sm:text-sm font-semibold block mb-1">
               Assistive Prescription Interpretation Notice:
@@ -271,7 +271,14 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
             <OriginalScriptViewer
               scriptKey={currentState.rawScriptKey}
-              previewUrl={uploadedData?.source === 'user_upload' ? uploadedData.previewUrl : undefined}
+              previewUrl={
+                uploadedData?.previewUrl ||
+                (currentState.rawScriptKey === 'rx-sample-2'
+                  ? '/samples/cardiology-clinic-slip.png'
+                  : currentState.rawScriptKey === 'rx-sample-3'
+                  ? '/samples/childcare-paediatric-sheet.png'
+                  : '/samples/handwritten-clinic-pad.png')
+              }
               activeBoundingBox={hoveredBox}
               highlightLabel={hoveredLabel}
               accessionId={currentState.accessionId}
@@ -284,7 +291,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
                 <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight flex items-center gap-2">
-                  <FileSpreadsheet className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                  <FileSpreadsheet className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
                   <span>Interpreted Posology ({currentState.fields.length} Fields)</span>
                 </h2>
                 <span className="text-xs sm:text-sm text-theme-muted">
@@ -334,7 +341,7 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           <div className="p-5 sm:p-6 rounded-2xl bg-surface border border-theme space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <ShieldCheck className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">Verification Checklist</h2>
               </div>
               <span className="text-xs sm:text-sm text-theme-muted font-medium">Pharmacist Oversight</span>
@@ -388,24 +395,24 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={onBackToUpload}
-                className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-5 py-2.5 rounded-full bg-white dark:bg-[#102A43]/60 hover:bg-[#F7FAFD] dark:hover:bg-[#1E3A5F]/70 border border-[#D0D5DD] dark:border-[#1E3A5F] text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <UploadCloud className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <UploadCloud className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Upload Another Prescription</span>
               </button>
 
               <button
                 onClick={handlePrint}
-                className="px-4 py-2.5 rounded-xl bg-surface hover:bg-surface-subtle border border-theme text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-5 py-2.5 rounded-full bg-white dark:bg-[#102A43]/60 hover:bg-[#F7FAFD] dark:hover:bg-[#1E3A5F]/70 border border-[#D0D5DD] dark:border-[#1E3A5F] text-sm font-semibold text-theme-primary transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
-                <Printer className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <Printer className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Print Findings</span>
               </button>
             </div>
 
             <button
               onClick={onBackToHome}
-              className="px-5 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#155EEF] to-[#2E90FA] hover:from-[#1249C7] hover:to-[#155EEF] text-white text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
             >
               <span>Return to Workspace Overview</span>
               <ArrowRight className="w-4 h-4" />

@@ -34,10 +34,10 @@ export const CoreCapabilitiesSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Intro */}
         <div className="max-w-3xl mb-16 sm:mb-20 space-y-3">
-          <div className="text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
+          <div className="text-sm font-semibold text-[#155EEF] dark:text-[#4B8BFF]">
             Core Architecture
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.85rem] font-extrabold tracking-tight text-theme-primary leading-[1.08]">
             Designed for medical clarity, safety, and evidence.
           </h2>
           <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
@@ -50,7 +50,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
           {/* Capability 01: UNDERSTAND */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#155EEF] dark:text-[#4B8BFF]">
                 1. Understanding Handwriting
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
@@ -60,7 +60,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 Rather than treating cursive scrawl as unconstrained text, our vision pipeline isolates localized ink stroke paths, disentangles clinical shorthands (such as 1-0-1, PC, AC, and TDS), and maps them into rigorous clinical slots.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
                 <span>Extracts drug, strength, frequency, timing &amp; duration</span>
               </div>
             </div>
@@ -73,14 +73,23 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 </span>
               </div>
 
-              {/* Raw handwritten ink mockup */}
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme flex items-center justify-between">
-                <span className="font-serif italic text-lg text-theme-primary font-bold">
-                  ℞ Augm 625 1-0-1 PC x 5d
-                </span>
-                <span className="text-xs text-theme-muted font-medium">
-                  Doctor pen ink
-                </span>
+              {/* Raw handwritten ink note */}
+              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-2">
+                <div className="flex items-center justify-between text-xs text-theme-muted">
+                  <span className="font-medium text-[11px] uppercase tracking-wider text-[#155EEF] dark:text-[#4B8BFF]">
+                    Prescription Ink Trajectory
+                  </span>
+                  <span className="text-xs text-theme-muted font-medium px-2 py-0.5 rounded-md bg-white/70 dark:bg-slate-800 border border-theme">
+                    Doctor pen ink
+                  </span>
+                </div>
+                <div className="rounded-lg overflow-hidden border border-theme bg-white shadow-xs">
+                  <img
+                    src="/samples/handwritten-augmentin-note.png"
+                    alt="Handwritten Augmentin Prescription Note showing authentic doctor pen ink"
+                    className="w-full h-auto max-h-[76px] sm:max-h-[88px] object-contain block mx-auto py-1 px-2"
+                  />
+                </div>
               </div>
 
               {/* Arrow Connector */}
@@ -126,7 +135,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 <span className="font-semibold text-xs text-theme-primary">
                   Clinical formulary &amp; sound-alike safety
                 </span>
-                <span className="text-xs text-[#7C5A8B] dark:text-[#F472B6] font-medium">CDSCO / RxNorm</span>
+                <span className="text-xs text-[#155EEF] dark:text-[#4B8BFF] font-semibold">CDSCO / RxNorm</span>
               </div>
 
               {/* Verified Item */}
@@ -168,7 +177,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
             </div>
 
             <div className="order-1 lg:order-2 lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold text-[#7C5A8B] dark:text-[#F472B6]">
+              <span className="text-xs font-bold text-[#155EEF] dark:text-[#4B8BFF]">
                 2. Verifying candidates
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
@@ -178,7 +187,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 Every extracted candidate is cross-referenced against authoritative clinical databases. When severe Look-Alike Sound-Alike (LASA) pairs or low-confidence strokes appear, the system applies TALL MAN lettering and flags them rather than guessing.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
                 <span>CDSCO India &amp; US NLM RxNorm ontological verification</span>
               </div>
             </div>
@@ -187,7 +196,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
           {/* Capability 03: EXPLAIN */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-xs font-bold text-[#7C5A8B] dark:text-[#F472B6]">
+              <span className="text-xs font-bold text-[#155EEF] dark:text-[#4B8BFF]">
                 3. Explaining posology
               </span>
               <h3 className="text-2xl sm:text-3xl lg:text-[2rem] font-bold tracking-tight text-theme-primary leading-snug">
@@ -197,7 +206,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 Medical prescriptions are often written using Latin abbreviations that confuse patients. DawaAI converts complicated regimens into empathetic, plain-language guidance in regional languages while preserving the original signed prescription.
               </p>
               <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-theme-muted pt-1">
-                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
                 <span>Native Devanagari script for Hindi and Marathi</span>
               </div>
             </div>
@@ -210,15 +219,15 @@ export const CoreCapabilitiesSection: React.FC = () => {
                 </span>
 
                 {/* Switcher Pills */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 p-1 bg-surface-subtle rounded-full border border-theme">
                   {(['en', 'hi', 'mr'] as const).map((lang) => (
                     <button
                       key={lang}
                       onClick={() => setExplainLang(lang)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
                         explainLang === lang
-                          ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] shadow-xs font-semibold'
-                          : 'bg-surface-subtle hover:bg-surface border border-theme text-theme-secondary hover:text-theme-primary'
+                          ? 'bg-[#155EEF] text-white shadow-xs font-semibold'
+                          : 'hover:bg-surface text-theme-secondary hover:text-theme-primary'
                       }`}
                     >
                       {explanationPhrases[lang].lang}
@@ -233,13 +242,13 @@ export const CoreCapabilitiesSection: React.FC = () => {
                   <div className="text-sm font-bold text-theme-primary">
                     Augmentin 625 Duo &middot; Oral Tablet
                   </div>
-                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#FFD6DA]/60 dark:bg-[#4A2E4D]/60 text-[#4A2E4D] dark:text-[#FFD6DA] border border-[#F472B6]/40 font-medium">
+                  <span className="text-[11px] px-3 py-0.5 rounded-full bg-[#EAF2FF] dark:bg-[#155EEF]/20 text-[#155EEF] dark:text-[#4B8BFF] border border-[#155EEF]/30 font-medium">
                     {explanationPhrases[explainLang].badge}
                   </span>
                 </div>
 
                 <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-2">
-                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
+                  <div className="text-xs font-semibold text-[#155EEF] dark:text-[#4B8BFF]">
                     Dosing Schedule &amp; Timing
                   </div>
                   <p className="text-sm sm:text-base font-medium text-theme-primary leading-relaxed">

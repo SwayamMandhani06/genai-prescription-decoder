@@ -32,12 +32,13 @@ def resolve_sample_image(sample_id: str) -> Path:
     clean_id = sample_id.strip().lower()
     mapping = {
         "sample-1": "sample_01_clear.png",
-        "rx-sample-1": "sample_01_clear.png",
+        "rx-sample-1": "handwritten-clinic-pad.png",
         "doc-rx-001": "sample_01_clear.png",
         "sample-2": "sample_02_cursive.png",
-        "rx-sample-2": "sample_02_cursive.png",
+        "rx-sample-2": "cardiology-clinic-slip.png",
         "doc-rx-002": "sample_02_cursive.png",
         "sample-3": "sample_03_blurred.png",
+        "rx-sample-3": "childcare-paediatric-sheet.png",
         "doc-rx-003": "sample_03_blurred.png",
         "sample-4": "sample_04_lowlight.png",
         "doc-rx-004": "sample_04_lowlight.png",

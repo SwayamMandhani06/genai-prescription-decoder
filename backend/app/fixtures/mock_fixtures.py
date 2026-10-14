@@ -31,11 +31,26 @@ from ..schemas.prescription import (
 )
 
 
-def get_confident_fixture(prescription_id: str = "DEMO-RX-01", image_url: str = "/uploads/samples/sample-standard.svg") -> PrescriptionAnalyzeResponse:
+def get_confident_fixture(prescription_id: str = "DEMO-RX-01", image_url: str = "/samples/handwritten-clinic-pad.png") -> PrescriptionAnalyzeResponse:
     """Fixture 1: Fully Confident Extraction (Standard Antibiotic)"""
     return PrescriptionAnalyzeResponse(
         prescription_id=prescription_id,
         original_image_url=image_url,
+        patient_details={
+            "name": "Vivek S.",
+            "age_or_dob": "19 y",
+            "sex_gender": "M",
+            "patient_id": "10193",
+            "prescription_date": "14/10/2024",
+        },
+        doctor_details={
+            "doctor_name": "Dr. R. Mehta, MBBS, MD (General Medicine)",
+            "qualifications": "MBBS, MD (General Medicine)",
+            "clinic_or_hospital": "City Health Clinic, OPD Services",
+            "contact": "123, Medical Center Road, Bengaluru - 560001",
+            "registration_no": "123456",
+        },
+        prescription_summary="Four medications prescribed: Tab. Augmentin 625 Duo twice daily after meals for 5 days; Cap. Pan 40mg once daily 30m before breakfast for 5 days; Tab. Dolo 650mg TDS as needed for fever; Tab. Cetcip 10mg once daily at bedtime.",
         fields={
             "medicine_name": FieldExtractionItem(
                 value="Augmentin 625 Duo",
@@ -113,13 +128,13 @@ def get_confident_fixture(prescription_id: str = "DEMO-RX-01", image_url: str = 
             difficulty_tag="Clear Handwriting",
             overall_status="VERIFIED",
             document_confidence=0.95,
-            patient_info=PatientInfo(name="Demo Patient", age_gender="Adult / 42Y"),
+            patient_info=PatientInfo(name="Vivek S.", age_gender="19 / M"),
             prescriber_info=PrescriberInfo(
-                name="Example Prescriber, M.D. (Internal Medicine)",
-                qualifications="Consulting Physician (Illustrative Demo)",
-                registration_no="Demo Reg. No. 00000",
-                clinic_name="Example Clinical Practice",
-                clinic_address="Sample Clinic Address (Evaluation Demo)",
+                name="Dr. R. Mehta, MBBS, MD (General Medicine)",
+                qualifications="MBBS, MD (General Medicine)",
+                registration_no="123456",
+                clinic_name="City Health Clinic",
+                clinic_address="123, Medical Center Road, Bengaluru - 560001",
             ),
             extracted_entities=[
                 ExtractedEntity(
@@ -280,11 +295,26 @@ def get_uncertain_fixture(prescription_id: str = "DEMO-RX-02", image_url: str = 
     return res
 
 
-def get_lasa_fixture(prescription_id: str = "DEMO-RX-04", image_url: str = "/uploads/samples/sample-standard.svg") -> PrescriptionAnalyzeResponse:
+def get_lasa_fixture(prescription_id: str = "DEMO-RX-02", image_url: str = "/samples/cardiology-clinic-slip.png") -> PrescriptionAnalyzeResponse:
     """Fixture 3: Look-Alike Sound-Alike Conflict (Metformin vs Metronidazole)"""
     return PrescriptionAnalyzeResponse(
         prescription_id=prescription_id,
         original_image_url=image_url,
+        patient_details={
+            "name": "Patient ID: 67201",
+            "age_or_dob": "58 y",
+            "sex_gender": "M",
+            "patient_id": "67201",
+            "prescription_date": "14/10/2024",
+        },
+        doctor_details={
+            "doctor_name": "Dr. Anil Kumar, MD, DM (Cardiology)",
+            "qualifications": "MD, DM (Cardiology)",
+            "clinic_or_hospital": "Sunrise MultiSpeciality Hospital, Dept of Cardiology",
+            "contact": "080-4123 5678",
+            "registration_no": "KMC 87654",
+        },
+        prescription_summary="Two cardiometabolic medications prescribed: Tab. Metformin 500mg twice daily with meals for glycemic management; Tab. Telmisartan 40mg once daily in morning post-cibum for blood pressure control. Educational LASA screening alert noted for Metformin vs Metronidazole.",
         fields={
             "medicine_name": FieldExtractionItem(
                 value="Glyciphage 500 / Metformin",
@@ -367,18 +397,18 @@ def get_lasa_fixture(prescription_id: str = "DEMO-RX-04", image_url: str = "/upl
         data=PrescriptionData(
             accession_id=prescription_id,
             script_sample_key="rx-sample-2",
-            scenario_title="Demo Case 04 (Look-Alike Sound-Alike Similarity Example)",
-            scenario_subtitle="Illustrative orthographic & phonetic similarity flag between Metformin and Metronidazole",
+            scenario_title="Cardiometabolic Script (LASA)",
+            scenario_subtitle="Cardiometabolic prescription with 2 entries and illustrative LASA screening flag",
             difficulty_tag="LASA Similarity",
             overall_status="SAFETY_ALERT",
             document_confidence=0.85,
-            patient_info=PatientInfo(name="Demo Patient", age_gender="Adult / 56Y"),
+            patient_info=PatientInfo(name="Patient ID: 67201", age_gender="58 y / M"),
             prescriber_info=PrescriberInfo(
-                name="Example Prescriber, M.D.",
-                qualifications="Consulting Physician (Illustrative Demo)",
-                registration_no="Demo Reg. No. 00000",
-                clinic_name="Example Clinical Practice",
-                clinic_address="Demo Medical Center · Illustrative Record",
+                name="Dr. Anil Kumar, MD, DM (Cardiology)",
+                qualifications="MD, DM (Cardiology)",
+                registration_no="KMC 87654",
+                clinic_name="Sunrise MultiSpeciality Hospital",
+                clinic_address="45, Palace Road, Bengaluru - 560052 | Ph: 080-4123 5678",
             ),
             extracted_entities=[
                 ExtractedEntity(
@@ -505,54 +535,69 @@ def get_lasa_fixture(prescription_id: str = "DEMO-RX-04", image_url: str = "/upl
     )
 
 
-def get_abstained_fixture(prescription_id: str = "DEMO-RX-05", image_url: str = "/uploads/samples/sample-standard.svg") -> PrescriptionAnalyzeResponse:
+def get_abstained_fixture(prescription_id: str = "DEMO-RX-03", image_url: str = "/samples/childcare-paediatric-sheet.png") -> PrescriptionAnalyzeResponse:
     """Fixture 4: Full Document Clinical Abstention (Severe Stroke Ambiguity)"""
     return PrescriptionAnalyzeResponse(
         prescription_id=prescription_id,
         original_image_url=image_url,
+        patient_details={
+            "name": "Aarav S.",
+            "age_or_dob": "5 y",
+            "sex_gender": "M",
+            "patient_id": "P-4587",
+            "prescription_date": "18/11/2024",
+        },
+        doctor_details={
+            "doctor_name": "Dr. Neha Sharma, MD (Paediatrics)",
+            "qualifications": "Fellowship in Child Health · Reg. No. MMC 201045",
+            "clinic_or_hospital": "ChildCare Paediatric Clinic",
+            "contact": "080-2345 6789",
+            "registration_no": "MMC 201045",
+        },
+        prescription_summary="Pediatric script containing 3 entries. Critical ambiguity detected on Prednisolone dosage strength ([1.0mg vs 10mg]); automated confirmation withheld for patient safety. Professional pharmacist verification required.",
         fields={
             "medicine_name": FieldExtractionItem(
-                value="UNCONFIRMED · Model Abstained",
-                confidence=0.28,
-                status="flagged",
-                candidates=["Model Abstained"],
-                explanation="Severe cursive overlapping ink and non-decipherable strokes trigger safety policy.",
-                uncertainty_reason="Severe stroke overlap, non-standard cursive abbreviations, ink bleed.",
-                verification_instruction="Direct pharmacist audit or contacting prescriber required. Do not dispense automatically.",
+                value="Omnacortil / Prednisolone [ABSTAINED]",
+                confidence=0.74,
+                status="uncertain",
+                candidates=["Omnacortil", "Prednisolone"],
+                explanation="Brand Prednisolone recognized with moderate stroke confidence, but dosage ligature triggers system-level selective abstention.",
+                uncertainty_reason="Decimal point ligature obscured by ink bleed.",
+                verification_instruction="Check handwritten stroke on physical prescription slip; pharmacist verification required.",
             ),
             "dosage": FieldExtractionItem(
-                value="UNCONFIRMED · Model Abstained",
-                confidence=0.22,
+                value="AMBIGUOUS: 1.0 mg vs 10 mg [FLAGGED]",
+                confidence=0.42,
                 status="flagged",
-                candidates=["Model Abstained"],
-                explanation="Degraded stroke contours prevent safe numerical extraction.",
-                uncertainty_reason="Numerical ligature degraded beyond diagnostic threshold.",
-                verification_instruction="Verify dosage strength directly against prescriber records.",
+                candidates=["1.0 mg", "10 mg"],
+                explanation="Decimal ligature degraded. Elevated epistemic uncertainty. Dosage ambiguity exists between 1.0mg and 10mg.",
+                uncertainty_reason="The decimal point '.' is masked by ink smear and paper crease. Visually ambiguous between 1.0 mg and 10 mg.",
+                verification_instruction="SYSTEM ABSTAINED. DO NOT DISPENSE WITHOUT CONFIRMATION FROM PRESCRIBER. Cursive ligature is ambiguous between 1.0mg and 10mg; confirm intended dose.",
             ),
             "frequency": FieldExtractionItem(
-                value="UNCONFIRMED · Model Abstained",
-                confidence=0.25,
-                status="flagged",
-                candidates=["Model Abstained"],
-                explanation="Timing loop indistinguishable between daily, bidaily, or prn.",
-                uncertainty_reason="Unresolvable cursive timing loop.",
-                verification_instruction="Obtain verbal or digitized confirmation of posology from prescriber.",
+                value="1-0-0 (Morning) [Needs Verification]",
+                confidence=0.58,
+                status="uncertain",
+                candidates=["1-0-0", "1-0-1"],
+                explanation="Timing loop ambiguous between once-daily (1-0-0) and twice-daily (1-0-1).",
+                uncertainty_reason="Trailing cursive loop resembles both OD and BD.",
+                verification_instruction="Verify dosing frequency directly with prescribing paediatrician.",
             ),
             "duration": FieldExtractionItem(
-                value="UNCONFIRMED · Model Abstained",
-                confidence=0.30,
+                value="3-5 days taper [AMBIGUOUS]",
+                confidence=0.46,
                 status="flagged",
-                candidates=["Model Abstained"],
-                explanation="Day count obscured by ink smear.",
-                uncertainty_reason="Paper fold and ink bleed across duration field.",
-                verification_instruction="Check physical prescription.",
+                candidates=["3 days", "5 days"],
+                explanation="Tapering schedule shorthand is truncated at bottom paper margin.",
+                uncertainty_reason="Stroke clipped by lower paper fold boundary.",
+                verification_instruction="Check prescriber clinic chart for steroid taper protocol.",
             ),
             "abbreviation": FieldExtractionItem(
-                value="UNCONFIRMED · Model Abstained",
-                confidence=0.20,
-                status="flagged",
-                candidates=["Model Abstained"],
-                explanation="Abbreviation loop non-standard.",
+                value="OD (Once Daily) / PC (After breakfast)",
+                confidence=0.76,
+                status="uncertain",
+                candidates=["OD", "PC"],
+                explanation="Morning post-cibum administration recommended to synchronize with diurnal cortisol rhythm.",
                 uncertainty_reason="Unrecognized handwriting shorthand.",
                 verification_instruction="Confirm clinical notes.",
             ),
@@ -560,18 +605,18 @@ def get_abstained_fixture(prescription_id: str = "DEMO-RX-05", image_url: str = 
         lasa_flags=[],
         validation={
             "medicine_name": ValidationItem(
-                found_in_db=False,
-                source="CDSCO Formulary · Automated Matching Abstained",
-                matched_entity_name="Abstained by Safety Engine",
-                generic_salt="Unverified",
-                rxnorm_cui="None",
-                cdsco_schedule="Unverified",
+                found_in_db=True,
+                source="Indian Pharmacopoeia & US NLM RxNorm",
+                matched_entity_name="Prednisolone (Omnacortil)",
+                generic_salt="Prednisolone",
+                rxnorm_cui="8640",
+                cdsco_schedule="Schedule H (Prescription Corticosteroid)",
             )
         },
         explanation=MultilingualSummary(
-            en="SYSTEM ABSTAINED: The handwriting is too ambiguous or degraded for safe automated interpretation. Please consult your doctor or pharmacist.",
-            hi="प्रणाली ने व्याख्या रोक दी है: लिखावट बहुत अस्पष्ट है। कृपया अपने डॉक्टर या फार्मासिस्ट से परामर्श लें।",
-            mr="हस्ताक्षर अत्यंत अस्पष्ट असल्याने प्रणालीने अर्थ लावणे थांबवले आहे. कृपया डॉक्टरांचा किंवा फार्मासिस्टचा सल्ला घ्या.",
+            en="SYSTEM ABSTAINED: Prednisolone dosage ligature is ambiguous between 1.0mg and 10mg. Mandatory physician or pharmacist verification required prior to administration.",
+            hi="प्रणाली ने व्याख्या रोक दी है: प्रेडनिसोलोन खुराक 1.0mg और 10mg के बीच अस्पष्ट है। दवा देने से पहले डॉक्टर या फार्मासिस्ट से सत्यापन अनिवार्य है।",
+            mr="प्रणालीने अर्थ लावणे थांबवले आहे: प्रेडनिसोलोन डोस 1.0mg आणि 10mg मध्ये अस्पष्ट आहे. औषध देण्यापूर्वी डॉक्टर किंवा फार्मसिस्टकडून खात्री करणे बंधनकारक आहे.",
         ),
         requires_human_review=True,
         status="abstain",
@@ -583,27 +628,27 @@ def get_abstained_fixture(prescription_id: str = "DEMO-RX-05", image_url: str = 
             pipeline_stages_completed=4,
         ),
         document_telemetry=DocumentTelemetry(
-            estimated_dpi=180,
-            contrast_ratio=1.85,
-            skew_angle_deg=-3.4,
-            illegibility_score=0.78,
+            estimated_dpi=200,
+            contrast_ratio=2.95,
+            skew_angle_deg=-2.1,
+            illegibility_score=0.38,
             orientation="Portrait",
         ),
         data=PrescriptionData(
             accession_id=prescription_id,
             script_sample_key="rx-sample-3",
-            scenario_title="Severe Stroke Ambiguity & Paper Degradation",
-            scenario_subtitle="Illustrative scenario of autonomous abstention on non-decipherable script",
+            scenario_title="Pediatric Script (Ambiguity)",
+            scenario_subtitle="Pediatric script demonstrating selective abstention on ambiguous decimal ligature",
             difficulty_tag="Severe Ambiguity",
             overall_status="ABSTAINED",
             document_confidence=0.28,
-            patient_info=PatientInfo(name="Demo Patient (Evaluation)", age_gender="Demo Record"),
+            patient_info=PatientInfo(name="Aarav S.", age_gender="5 y / M"),
             prescriber_info=PrescriberInfo(
-                name="Example Prescriber, M.D.",
-                qualifications="Consulting Specialist (Illustrative Demo)",
-                registration_no="Demo Reg. No. 00000",
-                clinic_name="Clinical Practice",
-                clinic_address="Medical Center Record",
+                name="Dr. Neha Sharma, MD (Paediatrics)",
+                qualifications="Fellowship in Child Health · Reg. No. MMC 201045",
+                registration_no="MMC 201045",
+                clinic_name="ChildCare Paediatric Clinic",
+                clinic_address="Child Wellness | Immunization | Growth & Development",
             ),
             extracted_entities=[
                 ExtractedEntity(

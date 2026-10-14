@@ -14,7 +14,6 @@ import {
   computeImageHeuristics,
 } from '../utils/imageHeuristics';
 import { prescriptionService } from '../services/prescriptionService';
-import { SAMPLE_PRESCRIPTION_CANVASES } from '../data/sampleHandwrittenSvg';
 import {
   ArrowLeft,
   ArrowRight,
@@ -90,25 +89,31 @@ export const UploadPage: React.FC<UploadPageProps> = ({
   const handleSelectCuratedSample = (sampleId: string) => {
     setErrorMessage(null);
 
-    const canvas = SAMPLE_PRESCRIPTION_CANVASES[sampleId] || SAMPLE_PRESCRIPTION_CANVASES['rx-sample-1'];
     const previewUrl =
       sampleId === 'rx-sample-2'
-        ? '/assets/sample-lasa.svg'
+        ? '/samples/cardiology-clinic-slip.png'
         : sampleId === 'rx-sample-3'
-        ? '/assets/sample-flagged.svg'
-        : '/assets/sample-standard.svg';
+        ? '/samples/childcare-paediatric-sheet.png'
+        : '/samples/handwritten-clinic-pad.png';
+
+    const fileName =
+      sampleId === 'rx-sample-2'
+        ? 'cardiology-clinic-slip.png'
+        : sampleId === 'rx-sample-3'
+        ? 'childcare-paediatric-sheet.png'
+        : 'handwritten-clinic-pad.png';
 
     const metrics = computeImageHeuristics(
       2480,
       3508,
       1024 * 1024 * 1.8,
-      'image/svg+xml'
+      'image/png'
     );
 
     setUploadedData({
       file: null,
       previewUrl,
-      fileName: `${canvas.accessionId}.svg`,
+      fileName,
       source: 'curated_sample',
       sampleId,
       metrics,
@@ -192,7 +197,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
               <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
               <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
+                <span className="font-brand-serif text-[#102A43] dark:text-white">Dawa</span><span className="text-[#155EEF] dark:text-[#4B8BFF]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">/ Prescription Intake</span>
             </div>
@@ -200,8 +205,8 @@ export const UploadPage: React.FC<UploadPageProps> = ({
 
           <div className="flex items-center gap-3">
             <ThemeSwitcher />
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#7C5A8B] dark:text-[#F472B6] bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 px-3 py-1 rounded-full border border-[#F472B6]/30">
-              <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#155EEF] dark:text-[#4B8BFF] bg-[#EAF2FF] dark:bg-[#16263D] px-3 py-1 rounded-full border border-[#155EEF]/30">
+              <span className="w-2 h-2 rounded-full bg-[#155EEF] animate-pulse" />
               <span>Intake Pipeline Ready</span>
             </div>
           </div>
@@ -212,8 +217,8 @@ export const UploadPage: React.FC<UploadPageProps> = ({
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         {/* Page Header */}
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/40 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
-            <FileCheck2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#EAF2FF] dark:bg-[#16263D] border border-[#155EEF]/30 text-[#102A43] dark:text-[#F5F7FA] text-xs sm:text-sm font-medium">
+            <FileCheck2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Stage 01: Document Intake</span>
           </div>
 
@@ -257,7 +262,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
               <div className="space-y-1 text-center sm:text-left">
                 <div className="text-base sm:text-lg font-bold text-theme-primary flex items-center justify-center sm:justify-start gap-2">
                   <span>Prescription:</span>
-                  <span className="font-mono text-[#7C5A8B] dark:text-[#F472B6]">{uploadedData.fileName}</span>
+                  <span className="font-mono text-[#155EEF] dark:text-[#4B8BFF]">{uploadedData.fileName}</span>
                   <Badge variant="emerald" size="sm">
                     Ready
                   </Badge>

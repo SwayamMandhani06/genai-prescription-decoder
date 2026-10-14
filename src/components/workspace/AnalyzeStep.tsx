@@ -132,7 +132,32 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
               err.message.toLowerCase().includes('high demand') ||
               err.message.toLowerCase().includes('temporarily unavailable')));
 
-        if (isTimeout) {
+        const isDocumentRejected =
+          err?.statusCode === 422 ||
+          err?.code === 'DOCUMENT_NOT_PRESCRIPTION' ||
+          err?.code === 'IMAGE_QUALITY_INSUFFICIENT' ||
+          (typeof err?.message === 'string' &&
+            (err.message.toLowerCase().includes('not appear to be a medical prescription') ||
+              err.message.toLowerCase().includes('not a medical prescription') ||
+              err.message.toLowerCase().includes('landscape') ||
+              err.message.toLowerCase().includes('receipt') ||
+              err.message.toLowerCase().includes('blank') ||
+              err.message.toLowerCase().includes('packaging') ||
+              err.message.toLowerCase().includes('portrait') ||
+              err.message.toLowerCase().includes('selfie') ||
+              err.message.toLowerCase().includes('food') ||
+              err.message.toLowerCase().includes('animal')));
+
+        if (isDocumentRejected) {
+          setErrorState({
+            title: 'Image Rejected: Not a Medical Prescription',
+            message:
+              err?.message ||
+              'The uploaded image was inspected by the clinical vision pipeline and rejected because it does not appear to be an authentic doctor prescription. To protect medical safety, no medications were extracted.',
+            code: 'DOCUMENT_REJECTED_422',
+            isRejected: true,
+          } as any);
+        } else if (isTimeout) {
           setErrorState({
             title: 'Prescription Analysis Timed Out (Gateway 504)',
             message:
@@ -208,7 +233,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
         </div>
 
         <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium border border-theme bg-surface shrink-0 self-start sm:self-auto shadow-xs">
-          <span className={`w-2.5 h-2.5 rounded-full ${apiConfig.useMock ? 'bg-purple-500' : 'bg-emerald-500 animate-pulse'}`} />
+          <span className={`w-2.5 h-2.5 rounded-full ${apiConfig.useMock ? 'bg-[#155EEF]' : 'bg-emerald-500 animate-pulse'}`} />
           <span className="text-theme-secondary">
             {apiConfig.useMock ? 'Demonstration Mock Mode' : 'Live FastAPI Backend (Port 8001)'}
           </span>
@@ -235,12 +260,12 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                     top: `${(activeStageIdx + 1) * 18}%`,
                     transition: 'top 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
-                  className="absolute inset-x-0 h-12 bg-gradient-to-b from-[#F472B6]/10 via-[#F472B6]/25 to-transparent pointer-events-none border-b-2 border-[#F472B6]/50"
+                  className="absolute inset-x-0 h-12 bg-gradient-to-b from-[#155EEF]/10 via-[#155EEF]/25 to-transparent pointer-events-none border-b-2 border-[#155EEF]/70 shadow-[0_4px_12px_rgba(21,94,239,0.3)]"
                 />
               )}
 
               {/* Prescription Document Display */}
-              {uploadedData?.source === 'user_upload' && uploadedData.previewUrl ? (
+              {uploadedData?.previewUrl ? (
                 <div className="flex flex-col items-center">
                   <img
                     src={uploadedData.previewUrl}
@@ -260,7 +285,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                     <div className="space-y-4 text-slate-900">
                       <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                         <div>
-                          <div className="font-semibold text-[#4A2E4D] text-[11px]">
+                          <div className="font-semibold text-[#102A43] text-[11px]">
                             {activeCanvas.doctorHeader.clinicName}
                           </div>
                           <div className="font-bold text-slate-900 text-xs">
@@ -316,12 +341,12 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                   </>
                 ) : !isDone ? (
                   <>
-                    <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-ping shrink-0" />
+                    <span className="w-2 h-2 rounded-full bg-[#155EEF] animate-ping shrink-0" />
                     <span className="truncate">
                       {elapsedSeconds < 10
                         ? 'Scanning handwriting ink trajectories...'
                         : elapsedSeconds < 25
-                        ? 'Deciphering cursive script with Gemini 3.8 Flash...'
+                        ? 'Deciphering cursive script with multimodal vision AI...'
                         : elapsedSeconds < 40
                         ? 'Grounding medicines against CDSCO & RxNorm...'
                         : 'Synthesizing verified posology explanation...'}
@@ -362,7 +387,13 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
 
               <div className="p-3 rounded-lg bg-surface/70 border border-theme text-xs text-theme-secondary space-y-1">
                 <strong className="text-theme-primary block">Recommended next steps:</strong>
-                {errorState.isTimeout ? (
+                {(errorState as any).isRejected ? (
+                  <>
+                    <p>1. Ensure you are uploading an authentic doctor prescription pad, clinic Rx slip, or hospital discharge order.</p>
+                    <p>2. Do not upload commercial receipts, personal photos, landscape scenes, or medication packaging without a prescription.</p>
+                    <p>3. Click &ldquo;Back to Review&rdquo; or re-upload a clear photograph of an authentic medical prescription.</p>
+                  </>
+                ) : errorState.isTimeout ? (
                   <>
                     <p>1. Click &ldquo;Retry Analysis&rdquo; below to send a fresh request to the multimodal inference worker.</p>
                     <p>2. If handwriting is heavily smudged or faint, click &ldquo;Back to Review&rdquo; to adjust contrast or rotation.</p>
@@ -383,7 +414,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
               <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
                   onClick={handleRetry}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#155EEF] to-[#2E90FA] hover:from-[#1249C7] hover:to-[#155EEF] text-white text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-sm"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Retry Analysis</span>
@@ -408,14 +439,14 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                   <span className="font-medium text-theme-secondary">
                     Progress
                   </span>
-                  <span className="font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
+                  <span className="font-semibold text-[#155EEF] dark:text-[#4B8BFF]">
                     {progressPercent}%
                   </span>
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-surface-subtle overflow-hidden border border-theme">
                   <div
                     style={{ width: `${progressPercent}%`, transition: 'width 0.4s ease-out' }}
-                    className="h-full bg-[#4A2E4D] dark:bg-[#F472B6] rounded-full"
+                    className="h-full bg-gradient-to-r from-[#155EEF] to-[#2E90FA] rounded-full"
                   />
                 </div>
               </div>
@@ -442,7 +473,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                           <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                         ) : isCurrent ? (
                           <span className="w-4 h-4 flex items-center justify-center">
-                            <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-[#155EEF] animate-pulse" />
                           </span>
                         ) : (
                           <span className="w-4 h-4 flex items-center justify-center text-[11px] text-theme-muted">
@@ -455,7 +486,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                         <h4
                           className={`text-base sm:text-lg ${
                             isCurrent
-                              ? 'font-bold text-[#4A2E4D] dark:text-[#F472B6]'
+                              ? 'font-bold text-[#155EEF] dark:text-[#4B8BFF]'
                               : isPassed
                               ? 'font-bold text-theme-primary'
                               : 'font-medium text-theme-secondary'
@@ -477,7 +508,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
                 <div className="pt-4 border-t border-theme animate-in fade-in duration-300">
                   <button
                     onClick={handleProceed}
-                    className="w-full py-4 px-6 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm cursor-pointer group"
+                    className="w-full py-4 px-6 rounded-full bg-gradient-to-r from-[#155EEF] to-[#2E90FA] hover:from-[#1249C7] hover:to-[#155EEF] text-white text-base font-semibold transition-all flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer group"
                   >
                     <ShieldCheck className="w-5 h-5" />
                     <span>View Findings &amp; Interpretation</span>

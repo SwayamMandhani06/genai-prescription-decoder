@@ -161,10 +161,10 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         # Resolve real sample bytes if sample_id is provided without direct file upload
         if (not image_bytes or len(image_bytes) < 10) and options.sample_id:
             sample_map = {
-                "rx-sample-1": "data/samples/sample_01_clear.png",
-                "rx-sample-2": "data/samples/sample_06_lasa_pair.png",
-                "rx-sample-3": "data/samples/sample_07_ambiguous_abstain.png",
-                "sample-standard": "data/samples/sample_01_clear.png",
+                "rx-sample-1": "data/samples/handwritten-clinic-pad.png",
+                "rx-sample-2": "data/samples/cardiology-clinic-slip.png",
+                "rx-sample-3": "data/samples/childcare-paediatric-sheet.png",
+                "sample-standard": "data/samples/handwritten-clinic-pad.png",
             }
             sample_file = sample_map.get(options.sample_id.lower())
             if sample_file:
@@ -220,6 +220,32 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             scenario=scenario,
         )
         t_inference_ms = (time.perf_counter() - t_inf_start) * 1000.0
+
+        # ------------------------------------------------------------------
+        # Document-Type Assessment Gate (Phase 2 Critical Safety Protection)
+        # Prevents unrelated images (landscapes, selfies, receipts, packaging, etc.)
+        # from producing hallucinated or fabricated prescription findings.
+        # ------------------------------------------------------------------
+        if not extraction_result.is_prescription or extraction_result.document_type != "prescription":
+            rejection_message = (
+                extraction_result.rejection_reason
+                or f"The uploaded image does not appear to be a medical prescription pad or doctor order slip (detected document type: '{extraction_result.document_type}')."
+            )
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message=rejection_message,
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={
+                    "document_type": extraction_result.document_type,
+                    "rejection_reason": extraction_result.rejection_reason,
+                    "confidence": extraction_result.document_type_confidence,
+                    "recommendation": "Please upload a clear photograph or scan of an authentic prescription containing doctor handwriting or clinical posology.",
+                },
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
 
         # ------------------------------------------------------------------
         # 4. Map Extraction Result to Canonical PLAN.md & UI Contracts
@@ -292,7 +318,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         primary_med_name = (
             extraction_result.medicines[0].medicine_name.value
             if extraction_result.medicines and extraction_result.medicines[0].medicine_name.value
-            else "Extracted Medication"
+            else ""
         )
         primary_dosage = (
             extraction_result.medicines[0].dosage.value
@@ -310,9 +336,33 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             else ""
         )
 
-        posology_summary_en = f"Take {primary_med_name} {primary_dosage} {primary_freq}."
-        posology_summary_hi = f"{primary_med_name} {primary_dosage} {primary_freq} लें।"
-        posology_summary_mr = f"{primary_med_name} {primary_dosage} {primary_freq} घ्या."
+        if primary_med_name:
+            pos_parts = [f"Take {primary_med_name}"]
+            if primary_dosage:
+                pos_parts.append(primary_dosage)
+            if primary_freq:
+                pos_parts.append(primary_freq)
+            if primary_duration:
+                pos_parts.append(f"for {primary_duration}")
+            posology_summary_en = " ".join(pos_parts) + "."
+
+            hi_parts = [primary_med_name]
+            if primary_dosage:
+                hi_parts.append(primary_dosage)
+            if primary_freq:
+                hi_parts.append(primary_freq)
+            posology_summary_hi = " ".join(hi_parts) + " लें।"
+
+            mr_parts = [primary_med_name]
+            if primary_dosage:
+                mr_parts.append(primary_dosage)
+            if primary_freq:
+                mr_parts.append(primary_freq)
+            posology_summary_mr = " ".join(mr_parts) + " घ्या."
+        else:
+            posology_summary_en = "No prescribed medications identified on document."
+            posology_summary_hi = "दस्तावेज़ पर कोई निर्धारित दवा नहीं मिली।"
+            posology_summary_mr = "दस्तऐवजावर कोणतेही विहित औषध आढळले नाही."
         t_entity_mapping_ms = (time.perf_counter() - t_map_start) * 1000.0
 
         # ------------------------------------------------------------------
@@ -550,16 +600,16 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             )
         else:
             ui_val_evidence = ValidationEvidence(
-                candidate_name=primary_med_name,
-                matched_entity_name=primary_med_name,
-                generic_salt=primary_med_name,
+                candidate_name=primary_med_name or "Not Observed",
+                matched_entity_name=primary_med_name or "Not Observed",
+                generic_salt=primary_med_name or "Not Observed",
                 validation_status="unverified",
                 status_badge_text="UNVERIFIED",
-                cdsco_schedule="Schedule H Prescription Drug",
+                cdsco_schedule="N/A",
                 rxnorm_cui="N/A",
                 atc_code="N/A",
-                therapeutic_class="Prescription Medicine",
-                indications="Clinical Posology Recorded",
+                therapeutic_class="N/A",
+                indications="No validated formulary match found" if primary_med_name else "No posology recorded",
                 evidence_source="Reference Validation Service",
             )
         t_abstention_ms = (time.perf_counter() - t_abs_start) * 1000.0

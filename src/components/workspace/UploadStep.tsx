@@ -107,20 +107,26 @@ export const UploadStep: React.FC<UploadStepProps> = ({
 
   const handleSelectCuratedSample = (sampleId: string) => {
     setErrorMsg(null);
-    const canvas = SAMPLE_PRESCRIPTION_CANVASES[sampleId] || SAMPLE_PRESCRIPTION_CANVASES['rx-sample-1'];
     const previewUrl =
       sampleId === 'rx-sample-2'
-        ? '/assets/sample-lasa.svg'
+        ? '/samples/cardiology-clinic-slip.png'
         : sampleId === 'rx-sample-3'
-        ? '/assets/sample-flagged.svg'
-        : '/assets/sample-standard.svg';
+        ? '/samples/childcare-paediatric-sheet.png'
+        : '/samples/handwritten-clinic-pad.png';
 
-    const metrics = computeImageHeuristics(2480, 3508, 1024 * 1024 * 1.8, 'image/svg+xml');
+    const fileName =
+      sampleId === 'rx-sample-2'
+        ? 'cardiology-clinic-slip.png'
+        : sampleId === 'rx-sample-3'
+        ? 'childcare-paediatric-sheet.png'
+        : 'handwritten-clinic-pad.png';
+
+    const metrics = computeImageHeuristics(2480, 3508, 1024 * 1024 * 1.8, 'image/png');
 
     onSetUploadedData({
       file: null,
       previewUrl,
-      fileName: `${canvas.accessionId}.svg`,
+      fileName,
       source: 'curated_sample',
       sampleId,
       metrics,
@@ -150,19 +156,19 @@ export const UploadStep: React.FC<UploadStepProps> = ({
     {
       id: 'rx-sample-1',
       title: 'Standard Outpatient Script',
-      subtitle: 'Augmentin 625 Duo · Pan 40 · Dolo 650',
+      subtitle: 'Augmentin 625 Duo · Pan 40 · Dolo 650 · Cetcip 10',
       difficulty: 'High Legibility',
     },
     {
       id: 'rx-sample-2',
       title: 'Cardiometabolic Script (LASA)',
-      subtitle: 'Metformin 500mg (Sound-alike risk)',
+      subtitle: 'Metformin 500mg · Telmisartan 40mg',
       difficulty: 'LASA Risk Alert',
     },
     {
       id: 'rx-sample-3',
       title: 'Pediatric Script (Ambiguity)',
-      subtitle: 'Prednisolone decimal ligature ambiguity',
+      subtitle: 'Levolin · Prednisolone [Ambiguous] · Montair LC Kid',
       difficulty: 'Selective Abstention',
     },
   ];
@@ -196,8 +202,8 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             onDrop={handleDrop}
             className={`relative rounded-3xl border-2 transition-all overflow-hidden flex flex-col items-center justify-center min-h-[460px] p-6 sm:p-10 ${
               isDragging
-                ? 'border-[#F472B6] bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30'
-                : 'border-dashed border-theme bg-surface/40'
+                ? 'border-[#155EEF] bg-[#EAF2FF]/40 dark:bg-[#155EEF]/15 shadow-md'
+                : 'border-dashed border-[#5073A5]/30 dark:border-[#B4C8E1]/25 bg-surface/60 hover:bg-surface/80 hover:border-[#155EEF]/50 shadow-xs'
             }`}
           >
             <input
@@ -220,8 +226,20 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     }}
                     className="max-w-md w-full shadow-md rounded-2xl prescription-paper p-6 border border-theme origin-center"
                   >
-                    {uploadedData.source === 'curated_sample' ? (
-                      /* Curated Sample SVG Preview dynamically reflecting selected scenario */
+                    {uploadedData.previewUrl ? (
+                      /* Mounted Prescription Image Preview */
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={uploadedData.previewUrl}
+                          alt="Prescription Document"
+                          className="w-full max-h-[380px] object-contain rounded-lg shadow-xs block bg-white"
+                        />
+                        <div className="pt-2 text-[10px] text-slate-600 font-mono text-center">
+                          {uploadedData.fileName}
+                        </div>
+                      </div>
+                    ) : (
+                      /* Curated Sample SVG Preview Fallback */
                       (() => {
                         const activeCanvas =
                           SAMPLE_PRESCRIPTION_CANVASES[uploadedData.sampleId || 'rx-sample-1'] ||
@@ -230,7 +248,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                           <div className="space-y-4 text-slate-900">
                             <div className="border-b border-slate-300 pb-2 flex justify-between items-start text-xs">
                               <div>
-                                <div className="font-semibold text-[#4A2E4D] text-[11px]">
+                                <div className="font-semibold text-[#102A43] text-[11px]">
                                   {activeCanvas.doctorHeader.clinicName}
                                 </div>
                                 <div className="font-bold text-slate-900 text-xs">
@@ -267,13 +285,6 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                           </div>
                         );
                       })()
-                    ) : (
-                      /* User Uploaded Image Preview */
-                      <img
-                        src={uploadedData.previewUrl}
-                        alt="Prescription Document"
-                        className="w-full max-h-[380px] object-contain rounded-lg shadow-xs"
-                      />
                     )}
                   </div>
                 </div>
@@ -285,7 +296,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                     className="px-3 py-1.5 rounded-xl bg-surface-subtle hover:bg-surface border border-theme text-xs font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer"
                     title="Replace Document"
                   >
-                    <UploadCloud className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                    <UploadCloud className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
                     <span>Replace</span>
                   </button>
 
@@ -334,7 +345,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             ) : (
               /* Empty State: Dropzone & Upload Action */
               <div className="space-y-5 text-center max-w-md">
-                <div className="w-16 h-16 rounded-3xl bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 flex items-center justify-center text-[#4A2E4D] dark:text-[#F472B6] mx-auto shadow-xs">
+                <div className="w-16 h-16 rounded-3xl bg-[#EAF2FF] dark:bg-[#155EEF]/20 border border-[#155EEF]/30 flex items-center justify-center text-[#155EEF] dark:text-[#4B8BFF] mx-auto shadow-xs">
                   <UploadCloud className="w-8 h-8" />
                 </div>
 
@@ -350,9 +361,9 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                 <div className="pt-2 flex justify-center">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-7 py-3.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-base font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm"
+                    className="btn-primary-pill group"
                   >
-                    <Camera className="w-4 h-4" />
+                    <Camera className="w-5 h-5" />
                     <span>Choose a prescription file</span>
                   </button>
                 </div>
@@ -369,10 +380,10 @@ export const UploadStep: React.FC<UploadStepProps> = ({
 
               <button
                 onClick={onContinueToReview}
-                className="px-7 py-3 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm group"
+                className="btn-primary-pill !min-h-[48px] !py-2.5 !px-6 !text-sm group"
               >
                 <span>Continue to Review</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           )}
@@ -383,7 +394,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
           {/* Curated Samples */}
           <div className="space-y-3">
             <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
               <span>Or choose a clinical sample:</span>
             </h3>
 
@@ -394,13 +405,13 @@ export const UploadStep: React.FC<UploadStepProps> = ({
                   onClick={() => handleSelectCuratedSample(sample.id)}
                   className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer ${
                     uploadedData?.sampleId === sample.id
-                      ? 'bg-surface border-[#4A2E4D] dark:border-[#F472B6] shadow-sm ring-1 ring-[#4A2E4D]/20 dark:ring-[#F472B6]/30'
+                      ? 'bg-surface border-[#155EEF] dark:border-[#4B8BFF] shadow-sm ring-1 ring-[#155EEF]/20 dark:ring-[#4B8BFF]/30'
                       : 'bg-surface-subtle/70 hover:bg-surface border-theme'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="font-bold text-theme-primary text-sm sm:text-base">{sample.title}</span>
-                    <span className="text-xs text-[#7C5A8B] dark:text-[#F472B6] font-semibold">
+                    <span className="text-xs text-[#155EEF] dark:text-[#4B8BFF] font-semibold">
                       {sample.difficulty}
                     </span>
                   </div>
@@ -413,27 +424,27 @@ export const UploadStep: React.FC<UploadStepProps> = ({
           {/* Document Quality Guidance - Quiet inline checklist without card wrapper */}
           <div className="space-y-3 pt-4 border-t border-theme">
             <h3 className="text-sm font-bold text-theme-primary flex items-center gap-1.5 uppercase tracking-wider">
-              <FileCheck2 className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+              <FileCheck2 className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
               <span>Document quality guidelines</span>
             </h3>
 
             <div className="space-y-2.5 text-sm text-theme-secondary leading-[1.6]">
               <div className="flex items-start gap-2.5">
-                <Sun className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
+                <Sun className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Even lighting:</strong> Minimal shadow over cursive handwriting.
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <RotateCw className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
+                <RotateCw className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Upright orientation:</strong> Rotate so physician header is at top.
                 </p>
               </div>
 
               <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
                 <p>
                   <strong className="text-theme-primary font-semibold">Sharp focus:</strong> Avoid motion blur for clear stroke tracing.
                 </p>

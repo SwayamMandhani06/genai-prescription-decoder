@@ -141,7 +141,15 @@ async def analyze_prescription(
         )
     elif sample_id:
         # Curated sample selection
-        public_image_url = f"/uploads/samples/{sample_id}.svg"
+        sample_img_map = {
+            "rx-sample-1": "/samples/handwritten-clinic-pad.png",
+            "rx-sample-2": "/samples/cardiology-clinic-slip.png",
+            "rx-sample-3": "/samples/childcare-paediatric-sheet.png",
+            "sample-1": "/samples/handwritten-clinic-pad.png",
+            "sample-2": "/samples/cardiology-clinic-slip.png",
+            "sample-3": "/samples/childcare-paediatric-sheet.png",
+        }
+        public_image_url = sample_img_map.get(sample_id.strip().lower(), f"/uploads/samples/{sample_id}.svg")
 
     # 3. Assemble pipeline execution options
     options = PipelineOptions(
