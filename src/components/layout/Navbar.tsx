@@ -75,81 +75,83 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo & Product Identification — Enlarged by 35% for strong visual presence */}
-          <button
-            onClick={onHomeClick}
-            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#155EEF] rounded-xl p-1"
-            aria-label="DawaAI Home"
-          >
-            <img
-              src="/brand/dawaai-logo.svg"
-              alt="DawaAI — Your Prescription, Made Clear."
-              className="h-10 sm:h-11 md:h-12 w-auto dark:hidden object-contain transition-transform duration-200 group-hover:scale-[1.02]"
-            />
-            <img
-              src="/brand/dawaai-logo-dark.svg"
-              alt="DawaAI — Your Prescription, Made Clear."
-              className="h-10 sm:h-11 md:h-12 w-auto hidden dark:block object-contain transition-transform duration-200 group-hover:scale-[1.02]"
-            />
-          </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex items-center justify-between min-h-[48px] relative">
+          {/* Logo & Product Identification */}
+          <div className="flex-1 flex items-center justify-start min-w-0">
+            <button
+              onClick={onHomeClick}
+              className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#155EEF] rounded-xl p-1"
+              aria-label="DawaAI Home"
+            >
+              <img
+                src="/brand/dawaai-logo.svg"
+                alt="DawaAI — Your Prescription, Made Clear."
+                className="h-10 sm:h-11 w-auto dark:hidden object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+              />
+              <img
+                src="/brand/dawaai-logo-dark.svg"
+                alt="DawaAI — Your Prescription, Made Clear."
+                className="h-10 sm:h-11 w-auto hidden dark:block object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+              />
+            </button>
+          </div>
 
-          {/* Primary Navigation (Desktop) — Distinctive visible glass pill */}
-          <nav className="hidden md:flex items-center gap-1 nav-pill-glass px-3 py-1.5 rounded-full shadow-xs">
+          {/* Primary Navigation (Desktop) — Mathematically Centered in Header */}
+          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 nav-pill-glass px-2.5 lg:px-3 py-1.5 rounded-full shadow-xs">
             <a
               href="#analyze"
               onClick={(e) => handleLinkClick(e, onNavigateToAnalyze, 'analyze')}
-              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
-              <ScanLine className="w-3.5 h-3.5 text-theme-muted" />
+              <ScanLine className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Analyze</span>
             </a>
 
             <a
               href="#how-it-works"
               onClick={(e) => handleLinkClick(e, onNavigateToHowItWorks, 'how-it-works')}
-              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
-              <HelpCircle className="w-3.5 h-3.5 text-theme-muted" />
+              <HelpCircle className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>How It Works</span>
             </a>
 
             <a
               href="#safety"
               onClick={(e) => handleLinkClick(e, onNavigateToSafety, 'safety')}
-              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-theme-muted" />
+              <ShieldCheck className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Safety</span>
             </a>
 
             <a
               href="#faq"
               onClick={(e) => handleLinkClick(e, undefined, 'faq')}
-              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <span>FAQ</span>
             </a>
 
             <button
               onClick={onNavigateToResearch}
-              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <FileText className="w-3.5 h-3.5 text-theme-muted" />
+              <FileText className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Research</span>
             </button>
           </nav>
 
-          {/* Right Action Bar (Desktop) */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          {/* Right Action Bar (Desktop) — Balanced Right Edge Alignment */}
+          <div className="hidden sm:flex flex-1 items-center justify-end gap-2 sm:gap-2.5">
             {onOpenResultsClick && (
               <button
                 onClick={onOpenResultsClick}
-                className="px-4 py-2 rounded-full border border-theme bg-surface hover:bg-surface-subtle text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs min-h-[46px]"
+                className="px-3.5 py-2 rounded-full border border-theme bg-surface hover:bg-surface-subtle text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs min-h-[42px]"
               >
                 <FileCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
-                <span>Findings</span>
+                <span className="hidden lg:inline">Findings</span>
               </button>
             )}
 
@@ -158,7 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="btn-header-cta"
+                className="btn-header-cta !min-h-[42px] !py-2 !px-4 text-xs sm:text-sm whitespace-nowrap"
               >
                 <UploadCloud className="w-4 h-4" />
                 <span>Analyze a Prescription</span>
@@ -173,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="btn-header-cta !min-h-[38px] !py-1.5 !px-3.5 !text-xs"
+                className="btn-header-cta !min-h-[38px] !py-1.5 !px-3.5 !text-xs whitespace-nowrap"
               >
                 Upload
               </button>
@@ -181,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-theme-secondary hover:text-theme-primary border border-theme bg-surface/70"
+              className="p-2 rounded-xl text-theme-secondary hover:text-theme-primary border border-theme bg-surface/70 cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

@@ -114,7 +114,7 @@ export const InteractiveAnalyzer: React.FC = () => {
           </div>
 
           {/* Vernacular Language Selector */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <span className="text-xs font-mono text-theme-secondary flex items-center gap-1">
               <Languages className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
               <span>Vernacular Posology:</span>

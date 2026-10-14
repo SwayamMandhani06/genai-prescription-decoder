@@ -165,7 +165,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
   };
 
   const languages = [
-    { code: 'en' as SupportedLanguage, label: 'English', sub: 'Clinical & Plain' },
+    { code: 'en' as SupportedLanguage, label: 'English', sub: 'EN' },
     { code: 'hi' as SupportedLanguage, label: 'हिन्दी', sub: 'Hindi' },
     { code: 'mr' as SupportedLanguage, label: 'मराठी', sub: 'Marathi' },
   ];
@@ -209,16 +209,16 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
 
   return (
     <div
-      className="rounded-3xl border border-theme bg-surface p-6 sm:p-8 space-y-7 shadow-xs transition-colors"
+      className="rounded-3xl border border-theme bg-surface p-6 sm:p-8 space-y-7 shadow-xs transition-colors overflow-hidden"
       data-testid="explanation-card"
     >
       {/* Header with Language Segmented Switcher */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-theme pb-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#EAF2FF] dark:bg-[#155EEF]/20 flex items-center justify-center">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-theme pb-5">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#EAF2FF] dark:bg-[#155EEF]/20 flex items-center justify-center shrink-0">
             <Globe className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">
               Patient Explanation &amp; Voice Guide
             </h2>
@@ -228,9 +228,9 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
           </div>
         </div>
 
-        {/* Language Tabs */}
+        {/* Language Tabs - Compact, responsive & non-overflowing */}
         <div
-          className="flex items-center p-1 rounded-full bg-surface-subtle border border-theme w-full sm:w-auto"
+          className="flex items-center p-1 rounded-full bg-surface-subtle border border-theme shrink-0 max-w-full"
           role="tablist"
           aria-label="Language selection"
         >
@@ -243,14 +243,13 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 aria-selected={isSelected}
                 onClick={() => setActiveLang(lang.code)}
                 data-testid={`lang-tab-${lang.code}`}
-                className={`flex-1 sm:flex-none px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
                   isSelected
                     ? 'bg-[#155EEF] text-white font-semibold shadow-xs'
                     : 'text-theme-secondary hover:text-theme-primary'
                 }`}
               >
                 <span>{lang.label}</span>
-                <span className="text-[11px] opacity-75 hidden md:inline">({lang.sub})</span>
               </button>
             );
           })}

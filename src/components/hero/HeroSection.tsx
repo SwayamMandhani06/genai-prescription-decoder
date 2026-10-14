@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
-import { InteractiveWaveCanvas } from './InteractiveWaveCanvas';
+import { SilkGradientWaveCanvas } from './SilkGradientWaveCanvas';
 
 export interface HeroSectionProps {
   onOpenUpload?: () => void;
@@ -55,8 +55,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       className="relative pt-28 pb-20 sm:pt-36 sm:pb-32 lg:pt-42 lg:pb-36 overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-[#F0F6FE] to-[#F7FAFD] dark:from-[#0A0F18] dark:via-[#101826] dark:to-[#0A0F18] border-b border-theme transition-colors"
     >
       {/* --------------------------------------------------------------- */}
-      {/* FLOWING WAVE BACKGROUND: Multi-layered organic SVG wave curves  */}
-      {/* Cloud white, pale blue, translucent blue & dark navy gradients  */}
+      {/* FLOWING SILK GRADIENT HORIZON (VisualJoy aesthetic reference)   */}
+      {/* Volumetric chromatic silk ribbons with specular edge highlights */}
       {/* --------------------------------------------------------------- */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {/* Soft Clinical Radial Glows */}
@@ -84,8 +84,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           }}
         />
 
-        {/* Slow, ambient, mouse-interactive harmonic biometric wave canvas */}
-        <InteractiveWaveCanvas />
+        {/* 3D Volumetric Silk Gradient Wave Canvas */}
+        <SilkGradientWaveCanvas />
 
         {/* Soft bottom blend into the subsequent interactive demo section */}
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-canvas via-canvas/60 to-transparent pointer-events-none" />
