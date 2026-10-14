@@ -69,42 +69,38 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-200 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
-          ? 'bg-surface/90 backdrop-blur-md border-b border-theme shadow-sm py-2.5'
-          : 'bg-transparent py-4'
+          ? 'glass-nav py-3'
+          : 'bg-transparent py-4 sm:py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo & Product Identification */}
+          {/* Logo & Product Identification — Enlarged by 35% for strong visual presence */}
           <button
             onClick={onHomeClick}
-            className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
+            className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#155EEF] rounded-xl p-1"
             aria-label="DawaAI Home"
           >
             <img
               src="/brand/dawaai-logo.svg"
               alt="DawaAI — Your Prescription, Made Clear."
-              className="h-8 sm:h-9 w-auto dark:hidden object-contain"
+              className="h-10 sm:h-11 md:h-12 w-auto dark:hidden object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             />
             <img
               src="/brand/dawaai-logo-dark.svg"
               alt="DawaAI — Your Prescription, Made Clear."
-              className="h-8 sm:h-9 w-auto hidden dark:block object-contain"
+              className="h-10 sm:h-11 md:h-12 w-auto hidden dark:block object-contain transition-transform duration-200 group-hover:scale-[1.02]"
             />
-            <span className="hidden xl:inline-flex items-center text-[10px] font-mono tracking-tight text-theme-muted bg-surface-subtle px-2 py-0.5 rounded-full border border-theme">
-              PCCOE Grp_Cap_43
-            </span>
           </button>
 
-
-          {/* Primary Navigation (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 bg-surface-subtle/80 px-2 py-1 rounded-full border border-theme backdrop-blur-sm">
+          {/* Primary Navigation (Desktop) — Distinctive visible glass pill */}
+          <nav className="hidden md:flex items-center gap-1 nav-pill-glass px-3 py-1.5 rounded-full shadow-xs">
             <a
               href="#analyze"
               onClick={(e) => handleLinkClick(e, onNavigateToAnalyze, 'analyze')}
-              className="px-3.5 py-1.5 text-xs font-medium text-theme-secondary hover:text-theme-primary hover:bg-surface rounded-full transition-all flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <ScanLine className="w-3.5 h-3.5 text-theme-muted" />
               <span>Analyze</span>
@@ -113,7 +109,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#how-it-works"
               onClick={(e) => handleLinkClick(e, onNavigateToHowItWorks, 'how-it-works')}
-              className="px-3.5 py-1.5 text-xs font-medium text-theme-secondary hover:text-theme-primary hover:bg-surface rounded-full transition-all flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <HelpCircle className="w-3.5 h-3.5 text-theme-muted" />
               <span>How It Works</span>
@@ -122,15 +118,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#safety"
               onClick={(e) => handleLinkClick(e, onNavigateToSafety, 'safety')}
-              className="px-3.5 py-1.5 text-xs font-medium text-theme-secondary hover:text-theme-primary hover:bg-surface rounded-full transition-all flex items-center gap-1.5"
+              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-theme-muted" />
               <span>Safety</span>
             </a>
 
+            <a
+              href="#faq"
+              onClick={(e) => handleLinkClick(e, undefined, 'faq')}
+              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+            >
+              <span>FAQ</span>
+            </a>
+
             <button
               onClick={onNavigateToResearch}
-              className="px-3.5 py-1.5 text-xs font-medium text-theme-secondary hover:text-theme-primary hover:bg-surface rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-theme-muted" />
               <span>Research</span>
@@ -138,13 +142,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Bar (Desktop) */}
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2.5">
             {onOpenResultsClick && (
               <button
                 onClick={onOpenResultsClick}
-                className="px-3 py-1.5 rounded-lg border border-theme bg-surface hover:bg-surface-subtle text-xs font-medium text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-4 py-2 rounded-full border border-theme bg-surface hover:bg-surface-subtle text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs min-h-[46px]"
               >
-                <FileCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <FileCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Findings</span>
               </button>
             )}
@@ -154,22 +158,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="px-3.5 py-1.5 rounded-lg bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                className="btn-header-cta"
               >
-                <UploadCloud className="w-3.5 h-3.5" />
-                <span>Upload Script</span>
+                <UploadCloud className="w-4 h-4" />
+                <span>Analyze a Prescription</span>
               </button>
             )}
           </div>
 
           {/* Mobile Bar: Theme switcher + Upload + Menu toggle */}
-          <div className="flex sm:hidden items-center gap-1.5">
+          <div className="flex sm:hidden items-center gap-2">
             <ThemeSwitcher />
 
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="px-2.5 py-1 rounded-md bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] text-xs font-semibold"
+                className="btn-header-cta !min-h-[38px] !py-1.5 !px-3.5 !text-xs"
               >
                 Upload
               </button>
@@ -177,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded-lg text-theme-secondary hover:text-theme-primary border border-theme"
+              className="p-2 rounded-xl text-theme-secondary hover:text-theme-primary border border-theme bg-surface/70"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -195,9 +199,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileMenuOpen(false);
               handleLinkClick(e, onNavigateToAnalyze, 'analyze');
             }}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-xl"
           >
-            <ScanLine className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <ScanLine className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Analyze</span>
           </a>
 
@@ -207,9 +211,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileMenuOpen(false);
               handleLinkClick(e, onNavigateToHowItWorks, 'how-it-works');
             }}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-xl"
           >
-            <HelpCircle className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <HelpCircle className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>How It Works</span>
           </a>
 
@@ -219,10 +223,22 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileMenuOpen(false);
               handleLinkClick(e, onNavigateToSafety, 'safety');
             }}
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg"
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-xl"
           >
-            <ShieldCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <ShieldCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Safety Philosophy</span>
+          </a>
+
+          <a
+            href="#faq"
+            onClick={(e) => {
+              setMobileMenuOpen(false);
+              handleLinkClick(e, undefined, 'faq');
+            }}
+            className="flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-xl"
+          >
+            <HelpCircle className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
+            <span>FAQ</span>
           </a>
 
           <button
@@ -230,9 +246,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileMenuOpen(false);
               if (onNavigateToResearch) onNavigateToResearch();
             }}
-            className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-lg cursor-pointer"
+            className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-theme-secondary hover:text-theme-primary hover:bg-surface-subtle rounded-xl cursor-pointer"
           >
-            <FileText className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <FileText className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Research & Methodology</span>
           </button>
 
@@ -242,9 +258,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setMobileMenuOpen(false);
                 onOpenResultsClick();
               }}
-              className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-[#4A2E4D] dark:text-[#F472B6] hover:bg-surface-subtle rounded-lg cursor-pointer font-medium"
+              className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-sm text-[#155EEF] dark:text-[#4B8BFF] hover:bg-surface-subtle rounded-xl cursor-pointer font-medium"
             >
-              <FileCheck className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+              <FileCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
               <span>Prescription Findings</span>
             </button>
           )}

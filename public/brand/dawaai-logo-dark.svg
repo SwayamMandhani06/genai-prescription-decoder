@@ -1,31 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 96" width="380" height="96" fill="none">
   <defs>
-    <!-- Cross vertical gradient for dark -->
+    <!-- Cross vertical arm: Dark clinical slate navy -->
     <linearGradient id="logoDarkCrossVert" x1="42" y1="12" x2="42" y2="84" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#8F6B9F" />
-      <stop offset="50%" stop-color="#674570" />
-      <stop offset="100%" stop-color="#4A2E4D" />
+      <stop offset="0%" stop-color="#1E3A5F" />
+      <stop offset="50%" stop-color="#162C46" />
+      <stop offset="100%" stop-color="#0E1B2E" />
     </linearGradient>
 
-    <!-- Cross horizontal gradient for dark -->
+    <!-- Cross horizontal arm: Bright clinical blue -->
     <linearGradient id="logoDarkCrossHoriz" x1="10" y1="48" x2="74" y2="48" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#7C5A8B" />
-      <stop offset="50%" stop-color="#B274A4" />
-      <stop offset="100%" stop-color="#F472B6" />
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="50%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#4B8BFF" />
     </linearGradient>
 
-    <!-- Pill top-right half gradient -->
-    <linearGradient id="logoDarkPillPink" x1="38" y1="36" x2="60" y2="36" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F472B6" />
-      <stop offset="60%" stop-color="#FB7185" />
-      <stop offset="100%" stop-color="#FDA4AF" />
+    <!-- Pill top-right half: Luminous blue -->
+    <linearGradient id="logoDarkPillBlue" x1="38" y1="36" x2="60" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="60%" stop-color="#4B8BFF" />
+      <stop offset="100%" stop-color="#84CAFF" />
     </linearGradient>
 
-    <!-- Pill bottom-left half gradient -->
+    <!-- Pill bottom-left half: Crisp pale surface -->
     <linearGradient id="logoDarkPillWhite" x1="24" y1="60" x2="46" y2="60" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="60%" stop-color="#FFF0F3" />
-      <stop offset="100%" stop-color="#FFD6DA" />
+      <stop offset="60%" stop-color="#F7FAFD" />
+      <stop offset="100%" stop-color="#EAF2FF" />
     </linearGradient>
 
     <filter id="logoDarkPillShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
@@ -43,15 +43,14 @@
         font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
         font-weight: 800;
         font-size: 46px;
-        fill: #F472B6;
+        fill: #4B8BFF;
       }
       .tagline-dark {
         font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
         font-size: 9.5px;
         font-weight: 600;
         letter-spacing: 2.8px;
-        fill: #FFD6DA;
-        opacity: 0.9;
+        fill: #A9B5C6;
       }
     </style>
   </defs>
@@ -63,7 +62,7 @@
     <!-- Vertical arm -->
     <rect x="32" y="12" width="26" height="70" rx="13" fill="url(#logoDarkCrossVert)" />
     <!-- Center blend -->
-    <rect x="32" y="34" width="26" height="26" fill="#4A2E4D" opacity="0.4" />
+    <rect x="32" y="34" width="26" height="26" fill="#0E1B2E" opacity="0.35" />
 
     <!-- Overlaid angled capsule -->
     <g transform="rotate(-42 45 47)" filter="url(#logoDarkPillShadow)">
@@ -71,7 +70,7 @@
       <!-- Left Half -->
       <path d="M 33,38 h 11 v 18 h -11 a 9,9 0 0 1 -9,-9 v 0 a 9,9 0 0 1 9,-9 Z" fill="url(#logoDarkPillWhite)" />
       <!-- Right Half -->
-      <path d="M 46,38 h 11 a 9,9 0 0 1 9,9 v 0 a 9,9 0 0 1 -9,9 h -11 Z" fill="url(#logoDarkPillPink)" />
+      <path d="M 46,38 h 11 a 9,9 0 0 1 9,9 v 0 a 9,9 0 0 1 -9,9 h -11 Z" fill="url(#logoDarkPillBlue)" />
       <!-- Separation Line -->
       <line x1="45" y1="38" x2="45" y2="56" stroke="#FFFFFF" stroke-width="1.2" />
     </g>

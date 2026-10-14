@@ -2,41 +2,41 @@
   <defs>
     <!-- Cross vertical gradient -->
     <linearGradient id="crossVertGrad" x1="100" y1="15" x2="100" y2="185" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#674570" />
-      <stop offset="45%" stop-color="#4A2E4D" />
-      <stop offset="100%" stop-color="#361C39" />
+      <stop offset="0%" stop-color="#1E3A5F" />
+      <stop offset="45%" stop-color="#102A43" />
+      <stop offset="100%" stop-color="#0A1628" />
     </linearGradient>
 
     <!-- Cross horizontal gradient -->
     <linearGradient id="crossHorizGrad" x1="15" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#7C5A8B" />
-      <stop offset="50%" stop-color="#A56E9B" />
-      <stop offset="100%" stop-color="#F472B6" />
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="50%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#53B1FD" />
     </linearGradient>
 
-    <!-- Right lobe warm glow -->
+    <!-- Right lobe accent glow -->
     <linearGradient id="rightLobeGrad" x1="110" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#E86299" />
-      <stop offset="100%" stop-color="#FF97B7" />
+      <stop offset="0%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#84CAFF" />
     </linearGradient>
 
     <!-- Pill top-right half gradient -->
-    <linearGradient id="pillPinkGrad" x1="90" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F472B6" />
-      <stop offset="50%" stop-color="#FB7185" />
-      <stop offset="100%" stop-color="#FDA4AF" />
+    <linearGradient id="pillBlueGrad" x1="90" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="50%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#53B1FD" />
     </linearGradient>
 
     <!-- Pill bottom-left half gradient -->
     <linearGradient id="pillWhiteGrad" x1="60" y1="130" x2="110" y2="130" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="60%" stop-color="#FFF0F3" />
-      <stop offset="100%" stop-color="#FFD6DA" />
+      <stop offset="60%" stop-color="#F7FAFD" />
+      <stop offset="100%" stop-color="#EAF2FF" />
     </linearGradient>
 
     <!-- Subtle drop shadow -->
     <filter id="pillShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="2" dy="5" stdDeviation="5" flood-color="#2E1E33" flood-opacity="0.25" />
+      <feDropShadow dx="2" dy="5" stdDeviation="5" flood-color="#102A43" flood-opacity="0.25" />
     </filter>
   </defs>
 
@@ -50,23 +50,20 @@
   <rect x="70" y="18" width="60" height="164" rx="30" fill="url(#crossVertGrad)" />
 
   <!-- Center blend intersection -->
-  <rect x="70" y="70" width="60" height="60" fill="#5A375E" opacity="0.35" />
+  <rect x="70" y="70" width="60" height="60" fill="#102A43" opacity="0.30" />
 
-  <!-- Angled Pill/Capsule Element (tilted at -45 deg around center 100,100) -->
+  <!-- Angled Pill/Capsule Element (tilted at -42 deg around center 100,100) -->
   <g transform="rotate(-42 100 100)" filter="url(#pillShadow)">
-    <!-- Pill Outer Shell with soft highlight stroke -->
+    <!-- Pill Outer Shell -->
     <rect x="52" y="77" width="96" height="46" rx="23" fill="#FFFFFF" />
     
-    <!-- Left Half (Soft White/Pink) -->
-    <path d="M 75,80 h 24 v 40 h -24 a 20,20 0 0 1 -20,-20 v 0 a 20,20 0 0 1 20,-20 Z" fill="url(#pillWhiteGrad)" />
+    <!-- Left Half (Crisp White/Pale Blue) -->
+    <path d="M 75,79 h 25 v 42 h -25 a 21,21 0 0 1 -21,-21 v 0 a 21,21 0 0 1 21,-21 Z" fill="url(#pillWhiteGrad)" />
     
-    <!-- Right Half (Accent Pink) -->
-    <path d="M 101,80 h 24 a 20,20 0 0 1 20,20 v 0 a 20,20 0 0 1 -20,20 h -24 Z" fill="url(#pillPinkGrad)" />
-
-    <!-- Center Separation Band -->
-    <line x1="100" y1="80" x2="100" y2="120" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
-
-    <!-- Subtle Glass Reflection Sheen on Top Edge -->
-    <path d="M 68,84 h 64 a 14,14 0 0 1 12,6 h -88 a 14,14 0 0 1 12,-6 Z" fill="#FFFFFF" opacity="0.45" />
+    <!-- Right Half (Clinical Blue) -->
+    <path d="M 100,79 h 25 a 21,21 0 0 1 21,21 v 0 a 21,21 0 0 1 -21,21 h -25 Z" fill="url(#pillBlueGrad)" />
+    
+    <!-- Center Dividing Line -->
+    <line x1="100" y1="78" x2="100" y2="122" stroke="#FFFFFF" stroke-width="2.5" />
   </g>
 </svg>

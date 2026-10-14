@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   Camera,
   FileSearch,
@@ -34,8 +35,8 @@ const STAGES: StageDetail[] = [
     num: '01',
     id: 'upload',
     title: 'Upload',
-    kicker: 'Intake & Quality Triage',
-    tagline: 'High-resolution document capture with automated optical quality validation.',
+    kicker: 'Select or upload a prescription',
+    tagline: 'High-resolution document capture with automated optical quality and contrast validation.',
     icon: Camera,
     inputs: [
       'Original clinical photograph or scanned document (JPEG, PNG, WebP)',
@@ -68,9 +69,9 @@ const STAGES: StageDetail[] = [
   },
   {
     num: '02',
-    id: 'understand',
-    title: 'Understand',
-    kicker: 'Multimodal Stroke Dissection',
+    id: 'extract',
+    title: 'Extract',
+    kicker: 'Identify readable medicine names and fields',
     tagline: 'Isolating cursive pen strokes into structured medication name, strength, frequency, and duration slots.',
     icon: FileSearch,
     inputs: [
@@ -104,10 +105,10 @@ const STAGES: StageDetail[] = [
   },
   {
     num: '03',
-    id: 'verify',
-    title: 'Verify',
-    kicker: 'Formulary & LASA Safety Barrier',
-    tagline: 'Cross-referencing candidates with CDSCO and RxNorm databases with active selective abstention.',
+    id: 'review-uncertainty',
+    title: 'Review Uncertainty',
+    kicker: 'Highlight ambiguous handwriting and gaps',
+    tagline: 'Formulary validation, LASA collision detection, and automated selective abstention on ambiguous script.',
     icon: ShieldCheck,
     inputs: [
       'Extracted drug candidates',
@@ -141,9 +142,9 @@ const STAGES: StageDetail[] = [
   },
   {
     num: '04',
-    id: 'explain',
-    title: 'Explain',
-    kicker: 'Controlled Multilingual Posology',
+    id: 'understand',
+    title: 'Understand',
+    kicker: 'Present patient-friendly explanations',
     tagline: 'Converting abbreviated clinical regimens into clear, patient-friendly guidance in English, Hindi, and Marathi.',
     icon: Languages,
     inputs: [
@@ -179,28 +180,41 @@ const STAGES: StageDetail[] = [
 ];
 
 export const HowItWorksSection: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
   const [activeStageIdx, setActiveStageIdx] = useState<number>(0);
   const activeStage = STAGES[activeStageIdx];
   const ActiveIcon = activeStage.icon;
 
   return (
-    <section id="how-it-works" className="py-20 sm:py-28 bg-canvas border-b border-theme">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" className="py-20 sm:py-28 bg-[#F7FAFD] dark:bg-[#0A1628] border-b border-theme relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="max-w-3xl mb-14 sm:mb-18 space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
-            05 // Clinical Pipeline Architecture
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="max-w-3xl mb-12 sm:mb-16 space-y-3"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF2FF] dark:bg-[#163657] border border-[#B2DDFF] dark:border-[#1E446E] text-xs font-semibold text-[#155EEF] dark:text-[#84CAFF]">
+            <span>Product-Led Storytelling</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-[2.5rem] font-bold tracking-tight text-theme-primary leading-[1.08]">
-            How DawaAI processes your prescription.
+          <h2 className="text-3xl sm:text-4xl lg:text-[2.85rem] font-extrabold tracking-tight text-[#102A43] dark:text-[#F7FAFD] leading-[1.08]">
+            How DawaAI turns handwriting into safe understanding.
           </h2>
-          <p className="text-lg sm:text-xl text-theme-secondary leading-[1.65]">
-            An integrated four-stage pipeline: Upload &rarr; Understand &rarr; Verify &rarr; Explain. Inspect each stage to see the underlying vision algorithms, clinical databases, and safety boundaries.
+          <p className="text-base sm:text-lg text-theme-secondary leading-relaxed">
+            An integrated four-stage journey: 1. Upload &rarr; 2. Extract &rarr; 3. Review Uncertainty &rarr; 4. Understand. Inspect each stage to see the clinical vision pipeline and safety guardrails.
           </p>
-        </div>
+        </motion.div>
 
         {/* Integrated Process Rail Navigation */}
-        <div className="relative mb-10">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.08, ease: 'easeOut' }}
+          className="relative mb-10"
+        >
           {/* Subtle rail connecting line for desktop */}
           <div
             className="hidden lg:block absolute top-7 left-12 right-12 h-0.5 bg-theme pointer-events-none"
@@ -225,20 +239,20 @@ export const HowItWorksSection: React.FC = () => {
                   aria-selected={isActive}
                   aria-controls={`panel-${stage.id}`}
                   onClick={() => setActiveStageIdx(idx)}
-                  className={`group relative text-left p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer ${
+                  className={`group relative text-left p-4 sm:p-5 rounded-2xl border transition-all cursor-pointer shadow-xs hover:-translate-y-0.5 active:translate-y-0 ${
                     isActive
-                      ? 'bg-surface border-[#4A2E4D] dark:border-[#F472B6] shadow-md ring-1 ring-[#4A2E4D]/20 dark:ring-[#F472B6]/30'
+                      ? 'bg-surface border-[#155EEF] shadow-md ring-1 ring-[#155EEF]/20'
                       : isPast
-                      ? 'bg-surface/70 border-theme hover:border-theme-hover text-theme-secondary'
+                      ? 'bg-surface/80 border-theme hover:border-theme-hover text-theme-secondary'
                       : 'bg-surface-subtle/50 border-theme hover:border-theme-hover text-theme-muted'
                   }`}
                 >
                   {/* Top indicator: Number & Icon */}
                   <div className="flex items-center justify-between mb-3">
                     <span
-                      className={`font-mono text-xs font-bold px-2 py-0.5 rounded-md ${
+                      className={`font-mono text-xs font-bold px-2 py-0.5 rounded-full ${
                         isActive
-                          ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233]'
+                          ? 'bg-gradient-to-r from-[#155EEF] to-[#2E90FA] text-white'
                           : isPast
                           ? 'bg-surface text-theme-secondary border border-theme'
                           : 'bg-surface-subtle text-theme-muted'
@@ -247,9 +261,9 @@ export const HowItWorksSection: React.FC = () => {
                       Stage {stage.num}
                     </span>
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
                         isActive
-                          ? 'bg-[#FFD6DA]/70 dark:bg-[#4A2E4D]/80 text-[#4A2E4D] dark:text-[#F472B6]'
+                          ? 'bg-[#EAF2FF] dark:bg-[#163657] text-[#155EEF] dark:text-[#84CAFF]'
                           : 'bg-surface text-theme-muted group-hover:text-theme-primary'
                       }`}
                     >
@@ -267,25 +281,29 @@ export const HowItWorksSection: React.FC = () => {
 
                   {/* Active bottom accent bar */}
                   {isActive && (
-                    <div className="absolute -bottom-[1px] left-6 right-6 h-[2px] bg-[#4A2E4D] dark:bg-[#F472B6] rounded-full" />
+                    <div className="absolute -bottom-[1px] left-6 right-6 h-[2.5px] bg-[#155EEF] rounded-full" />
                   )}
                 </button>
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
         {/* Detailed Stage Inspector (Active Pane) */}
-        <div
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.12, ease: 'easeOut' }}
           role="tabpanel"
           id={`panel-${activeStage.id}`}
           aria-labelledby={`tab-${activeStage.id}`}
-          className="rounded-3xl bg-surface border border-theme p-6 sm:p-9 lg:p-10 shadow-elevated-card transition-all"
+          className="rounded-3xl bg-surface card-border-interactive p-6 sm:p-9 lg:p-10 shadow-elevated-card transition-all"
         >
           {/* Header Row: Stage Identity & Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-theme">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#155EEF] dark:text-[#4B8BFF]">
                 <ActiveIcon className="w-4 h-4" />
                 <span>Stage {activeStage.num} &middot; {activeStage.kicker}</span>
               </div>
@@ -303,7 +321,7 @@ export const HowItWorksSection: React.FC = () => {
                 onClick={() => setActiveStageIdx((prev) => Math.max(0, prev - 1))}
                 disabled={activeStageIdx === 0}
                 aria-label="Previous pipeline stage"
-                className="p-2.5 rounded-xl border border-theme bg-surface hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed text-theme-secondary hover:text-theme-primary transition-colors cursor-pointer"
+                className="p-2.5 rounded-full border border-theme bg-surface hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed text-theme-secondary hover:text-theme-primary transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
@@ -314,7 +332,7 @@ export const HowItWorksSection: React.FC = () => {
                 onClick={() => setActiveStageIdx((prev) => Math.min(STAGES.length - 1, prev + 1))}
                 disabled={activeStageIdx === STAGES.length - 1}
                 aria-label="Next pipeline stage"
-                className="p-2.5 rounded-xl border border-theme bg-surface hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed text-theme-secondary hover:text-theme-primary transition-colors cursor-pointer"
+                className="p-2.5 rounded-full border border-theme bg-surface hover:bg-surface-subtle disabled:opacity-40 disabled:cursor-not-allowed text-theme-secondary hover:text-theme-primary transition-colors cursor-pointer"
               >
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -336,7 +354,7 @@ export const HowItWorksSection: React.FC = () => {
                     className="p-4 sm:p-5 rounded-2xl bg-surface-subtle/70 border border-theme space-y-1.5"
                   >
                     <div className="text-sm font-bold text-theme-primary flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-[#FFD6DA]/60 dark:bg-[#4A2E4D] text-[#4A2E4D] dark:text-[#FFD6DA] text-xs font-mono font-bold flex items-center justify-center shrink-0">
+                      <span className="w-5 h-5 rounded-full bg-[#EAF2FF] dark:bg-[#163657] text-[#155EEF] dark:text-[#84CAFF] text-xs font-mono font-bold flex items-center justify-center shrink-0">
                         {i + 1}
                       </span>
                       <span>{mech.title}</span>
@@ -376,7 +394,7 @@ export const HowItWorksSection: React.FC = () => {
                       key={idx}
                       className="p-3 rounded-xl bg-surface border border-theme text-xs text-theme-secondary flex items-start gap-2"
                     >
-                      <Eye className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6] shrink-0 mt-0.5" />
+                      <Eye className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
                       <span>{inp}</span>
                     </div>
                   ))}
@@ -403,7 +421,7 @@ export const HowItWorksSection: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

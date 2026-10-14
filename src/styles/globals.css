@@ -13,118 +13,109 @@
   --color-theme-secondary: var(--text-secondary);
   --color-theme-muted: var(--text-muted);
 
-  --color-dawaai-primary: #4A2E4D;
-  --color-dawaai-secondary: #7C5A8B;
-  --color-dawaai-accent: #F472B6;
-  --color-dawaai-soft: #FFD6DA;
-  --color-dawaai-background: #F8F2F6;
-  --color-dawaai-text: #2E2233;
+  /* DawaAI Clinical Design System Tokens */
+  --color-clinical-blue: #155EEF;
+  --color-deep-navy: #102A43;
+  --color-soft-blue: #EAF2FF;
+  --color-soft-mint: #DDF7EC;
+  --color-amber-caution: #F79009;
 
-  --color-plum-950: #140C17;
-  --color-plum-900: #1E1322;
-  --color-plum-850: #261A2B;
-  --color-plum-800: #2E2233;
-  --color-plum-700: #4A2E4D;
-  --color-plum-600: #5C3A60;
-  --color-plum-500: #7C5A8B;
-  --color-plum-400: #9B76AA;
-  --color-plum-300: #C4A5D1;
-  --color-plum-200: #E2D3E0;
-  --color-plum-100: #F2EBF1;
-  --color-plum-50: #F8F2F6;
+  /* Backward Compatibility Mappings */
+  --color-dawaai-primary: #102A43;
+  --color-dawaai-secondary: #155EEF;
+  --color-dawaai-accent: #2E90FA;
+  --color-dawaai-soft: #EAF2FF;
+  --color-dawaai-background: #F7FAFD;
+  --color-dawaai-text: #102A43;
 
-  --font-sans: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'DM Serif Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 @layer base {
   :root {
-    /* DawaAI Official Design Tokens (Source of Truth) */
-    --dawaai-primary: #4A2E4D;
-    --dawaai-secondary: #7C5A8B;
-    --dawaai-accent: #F472B6;
-    --dawaai-soft: #FFD6DA;
-    --dawaai-background: #F8F2F6;
-    --dawaai-text: #2E2233;
+    /* DawaAI Official Clinical Design Tokens */
+    --dawaai-primary: #102A43;
+    --dawaai-secondary: #155EEF;
+    --dawaai-accent: #2E90FA;
+    --dawaai-soft: #EAF2FF;
+    --dawaai-background: #F7FAFD;
+    --dawaai-text: #102A43;
 
-    --font-sans: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-serif: 'DM Serif Display', 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-serif: 'DM Serif Display', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    /* Light Theme: DawaAI Calm Healthcare Identity */
-    --bg-canvas: #F8F2F6;
+    /* Light Theme: Cloud White #F7FAFD & Deep Navy #102A43 */
+    --bg-canvas: #F7FAFD;
     --bg-surface: #FFFFFF;
-    --bg-surface-subtle: #F2EBF1;
-    --bg-surface-elevated: #EADEE8;
+    --bg-surface-subtle: #F0F5FA;
+    --bg-surface-elevated: #EAF2FF;
 
-    /* Border: Harmonized with DawaAI plum palette */
-    --border-subtle: #E2D3E0;
-    --border-hover: #C5B0C2;
-    --border-focus: #7C5A8B;
+    /* Border: Delicate clinical slate */
+    --border-subtle: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --border-focus: #155EEF;
     
-    /* Typography: DawaAI Primary Text #2E2233 */
-    --text-primary: #2E2233;    /* Deep plum-charcoal (contrast > 13:1) */
-    --text-secondary: #58445E;  /* Secondary plum (contrast > 7:1) */
-    --text-muted: #826E88;      /* Muted plum (contrast > 4.5:1) */
+    /* Typography */
+    --text-primary: #102A43;    /* Deep navy (contrast > 14:1) */
+    --text-secondary: #334E68;  /* Readable slate navy (contrast > 7:1) */
+    --text-muted: #627D98;      /* Muted slate (contrast > 4.5:1) */
 
-    /* DawaAI Accents & Brand Moments */
-    --accent-primary: #4A2E4D;
-    --accent-secondary: #7C5A8B;
-    --accent-pink: #F472B6;
-    --accent-soft: #FFD6DA;
-
-    /* Harmonized Semantic Colors */
-    --accent-teal: #7C5A8B;
-    --accent-cyan: #8F559C;
-    --accent-emerald: #15803D;  /* Semantic Confirmed/Verified */
-    --accent-amber: #B45309;    /* Semantic Needs Verification */
-    --accent-rose: #BE123C;     /* Semantic Flagged / LASA Screened */
+    /* Accents */
+    --accent-primary: #155EEF;
+    --accent-secondary: #2E90FA;
+    --accent-soft: #EAF2FF;
+    --accent-mint: #DDF7EC;
+    --accent-emerald: #027A48;  /* Semantic Confirmed/Verified */
+    --accent-amber: #B54708;    /* Semantic Caution / Needs Verification */
+    --accent-amber-bg: #FFFAEB;
+    --accent-rose: #B42318;     /* Semantic Flagged / LASA Screened */
 
     /* Document / Prescription Surface */
     --paper-bg: #FFFFFF;
-    --paper-line: rgba(74, 46, 77, 0.08);
-    --paper-shadow: 0 4px 16px -2px rgba(46, 34, 51, 0.08), 0 16px 36px -6px rgba(46, 34, 51, 0.1);
-    --paper-border: #E2D3E0;
-    --ink-primary: #4A2E4D;
-    --ink-secondary: #2E2233;
+    --paper-line: rgba(16, 42, 67, 0.06);
+    --paper-shadow: 0 4px 20px -2px rgba(16, 42, 67, 0.06), 0 16px 36px -6px rgba(16, 42, 67, 0.08);
+    --paper-border: #E2E8F0;
+    --ink-primary: #102A43;
+    --ink-secondary: #1E3A8A;
   }
 
   .dark {
-    /* Dark Theme: DawaAI Plum Family (#4A2E4D / #1E1322) */
-    --bg-canvas: #1E1322;
-    --bg-surface: #2A1B2F;
-    --bg-surface-subtle: #36233B;
-    --bg-surface-elevated: #442C4B;
+    /* Dark Theme: Deep Navy #0A0F18 & Luminous Clinical Blue #4B8BFF */
+    --bg-canvas: #0A0F18;
+    --bg-surface: #101826;
+    --bg-surface-subtle: #131E2E;
+    --bg-surface-elevated: #162131;
 
-    /* Border: Subtle pink/plum border */
-    --border-subtle: rgba(244, 114, 182, 0.16);
-    --border-hover: rgba(244, 114, 182, 0.32);
-    --border-focus: #F472B6;
+    /* Border: Subtle translucent slate/white */
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.16);
+    --border-focus: #4B8BFF;
 
     /* Typography */
-    --text-primary: #FDFBFE;    /* Pure crisp white */
-    --text-secondary: #D8CADC;  /* Readable plum-white */
-    --text-muted: #A895AC;      /* Lilac slate */
+    --text-primary: #F5F7FA;    /* Pure crisp cloud white */
+    --text-secondary: #A9B5C6;  /* Soft readable slate */
+    --text-muted: #6C7D93;      /* Muted blue slate */
 
     /* Brand Accents */
-    --accent-primary: #FFD6DA;
-    --accent-secondary: #C498D4;
-    --accent-pink: #F472B6;
-    --accent-soft: #4A2E4D;
-    --accent-teal: #C498D4;
-    --accent-cyan: #E879F9;
-    --accent-emerald: #34D399;
-    --accent-amber: #FBBF24;
-    --accent-rose: #FB7185;
+    --accent-primary: #4B8BFF;
+    --accent-secondary: #84CAFF;
+    --accent-soft: #16263D;
+    --accent-mint: #0E3E37;
+    --accent-emerald: #00E676;  /* Genuine positive states */
+    --accent-amber: #F59E0B;    /* Uncertainty and caution */
+    --accent-amber-bg: rgba(245, 158, 11, 0.15);
+    --accent-rose: #FDA29B;
 
-    /* Document */
-    --paper-bg: #2A1B2F;
-    --paper-line: rgba(244, 114, 182, 0.1);
-    --paper-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 24px 60px -8px rgba(0, 0, 0, 0.75);
-    --paper-border: rgba(244, 114, 182, 0.18);
-    --ink-primary: #FDFBFE;
-    --ink-secondary: #D8CADC;
+    /* Prescription Paper Document in Dark Mode (Intentionally Paper-Like & Legible) */
+    --paper-bg: #101E30;
+    --paper-line: rgba(255, 255, 255, 0.06);
+    --paper-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.6), 0 24px 60px -8px rgba(0, 0, 0, 0.75);
+    --paper-border: rgba(255, 255, 255, 0.12);
+    --ink-primary: #F5F7FA;
+    --ink-secondary: #93C5FD;
   }
 
   html {
@@ -340,11 +331,11 @@ html.theme-transitioning *::after {
 
 /* Subtle Ambient Lighting */
 .bg-ambient-warm {
-  background-image: radial-gradient(circle at 50% 0%, rgba(124, 90, 139, 0.05) 0%, transparent 65%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(21, 94, 239, 0.05) 0%, transparent 65%);
 }
 
 .dark .bg-ambient-warm {
-  background-image: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.04) 0%, transparent 65%);
+  background-image: radial-gradient(circle at 50% 0%, rgba(75, 139, 255, 0.05) 0%, transparent 65%);
 }
 
 /* Scanning Beam Animation */
@@ -369,12 +360,261 @@ html.theme-transitioning *::after {
   animation: scanSweep 3.2s ease-in-out infinite;
 }
 
+/* Visible Premium Glassmorphism System */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(80, 115, 165, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 4px 20px -2px rgba(16, 42, 67, 0.06), 0 1px 3px rgba(16, 42, 67, 0.04);
+}
+
+.dark .glass-panel {
+  background: rgba(16, 24, 38, 0.80);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(180, 200, 225, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 24px -2px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(80, 115, 165, 0.20);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.8), 0 4px 20px -2px rgba(16, 42, 67, 0.05);
+}
+
+.dark .glass-nav {
+  background: rgba(10, 15, 24, 0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(180, 200, 225, 0.15);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.nav-pill-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(80, 115, 165, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 8px -2px rgba(16, 42, 67, 0.05);
+}
+
+.dark .nav-pill-glass {
+  background: rgba(22, 33, 49, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(180, 200, 225, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Subtle Container Borders */
+.card-border-subtle {
+  border: 1px solid rgba(75, 105, 145, 0.18);
+}
+
+.dark .card-border-subtle {
+  border: 1px solid rgba(180, 200, 225, 0.16);
+}
+
+.card-border-interactive {
+  border: 1px solid rgba(75, 105, 145, 0.22);
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.card-border-interactive:hover {
+  border-color: rgba(21, 94, 239, 0.40);
+  box-shadow: 0 8px 24px -4px rgba(21, 94, 239, 0.10);
+}
+
+.dark .card-border-interactive {
+  border: 1px solid rgba(180, 200, 225, 0.18);
+}
+
+.dark .card-border-interactive:hover {
+  border-color: rgba(75, 139, 255, 0.50);
+  box-shadow: 0 8px 28px -4px rgba(0, 0, 0, 0.5);
+}
+
 /* Clean Editorial Panel */
 .editorial-panel {
   background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 0.875rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(75, 105, 145, 0.18);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 14px rgba(16, 42, 67, 0.04);
+}
+
+.dark .editorial-panel {
+  border: 1px solid rgba(180, 200, 225, 0.16);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium Clinical Pill Buttons (54–60px on Desktop) */
+.btn-primary-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 56px;
+  padding: 0.9375rem 2.125rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #155EEF 0%, #2E90FA 100%);
+  color: #FFFFFF;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 4px 14px -2px rgba(21, 94, 239, 0.35), 0 12px 28px -6px rgba(21, 94, 239, 0.28);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary-pill:hover {
+  background: linear-gradient(135deg, #104ecc 0%, #155EEF 100%);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.50), 0 8px 22px -2px rgba(21, 94, 239, 0.44), 0 20px 38px -8px rgba(21, 94, 239, 0.36);
+}
+
+.btn-primary-pill:active {
+  transform: translateY(0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 6px -1px rgba(21, 94, 239, 0.3);
+}
+
+.btn-secondary-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 56px;
+  padding: 0.9375rem 2.125rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #102A43;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  border: 1px solid rgba(80, 115, 165, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 10px rgba(16, 42, 67, 0.05);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-secondary-pill:hover {
+  background: #FFFFFF;
+  color: #102A43;
+  border-color: rgba(21, 94, 239, 0.40);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 8px 22px -2px rgba(16, 42, 67, 0.10);
+}
+
+.btn-secondary-pill:active {
+  transform: translateY(0);
+}
+
+.dark .btn-secondary-pill {
+  background: rgba(22, 33, 49, 0.85);
+  border: 1px solid rgba(180, 200, 225, 0.20);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 4px 16px rgba(0, 0, 0, 0.35);
+  color: #F5F7FA;
+}
+
+.dark .btn-secondary-pill:hover {
+  background: rgba(28, 42, 62, 0.95);
+  border-color: rgba(75, 139, 255, 0.45);
+  color: #FFFFFF;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 8px 26px rgba(0, 0, 0, 0.5);
+}
+
+/* Header Action Button (48px) */
+.btn-header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.625rem 1.625rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #155EEF 0%, #2E90FA 100%);
+  color: #FFFFFF;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 2px 10px rgba(21, 94, 239, 0.28);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.btn-header-cta:hover {
+  background: linear-gradient(135deg, #104ecc 0%, #155EEF 100%);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 6px 18px rgba(21, 94, 239, 0.38);
+}
+
+/* Multi-Layer Continuous Seamless Wave Animations */
+@keyframes waveContinuousScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes waveContinuousScrollReverse {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes waveLightShimmer {
+  0% {
+    opacity: 0.18;
+    transform: translateX(-15%);
+  }
+  50% {
+    opacity: 0.45;
+    transform: translateX(15%);
+  }
+  100% {
+    opacity: 0.18;
+    transform: translateX(-15%);
+  }
+}
+
+.animate-wave-continuous {
+  animation: waveContinuousScroll 20s linear infinite;
+  will-change: transform;
+}
+
+.animate-wave-continuous-reverse {
+  animation: waveContinuousScrollReverse 26s linear infinite;
+  will-change: transform;
+}
+
+.animate-wave-highlight {
+  animation: waveContinuousScroll 17s linear infinite;
+  will-change: transform;
+}
+
+.animate-wave-shimmer {
+  animation: waveLightShimmer 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-wave-continuous,
+  .animate-wave-continuous-reverse,
+  .animate-wave-highlight,
+  .animate-wave-shimmer {
+    animation: none !important;
+  }
 }
 
 /* Focus and Accessibility */

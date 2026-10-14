@@ -5,20 +5,20 @@
         font-family: 'DM Serif Display', 'Playfair Display', 'Georgia', serif;
         font-weight: 700;
         font-size: 50px;
-        fill: #4A2E4D;
+        fill: #102A43;
       }
       .wm-sans {
         font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
         font-weight: 800;
         font-size: 50px;
-        fill: #F472B6;
+        fill: #155EEF;
       }
       .wm-tag {
         font-family: 'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
         font-size: 8.5px;
         font-weight: 600;
         letter-spacing: 2.6px;
-        fill: #7C5A8B;
+        fill: #334E68;
       }
     </style>
   </defs>

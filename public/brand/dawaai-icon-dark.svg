@@ -1,66 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" fill="none">
   <defs>
-    <!-- Background rounded square gradient -->
-    <linearGradient id="darkBgGrad" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#4A2E4D" />
-      <stop offset="50%" stop-color="#2E1E33" />
-      <stop offset="100%" stop-color="#1E1422" />
+    <!-- Cross vertical gradient dark -->
+    <linearGradient id="crossDarkVertGrad" x1="100" y1="15" x2="100" y2="185" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E3A5F" />
+      <stop offset="45%" stop-color="#162C46" />
+      <stop offset="100%" stop-color="#0E1B2E" />
     </linearGradient>
 
-    <!-- Cross vertical gradient for dark -->
-    <linearGradient id="crossVertGradDark" x1="100" y1="25" x2="100" y2="175" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#8F6B9F" />
-      <stop offset="50%" stop-color="#674570" />
-      <stop offset="100%" stop-color="#4A2E4D" />
+    <!-- Cross horizontal gradient dark -->
+    <linearGradient id="crossDarkHorizGrad" x1="15" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="50%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#4B8BFF" />
     </linearGradient>
 
-    <!-- Cross horizontal gradient for dark -->
-    <linearGradient id="crossHorizGradDark" x1="25" y1="100" x2="175" y2="100" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#7C5A8B" />
-      <stop offset="50%" stop-color="#B274A4" />
-      <stop offset="100%" stop-color="#F472B6" />
+    <!-- Right lobe accent glow -->
+    <linearGradient id="rightDarkLobeGrad" x1="110" y1="100" x2="185" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2E90FA" />
+      <stop offset="100%" stop-color="#84CAFF" />
     </linearGradient>
 
     <!-- Pill top-right half gradient -->
-    <linearGradient id="pillPinkGradDark" x1="90" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F472B6" />
-      <stop offset="60%" stop-color="#FB7185" />
-      <stop offset="100%" stop-color="#FDA4AF" />
+    <linearGradient id="pillDarkBlueGrad" x1="90" y1="70" x2="140" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#155EEF" />
+      <stop offset="60%" stop-color="#4B8BFF" />
+      <stop offset="100%" stop-color="#84CAFF" />
     </linearGradient>
 
     <!-- Pill bottom-left half gradient -->
-    <linearGradient id="pillWhiteGradDark" x1="60" y1="130" x2="110" y2="130" gradientUnits="userSpaceOnUse">
+    <linearGradient id="pillDarkWhiteGrad" x1="60" y1="130" x2="110" y2="130" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="60%" stop-color="#FFF0F3" />
-      <stop offset="100%" stop-color="#FFD6DA" />
+      <stop offset="60%" stop-color="#F7FAFD" />
+      <stop offset="100%" stop-color="#EAF2FF" />
     </linearGradient>
 
-    <filter id="pillShadowDark" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="2" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
+    <filter id="pillDarkShadow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.45" />
     </filter>
   </defs>
 
-  <!-- Dark Squircle Background -->
-  <rect x="8" y="8" width="184" height="184" rx="46" fill="url(#darkBgGrad)" stroke="#5A3A60" stroke-width="1.5" />
+  <!-- Medical Cross Geometry -->
+  <!-- Horizontal arm -->
+  <rect x="18" y="70" width="164" height="60" rx="30" fill="url(#crossDarkHorizGrad)" />
+  <!-- Right lobe accent glow -->
+  <path d="M 120,70 h 32 a 30,30 0 0 1 30,30 v 0 a 30,30 0 0 1 -30,30 h -32 Z" fill="url(#rightDarkLobeGrad)" />
 
-  <!-- Embedded DawaAI Cross Geometry scaled down slightly -->
-  <g transform="translate(10, 10) scale(0.9)">
-    <!-- Horizontal arm -->
-    <rect x="25" y="72" width="150" height="56" rx="28" fill="url(#crossHorizGradDark)" />
-    <!-- Vertical arm -->
-    <rect x="72" y="25" width="56" height="150" rx="28" fill="url(#crossVertGradDark)" />
-    <!-- Center blend -->
-    <rect x="72" y="72" width="56" height="56" fill="#4A2E4D" opacity="0.4" />
+  <!-- Vertical arm -->
+  <rect x="70" y="18" width="60" height="164" rx="30" fill="url(#crossDarkVertGrad)" />
 
-    <!-- Angled Pill/Capsule -->
-    <g transform="rotate(-42 100 100)" filter="url(#pillShadowDark)">
-      <rect x="54" y="79" width="92" height="42" rx="21" fill="#FFFFFF" />
-      <!-- Left Half -->
-      <path d="M 75,81 h 24 v 38 h -24 a 19,19 0 0 1 -19,-19 v 0 a 19,19 0 0 1 19,-19 Z" fill="url(#pillWhiteGradDark)" />
-      <!-- Right Half -->
-      <path d="M 101,81 h 24 a 19,19 0 0 1 19,19 v 0 a 19,19 0 0 1 -19,19 h -24 Z" fill="url(#pillPinkGradDark)" />
-      <!-- Center Separation Band -->
-      <line x1="100" y1="81" x2="100" y2="119" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
-    </g>
+  <!-- Center blend intersection -->
+  <rect x="70" y="70" width="60" height="60" fill="#0E1B2E" opacity="0.40" />
+
+  <!-- Angled Pill/Capsule Element (tilted at -42 deg around center 100,100) -->
+  <g transform="rotate(-42 100 100)" filter="url(#pillDarkShadow)">
+    <!-- Pill Outer Shell -->
+    <rect x="52" y="77" width="96" height="46" rx="23" fill="#FFFFFF" />
+    
+    <!-- Left Half (Crisp White) -->
+    <path d="M 75,79 h 25 v 42 h -25 a 21,21 0 0 1 -21,-21 v 0 a 21,21 0 0 1 21,-21 Z" fill="url(#pillDarkWhiteGrad)" />
+    
+    <!-- Right Half (Luminous Blue) -->
+    <path d="M 100,79 h 25 a 21,21 0 0 1 21,21 v 0 a 21,21 0 0 1 -21,21 h -25 Z" fill="url(#pillDarkBlueGrad)" />
+    
+    <!-- Center Dividing Line -->
+    <line x1="100" y1="78" x2="100" y2="122" stroke="#FFFFFF" stroke-width="2.5" />
   </g>
 </svg>
