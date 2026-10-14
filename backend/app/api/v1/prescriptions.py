@@ -44,9 +44,9 @@ def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPip
     """Dependency injector returning the active processing pipeline."""
     global _multimodal_pipeline
     if not settings.USE_MOCK_PIPELINE:
-        if _multimodal_pipeline is None:
+        if _multimodal_pipeline is None or getattr(_multimodal_pipeline, "settings", None) != settings:
             from ...services.multimodal_pipeline import MultimodalPrescriptionPipeline
-            _multimodal_pipeline = MultimodalPrescriptionPipeline()
+            _multimodal_pipeline = MultimodalPrescriptionPipeline(settings=settings)
         return _multimodal_pipeline
     return _mock_pipeline
 

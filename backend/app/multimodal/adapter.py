@@ -76,11 +76,44 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
     generateContent API via asynchronous HTTP.
     """
 
-    def __init__(self, config: Optional[MultimodalConfig] = None):
+    def __init__(self, config: Optional[MultimodalConfig] = None, settings: Optional[Any] = None):
         self.config = config or MultimodalConfig()
+        self.settings = settings
+
+    def get_active_settings(self) -> Optional[Any]:
+        if self.settings is not None:
+            return self.settings
+        try:
+            from ..main import app
+            from ..config import get_settings
+            if get_settings in getattr(app, "dependency_overrides", {}):
+                return app.dependency_overrides[get_settings]()
+        except Exception:
+            pass
+        return None
+
+    def _resolve_api_key(self, active_config: MultimodalConfig) -> Optional[str]:
+        settings = self.get_active_settings()
+        if settings is not None:
+            key = getattr(settings, "GEMINI_API_KEY", None)
+            if key is None:
+                key = getattr(settings, "GOOGLE_API_KEY", None)
+            if key is not None:
+                if active_config.is_valid_key(key):
+                    return key.strip().strip("'\"")
+                return None
+        return active_config.get_api_key()
+
+    def _resolve_model_id(self, active_config: MultimodalConfig) -> str:
+        settings = self.get_active_settings()
+        if settings is not None:
+            mid = getattr(settings, "MULTIMODAL_MODEL_ID", None) or getattr(settings, "GEMINI_MODEL", None)
+            if mid:
+                return str(mid).strip()
+        return active_config.model_id
 
     def is_available(self) -> bool:
-        api_key = self.config.get_api_key()
+        api_key = self._resolve_api_key(self.config)
         return bool(api_key and self.config.is_valid_key(api_key))
 
     async def extract(
@@ -91,7 +124,8 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
         scenario: Optional[str] = None,
     ) -> str:
         active_config = config or self.config
-        api_key = active_config.get_api_key()
+        api_key = self._resolve_api_key(active_config)
+        model_id = self._resolve_model_id(active_config)
 
         if not api_key:
             raise PipelineProcessingError(
@@ -105,7 +139,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                 retryable=True,
                 details={
                     "provider": active_config.provider,
-                    "model_id": active_config.model_id,
+                    "model_id": model_id,
                     "env_var": active_config.api_key_env_var,
                 },
             )
@@ -123,7 +157,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
         b64_image = base64.b64encode(image_bytes).decode("utf-8")
         url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/"
-            f"{active_config.model_id}:generateContent"
+            f"{model_id}:generateContent"
         )
 
         request_body = {
@@ -198,20 +232,20 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                         if response.status_code == 404:
                             raise PipelineProcessingError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
-                                message=f"Gemini model '{active_config.model_id}' was not found or is unsupported.",
+                                message=f"Gemini model '{model_id}' was not found or is unsupported.",
                                 stage="multimodal_inference_dispatch",
                                 status_code=503,
                                 retryable=False,
-                                details={"http_status": response.status_code, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                                details={"http_status": response.status_code, "model_id": model_id, "raw_error": sanitized_error},
                             )
                         if response.status_code == 429:
                             raise PipelineProcessingError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
-                                message=f"Gemini API rate limit or quota exceeded for model '{active_config.model_id}'. The model is temporarily unavailable; please check your Google AI Studio plan quota or retry in a few moments.",
+                                message=f"Gemini API rate limit or quota exceeded for model '{model_id}'. The model is temporarily unavailable; please check your Google AI Studio plan quota or retry in a few moments.",
                                 stage="multimodal_inference_dispatch",
                                 status_code=503,
                                 retryable=True,
-                                details={"http_status": 429, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                                details={"http_status": 429, "model_id": model_id, "raw_error": sanitized_error},
                             )
                         if response.status_code in (503, 504):
                             raise PipelineProcessingError(
@@ -220,7 +254,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                                 stage="multimodal_inference_dispatch",
                                 status_code=503,
                                 retryable=True,
-                                details={"http_status": response.status_code, "model_id": active_config.model_id, "raw_error": sanitized_error},
+                                details={"http_status": response.status_code, "model_id": model_id, "raw_error": sanitized_error},
                             )
                         raise PipelineProcessingError(
                             code=ErrorCode.PROCESSING_FAILED,

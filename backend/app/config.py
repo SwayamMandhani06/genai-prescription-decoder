@@ -27,8 +27,13 @@ class Settings(BaseSettings):
     HOST: str = "127.0.0.1"
     PORT: int = 8001
 
-    # Model Credentials (Optional in mock/evaluation mode)
+    # Model Credentials and Multimodal Configuration
     GEMINI_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key")
+    GOOGLE_API_KEY: Optional[str] = Field(default=None, description="Google Gemini API Key Fallback")
+    GEMINI_MODEL: str = Field(default="gemini-3.8-flash", description="Google Gemini Model Identifier")
+    MULTIMODAL_MODEL_ID: Optional[str] = Field(default=None, description="Multimodal Model Identifier")
+    MULTIMODAL_MAX_TOKENS: int = Field(default=4096, description="Max Output Generation Tokens")
+    MULTIMODAL_TIMEOUT_SECONDS: float = Field(default=50.0, description="Inference Timeout Seconds")
 
     # CORS Settings
     CORS_ORIGINS: Union[List[str], str] = [

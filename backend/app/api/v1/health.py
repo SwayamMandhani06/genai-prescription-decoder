@@ -24,11 +24,20 @@ START_TIME = time.time()
 async def check_health(settings: Settings = Depends(get_settings)) -> HealthResponse:
     uptime = time.time() - START_TIME
     now_iso = datetime.now(timezone.utc).isoformat()
-    raw_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or settings.GEMINI_API_KEY
+    raw_key = (
+        getattr(settings, "GEMINI_API_KEY", None)
+        or getattr(settings, "GOOGLE_API_KEY", None)
+    )
+    if raw_key is None:
+        raw_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     has_gemini_key = MultimodalConfig.is_valid_key(raw_key)
 
     is_live_pipeline = not settings.USE_MOCK_PIPELINE
-    mm_cfg = MultimodalConfig()
+    configured_model = (
+        getattr(settings, "MULTIMODAL_MODEL_ID", None)
+        or getattr(settings, "GEMINI_MODEL", None)
+        or MultimodalConfig().model_id
+    )
 
     if is_live_pipeline:
         if has_gemini_key:
@@ -55,7 +64,7 @@ async def check_health(settings: Settings = Depends(get_settings)) -> HealthResp
             "pipeline_mode": "mock" if settings.USE_MOCK_PIPELINE else "multimodal",
             "dependencies": {
                 "multimodal_model_provider": "gemini" if not settings.USE_MOCK_PIPELINE else "mock",
-                "configured_model": mm_cfg.model_id,
+                "configured_model": configured_model,
                 "gemini_api_key_configured": has_gemini_key,
                 "model_adapter_status": adapter_status,
                 "rag_formulary_status": "ready",

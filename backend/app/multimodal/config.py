@@ -11,6 +11,18 @@ from typing import Literal, Optional
 from pydantic import BaseModel, Field
 
 
+def resolve_active_settings():
+    """Retrieves active application settings if available via dependency overrides."""
+    try:
+        from ..main import app
+        from ..config import get_settings
+        if get_settings in getattr(app, "dependency_overrides", {}):
+            return app.dependency_overrides[get_settings]()
+    except Exception:
+        pass
+    return None
+
+
 class MultimodalConfig(BaseModel):
     """
     Configuration contract for multimodal vision-language extraction.
@@ -25,11 +37,17 @@ class MultimodalConfig(BaseModel):
         description="Multimodal model provider ('gemini' or 'mock')",
     )
     model_id: str = Field(
-        default_factory=lambda: os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
+        default_factory=lambda: (
+            (getattr(resolve_active_settings(), "MULTIMODAL_MODEL_ID", None) or getattr(resolve_active_settings(), "GEMINI_MODEL", None))
+            if resolve_active_settings() is not None else None
+        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
         description="Canonical model identifier",
     )
     model_version: str = Field(
-        default_factory=lambda: os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
+        default_factory=lambda: (
+            (getattr(resolve_active_settings(), "MULTIMODAL_MODEL_ID", None) or getattr(resolve_active_settings(), "GEMINI_MODEL", None))
+            if resolve_active_settings() is not None else None
+        ) or os.environ.get("MULTIMODAL_MODEL_ID") or os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
         description="Exact provider model release version",
     )
     temperature: float = Field(
@@ -100,7 +118,17 @@ class MultimodalConfig(BaseModel):
         return lower not in placeholders
 
     def get_api_key(self) -> Optional[str]:
-        """Resolves API key from environment variables without hardcoding secrets."""
+        """Resolves API key from active application Settings or environment variables without hardcoding secrets."""
+        s = resolve_active_settings()
+        if s is not None:
+            key = getattr(s, "GEMINI_API_KEY", None)
+            if key is None:
+                key = getattr(s, "GOOGLE_API_KEY", None)
+            if key is not None:
+                if self.is_valid_key(key):
+                    return key.strip().strip("'\"")
+                return None
+
         key = os.environ.get(self.api_key_env_var) or os.environ.get("GOOGLE_API_KEY")
         if key and self.is_valid_key(key):
             return key.strip().strip("'\"")

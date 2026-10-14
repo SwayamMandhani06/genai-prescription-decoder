@@ -57,14 +57,35 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         self,
         service: Optional[MultimodalExtractionService] = None,
         config: Optional[MultimodalConfig] = None,
+        settings: Optional[Any] = None,
     ):
+        self.settings = settings
+        if self.settings is None:
+            try:
+                from ..main import app
+                from ..config import get_settings
+                if get_settings in getattr(app, "dependency_overrides", {}):
+                    self.settings = app.dependency_overrides[get_settings]()
+                else:
+                    self.settings = get_settings()
+            except Exception:
+                pass
+
         self.config = config or MultimodalConfig()
         if service is not None:
             self.service = service
         elif self.config.provider == "gemini":
             self.service = MultimodalExtractionService(
-                adapter=GeminiMultimodalAdapter(config=self.config),
+                adapter=GeminiMultimodalAdapter(config=self.config, settings=self.settings),
                 config=self.config,
+            )
+        elif self.settings and not getattr(self.settings, "USE_MOCK_PIPELINE", True):
+            raise PipelineProcessingError(
+                code=ErrorCode.MODEL_UNAVAILABLE,
+                message="Mock adapter fallback is forbidden when USE_MOCK_PIPELINE is False.",
+                stage="multimodal_pipeline_initialization",
+                status_code=503,
+                retryable=False,
             )
         else:
             self.service = MultimodalExtractionService(
