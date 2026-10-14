@@ -75,10 +75,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="grid grid-cols-[auto_1fr] md:grid-cols-[1fr_auto_1fr] items-center min-h-[48px] gap-3 lg:gap-4">
-          {/* Logo & Product Identification (Left Column) */}
-          <div className="flex items-center justify-start min-w-0">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
+        <div className="flex items-center justify-between min-h-[48px] gap-4 sm:gap-6">
+          {/* Logo & Product Identification */}
+          <div className="flex items-center justify-start shrink-0">
             <button
               onClick={onHomeClick}
               className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#155EEF] rounded-xl p-1"
@@ -97,8 +97,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Primary Navigation (Center Column) — Symmetrical & True Center in Grid */}
-          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 nav-pill-glass px-2.5 lg:px-3.5 py-1.5 rounded-full shadow-xs justify-self-center">
+          {/* Primary Navigation (Center) — Equidistant between Logo and Right Actions */}
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 nav-pill-glass px-2.5 lg:px-3.5 py-1.5 rounded-full shadow-xs shrink-0">
             <a
               href="#analyze"
               onClick={(e) => handleLinkClick(e, onNavigateToAnalyze, 'analyze')}
@@ -153,8 +153,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </a>
           </nav>
 
-          {/* Right Action Bar (Desktop Column) — Symmetrical Right Alignment */}
-          <div className="hidden sm:flex items-center justify-end gap-3 justify-self-end">
+          {/* Right Action Bar — Symmetrical Equal Distance from Nav Pill */}
+          <div className="hidden sm:flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
             <ThemeSwitcher />
 
             {onOpenUploadClick && (
