@@ -72,8 +72,8 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
       time += prefersReducedMotion ? 0 : 0.007;
       const dark = isDarkMode();
 
-      // Ribbon anchor parameters (positioned gracefully in lower 50%-85% of hero)
-      const baseHorizon = height * 0.72;
+      // Ribbon anchor parameters (positioned below the trust badges)
+      const baseHorizon = height * 0.90;
       const step = 8; // Horizontal mesh resolution
       const numSteps = Math.ceil((width + 120) / step);
 

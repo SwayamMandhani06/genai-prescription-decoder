@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section
-      className="relative pt-20 pb-20 sm:pt-24 sm:pb-28 lg:pt-28 lg:pb-32 overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-[#F0F6FE] to-[#F7FAFD] dark:from-[#0A0F18] dark:via-[#101826] dark:to-[#0A0F18] border-b border-theme transition-colors"
+      className="relative pt-24 pb-36 sm:pt-28 sm:pb-44 lg:pt-32 lg:pb-52 overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-[#F0F6FE] to-[#F7FAFD] dark:from-[#0A0F18] dark:via-[#101826] dark:to-[#0A0F18] border-b border-theme transition-colors"
     >
       {/* --------------------------------------------------------------- */}
       {/* FLOWING SILK GRADIENT HORIZON (VisualJoy aesthetic reference)   */}
@@ -88,7 +88,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <SilkGradientWaveCanvas />
 
         {/* Soft bottom blend into the subsequent interactive demo section */}
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-canvas via-canvas/60 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-canvas via-canvas/30 to-transparent pointer-events-none" />
       </div>
 
       {/* ========================================================= */}
@@ -99,7 +99,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="space-y-5 sm:space-y-6 flex flex-col items-center"
+          className="space-y-6 sm:space-y-7 flex flex-col items-center"
         >
           {/* Headline with Serif Italic Pairing (Enlarged by ~12% for Commanding Presence) */}
           <motion.div variants={itemVariants} className="max-w-4xl">
@@ -121,7 +121,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Action CTAs: High-presence 56px Pill Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-1 sm:pt-2 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-2 sm:pt-3 w-full sm:w-auto"
           >
             {onOpenUpload && (
               <button
@@ -146,7 +146,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Trust Footnote */}
           <motion.div
             variants={itemVariants}
-            className="pt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-theme-muted"
+            className="pt-5 flex flex-wrap items-center justify-center gap-3 text-xs text-theme-muted"
           >
             <div className="flex items-center gap-1.5 font-medium">
               <ShieldCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
