@@ -100,5 +100,6 @@ data/processed/*
 # ==============================================================================
 scripts/test_prescription.png
 scratch/
+screenshots/
 data/samples/user_*
 *.log

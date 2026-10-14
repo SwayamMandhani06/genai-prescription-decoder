@@ -146,7 +146,7 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={handlePrint}
-            className="text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-colors flex items-center gap-2 cursor-pointer py-2 px-3 border border-theme rounded-xl bg-surface"
+            className="btn-secondary-pill !min-h-[44px] !py-2 !px-5 !text-sm"
           >
             <Printer className="w-4 h-4 text-theme-muted" />
             <span>Print Report</span>
@@ -154,7 +154,7 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
 
           <button
             onClick={onNewPrescription}
-            className="px-5 py-2.5 rounded-xl bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+            className="btn-primary-pill !min-h-[44px] !py-2 !px-5 !text-sm"
           >
             <UploadCloud className="w-4 h-4" />
             <span>Analyze Another</span>
@@ -199,9 +199,9 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
           {/* A. Patient & Doctor Details Panel */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Patient Card */}
-            <div className="rounded-2xl border border-theme bg-surface p-5 space-y-3">
+            <div className="rounded-2xl card-border-interactive bg-surface p-5 space-y-3 shadow-xs">
               <div className="flex items-center gap-2 border-b border-theme pb-2.5 text-theme-primary font-semibold text-sm">
-                <User className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <User className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Patient Information</span>
               </div>
               <div className="space-y-2 text-xs sm:text-sm">
@@ -233,9 +233,9 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
             </div>
 
             {/* Doctor & Facility Card */}
-            <div className="rounded-2xl border border-theme bg-surface p-5 space-y-3">
+            <div className="rounded-2xl card-border-interactive bg-surface p-5 space-y-3 shadow-xs">
               <div className="flex items-center gap-2 border-b border-theme pb-2.5 text-theme-primary font-semibold text-sm">
-                <Stethoscope className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <Stethoscope className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Doctor &amp; Facility</span>
               </div>
               <div className="space-y-2 text-xs sm:text-sm">
@@ -292,7 +292,7 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
                   <div className="flex flex-wrap items-start justify-between gap-3 border-b border-theme pb-3.5">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <Pill className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                        <Pill className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
                         <h3 className="text-xl font-bold text-theme-primary tracking-tight font-mono">
                           {med.name}
                         </h3>

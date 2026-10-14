@@ -34,7 +34,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
   const handleResetZoom = () => setZoomLevel(100);
 
   const resolvedPreviewUrl = previewUrl
-    ? previewUrl.startsWith('http') || previewUrl.startsWith('data:') || previewUrl.startsWith('blob:')
+    ? previewUrl.startsWith('http') || previewUrl.startsWith('data:') || previewUrl.startsWith('blob:') || previewUrl.startsWith('/samples') || previewUrl.startsWith('/assets')
       ? previewUrl
       : `${apiConfig.baseUrl}${previewUrl}`
     : undefined;
@@ -57,7 +57,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
       {/* Header Bar */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-surface-subtle border-b border-theme text-xs">
         <div className="flex items-center gap-2">
-          <Eye className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <Eye className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span className="font-semibold text-theme-primary">
             Original script · <span className="font-mono text-xs">{accessionId}</span>
           </span>
@@ -99,7 +99,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
             aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            className="p-1 rounded-lg bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/60 border border-[#F472B6]/40 text-[#4A2E4D] dark:text-[#F472B6] hover:bg-[#FFD6DA]/80 cursor-pointer ml-1"
+            className="p-1.5 rounded-lg bg-[#EAF2FF] dark:bg-[#155EEF]/20 border border-[#155EEF]/30 text-[#155EEF] dark:text-[#4B8BFF] hover:bg-[#EAF2FF]/80 cursor-pointer ml-1"
             title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -133,7 +133,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
               />
               {hasGroundedBox && activeBoundingBox && (
                 <div
-                  className="absolute border-2 border-[#F472B6] bg-[#F472B6]/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-[#F472B6]/40"
+                  className="absolute border-2 border-[#155EEF] bg-[#155EEF]/15 rounded-md pointer-events-none transition-all duration-200 ring-2 ring-[#155EEF]/40"
                   style={{
                     top: `${activeBoundingBox.y}%`,
                     left: `${activeBoundingBox.x}%`,
@@ -141,7 +141,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
                     height: `${activeBoundingBox.height}%`,
                   }}
                 >
-                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-[#4A2E4D] dark:text-[#F472B6] rounded border border-theme shadow-xs">
+                  <span className="absolute -top-4 left-1 px-1.5 py-0.2 bg-surface text-[9px] font-medium text-[#155EEF] dark:text-[#4B8BFF] rounded border border-theme shadow-xs">
                     {highlightLabel || 'Verified Region'}
                   </span>
                 </div>
@@ -162,7 +162,7 @@ export const OriginalScriptViewer: React.FC<OriginalScriptViewerProps> = ({
       {/* Bottom Notice Strip */}
       <div className="px-4 py-2 bg-surface-subtle border-t border-theme flex items-center justify-between text-xs text-theme-muted">
         <div className="flex items-center gap-1.5">
-          <FileCheck className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <FileCheck className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span>Original physician document preserved as primary legal record</span>
         </div>
       </div>

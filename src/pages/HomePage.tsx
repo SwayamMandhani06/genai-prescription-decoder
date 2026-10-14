@@ -1,11 +1,12 @@
 import React from 'react';
 import { Navbar } from '../components/layout/Navbar';
 import { HeroSection } from '../components/hero/HeroSection';
-import { TransformationDemoSection } from '../components/home/TransformationDemoSection';
+import { InteractivePrescriptionSection } from '../components/home/InteractivePrescriptionSection';
 import { CoreCapabilitiesSection } from '../components/home/CoreCapabilitiesSection';
-import { SafetyPhilosophySection } from '../components/home/SafetyPhilosophySection';
 import { HowItWorksSection } from '../components/home/HowItWorksSection';
+import { SafetyPhilosophySection } from '../components/home/SafetyPhilosophySection';
 import { LanguageSupportSection } from '../components/home/LanguageSupportSection';
+import { FaqSection } from '../components/home/FaqSection';
 import { ResearchOverviewSection } from '../components/home/ResearchOverviewSection';
 import { FinalCtaSection } from '../components/home/FinalCtaSection';
 import { Footer } from '../components/layout/Footer';
@@ -29,7 +30,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-theme-primary flex flex-col font-sans selection:bg-[#F472B6]/30 selection:text-[#4A2E4D] dark:selection:text-[#FFD6DA]">
+    <div className="min-h-screen bg-canvas text-theme-primary flex flex-col font-sans selection:bg-[#155EEF]/20 selection:text-[#102A43] dark:selection:text-[#EAF2FF]">
       {/* Top Navigation */}
       <Navbar
         onNavigateToAnalyze={onOpenUpload}
@@ -44,35 +45,38 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Main Product Journey */}
       <main className="flex-1">
-        {/* 1. Hero: Problem, Prescription Object & Visual 4-Phase Transformation */}
+        {/* Section 1: Hero (Centered Spacious Composition, No Dashboard) */}
         <HeroSection
           onOpenUpload={onOpenUpload}
-          onScrollToHowItWorks={() => scrollToSection('transformation')}
+          onScrollToHowItWorks={() => scrollToSection('demo')}
         />
 
-        {/* 2. First Scroll: "See what changes." Interactive Before/After */}
-        <TransformationDemoSection />
+        {/* Section 2: Interactive Prescription Preview ("From handwriting to understanding") */}
+        <InteractivePrescriptionSection />
 
-        {/* 3. Three Core Capabilities: Understand · Verify · Explain */}
-        <CoreCapabilitiesSection />
-
-        {/* 4. Safety Philosophy: "The system should know when it does not know." */}
-        <SafetyPhilosophySection />
-
-        {/* 5. How It Works: 4-Stage Transparent Verification Pipeline */}
+        {/* Section 3: How DawaAI Works (4-Stage Pipeline: Upload, Extract, Review Uncertainty, Understand) */}
         <HowItWorksSection />
 
-        {/* 6. Multilingual Posology: English · हिन्दी · मराठी */}
+        {/* Section 4: Safety & Uncertainty Philosophy */}
+        <SafetyPhilosophySection />
+
+        {/* Three Core Capabilities: Understand · Verify · Explain */}
+        <CoreCapabilitiesSection />
+
+        {/* Multilingual Posology: English · हिन्दी · मराठी */}
         <LanguageSupportSection />
 
-        {/* 6. Compact Research Prototype Statement */}
+        {/* Section 5: Short FAQ Section with Accessible Accordions */}
+        <FaqSection />
+
+        {/* Compact Research Prototype Statement */}
         <ResearchOverviewSection onOpenResearchPage={onOpenResearch} />
 
-        {/* 7. Final Calm CTA */}
+        {/* Final Calm Call to Action */}
         <FinalCtaSection onOpenUpload={onOpenUpload} />
       </main>
 
-      {/* 8. Clean, Professional Footer */}
+      {/* Section 6: Clean, Professional Footer */}
       <Footer
         onNavigateToResearch={onOpenResearch}
         onOpenUpload={onOpenUpload}

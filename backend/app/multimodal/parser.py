@@ -287,20 +287,38 @@ def parse_multimodal_response(
             raw_response=raw_text,
         )
 
-    parsed_medicines: List[ExtractedMedicine] = []
-    for idx, item in enumerate(raw_medicines):
-        if not isinstance(item, dict):
-            continue
-        parsed_med = parse_raw_medicine(item, source=source)
-        parsed_medicines.append(parsed_med)
+    # Document classification & rejection assessment
+    raw_is_rx = data.get("is_prescription")
+    doc_type = str(data.get("document_type", "prescription")).lower().strip()
+    rejection_reason = data.get("rejection_reason")
+    doc_conf = float(data.get("document_type_confidence", 1.0)) if data.get("document_type_confidence") is not None else 1.0
 
-    requires_review = bool(data.get("requires_human_review", False))
+    is_prescription = True
+    if raw_is_rx is False or doc_type in ("unrelated_image", "receipt", "packaging_only", "medical_literature", "blank_page", "other"):
+        is_prescription = False
+
+    parsed_medicines: List[ExtractedMedicine] = []
+    # If document is verified to NOT be a prescription, reject all extracted medicines to prevent hallucination
+    if is_prescription:
+        for idx, item in enumerate(raw_medicines):
+            if not isinstance(item, dict):
+                continue
+            parsed_med = parse_raw_medicine(item, source=source)
+            parsed_medicines.append(parsed_med)
+    else:
+        requires_review = True
+
+    requires_review = bool(data.get("requires_human_review", False)) if is_prescription else True
 
     return {
+        "is_prescription": is_prescription,
+        "document_type": doc_type if doc_type else ("prescription" if is_prescription else "unrelated_image"),
+        "rejection_reason": rejection_reason,
+        "document_type_confidence": doc_conf,
         "medicines": parsed_medicines,
         "requires_human_review": requires_review,
-        "prescription_summary": data.get("prescription_summary"),
-        "patient_details": data.get("patient_details"),
-        "doctor_details": data.get("doctor_details"),
+        "prescription_summary": data.get("prescription_summary") if is_prescription else None,
+        "patient_details": data.get("patient_details") if is_prescription else None,
+        "doctor_details": data.get("doctor_details") if is_prescription else None,
         "raw_response": raw_text,
     }

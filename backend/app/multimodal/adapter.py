@@ -335,17 +335,97 @@ class MockMultimodalModelAdapter(IMultimodalModelAdapter):
                 details={"scenario": active_scenario},
             )
 
-        # Case 14: Empty Extraction Result
-        if active_scenario in ("empty_extraction", "blank_page", "empty_result"):
+        # Case 14: Blank Page or Empty Canvas
+        if active_scenario in ("empty_extraction", "blank_page", "blank_white_page", "empty_result"):
             return json.dumps({
+                "is_prescription": False,
+                "document_type": "blank_page",
+                "rejection_reason": "The uploaded image is blank and contains no discernible medical prescription or ink strokes.",
+                "document_type_confidence": 0.99,
                 "medicines": [],
                 "requires_human_review": True,
                 "visual_observations": "Blank paper or no legible handwritten medication text observed.",
             })
 
+        # Rejection Scenario: Landscape / Scenic Photograph
+        if active_scenario in ("landscape", "unrelated_image", "nature", "scenery"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "unrelated_image",
+                "rejection_reason": "The uploaded image appears to be a landscape photograph and does not contain a medical prescription.",
+                "document_type_confidence": 0.98,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Visual scene contains outdoor natural landscape features with zero clinical or prescription evidence.",
+            })
+
+        # Rejection Scenario: Selfie or Portrait
+        if active_scenario in ("selfie", "portrait", "person"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "unrelated_image",
+                "rejection_reason": "The uploaded image appears to be a personal selfie or portrait photograph and does not contain a medical prescription.",
+                "document_type_confidence": 0.98,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Human portrait photograph detected without clinical document structure or prescription pad.",
+            })
+
+        # Rejection Scenario: Food or Animal
+        if active_scenario in ("food", "animal", "pet", "food_animal", "meal"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "unrelated_image",
+                "rejection_reason": "The uploaded image appears to be a photograph of food or animals and does not contain a medical prescription.",
+                "document_type_confidence": 0.97,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Non-document subject matter (food/animal) with zero prescription pad evidence.",
+            })
+
+        # Rejection Scenario: Shopping or Payment Receipt
+        if active_scenario in ("receipt", "shopping_receipt", "payment_receipt", "bill", "invoice"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "receipt",
+                "rejection_reason": "The uploaded image appears to be a commercial or retail shopping/payment receipt, not a clinical prescription.",
+                "document_type_confidence": 0.96,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Point-of-sale thermal receipt layout detected. No medical prescriber credentials or clinical posology present.",
+            })
+
+        # Rejection Scenario: Medicine packaging without prescription
+        if active_scenario in ("packaging_only", "medicine_packaging", "medication_box", "pill_bottle"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "packaging_only",
+                "rejection_reason": "The uploaded image shows commercial medicine packaging or a medication box, but does not contain an individualized doctor prescription.",
+                "document_type_confidence": 0.95,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Commercial pharmaceutical product packaging observed without an individualized doctor order.",
+            })
+
+        # Rejection Scenario: Printed medical literature or textbook
+        if active_scenario in ("medical_literature", "printed_literature", "textbook", "journal"):
+            return json.dumps({
+                "is_prescription": False,
+                "document_type": "medical_literature",
+                "rejection_reason": "The uploaded image contains printed medical literature or reference text, not an authorized patient prescription order.",
+                "document_type_confidence": 0.94,
+                "medicines": [],
+                "requires_human_review": True,
+                "visual_observations": "Academic textbook or journal typography detected. No individual patient posology order present.",
+            })
+
         # Case 1: Single medicine — all fields confident
         if active_scenario in ("single_medicine_confident", "confident", "sample_confident"):
             return json.dumps({
+                "is_prescription": True,
+                "document_type": "prescription",
+                "rejection_reason": None,
+                "document_type_confidence": 0.98,
                 "medicines": [
                     {
                         "medicine_name": {
@@ -504,9 +584,110 @@ class MockMultimodalModelAdapter(IMultimodalModelAdapter):
                 "visual_observations": "Prescription contains Azithromycin without explicit dosage strength.",
             })
 
-        # Case 4: Uncertain medicine name
-        if active_scenario in ("uncertain", "uncertain_medicine_name", "uncertain_name", "ambiguous_name"):
+        # Scenario: Blurry Prescription
+        if active_scenario in ("blurry_prescription", "blurry", "severe_blur"):
             return json.dumps({
+                "is_prescription": True,
+                "document_type": "prescription",
+                "rejection_reason": None,
+                "document_type_confidence": 0.85,
+                "medicines": [
+                    {
+                        "medicine_name": {
+                            "value": "Amoxcillin",
+                            "status": "uncertain",
+                            "candidates": ["Amoxcillin", "Amoxicillin"],
+                            "explanation": "Severe optical blur obscures letter strokes",
+                            "uncertainty_reason": "High optical defocus blur across medicine header",
+                            "verification_instruction": "Request a sharper, clearer photograph of the prescription pad",
+                            "bounding_box": {"x": 10.0, "y": 30.0, "width": 40.0, "height": 8.0},
+                        },
+                        "dosage": {
+                            "value": None,
+                            "status": "uncertain",
+                            "presence": "absent",
+                            "extraction_state": "missing",
+                            "candidates": [],
+                            "explanation": "Dosage illegible due to blur",
+                            "uncertainty_reason": "Severe blur prevents numeral identification",
+                        },
+                        "frequency": {
+                            "value": "1-0-1",
+                            "status": "uncertain",
+                            "candidates": ["1-0-1"],
+                            "explanation": "Blurry schedule strokes",
+                        },
+                        "duration": {
+                            "value": None,
+                            "status": "uncertain",
+                            "presence": "absent",
+                            "extraction_state": "missing",
+                            "candidates": [],
+                        },
+                        "status": "uncertain",
+                        "overall_confidence": 0.55,
+                    }
+                ],
+                "requires_human_review": True,
+                "visual_observations": "Prescription exhibits severe optical defocus blur. Request clearer capture.",
+            })
+
+        # Scenario: Partially Cropped Prescription
+        if active_scenario in ("partially_cropped", "cropped", "cropped_prescription"):
+            return json.dumps({
+                "is_prescription": True,
+                "document_type": "prescription",
+                "rejection_reason": None,
+                "document_type_confidence": 0.90,
+                "medicines": [
+                    {
+                        "medicine_name": {
+                            "value": "Amoxicillin",
+                            "status": "confident",
+                            "candidates": ["Amoxicillin"],
+                            "explanation": "Medicine name is intact inside visible crop area",
+                            "bounding_box": {"x": 12.0, "y": 30.0, "width": 40.0, "height": 8.0},
+                        },
+                        "dosage": {
+                            "value": "500 mg",
+                            "status": "confident",
+                            "candidates": ["500 mg"],
+                            "bounding_box": {"x": 55.0, "y": 30.0, "width": 18.0, "height": 8.0},
+                        },
+                        "frequency": {
+                            "value": None,
+                            "status": "uncertain",
+                            "presence": "absent",
+                            "extraction_state": "missing",
+                            "candidates": [],
+                            "explanation": "Frequency field cropped out at paper boundary",
+                            "uncertainty_reason": "Bottom and right margin crop truncates posology instructions",
+                            "verification_instruction": "Re-photograph the full prescription pad including right and bottom margins",
+                        },
+                        "duration": {
+                            "value": None,
+                            "status": "uncertain",
+                            "presence": "absent",
+                            "extraction_state": "missing",
+                            "candidates": [],
+                            "explanation": "Duration field cropped out at paper boundary",
+                            "uncertainty_reason": "Prescription paper is partially cropped",
+                            "verification_instruction": "Confirm course duration with prescribing practitioner",
+                        },
+                        "status": "uncertain",
+                        "overall_confidence": 0.65,
+                    }
+                ],
+                "requires_human_review": True,
+                "visual_observations": "Document edges are partially cropped, cutting off frequency and duration instructions.",
+            })
+
+        # Case 4: Uncertain medicine name
+        if active_scenario in ("uncertain", "uncertain_medicine_name", "uncertain_name", "ambiguous_name", "handwritten_uncertain_medicine"):
+            return json.dumps({
+                "is_prescription": True,
+                "document_type": "prescription",
+                "rejection_reason": None,
                 "medicines": [
                     {
                         "medicine_name": {

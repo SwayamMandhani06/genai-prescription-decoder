@@ -61,7 +61,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
               <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
               <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
+                <span className="font-brand-serif text-[#102A43] dark:text-white">Dawa</span><span className="text-[#155EEF]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">
                 / Research Methodology &amp; Evaluation
@@ -74,7 +74,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
             {onOpenUpload && (
               <button
                 onClick={onOpenUpload}
-                className="px-3.5 py-1.5 rounded-lg bg-[#4A2E4D] hover:bg-[#5C3A60] dark:bg-[#F472B6] text-white dark:text-[#2E2233] text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-[#155EEF] to-[#2E90FA] hover:from-[#1249C7] hover:to-[#155EEF] text-white text-xs font-semibold transition-all cursor-pointer shadow-xs hover:shadow-sm"
               >
                 Analyze a Prescription
               </button>
@@ -87,7 +87,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 space-y-14">
         {/* Research Title & Abstract */}
         <section className="space-y-5">
-          <div className="text-xs sm:text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-2">
+          <div className="text-xs sm:text-sm font-semibold text-[#155EEF] dark:text-[#4B8BFF] flex items-center gap-2">
             <FileText className="w-4 h-4" />
             <span>Academic Research Prototype</span>
           </div>
@@ -133,7 +133,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
         {/* 1. Quantitative Benchmark Comparison Table */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <BarChart3 className="w-6 h-6 text-[#155EEF] dark:text-[#4B8BFF]" />
             <h2 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-theme-primary tracking-tight leading-[1.1]">
               Comparative Benchmark Protocol (Illustrative Targets)
             </h2>
@@ -149,7 +149,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
                   <th className="py-4 px-4 sm:px-6">Evaluation Metric</th>
                   <th className="py-4 px-4 text-theme-secondary">Conventional OCR (Simulated Baseline)</th>
                   <th className="py-4 px-4 text-theme-secondary">Zero-Shot VLM (Simulated Baseline)</th>
-                  <th className="py-4 px-4 text-[#4A2E4D] dark:text-[#FFD6DA] font-bold bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                  <th className="py-4 px-4 text-[#155EEF] dark:text-[#4B8BFF] font-bold bg-[#EAF2FF]/60 dark:bg-[#155EEF]/20">
                     DawaAI (Design Target)
                   </th>
                   <th className="py-4 px-4 sm:px-6 text-emerald-600 dark:text-emerald-400">Target Objective</th>
@@ -164,7 +164,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
                     </td>
                     <td className="py-4 px-4 text-xs sm:text-sm font-mono">{metric.traditionalOcr}</td>
                     <td className="py-4 px-4 text-xs sm:text-sm font-mono">{metric.generalVlm}</td>
-                    <td className="py-4 px-4 text-xs sm:text-sm font-mono font-bold text-[#4A2E4D] dark:text-[#FFD6DA] bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                    <td className="py-4 px-4 text-xs sm:text-sm font-mono font-bold text-[#155EEF] dark:text-[#4B8BFF] bg-[#EAF2FF]/60 dark:bg-[#155EEF]/20">
                       {metric.auraRxModel}
                     </td>
                     <td className="py-4 px-4 sm:px-6 text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400">
@@ -214,7 +214,7 @@ export const ResearchPage: React.FC<ResearchPageProps> = ({ onBackToHome, onOpen
         {/* 3. Look-Alike Sound-Alike (LASA) Safety */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-6 h-6 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <ShieldCheck className="w-6 h-6 text-[#155EEF] dark:text-[#4B8BFF]" />
             <h2 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-theme-primary tracking-tight leading-[1.1]">
               Phonological &amp; Orthographic LASA Differentiation
             </h2>

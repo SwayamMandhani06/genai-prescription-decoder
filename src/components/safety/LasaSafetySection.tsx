@@ -45,7 +45,7 @@ export const LasaSafetySection: React.FC = () => {
         {/* Top Controls: TALL MAN Lettering Toggle */}
         <div className="flex items-center justify-between p-3.5 rounded-xl bg-surface border border-theme mb-6 shadow-xs">
           <div className="flex items-center gap-2.5">
-            <Eye className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <Eye className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span className="text-xs sm:text-sm font-bold text-theme-primary font-sans">
               FDA / ISMP TALL MAN Lettering Standard:
             </span>
@@ -54,7 +54,7 @@ export const LasaSafetySection: React.FC = () => {
             onClick={() => setUseTallManLettering(!useTallManLettering)}
             className={`px-3 py-1 text-xs font-mono rounded-lg border transition-all cursor-pointer ${
               useTallManLettering
-                ? 'bg-[#FFD6DA]/60 dark:bg-[#4A2E4D]/60 text-[#4A2E4D] dark:text-[#FFD6DA] border-[#F472B6]/40 shadow-xs font-semibold'
+                ? 'bg-[#EAF2FF] dark:bg-[#16263D] text-[#102A43] dark:text-[#F5F7FA] border-[#155EEF]/40 shadow-xs font-semibold'
                 : 'bg-surface-subtle text-theme-muted border-theme'
             }`}
           >
@@ -121,7 +121,7 @@ export const LasaSafetySection: React.FC = () => {
               {/* Side by side comparison pills */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 font-sans">
                 <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
-                  <span className="text-[10px] font-mono text-[#7C5A8B] dark:text-[#F472B6] uppercase tracking-wider block font-bold">
+                  <span className="text-[10px] font-mono text-[#155EEF] dark:text-[#4B8BFF] uppercase tracking-wider block font-bold">
                     Prescribed Drug Candidate
                   </span>
                   <div className="text-base font-bold text-theme-primary">
@@ -149,7 +149,7 @@ export const LasaSafetySection: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 mb-5 font-mono text-xs">
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
                   <div className="text-theme-secondary text-[11px]">Levenshtein String Overlap:</div>
-                  <div className="text-base font-bold text-[#4A2E4D] dark:text-[#F472B6]">
+                  <div className="text-base font-bold text-[#155EEF] dark:text-[#4B8BFF]">
                     {Math.round(activePair.orthographicSimilarity * 100)}%
                   </div>
                   <div className="text-[10px] text-theme-muted">
@@ -159,7 +159,7 @@ export const LasaSafetySection: React.FC = () => {
 
                 <div className="p-3 rounded-xl bg-surface-subtle border border-theme space-y-1">
                   <div className="text-theme-secondary text-[11px]">Acoustic Phonetic Distance:</div>
-                  <div className="text-base font-bold text-[#4A2E4D] dark:text-[#F472B6]">
+                  <div className="text-base font-bold text-[#155EEF] dark:text-[#4B8BFF]">
                     {Math.round(activePair.phoneticSimilarity * 100)}%
                   </div>
                   <div className="text-[10px] text-theme-muted">

@@ -232,7 +232,7 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
               <img src="/brand/dawaai-icon.svg" alt="DawaAI" className="w-5 h-5 dark:hidden" />
               <img src="/brand/dawaai-icon-dark.svg" alt="DawaAI" className="w-5 h-5 hidden dark:block" />
               <span className="font-bold text-sm tracking-tight text-theme-primary">
-                <span className="font-brand-serif text-[#4A2E4D] dark:text-white">Dawa</span><span className="text-[#F472B6]">AI</span>
+                <span className="font-brand-serif text-[#102A43] dark:text-white">Dawa</span><span className="text-[#155EEF] dark:text-[#4B8BFF]">AI</span>
               </span>
               <span className="text-xs text-theme-muted">
                 / Processing Workflow
@@ -262,7 +262,7 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
 
             <div className="hidden md:flex items-center gap-1.5 text-xs text-theme-secondary bg-surface-subtle px-3 py-1 rounded-lg border border-theme">
               <span>Progress:</span>
-              <span className="text-[#7C5A8B] dark:text-[#F472B6] font-bold font-mono">{overallPercent}%</span>
+              <span className="text-[#155EEF] dark:text-[#4B8BFF] font-bold font-mono">{overallPercent}%</span>
             </div>
           </div>
         </div>
@@ -280,8 +280,8 @@ export const ProcessingPage: React.FC<ProcessingPageProps> = ({
         <div className="space-y-3.5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/50 border border-[#F472B6]/30 text-[#4A2E4D] dark:text-[#FFD6DA] text-xs sm:text-sm font-medium">
-                <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF2FF] dark:bg-[#16263D] border border-[#155EEF]/30 text-[#102A43] dark:text-[#F5F7FA] text-xs sm:text-sm font-medium">
+                <span className="w-2 h-2 rounded-full bg-[#155EEF] animate-pulse" />
                 <span>
                   Stage 0{currentStageDef.stepNumber}: {currentStageDef.label}
                 </span>

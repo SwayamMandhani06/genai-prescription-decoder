@@ -40,6 +40,8 @@ class AbstentionReasonCode(str, Enum):
 
     # Pipeline & system reasons
     PROCESSING_UNCERTAIN = "PROCESSING_UNCERTAIN"
+    DOCUMENT_NOT_PRESCRIPTION = "DOCUMENT_NOT_PRESCRIPTION"
+    NO_PRESCRIPTION_CONTENT_OBSERVED = "NO_PRESCRIPTION_CONTENT_OBSERVED"
 
 
 # Human-readable documentation for each standardized reason code
@@ -90,6 +92,12 @@ REASON_DESCRIPTIONS: Dict[AbstentionReasonCode, str] = {
     ),
     AbstentionReasonCode.PROCESSING_UNCERTAIN: (
         "Upstream optical or pipeline processing encountered marginal quality or ambiguous intermediary representations."
+    ),
+    AbstentionReasonCode.DOCUMENT_NOT_PRESCRIPTION: (
+        "The uploaded image does not contain sufficient visual or textual evidence of a medical prescription document."
+    ),
+    AbstentionReasonCode.NO_PRESCRIPTION_CONTENT_OBSERVED: (
+        "Zero valid medication posology line items were visually identified on the submitted document."
     ),
 }
 

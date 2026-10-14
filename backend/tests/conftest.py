@@ -74,3 +74,11 @@ def tiny_prescription_image() -> bytes:
 def corrupted_image_bytes() -> bytes:
     """Returns truncated, non-decodable bytes for corruption testing."""
     return b"NOT_A_REAL_IMAGE_DATA_HEADER_CORRUPTED_STREAM"
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiter():
+    """Resets the singleton prescription rate limiter before each test to prevent test runner quota exhaustion."""
+    from backend.app.core.security import prescription_rate_limiter
+    prescription_rate_limiter.reset()
+

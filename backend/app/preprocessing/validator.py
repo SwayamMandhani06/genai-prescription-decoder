@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Optional, Set, Tuple
 from PIL import Image, ImageOps, UnidentifiedImageError
 
+# Security constraint: Limit maximum decompressed pixels to defend against zip/decompression bombs
+Image.MAX_IMAGE_PIXELS = 50_000_000
+
 from .config import PreprocessingConfig, QualityThresholds
 from .metadata import ImageMetadata, extract_image_metadata
 from ..schemas.error import ErrorCode
@@ -57,6 +60,7 @@ class ImageIngestionValidator:
         self,
         image_bytes: Optional[bytes],
         filename: Optional[str] = None,
+        reject_blank: bool = False,
     ) -> Tuple[Image.Image, ImageMetadata]:
         """
         Validates raw image bytes and returns:
@@ -192,5 +196,32 @@ class ImageIngestionValidator:
         else:
             # Fallback conversion
             normalized_img = pil_img.convert("RGB")
+
+        # 7. Optional preflight check for blank or non-informative canvas (blank white page or uniform color)
+        if reject_blank:
+            try:
+                import numpy as np
+                gray_check = np.array(normalized_img.convert("L"), dtype=np.float32)
+                pixel_std = float(np.std(gray_check))
+                mean_lum = float(np.mean(gray_check))
+                # If standard deviation is extremely low, there are no strokes, ink, or text
+                if pixel_std < 2.5 and (mean_lum > 235.0 or mean_lum < 20.0):
+                    raise ImageValidationError(
+                        code=ErrorCode.IMAGE_QUALITY_INSUFFICIENT,
+                        message="The uploaded image appears completely blank or devoid of handwritten ink strokes and document content.",
+                        status_code=422,
+                        stage="image_content_validation",
+                        retryable=True,
+                        details={
+                            "std_deviation": round(pixel_std, 2),
+                            "mean_luminance": round(mean_lum, 2),
+                            "issue": "blank_or_solid_page",
+                            "recommendation": "Please upload a clear photograph of a physical prescription containing doctor handwriting or clinical text.",
+                        },
+                    )
+            except ImageValidationError:
+                raise
+            except Exception:
+                pass
 
         return normalized_img, metadata

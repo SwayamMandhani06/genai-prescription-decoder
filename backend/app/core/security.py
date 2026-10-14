@@ -63,6 +63,11 @@ class SlidingWindowRateLimiter:
         remaining = max(0, self.max_requests - len(valid_timestamps))
         return True, remaining, 0
 
+    def reset(self) -> None:
+        """Clears client history for testing and state resets."""
+        self._history.clear()
+
+
 
 # Global singleton rate limiter: 60 requests per minute per IP for analysis endpoints
 prescription_rate_limiter = SlidingWindowRateLimiter(max_requests=60, window_seconds=60)

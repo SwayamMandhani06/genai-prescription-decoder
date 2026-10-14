@@ -179,12 +179,17 @@ def finalize_extraction_result(
     prescription_summary: Optional[str] = None,
     patient_details: Optional[Dict[str, Any]] = None,
     doctor_details: Optional[Dict[str, Any]] = None,
+    is_prescription: bool = True,
+    document_type: str = "prescription",
+    rejection_reason: Optional[str] = None,
+    document_type_confidence: float = 1.0,
 ) -> PrescriptionExtractionResult:
     """
     Finalizes the complete PrescriptionExtractionResult with conservative post-processing:
     - Normalizes all medicine entries
     - Derives requires_human_review strictly:
-      True if model demanded review OR if any medicine or field has status != 'confident'
+      True if model demanded review OR if document is rejected/not a prescription
+      OR if any medicine or field has status != 'confident'
       OR if no medicines were extracted.
     - Generates aggregate fields dictionary.
     """
@@ -192,7 +197,9 @@ def finalize_extraction_result(
 
     # Compute conservative human review requirement
     requires_review = model_demands_review
-    if not processed_medicines:
+    if not is_prescription or document_type != "prescription":
+        requires_review = True
+    elif not processed_medicines:
         requires_review = True
     else:
         for m in processed_medicines:
@@ -215,6 +222,10 @@ def finalize_extraction_result(
         preprocessed_image_url=preprocessed_image_url,
         preprocessed_image_sha256=preprocessed_image_sha256,
         model=model_metadata,
+        is_prescription=is_prescription,
+        document_type=document_type,
+        rejection_reason=rejection_reason,
+        document_type_confidence=document_type_confidence,
         medicines=processed_medicines,
         fields=fields,
         prescription_summary=prescription_summary,

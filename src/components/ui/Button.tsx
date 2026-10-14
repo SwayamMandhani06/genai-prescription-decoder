@@ -20,25 +20,25 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none rounded-full focus-visible:outline-2 focus-visible:outline-offset-2';
 
   const sizeStyles = {
-    sm: 'text-xs px-3 py-1.5 gap-1.5',
-    md: 'text-sm px-4 py-2.5 gap-2',
-    lg: 'text-base px-6 py-3 gap-2.5 font-semibold',
+    sm: 'text-xs px-3.5 py-1.5 gap-1.5',
+    md: 'text-sm px-5 py-2.5 gap-2',
+    lg: 'text-base px-7 py-3.5 gap-2.5 font-semibold',
   };
 
   const variantStyles = {
     primary:
-      'bg-[#4A2E4D] hover:bg-[#5C3A60] active:bg-[#3B243E] dark:bg-[#F472B6] dark:hover:bg-[#F687C2] text-white dark:text-[#2E2233] font-semibold shadow-xs focus-visible:outline-[#4A2E4D] dark:focus-visible:outline-[#F472B6]',
+      'bg-gradient-to-r from-[#155EEF] to-[#2E90FA] hover:from-[#1249C7] hover:to-[#155EEF] text-white font-semibold shadow-xs hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-[#155EEF]',
     clinical:
-      'bg-[#7C5A8B] hover:bg-[#6A4B78] active:bg-[#593E65] text-white font-medium shadow-xs focus-visible:outline-[#7C5A8B]',
+      'bg-[#102A43] hover:bg-[#1E3A5F] active:bg-[#0B1D2D] text-white font-medium shadow-xs focus-visible:outline-[#102A43]',
     secondary:
-      'bg-surface hover:bg-surface-subtle text-theme-primary border border-theme shadow-xs focus-visible:outline-[#7C5A8B]',
+      'bg-white dark:bg-[#102A43]/60 hover:bg-[#F7FAFD] dark:hover:bg-[#1E3A5F]/70 text-[#102A43] dark:text-white border border-[#D0D5DD] dark:border-[#1E3A5F] shadow-xs focus-visible:outline-[#155EEF]',
     outline:
-      'bg-transparent hover:bg-surface text-theme-primary border border-theme hover:border-theme-hover shadow-xs focus-visible:outline-[#7C5A8B]',
+      'bg-transparent hover:bg-[#EAF2FF]/50 text-[#155EEF] dark:text-[#4B8BFF] border border-[#155EEF]/30 hover:border-[#155EEF] shadow-xs focus-visible:outline-[#155EEF]',
     ghost:
-      'bg-transparent hover:bg-surface-subtle text-theme-secondary hover:text-theme-primary focus-visible:outline-[#7C5A8B]',
+      'bg-transparent hover:bg-[#EAF2FF]/40 text-[#102A43] dark:text-[#EAF2FF] hover:text-[#155EEF] dark:hover:text-[#4B8BFF] focus-visible:outline-[#155EEF]',
     danger:
       'bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 focus-visible:outline-red-600',
   };

@@ -165,6 +165,24 @@ class PrescriptionExtractionResult(BaseModel):
     preprocessed_image_url: Optional[str] = Field(None, description="Accessible URL of Phase 4 preprocessed image")
     preprocessed_image_sha256: Optional[str] = Field(None, description="SHA-256 of derived preprocessed image")
     model: ModelMetadata = Field(..., description="Audit metadata for model and prompt")
+    is_prescription: bool = Field(
+        True,
+        description="True if image contains sufficient visual/textual evidence of a valid medical prescription",
+    )
+    document_type: str = Field(
+        "prescription",
+        description="Document type classification: 'prescription', 'unrelated_image', 'receipt', 'packaging_only', 'medical_literature', 'blank_page', 'other'",
+    )
+    rejection_reason: Optional[str] = Field(
+        None,
+        description="Actionable explanation if image is classified as non-prescription or rejected",
+    )
+    document_type_confidence: float = Field(
+        1.0,
+        ge=0.0,
+        le=1.0,
+        description="Model or heuristic confidence in document type assessment [0.0 - 1.0]",
+    )
     medicines: List[ExtractedMedicine] = Field(
         default_factory=list,
         description="List of independently extracted prescribed medications",

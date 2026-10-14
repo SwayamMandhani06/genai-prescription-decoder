@@ -31,7 +31,7 @@ export const LiveDocumentScanner: React.FC<LiveDocumentScannerProps> = ({
       {/* Top Workstation Bar */}
       <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-surface-subtle border-b border-theme text-xs">
         <div className="flex items-center gap-2 text-theme-primary">
-          <FileText className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <FileText className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span className="font-semibold">
             {uploadedData?.fileName || 'Prescription Document'}
           </span>
@@ -40,7 +40,7 @@ export const LiveDocumentScanner: React.FC<LiveDocumentScannerProps> = ({
         <div className="flex items-center gap-2 text-xs text-theme-secondary">
           <span>Processing Stage</span>
           <span className="text-theme-muted">·</span>
-          <span className="text-[#7C5A8B] dark:text-[#F472B6] font-bold font-mono">{overallPercent}%</span>
+          <span className="text-[#155EEF] dark:text-[#4B8BFF] font-bold font-mono">{overallPercent}%</span>
         </div>
       </div>
 
@@ -54,10 +54,10 @@ export const LiveDocumentScanner: React.FC<LiveDocumentScannerProps> = ({
 
         {/* Dynamic Scanning Line */}
         <div
-          className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#F472B6] to-transparent pointer-events-none z-30 transition-all duration-300 ease-out opacity-80"
+          className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#155EEF] dark:via-[#4B8BFF] to-transparent pointer-events-none z-30 transition-all duration-300 ease-out opacity-90 shadow-[0_0_10px_rgba(21,94,239,0.7)]"
           style={{ top: currentScanY }}
         >
-          <div className="absolute right-4 -top-3 text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface border border-theme text-[#4A2E4D] dark:text-[#F472B6] shadow-xs">
+          <div className="absolute right-4 -top-3 text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface border border-[#155EEF]/30 dark:border-[#4B8BFF]/40 text-[#155EEF] dark:text-[#4B8BFF] shadow-xs">
             Scanning
           </div>
         </div>

@@ -215,8 +215,8 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       {/* Header with Language Segmented Switcher */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-theme pb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#4A2E4D]/10 dark:bg-[#F472B6]/20 flex items-center justify-center">
-            <Globe className="w-5 h-5 text-[#4A2E4D] dark:text-[#F472B6]" />
+          <div className="w-10 h-10 rounded-2xl bg-[#EAF2FF] dark:bg-[#155EEF]/20 flex items-center justify-center">
+            <Globe className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
           </div>
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-theme-primary tracking-tight">
@@ -230,7 +230,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
 
         {/* Language Tabs */}
         <div
-          className="flex items-center p-1 rounded-2xl bg-surface-subtle border border-theme w-full sm:w-auto"
+          className="flex items-center p-1 rounded-full bg-surface-subtle border border-theme w-full sm:w-auto"
           role="tablist"
           aria-label="Language selection"
         >
@@ -243,9 +243,9 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 aria-selected={isSelected}
                 onClick={() => setActiveLang(lang.code)}
                 data-testid={`lang-tab-${lang.code}`}
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                className={`flex-1 sm:flex-none px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] font-semibold shadow-xs'
+                    ? 'bg-[#155EEF] text-white font-semibold shadow-xs'
                     : 'text-theme-secondary hover:text-theme-primary'
                 }`}
               >
@@ -258,10 +258,10 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       </div>
 
       {/* Section A — Prescription Summary & Prominent Voice Assistance */}
-      <div className="p-6 rounded-2xl bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/25 border border-[#F472B6]/25 space-y-4">
+      <div className="p-6 rounded-2xl bg-[#EAF2FF]/50 dark:bg-[#155EEF]/10 border border-[#155EEF]/20 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#4A2E4D] dark:text-[#FFD6DA] uppercase tracking-wider">
-            <FileText className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <div className="flex items-center gap-2 text-xs font-bold text-[#102A43] dark:text-[#EAF2FF] uppercase tracking-wider">
+            <FileText className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Prescription Overview</span>
           </div>
 
@@ -269,10 +269,10 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
           <button
             onClick={handleToggleAudio}
             aria-label={isPlayingAudio ? 'Pause spoken explanation' : 'Listen to spoken explanation'}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer font-semibold shadow-xs ${
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer font-semibold shadow-xs ${
               isPlayingAudio
-                ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233]'
-                : 'bg-surface hover:bg-surface-subtle text-theme-primary border border-theme'
+                ? 'bg-[#155EEF] text-white'
+                : 'bg-white dark:bg-[#102A43]/60 hover:bg-[#F7FAFD] dark:hover:bg-[#1E3A5F]/70 text-[#102A43] dark:text-white border border-[#D0D5DD] dark:border-[#1E3A5F]'
             }`}
           >
             {isPlayingAudio ? (
@@ -282,7 +282,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
               </>
             ) : (
               <>
-                <Volume2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <Volume2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                 <span>Listen Spoken Explanation</span>
               </>
             )}
@@ -302,7 +302,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
         {/* Instructions narrative if distinct */}
         {currentContent.instructions && currentContent.instructions !== displaySummary && (
           <p
-            className="text-xs sm:text-sm text-theme-secondary leading-relaxed whitespace-pre-line pt-2 border-t border-[#F472B6]/20 font-normal"
+            className="text-xs sm:text-sm text-theme-secondary leading-relaxed whitespace-pre-line pt-2 border-t border-[#155EEF]/20 font-normal"
             data-testid="explanation-instructions"
           >
             {currentContent.instructions}
@@ -311,12 +311,12 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
 
         {/* Audio Waveform Animation when playing */}
         {isPlayingAudio && (
-          <div className="p-3 rounded-xl bg-surface border border-theme flex items-center gap-3 text-xs text-[#4A2E4D] dark:text-[#FFD6DA] animate-in fade-in">
+          <div className="p-3 rounded-xl bg-surface border border-theme flex items-center gap-3 text-xs text-[#102A43] dark:text-[#EAF2FF] animate-in fade-in">
             <div className="flex items-end gap-1 h-4">
-              <span className="w-1 bg-[#F472B6] h-2.5 animate-bounce" />
-              <span className="w-1 bg-[#F472B6] h-4 animate-bounce delay-75" />
-              <span className="w-1 bg-[#F472B6] h-3 animate-bounce delay-150" />
-              <span className="w-1 bg-[#F472B6] h-2 animate-bounce" />
+              <span className="w-1 bg-[#155EEF] h-2.5 animate-bounce" />
+              <span className="w-1 bg-[#155EEF] h-4 animate-bounce delay-75" />
+              <span className="w-1 bg-[#155EEF] h-3 animate-bounce delay-150" />
+              <span className="w-1 bg-[#155EEF] h-2 animate-bounce" />
             </div>
             <span className="font-medium">
               Speaking verified explanation in {activeLang.toUpperCase()} vernacular voice...
@@ -344,7 +344,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <Pill className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                      <Pill className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                       <h4 className="font-bold text-base text-theme-primary font-mono">{med.name}</h4>
                     </div>
                     {med.strength && (
@@ -401,7 +401,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
       {currentContent.timing && currentContent.timing.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-theme-primary">
-            <Clock className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+            <Clock className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
             <span>Daily Intake Schedule:</span>
           </div>
 
@@ -424,11 +424,11 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-xs font-semibold text-theme-primary">{item.slot}</span>
-                    <SlotIcon className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                    <SlotIcon className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
                   </div>
                   <div
                     className={`text-base font-bold font-mono ${
-                      isSkip ? 'text-theme-muted' : 'text-[#4A2E4D] dark:text-[#F472B6]'
+                      isSkip ? 'text-theme-muted' : 'text-[#155EEF] dark:text-[#4B8BFF]'
                     }`}
                   >
                     {item.dose}
@@ -481,7 +481,7 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
           className="flex items-center gap-1.5 text-xs text-theme-muted hover:text-theme-primary font-medium py-1 cursor-pointer transition-colors"
           data-testid="toggle-side-by-side"
         >
-          <Sparkles className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <Sparkles className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span>Developer Diagnostics: Cross-Language Alignment</span>
           {showDeveloperAudit ? (
             <ChevronUp className="w-3.5 h-3.5" />
@@ -505,19 +505,19 @@ export const MultilingualExplanationCard: React.FC<MultilingualExplanationCardPr
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1">
-                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">English (en)</span>
+                <span className="font-bold text-[#155EEF] dark:text-[#4B8BFF] block">English (en)</span>
                 <p className="text-theme-primary font-medium">
                   {multilingual.en.summary || multilingual.en.instructions}
                 </p>
               </div>
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1">
-                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">हिन्दी (hi)</span>
+                <span className="font-bold text-[#155EEF] dark:text-[#4B8BFF] block">हिन्दी (hi)</span>
                 <p className="text-theme-primary font-medium">
                   {multilingual.hi.summary || multilingual.hi.instructions}
                 </p>
               </div>
               <div className="p-3 rounded-lg bg-surface border border-theme space-y-1">
-                <span className="font-bold text-[#7C5A8B] dark:text-[#F472B6] block">मराठी (mr)</span>
+                <span className="font-bold text-[#155EEF] dark:text-[#4B8BFF] block">मराठी (mr)</span>
                 <p className="text-theme-primary font-medium">
                   {multilingual.mr.summary || multilingual.mr.instructions}
                 </p>

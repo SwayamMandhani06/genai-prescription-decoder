@@ -25,11 +25,21 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
   const [analysisResult, setAnalysisResult] = useState<PrescriptionAnalysisResult | null>(null);
   const [liveDemoState, setLiveDemoState] = useState<ResultsDemoState | null>(null);
 
+  const handleUploadedDataChange = (data: UploadedPrescriptionFile | null) => {
+    setUploadedData(data);
+    // Explicitly invalidate stale results whenever a new prescription or sample is selected
+    setAnalysisResult(null);
+    setLiveDemoState(null);
+  };
+
   const handleContinueToReview = () => {
     setCurrentStep('review');
   };
 
   const handleStartAnalysis = () => {
+    // Invalidate stale results before starting analysis
+    setAnalysisResult(null);
+    setLiveDemoState(null);
     setCurrentStep('analyze');
   };
 
@@ -57,7 +67,7 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
       {currentStep === 'upload' && (
         <UploadStep
           uploadedData={uploadedData}
-          onSetUploadedData={setUploadedData}
+          onSetUploadedData={handleUploadedDataChange}
           rotation={rotation}
           onSetRotation={setRotation}
           zoom={zoom}

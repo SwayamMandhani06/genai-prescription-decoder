@@ -57,7 +57,7 @@ export const LanguageSupportSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Column: Context & Controls */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="text-sm font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-2">
+            <div className="text-sm font-semibold text-[#155EEF] dark:text-[#4B8BFF] flex items-center gap-2">
               <Languages className="w-4 h-4" />
               <span>Multilingual Posology</span>
             </div>
@@ -73,12 +73,12 @@ export const LanguageSupportSection: React.FC = () => {
             {/* Official DawaAI Brand Language Banner */}
             <div className="p-3.5 rounded-xl bg-surface border border-theme shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="font-brand-serif font-bold text-base text-[#4A2E4D] dark:text-white">Dawa</span>
-                <span className="font-bold text-base text-[#F472B6]">AI</span>
+                <span className="font-brand-serif font-bold text-base text-[#102A43] dark:text-white">Dawa</span>
+                <span className="font-bold text-base text-[#155EEF]">AI</span>
                 <span className="text-xs text-theme-muted">&bull;</span>
                 <span className="text-xs font-semibold text-theme-primary">{active.brandMotto}</span>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#7C5A8B] dark:text-[#F472B6]">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#155EEF] dark:text-[#4B8BFF]">
                 {activeLang.toUpperCase()}
               </span>
             </div>
@@ -88,14 +88,14 @@ export const LanguageSupportSection: React.FC = () => {
               <div className="text-xs font-semibold uppercase tracking-wider text-theme-muted">
                 Switch Language:
               </div>
-              <div className="inline-flex p-1.5 rounded-2xl bg-surface border border-theme shadow-xs">
+              <div className="inline-flex p-1.5 rounded-full bg-surface border border-theme shadow-xs">
                 {languages.map((lang) => (
                   <button
                     key={lang.id}
                     onClick={() => setActiveLang(lang.id)}
-                    className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                       activeLang === lang.id
-                        ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] shadow-xs'
+                        ? 'bg-gradient-to-r from-[#155EEF] to-[#2E90FA] text-white shadow-xs'
                         : 'text-theme-secondary hover:text-theme-primary'
                     }`}
                   >
@@ -106,7 +106,7 @@ export const LanguageSupportSection: React.FC = () => {
             </div>
 
             <div className="pt-2 flex items-center gap-2 text-xs sm:text-sm text-theme-muted">
-              <CheckCircle2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6] shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
               <span>Standardized medical glossaries validated for Indian vernaculars</span>
             </div>
           </div>
@@ -117,7 +117,7 @@ export const LanguageSupportSection: React.FC = () => {
               {/* Header with Drug Name and Audio Button */}
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-theme pb-4">
                 <div>
-                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6]">
+                  <div className="text-xs font-semibold text-[#155EEF] dark:text-[#4B8BFF]">
                     Patient guidance card &middot; {languages.find((l) => l.id === activeLang)?.label}
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-theme-primary mt-1">
@@ -128,8 +128,8 @@ export const LanguageSupportSection: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-surface-subtle text-xs font-semibold text-theme-primary border border-theme">
-                  <Volume2 className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-subtle text-xs font-semibold text-theme-primary border border-theme">
+                  <Volume2 className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                   <span>{active.audioLabel}</span>
                 </div>
               </div>
@@ -140,8 +140,8 @@ export const LanguageSupportSection: React.FC = () => {
                 className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300"
               >
                 {/* Primary Schedule Instruction */}
-                <div className="p-4 sm:p-5 rounded-xl bg-surface-subtle/70 space-y-1.5">
-                  <div className="text-xs font-semibold text-[#7C5A8B] dark:text-[#F472B6] flex items-center gap-1.5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-surface-subtle/70 space-y-1.5">
+                  <div className="text-xs font-semibold text-[#155EEF] dark:text-[#4B8BFF] flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     <span>How &amp; when to take</span>
                   </div>
@@ -155,9 +155,9 @@ export const LanguageSupportSection: React.FC = () => {
 
                 {/* Dietary Condition & Precaution Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                  <div className="p-3.5 rounded-xl bg-surface-subtle/50 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-surface-subtle/50 space-y-1">
                     <div className="font-semibold text-theme-primary flex items-center gap-1.5">
-                      <Utensils className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+                      <Utensils className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
                       <span>Meal relationship</span>
                     </div>
                     <p className="text-theme-secondary leading-[1.6]">
@@ -165,7 +165,7 @@ export const LanguageSupportSection: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-surface-subtle/50 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-surface-subtle/50 space-y-1">
                     <div className="font-semibold text-theme-primary flex items-center gap-1.5">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>Important precaution</span>

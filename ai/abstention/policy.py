@@ -392,22 +392,47 @@ def evaluate_prescription_abstention(
 
     total_evaluated = len(primary_fields)
     abstained_count = len(fields_requiring_verification)
-    abstention_rate = (abstained_count / total_evaluated) if total_evaluated > 0 else 0.0
 
-    requires_verification = abstained_count > 0
-    prescription_decision = "REQUIRES_HUMAN_VERIFICATION" if requires_verification else "ACCEPTED"
+    is_valid_rx = getattr(extraction_result, "is_prescription", True) if extraction_result else False
 
-    if requires_verification:
+    if not is_valid_rx:
+        requires_verification = True
+        prescription_decision = "REQUIRES_HUMAN_VERIFICATION"
+        fields_requiring_verification.append("document_type")
+        abstained_count = len(fields_requiring_verification)
+        total_evaluated = max(total_evaluated, 1)
+        abstention_rate = 1.0
         summary = (
-            f"Prescription requires clinician/pharmacist human verification: "
-            f"{abstained_count} of {total_evaluated} extracted posology fields triggered safety-critical "
-            f"abstention conditions under {config.policy_version}."
+            f"Prescription interpretation withheld under {config.policy_version}: "
+            f"Document visual/textual evidence does not substantiate a valid medical prescription."
+        )
+    elif total_evaluated == 0:
+        requires_verification = True
+        prescription_decision = "REQUIRES_HUMAN_VERIFICATION"
+        fields_requiring_verification.append("medicines")
+        abstained_count = 1
+        total_evaluated = 1
+        abstention_rate = 1.0
+        summary = (
+            f"Prescription interpretation withheld under {config.policy_version}: "
+            f"Zero valid medication posology items were identified for evaluation."
         )
     else:
-        summary = (
-            f"Prescription interpretation accepted under {config.policy_version}: "
-            f"All {total_evaluated} posology fields satisfied automatic acceptance criteria without conflict."
-        )
+        abstention_rate = (abstained_count / total_evaluated) if total_evaluated > 0 else 0.0
+        requires_verification = abstained_count > 0
+        prescription_decision = "REQUIRES_HUMAN_VERIFICATION" if requires_verification else "ACCEPTED"
+
+        if requires_verification:
+            summary = (
+                f"Prescription requires clinician/pharmacist human verification: "
+                f"{abstained_count} of {total_evaluated} extracted posology fields triggered safety-critical "
+                f"abstention conditions under {config.policy_version}."
+            )
+        else:
+            summary = (
+                f"Prescription interpretation accepted under {config.policy_version}: "
+                f"All {total_evaluated} posology fields satisfied automatic acceptance criteria without conflict."
+            )
 
     now_iso = datetime.now(timezone.utc).isoformat()
 

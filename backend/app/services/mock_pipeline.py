@@ -109,6 +109,94 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
             )
 
         # ------------------------------------------------------------------
+        # Document-Type Assessment Rejection Scenarios (Phase 2 Critical Safety Protection)
+        # Prevents unrelated images (landscapes, selfies, receipts, packaging, etc.)
+        # from producing hallucinated or fabricated prescription findings.
+        # ------------------------------------------------------------------
+        if scenario in ("landscape", "unrelated_image", "nature", "scenery"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image appears to be a landscape photograph and does not contain a medical prescription.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "unrelated_image", "rejection_reason": "Landscape photograph detected."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("selfie", "portrait", "person"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image appears to be a personal selfie or portrait photograph and does not contain a medical prescription.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "unrelated_image", "rejection_reason": "Portrait photo detected."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("food", "animal", "pet", "food_animal", "meal"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image appears to be a photograph of food or animals and does not contain a medical prescription.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "unrelated_image", "rejection_reason": "Food or animal photo detected."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("receipt", "shopping_receipt", "payment_receipt", "bill", "invoice"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image appears to be a commercial or retail shopping/payment receipt, not a clinical prescription.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "receipt", "rejection_reason": "Commercial shopping receipt detected."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("packaging_only", "medicine_packaging", "medication_box", "pill_bottle"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image shows commercial medicine packaging or a medication box, but does not contain an individualized doctor prescription.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "packaging_only", "rejection_reason": "Pharmaceutical packaging without doctor order."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("medical_literature", "printed_literature", "textbook", "journal"):
+            raise PipelineProcessingError(
+                code=ErrorCode.VALIDATION_FAILED,
+                message="The uploaded image contains printed medical literature or reference text, not an authorized patient prescription order.",
+                stage="document_type_assessment",
+                status_code=422,
+                retryable=False,
+                details={"document_type": "medical_literature", "rejection_reason": "Medical textbook/journal typography detected."},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        # Delegate rich multimodal test scenarios directly to MultimodalPrescriptionPipeline
+        if scenario in ("single_medicine_confident", "handwritten_uncertain_medicine", "blurry_prescription", "partially_cropped"):
+            from .multimodal_pipeline import MultimodalPrescriptionPipeline
+            m_pipe = MultimodalPrescriptionPipeline()
+            return await m_pipe.process_prescription(
+                image_bytes=image_bytes,
+                filename=filename,
+                public_image_url=public_image_url,
+                options=options,
+            )
+
+        # ------------------------------------------------------------------
         # 2. Phase 4 Preprocessing & Quality Assessment Execution
         # ------------------------------------------------------------------
         from ..preprocessing import ImagePreprocessingService, ImageValidationError

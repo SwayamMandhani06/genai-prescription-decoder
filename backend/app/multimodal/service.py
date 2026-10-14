@@ -87,7 +87,12 @@ class MultimodalExtractionService:
         start_time = time.perf_counter()
 
         # 2. Invoke multimodal model adapter
-        raw_text = await self.adapter.extract(
+        # If an evaluation scenario is explicitly requested (for offline tests), use MockMultimodalModelAdapter
+        active_adapter = self.adapter
+        if scenario is not None and not isinstance(self.adapter, MockMultimodalModelAdapter):
+            active_adapter = MockMultimodalModelAdapter()
+
+        raw_text = await active_adapter.extract(
             image_bytes=image_bytes,
             mime_type=mime_type,
             config=self.config,
@@ -113,7 +118,7 @@ class MultimodalExtractionService:
         duration = time.perf_counter() - start_time
 
         # 4. Construct audit metadata
-        is_mock = isinstance(self.adapter, MockMultimodalModelAdapter) or self.config.provider == "mock"
+        is_mock = isinstance(active_adapter, MockMultimodalModelAdapter) or self.config.provider == "mock" or scenario is not None
         model_meta = ModelMetadata(
             provider="mock" if is_mock else self.config.provider,
             model_id="mock-prescription-v1" if is_mock else self.config.model_id,
@@ -138,6 +143,10 @@ class MultimodalExtractionService:
             prescription_summary=parsed.get("prescription_summary"),
             patient_details=parsed.get("patient_details"),
             doctor_details=parsed.get("doctor_details"),
+            is_prescription=parsed.get("is_prescription", True),
+            document_type=parsed.get("document_type", "prescription"),
+            rejection_reason=parsed.get("rejection_reason"),
+            document_type_confidence=parsed.get("document_type_confidence", 1.0),
         )
 
         return result

@@ -40,7 +40,18 @@ async function capture() {
     document.documentElement.classList.remove('dark');
   });
 
-  // 3. Fullpage Light
+  // 3. Scroll through sections sequentially so IntersectionObservers trigger properly
+  const sectionIds = ['demo', 'how-it-works', 'safety', 'capabilities', 'faq', 'safety-transparency', 'analyze'];
+  for (const id of sectionIds) {
+    await page.evaluate((sId) => {
+      const el = document.getElementById(sId);
+      if (el) el.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }, id);
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  // Scroll back to top smoothly
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await new Promise((r) => setTimeout(r, 600));
   await page.screenshot({ path: path.join(outDir, 'screenshot-home-fullpage.png'), fullPage: true });
 
   // 4. Click "Analyze a prescription" to go to Workspace
@@ -75,7 +86,7 @@ async function capture() {
     const target = btns.find((b) => b.textContent && b.textContent.includes('Start Analysis'));
     if (target) target.click();
   });
-  await new Promise((r) => setTimeout(r, 6500)); // wait for pipeline stages
+  await new Promise((r) => setTimeout(r, 12000)); // wait for pipeline stages
   await page.screenshot({ path: path.join(outDir, 'screenshot-workspace-analyze-done.png') });
 
   // 7. Click "View Findings"
@@ -84,7 +95,7 @@ async function capture() {
     const target = btns.find((b) => b.textContent && (b.textContent.includes('View Findings') || b.textContent.includes('View Extracted Results')));
     if (target) target.click();
   });
-  await new Promise((r) => setTimeout(r, 1200));
+  await new Promise((r) => setTimeout(r, 2000));
   await page.screenshot({ path: path.join(outDir, 'screenshot-workspace-findings.png') });
 
   // 8. Tablet (820x1180) & Mobile (390x844)

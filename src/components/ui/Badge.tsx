@@ -24,20 +24,20 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   const variantStyles = {
-    cyan: 'bg-[#FFD6DA]/50 dark:bg-[#4A2E4D]/50 text-[#4A2E4D] dark:text-[#FFD6DA] border border-[#F472B6]/30',
-    teal: 'bg-[#FFD6DA]/70 dark:bg-[#4A2E4D]/70 text-[#4A2E4D] dark:text-[#F472B6] border border-[#F472B6]/40',
+    cyan: 'bg-[#EAF2FF] dark:bg-[#155EEF]/20 text-[#155EEF] dark:text-[#4B8BFF] border border-[#155EEF]/25',
+    teal: 'bg-[#DDF7EC] dark:bg-emerald-950/40 text-[#027A48] dark:text-[#6CE9A6] border border-[#12B76A]/30',
     emerald: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800',
-    amber: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
+    amber: 'bg-[#FFFAEB] dark:bg-amber-950/40 text-[#B54708] dark:text-[#FEDF89] border border-[#F79009]/30',
     coral: 'bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800',
     slate: 'bg-surface-subtle text-theme-secondary border border-theme',
     outline: 'bg-transparent text-theme-secondary border border-theme',
   };
 
   const dotColors = {
-    cyan: 'bg-[#7C5A8B]',
-    teal: 'bg-[#F472B6]',
+    cyan: 'bg-[#155EEF]',
+    teal: 'bg-[#12B76A]',
     emerald: 'bg-emerald-500',
-    amber: 'bg-amber-500',
+    amber: 'bg-[#F79009]',
     coral: 'bg-red-500',
     slate: 'bg-slate-400',
     outline: 'bg-slate-400',

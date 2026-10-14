@@ -8,7 +8,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ children, className, variant = 'glass', padding = 'md', ...props }, ref) => {
-    const baseStyles = 'rounded-xl border transition-all duration-200 relative overflow-hidden';
+    const baseStyles = 'rounded-2xl border transition-all duration-200 relative overflow-hidden';
 
     const paddingStyles = {
       none: 'p-0',
@@ -21,7 +21,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       glass: 'bg-surface/90 border-theme shadow-xs',
       subtle: 'bg-surface-subtle border-theme',
       elevated: 'bg-surface border-theme shadow-md',
-      cyan: 'bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border-[#F472B6]/40 dark:border-[#F472B6]/40',
+      cyan: 'bg-[#EAF2FF]/50 dark:bg-[#155EEF]/10 border-[#155EEF]/25 dark:border-[#155EEF]/30',
       amber: 'bg-amber-50/70 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/80',
       coral: 'bg-red-50/70 dark:bg-red-950/20 border-red-200 dark:border-red-800/80',
       interactive:

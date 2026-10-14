@@ -16,7 +16,7 @@ export const CuratedSamplePicker: React.FC<CuratedSamplePickerProps> = ({
     <div className="space-y-2.5">
       <div className="flex items-center justify-between text-xs">
         <span className="text-theme-secondary font-medium flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <Sparkles className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span>Or evaluate with curated test scripts:</span>
         </span>
         <span className="text-[11px] text-theme-muted">Sample Prescriptions</span>
@@ -32,7 +32,7 @@ export const CuratedSamplePicker: React.FC<CuratedSamplePickerProps> = ({
               onClick={() => onSelectSample(sample.id)}
               className={`p-3 rounded-xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-[#FFD6DA]/40 dark:bg-[#4A2E4D]/60 border-[#F472B6] shadow-xs'
+                  ? 'bg-[#EAF2FF] dark:bg-[#16263D] border-[#155EEF] shadow-xs'
                   : 'bg-surface border-theme hover:border-theme-hover shadow-xs'
               }`}
             >

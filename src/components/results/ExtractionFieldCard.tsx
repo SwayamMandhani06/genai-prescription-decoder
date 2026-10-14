@@ -68,7 +68,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       return 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800';
     }
     if (isActive) {
-      return 'bg-[#FFD6DA]/20 dark:bg-[#4A2E4D]/30 border-[#F472B6] dark:border-[#F472B6] shadow-sm ring-1 ring-[#F472B6]/30';
+      return 'bg-[#EAF2FF]/50 dark:bg-[#155EEF]/20 border-[#155EEF] dark:border-[#4B8BFF] shadow-sm ring-1 ring-[#155EEF]/30';
     }
     return 'bg-surface border-theme hover:border-theme-hover shadow-xs';
   };
@@ -99,11 +99,11 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
               <>
                 <span
                   title="Calibrated confidence estimate grounded in empirical validation distribution"
-                  className="text-sm font-bold font-mono text-[#7C5A8B] dark:text-[#F472B6]"
+                  className="text-sm font-bold font-mono text-[#155EEF] dark:text-[#4B8BFF]"
                 >
                   {Math.round(field.calibratedConfidence * 100)}%
                 </span>
-                <span className="text-[11px] text-[#7C5A8B] dark:text-[#F472B6] block font-medium">
+                <span className="text-[11px] text-[#155EEF] dark:text-[#4B8BFF] block font-medium">
                   Calibrated Confidence
                 </span>
               </>
@@ -232,7 +232,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
 
           {/* Dosage Invariant Notice */}
           {field.fieldKey === 'dosage' && (
-            <div className="p-2.5 rounded-lg bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30 border border-[#F472B6]/30 text-xs text-[#4A2E4D] dark:text-[#FFD6DA] leading-relaxed">
+            <div className="p-2.5 rounded-lg bg-[#EAF2FF]/60 dark:bg-[#155EEF]/20 border border-[#155EEF]/30 text-xs text-[#102A43] dark:text-[#EAF2FF] leading-relaxed">
               <strong>IMPORTANT:</strong> The system has NOT changed the observed dosage. Reference data matches never alter prescribed dosage.
             </div>
           )}
@@ -262,7 +262,7 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                   type="text"
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg text-sm border border-theme bg-surface text-theme-primary focus:outline-none focus:ring-1 focus:ring-[#F472B6]"
+                  className="flex-1 px-3 py-1.5 rounded-lg text-sm border border-theme bg-surface text-theme-primary focus:outline-none focus:ring-1 focus:ring-[#155EEF]"
                   placeholder="Corrected clinical text..."
                 />
                 <button
@@ -274,14 +274,14 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                       setIsEditing(false);
                     }
                   }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233] hover:bg-[#5C3A60] transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#155EEF] text-white hover:bg-[#1249C7] transition-colors cursor-pointer"
                 >
                   Save
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-subtle text-theme-secondary hover:bg-theme-muted transition-colors"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-surface-subtle text-theme-secondary hover:bg-theme-muted transition-colors"
                 >
                   Cancel
                 </button>
@@ -295,10 +295,10 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                   setVerifiedValue(field.value);
                   setVerificationStatus('confirmed');
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer ${
                   verificationStatus === 'confirmed'
-                    ? 'bg-[#4A2E4D] dark:bg-[#F472B6] text-white dark:text-[#2E2233]'
-                    : 'bg-surface-subtle text-theme-primary hover:bg-[#FFD6DA]/30 dark:hover:bg-[#4A2E4D]/30 border border-theme'
+                    ? 'bg-[#155EEF] text-white'
+                    : 'bg-surface-subtle text-theme-primary hover:bg-[#EAF2FF]/50 dark:hover:bg-[#155EEF]/20 border border-theme'
                 }`}
               >
                 <Check className="w-3.5 h-3.5" />
@@ -342,10 +342,10 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
       {/* Card Footer */}
       <div className="pt-3 border-t border-theme flex items-center justify-between text-xs text-theme-muted">
         <div className="flex items-center gap-1.5">
-          <FileSearch className="w-3.5 h-3.5 text-[#7C5A8B] dark:text-[#F472B6]" />
+          <FileSearch className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
           <span>Source: {field.source}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-[#7C5A8B] dark:text-[#F472B6] hover:underline font-medium">
+        <div className="flex items-center gap-1.5 text-[#155EEF] dark:text-[#4B8BFF] hover:underline font-medium">
           <span>Highlight On Script</span>
           <ExternalLink className="w-3 h-3" />
         </div>

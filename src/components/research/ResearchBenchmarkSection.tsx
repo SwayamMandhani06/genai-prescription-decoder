@@ -25,7 +25,7 @@ export const ResearchBenchmarkSection: React.FC = () => {
         <Card variant="glass" padding="none" className="border-theme mb-12 overflow-x-auto shadow-xs">
           <div className="p-5 sm:p-6 border-b border-theme flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-[#7C5A8B] dark:text-[#F472B6]" />
+              <BarChart3 className="w-5 h-5 text-[#155EEF] dark:text-[#4B8BFF]" />
               <h3 className="text-base sm:text-lg font-bold text-theme-primary">
                 Model Performance Benchmark (IndoRx-1200 Test Set)
               </h3>
@@ -41,7 +41,7 @@ export const ResearchBenchmarkSection: React.FC = () => {
                 <th className="py-3.5 px-4 sm:px-6 font-semibold">Evaluation Metric</th>
                 <th className="py-3.5 px-4 font-semibold">Traditional OCR (Tesseract 5.3)</th>
                 <th className="py-3.5 px-4 font-semibold">Zero-Shot VLM (General)</th>
-                <th className="py-3.5 px-4 text-[#4A2E4D] dark:text-[#FFD6DA] font-bold bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                <th className="py-3.5 px-4 text-[#102A43] dark:text-[#F5F7FA] font-bold bg-[#EAF2FF] dark:bg-[#16263D]">
                   DawaAI (Proposed Grounded Pipeline)
                 </th>
                 <th className="py-3.5 px-4 sm:px-6 text-emerald-700 dark:text-emerald-400 font-semibold">Improvement Margin</th>
@@ -56,7 +56,7 @@ export const ResearchBenchmarkSection: React.FC = () => {
                   </td>
                   <td className="py-4 px-4 font-mono text-theme-secondary">{metric.traditionalOcr}</td>
                   <td className="py-4 px-4 font-mono text-theme-secondary">{metric.generalVlm}</td>
-                  <td className="py-4 px-4 font-mono font-bold text-[#4A2E4D] dark:text-[#FFD6DA] bg-[#FFD6DA]/30 dark:bg-[#4A2E4D]/30">
+                  <td className="py-4 px-4 font-mono font-bold text-[#102A43] dark:text-[#F5F7FA] bg-[#EAF2FF] dark:bg-[#16263D]">
                     {metric.auraRxModel}
                   </td>
                   <td className="py-4 px-4 sm:px-6 font-mono text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
@@ -74,7 +74,7 @@ export const ResearchBenchmarkSection: React.FC = () => {
             <Card key={ds.name} variant="subtle" padding="md" className="border-theme">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Database className="w-4 h-4 text-[#7C5A8B] dark:text-[#F472B6]" />
+                  <Database className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
                   <h4 className="text-sm font-bold text-theme-primary font-mono">{ds.name}</h4>
                 </div>
                 <Badge variant="cyan" size="xs">
