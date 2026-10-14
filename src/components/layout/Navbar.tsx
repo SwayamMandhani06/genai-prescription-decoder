@@ -75,10 +75,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="flex items-center justify-between min-h-[48px] relative">
-          {/* Logo & Product Identification */}
-          <div className="flex-1 flex items-center justify-start min-w-0">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
+        <div className="grid grid-cols-[auto_1fr] md:grid-cols-[1fr_auto_1fr] items-center min-h-[48px] gap-3 lg:gap-4">
+          {/* Logo & Product Identification (Left Column) */}
+          <div className="flex items-center justify-start min-w-0">
             <button
               onClick={onHomeClick}
               className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#155EEF] rounded-xl p-1"
@@ -97,12 +97,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Primary Navigation (Desktop) — Mathematically Centered in Header */}
-          <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1 nav-pill-glass px-2.5 lg:px-3 py-1.5 rounded-full shadow-xs">
+          {/* Primary Navigation (Center Column) — Symmetrical & True Center in Grid */}
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 nav-pill-glass px-2.5 lg:px-3.5 py-1.5 rounded-full shadow-xs justify-self-center">
             <a
               href="#analyze"
               onClick={(e) => handleLinkClick(e, onNavigateToAnalyze, 'analyze')}
-              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <ScanLine className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Analyze</span>
@@ -111,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#how-it-works"
               onClick={(e) => handleLinkClick(e, onNavigateToHowItWorks, 'how-it-works')}
-              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <HelpCircle className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>How It Works</span>
@@ -120,47 +120,47 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="#safety"
               onClick={(e) => handleLinkClick(e, onNavigateToSafety, 'safety')}
-              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+              className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Safety</span>
             </a>
 
-            <a
-              href="#faq"
-              onClick={(e) => handleLinkClick(e, undefined, 'faq')}
-              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
-            >
-              <span>FAQ</span>
-            </a>
+            {onOpenResultsClick && (
+              <button
+                onClick={onOpenResultsClick}
+                className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <FileCheck className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
+                <span>Findings</span>
+              </button>
+            )}
 
             <button
               onClick={onNavigateToResearch}
-              className="px-3 lg:px-3.5 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-theme-muted hidden xl:block" />
               <span>Research</span>
             </button>
+
+            <a
+              href="#faq"
+              onClick={(e) => handleLinkClick(e, undefined, 'faq')}
+              className="px-2.5 lg:px-3 py-1.5 text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary hover:bg-surface/80 rounded-full transition-all flex items-center gap-1.5"
+            >
+              <span>FAQ</span>
+            </a>
           </nav>
 
-          {/* Right Action Bar (Desktop) — Balanced Right Edge Alignment */}
-          <div className="hidden sm:flex flex-1 items-center justify-end gap-2 sm:gap-2.5">
-            {onOpenResultsClick && (
-              <button
-                onClick={onOpenResultsClick}
-                className="px-3.5 py-2 rounded-full border border-theme bg-surface hover:bg-surface-subtle text-xs lg:text-sm font-semibold text-theme-secondary hover:text-theme-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-xs min-h-[42px]"
-              >
-                <FileCheck className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF]" />
-                <span className="hidden lg:inline">Findings</span>
-              </button>
-            )}
-
+          {/* Right Action Bar (Desktop Column) — Symmetrical Right Alignment */}
+          <div className="hidden sm:flex items-center justify-end gap-2.5 justify-self-end">
             <ThemeSwitcher />
 
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="btn-header-cta !min-h-[42px] !py-2 !px-4 text-xs sm:text-sm whitespace-nowrap"
+                className="btn-header-cta !min-h-[40px] !py-2 !px-4 text-xs sm:text-sm whitespace-nowrap shadow-xs"
               >
                 <UploadCloud className="w-4 h-4" />
                 <span>Analyze a Prescription</span>
@@ -168,14 +168,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* Mobile Bar: Theme switcher + Upload + Menu toggle */}
-          <div className="flex sm:hidden items-center gap-2">
+          {/* Mobile Right Controls (< 640px) */}
+          <div className="flex sm:hidden items-center justify-end gap-2">
             <ThemeSwitcher />
 
             {onOpenUploadClick && (
               <button
                 onClick={onOpenUploadClick}
-                className="btn-header-cta !min-h-[38px] !py-1.5 !px-3.5 !text-xs whitespace-nowrap"
+                className="btn-header-cta !min-h-[36px] !py-1.5 !px-3 !text-xs whitespace-nowrap"
               >
                 Upload
               </button>

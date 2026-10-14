@@ -20,16 +20,6 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
     let height = 0;
     let time = 0;
 
-    // Smooth interpolated mouse tracking for gentle fluid tilt
-    const mouse = {
-      x: -1000,
-      y: -1000,
-      targetX: -1000,
-      targetY: -1000,
-      influence: 0,
-      targetInfluence: 0,
-    };
-
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -48,39 +38,10 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-
-      if (mouse.targetX === -1000) {
-        mouse.targetX = width * 0.5;
-        mouse.targetY = height * 0.7;
-        mouse.x = mouse.targetX;
-        mouse.y = mouse.targetY;
-      }
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
-
-    // Track mouse gently across the parent hero section
-    const heroSection = canvas.closest('section') || canvas.parentElement || window;
-
-    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
-      const clientX = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX;
-      const clientY = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
-      const rect = canvas.getBoundingClientRect();
-
-      mouse.targetX = clientX - rect.left;
-      mouse.targetY = clientY - rect.top;
-      mouse.targetInfluence = 1;
-    };
-
-    const handlePointerLeave = () => {
-      mouse.targetInfluence = 0;
-    };
-
-    heroSection.addEventListener('mousemove', handlePointerMove as EventListener, { passive: true });
-    heroSection.addEventListener('touchmove', handlePointerMove as EventListener, { passive: true });
-    heroSection.addEventListener('mouseleave', handlePointerLeave as EventListener);
-    heroSection.addEventListener('touchend', handlePointerLeave as EventListener);
 
     // Pause animation when scrolled out of viewport
     const observer = new IntersectionObserver(
@@ -92,10 +53,10 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
     observer.observe(canvas);
 
     // -------------------------------------------------------------------------
-    // 3D SILK GRADIENT WAVE RIBBONS (VisualJoy inspired, DawaAI Clinical Palette)
+    // 3D SILK GRADIENT WAVE RIBBONS (Autonomous, Gentle, Calibrated Light Palette)
     // -------------------------------------------------------------------------
-    // Renders volumetric twisting silk ribbons with gradient lighting, specular
-    // highlights, and soft ambient occlusion folds.
+    // Renders volumetric twisting silk ribbons with soft ambient lighting, gentle
+    // specular edge accents, and translucent pastel gradients that never distract.
     // -------------------------------------------------------------------------
     const render = () => {
       if (!ctx || !isVisible) {
@@ -107,55 +68,47 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
 
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse lerping
-      mouse.x += (mouse.targetX - mouse.x) * 0.035;
-      mouse.y += (mouse.targetY - mouse.y) * 0.035;
-      mouse.influence += (mouse.targetInfluence - mouse.influence) * 0.03;
-
-      time += prefersReducedMotion ? 0 : 0.008;
+      // Smooth, slow autonomous undulation without mouse interference
+      time += prefersReducedMotion ? 0 : 0.005;
       const dark = isDarkMode();
 
-      // Ribbon anchor parameters (positioned gracefully in lower 50%-85% of hero)
-      const baseHorizon = height * 0.72;
+      // Ribbon anchor parameters (positioned gracefully in lower third of hero)
+      const baseHorizon = height * 0.78;
       const step = 8; // Horizontal mesh resolution
       const numSteps = Math.ceil((width + 120) / step);
 
-      // Ribbon Definition:
-      // Ribbon 1: Soft broad background silk layer (Deep ambient glow & volume)
-      // Ribbon 2: Primary foreground 3D chrome-silk ribbon with specular highlights & folds
-      // Ribbon 3: Fine luminous crest rim-light filament
-
+      // Ribbon Definition (Soft, light, translucent, non-disturbing):
       const ribbons = [
         // Background Secondary Silk Band
         {
-          baseY: baseHorizon - 20,
-          amplitude1: 45,
-          amplitude2: 25,
-          freq1: 0.0018,
-          freq2: 0.0036,
-          speed1: 0.55,
-          speed2: 0.85,
+          baseY: baseHorizon - 22,
+          amplitude1: 36,
+          amplitude2: 20,
+          freq1: 0.0016,
+          freq2: 0.0032,
+          speed1: 0.45,
+          speed2: 0.70,
           phase: 1.8,
-          widthBase: 70,
-          widthVar: 30,
-          twistFreq: 0.0022,
-          opacity: dark ? 0.75 : 0.40,
+          widthBase: 60,
+          widthVar: 25,
+          twistFreq: 0.0020,
+          opacity: dark ? 0.28 : 0.16,
           specular: false,
         },
-        // Foreground Main Volumetric Silk Ribbon (Primary focal feature)
+        // Foreground Main Volumetric Silk Ribbon (Soft light focal feature)
         {
           baseY: baseHorizon,
-          amplitude1: 65,
-          amplitude2: 38,
-          freq1: 0.0014,
-          freq2: 0.0028,
-          speed1: 0.7,
-          speed2: 1.1,
+          amplitude1: 52,
+          amplitude2: 30,
+          freq1: 0.0013,
+          freq2: 0.0026,
+          speed1: 0.55,
+          speed2: 0.85,
           phase: 0.0,
-          widthBase: 110,
-          widthVar: 45,
-          twistFreq: 0.0018,
-          opacity: dark ? 0.95 : 0.75,
+          widthBase: 95,
+          widthVar: 35,
+          twistFreq: 0.0016,
+          opacity: dark ? 0.38 : 0.22,
           specular: true,
         },
       ];
@@ -170,13 +123,12 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
         width * 0.48
       );
       if (dark) {
-        bloomGrad.addColorStop(0, 'rgba(46, 144, 250, 0.22)');
-        bloomGrad.addColorStop(0.4, 'rgba(21, 94, 239, 0.12)');
-        bloomGrad.addColorStop(0.8, 'rgba(16, 42, 67, 0.05)');
+        bloomGrad.addColorStop(0, 'rgba(56, 189, 248, 0.08)');
+        bloomGrad.addColorStop(0.5, 'rgba(21, 94, 239, 0.04)');
         bloomGrad.addColorStop(1, 'rgba(10, 15, 24, 0)');
       } else {
-        bloomGrad.addColorStop(0, 'rgba(46, 144, 250, 0.14)');
-        bloomGrad.addColorStop(0.5, 'rgba(21, 94, 239, 0.06)');
+        bloomGrad.addColorStop(0, 'rgba(186, 230, 253, 0.10)');
+        bloomGrad.addColorStop(0.5, 'rgba(147, 197, 253, 0.03)');
         bloomGrad.addColorStop(1, 'rgba(247, 250, 253, 0)');
       }
       ctx.fillStyle = bloomGrad;
@@ -197,25 +149,14 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
           const wave1 = Math.sin(x * ribbon.freq1 + t1) * ribbon.amplitude1;
           const wave2 = Math.cos(x * ribbon.freq2 + t2) * ribbon.amplitude2;
 
-          // Mouse proximity influence (gentle fluid undulation, never breaks shape)
-          let mouseOffset = 0;
-          if (mouse.influence > 0.01) {
-            const dx = x - mouse.x;
-            const dist = Math.abs(dx);
-            if (dist < 320) {
-              const falloff = Math.cos((dist / 320) * (Math.PI / 2));
-              mouseOffset = falloff * falloff * 24 * mouse.influence * (mouse.y < ribbon.baseY ? 1 : -1);
-            }
-          }
-
-          const centerY = ribbon.baseY + wave1 + wave2 + mouseOffset;
+          const centerY = ribbon.baseY + wave1 + wave2;
 
           // 3D twist modulation along ribbon path
-          const twist = Math.sin(x * ribbon.twistFreq + time * 0.6 + ribbon.phase);
-          const currentWidth = ribbon.widthBase + Math.cos(x * 0.002 + time * 0.4) * ribbon.widthVar;
+          const twist = Math.sin(x * ribbon.twistFreq + time * 0.5 + ribbon.phase);
+          const currentWidth = ribbon.widthBase + Math.cos(x * 0.002 + time * 0.35) * ribbon.widthVar;
 
           // Project upper and lower edges with 3D perspective fold
-          const halfH = Math.max(12, Math.abs(twist) * currentWidth * 0.5);
+          const halfH = Math.max(10, Math.abs(twist) * currentWidth * 0.5);
           const yTop = centerY - halfH;
           const yBot = centerY + halfH;
 
@@ -229,7 +170,6 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
         if (topPts.length < 2) return;
 
         // Draw segmented volumetric silk gradient mesh
-        // We draw vertical slice quads with rich chromatic gradients
         for (let i = 0; i < topPts.length - 1; i++) {
           const p1Top = topPts[i];
           const p2Top = topPts[i + 1];
@@ -243,38 +183,37 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
           ctx.lineTo(p1Bot.x, p1Bot.y);
           ctx.closePath();
 
-          // Dynamic volumetric gradient for each slice with slope-based specular lighting
+          // Dynamic volumetric gradient for each slice with subtle specular lighting
           const sliceGrad = ctx.createLinearGradient(p1Top.x, p1Top.y, p1Bot.x, p1Bot.y);
           const slopeFactor = 0.5 + 0.5 * Math.sin(p1Top.slope * 2.8);
-          const highlightAlpha = Math.min(1, (0.85 + slopeFactor * 0.15) * ribbon.opacity);
+          const highlightAlpha = Math.min(1, (0.75 + slopeFactor * 0.25) * ribbon.opacity);
 
           if (dark) {
             if (rIdx === 1) {
-              // Primary Foreground Silk (Electric Cyan to Royal Cobalt to Obsidian)
-              sliceGrad.addColorStop(0, `rgba(224, 242, 254, ${highlightAlpha})`); // Crisp chrome edge
-              sliceGrad.addColorStop(0.12, `rgba(56, 189, 248, ${0.85 * ribbon.opacity})`); // Electric cyan highlight
-              sliceGrad.addColorStop(0.38, `rgba(46, 144, 250, ${0.75 * ribbon.opacity})`); // Vibrant azure
-              sliceGrad.addColorStop(0.68, `rgba(21, 94, 239, ${0.70 * ribbon.opacity})`); // Deep clinical cobalt
-              sliceGrad.addColorStop(0.88, `rgba(16, 42, 67, ${0.55 * ribbon.opacity})`); // Deep navy shadow fold
-              sliceGrad.addColorStop(1, 'rgba(10, 15, 24, 0.05)'); // Seamless dark fade
+              // Primary Foreground Silk (Gentle luminescent cyan/azure)
+              sliceGrad.addColorStop(0, `rgba(224, 242, 254, ${highlightAlpha * 0.7})`);
+              sliceGrad.addColorStop(0.18, `rgba(56, 189, 248, ${0.45 * ribbon.opacity})`);
+              sliceGrad.addColorStop(0.48, `rgba(46, 144, 250, ${0.35 * ribbon.opacity})`);
+              sliceGrad.addColorStop(0.78, `rgba(21, 94, 239, ${0.25 * ribbon.opacity})`);
+              sliceGrad.addColorStop(1, 'rgba(10, 15, 24, 0.0)');
             } else {
-              // Secondary Background Silk (Deep Indigo to Translucent Cyan)
-              sliceGrad.addColorStop(0, `rgba(75, 139, 255, ${0.60 * ribbon.opacity})`);
-              sliceGrad.addColorStop(0.4, `rgba(21, 94, 239, ${0.50 * ribbon.opacity})`);
-              sliceGrad.addColorStop(0.8, `rgba(16, 42, 67, ${0.35 * ribbon.opacity})`);
+              // Secondary Background Silk
+              sliceGrad.addColorStop(0, `rgba(56, 189, 248, ${0.25 * ribbon.opacity})`);
+              sliceGrad.addColorStop(0.5, `rgba(30, 58, 138, ${0.18 * ribbon.opacity})`);
               sliceGrad.addColorStop(1, 'rgba(10, 15, 24, 0.0)');
             }
           } else {
             if (rIdx === 1) {
-              // Light Mode: Gleaming clinical blue silk with ice highlights
-              sliceGrad.addColorStop(0, `rgba(240, 249, 255, ${highlightAlpha})`); // Crisp rim highlight
-              sliceGrad.addColorStop(0.14, `rgba(56, 189, 248, ${0.65 * ribbon.opacity})`);
-              sliceGrad.addColorStop(0.42, `rgba(46, 144, 250, ${0.55 * ribbon.opacity})`);
-              sliceGrad.addColorStop(0.72, `rgba(21, 94, 239, ${0.45 * ribbon.opacity})`);
-              sliceGrad.addColorStop(1, 'rgba(247, 250, 253, 0.0)');
+              // Light Mode: Very soft, airy, translucent pastel ice-blue
+              sliceGrad.addColorStop(0, `rgba(255, 255, 255, ${highlightAlpha * 0.6})`); // Soft pearlescent rim
+              sliceGrad.addColorStop(0.18, `rgba(224, 242, 254, ${0.40 * ribbon.opacity})`); // Subtle ice cyan
+              sliceGrad.addColorStop(0.48, `rgba(186, 230, 253, ${0.30 * ribbon.opacity})`); // Translucent sky blue
+              sliceGrad.addColorStop(0.78, `rgba(147, 197, 253, ${0.20 * ribbon.opacity})`); // Light pastel azure
+              sliceGrad.addColorStop(1, 'rgba(247, 250, 253, 0.0)'); // Clean fade
             } else {
-              sliceGrad.addColorStop(0, `rgba(46, 144, 250, ${0.40 * ribbon.opacity})`);
-              sliceGrad.addColorStop(0.5, `rgba(21, 94, 239, ${0.30 * ribbon.opacity})`);
+              // Secondary Background Silk (Subtle ambient pastel veil)
+              sliceGrad.addColorStop(0, `rgba(186, 230, 253, ${0.22 * ribbon.opacity})`);
+              sliceGrad.addColorStop(0.5, `rgba(147, 197, 253, ${0.14 * ribbon.opacity})`);
               sliceGrad.addColorStop(1, 'rgba(247, 250, 253, 0.0)');
             }
           }
@@ -283,7 +222,7 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
           ctx.fill();
         }
 
-        // Luminous Crest Filament (Razor-sharp metallic / specular rim light on top edge)
+        // Luminous Crest Filament (Delicate metallic / pearlescent rim accent)
         if (ribbon.specular) {
           ctx.beginPath();
           ctx.moveTo(topPts[0].x, topPts[0].y);
@@ -291,32 +230,33 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
             ctx.lineTo(topPts[i].x, topPts[i].y);
           }
 
-          // Specular stroke
           const rimGrad = ctx.createLinearGradient(0, 0, width, 0);
           if (dark) {
-            rimGrad.addColorStop(0, 'rgba(56, 189, 248, 0.3)');
-            rimGrad.addColorStop(0.3, 'rgba(224, 242, 254, 0.95)'); // Ultra-bright glint
-            rimGrad.addColorStop(0.5, 'rgba(46, 144, 250, 0.8)');
-            rimGrad.addColorStop(0.7, 'rgba(224, 242, 254, 0.95)'); // Ultra-bright glint
-            rimGrad.addColorStop(1, 'rgba(56, 189, 248, 0.3)');
+            rimGrad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
+            rimGrad.addColorStop(0.3, 'rgba(224, 242, 254, 0.6)');
+            rimGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.4)');
+            rimGrad.addColorStop(0.7, 'rgba(224, 242, 254, 0.6)');
+            rimGrad.addColorStop(1, 'rgba(56, 189, 248, 0.15)');
           } else {
-            rimGrad.addColorStop(0, 'rgba(46, 144, 250, 0.4)');
-            rimGrad.addColorStop(0.5, 'rgba(21, 94, 239, 0.9)');
-            rimGrad.addColorStop(1, 'rgba(46, 144, 250, 0.4)');
+            rimGrad.addColorStop(0, 'rgba(186, 230, 253, 0.15)');
+            rimGrad.addColorStop(0.3, 'rgba(255, 255, 255, 0.6)');
+            rimGrad.addColorStop(0.5, 'rgba(147, 197, 253, 0.35)');
+            rimGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.6)');
+            rimGrad.addColorStop(1, 'rgba(186, 230, 253, 0.15)');
           }
 
           ctx.strokeStyle = rimGrad;
-          ctx.lineWidth = 2.2;
+          ctx.lineWidth = 1.0;
           ctx.stroke();
 
-          // Subtle glowing secondary crest line inside the fold
+          // Subtle secondary fold accent
           ctx.beginPath();
           ctx.moveTo(botPts[0].x, botPts[0].y);
           for (let i = 1; i < botPts.length; i++) {
             ctx.lineTo(botPts[i].x, botPts[i].y);
           }
-          ctx.strokeStyle = dark ? 'rgba(75, 139, 255, 0.25)' : 'rgba(21, 94, 239, 0.15)';
-          ctx.lineWidth = 1.2;
+          ctx.strokeStyle = dark ? 'rgba(75, 139, 255, 0.12)' : 'rgba(147, 197, 253, 0.08)';
+          ctx.lineWidth = 0.8;
           ctx.stroke();
         }
       });
@@ -332,10 +272,6 @@ export const SilkGradientWaveCanvas: React.FC<SilkGradientWaveCanvasProps> = ({ 
       cancelAnimationFrame(animationFrameId);
       observer.disconnect();
       window.removeEventListener('resize', handleResize);
-      heroSection.removeEventListener('mousemove', handlePointerMove as EventListener);
-      heroSection.removeEventListener('touchmove', handlePointerMove as EventListener);
-      heroSection.removeEventListener('mouseleave', handlePointerLeave as EventListener);
-      heroSection.removeEventListener('touchend', handlePointerLeave as EventListener);
     };
   }, []);
 
