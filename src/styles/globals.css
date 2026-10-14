@@ -437,6 +437,33 @@ html.theme-transitioning *::after {
   box-shadow: 0 8px 28px -4px rgba(0, 0, 0, 0.5);
 }
 
+/* Dotted Clinical Pattern & Dashed Frame (Synchronized with Upload Prescription Viewfinder) */
+.box-dotted-pattern {
+  border: 1.5px dashed rgba(80, 115, 165, 0.32);
+  background-color: var(--bg-surface-subtle);
+  background-image: radial-gradient(rgba(21, 94, 239, 0.12) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+.dark .box-dotted-pattern {
+  border-color: rgba(180, 200, 225, 0.22);
+  background-color: var(--bg-surface-subtle);
+  background-image: radial-gradient(rgba(75, 139, 255, 0.12) 1.2px, transparent 1.2px);
+}
+
+.box-dotted-frame {
+  border: 2px dashed rgba(80, 115, 165, 0.32);
+  background-color: var(--bg-surface);
+  background-image: radial-gradient(rgba(21, 94, 239, 0.10) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+.dark .box-dotted-frame {
+  border-color: rgba(180, 200, 225, 0.22);
+  background-color: var(--bg-surface);
+  background-image: radial-gradient(rgba(75, 139, 255, 0.10) 1.2px, transparent 1.2px);
+}
+
 /* Clean Editorial Panel */
 .editorial-panel {
   background-color: var(--bg-surface);

@@ -200,10 +200,10 @@ export const UploadStep: React.FC<UploadStepProps> = ({
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative rounded-3xl border-2 transition-all overflow-hidden flex flex-col items-center justify-center min-h-[460px] p-6 sm:p-10 ${
+            className={`relative rounded-3xl border-2 transition-all overflow-hidden flex flex-col items-center justify-center min-h-[460px] p-6 sm:p-10 box-dotted-frame ${
               isDragging
                 ? 'border-[#155EEF] bg-[#EAF2FF]/40 dark:bg-[#155EEF]/15 shadow-md'
-                : 'border-dashed border-[#5073A5]/30 dark:border-[#B4C8E1]/25 bg-surface/60 hover:bg-surface/80 hover:border-[#155EEF]/50 shadow-xs'
+                : 'border-dashed border-[#5073A5]/30 dark:border-[#B4C8E1]/25 hover:bg-surface/80 hover:border-[#155EEF]/50 shadow-xs'
             }`}
           >
             <input

@@ -380,7 +380,7 @@ export const InteractivePrescriptionSection: React.FC = () => {
             {/* Document Canvas Frame (Authentic Image with Overlay Coordinates) */}
             <div
               ref={imgFrameRef}
-              className="relative rounded-2xl overflow-hidden border border-theme/80 bg-white shadow-inner select-none transition-all"
+              className="relative rounded-2xl overflow-hidden box-dotted-frame bg-white shadow-inner select-none transition-all p-1.5"
             >
               {/* The Unhighlighted Source Fictional Prescription Image */}
               <img
@@ -529,7 +529,7 @@ export const InteractivePrescriptionSection: React.FC = () => {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-theme-muted">
                 Original Doctor Handwriting Transcription
               </div>
-              <div className="p-3 rounded-xl bg-surface-subtle border border-theme font-mono text-xs sm:text-sm text-theme-primary">
+              <div className="p-3.5 rounded-xl box-dotted-pattern font-mono text-xs sm:text-sm text-theme-primary">
                 {activeLine.doctorInkText}
               </div>
             </div>
@@ -540,7 +540,7 @@ export const InteractivePrescriptionSection: React.FC = () => {
                 Interpreted Medication &amp; Formulation
               </div>
 
-              <div className="p-4 rounded-2xl bg-surface-subtle/80 border border-theme space-y-3">
+              <div className="p-4 rounded-2xl box-dotted-pattern space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-2">
                   <div className="flex items-center gap-2">
                     <Pill className="w-4 h-4 text-[#155EEF] dark:text-[#4B8BFF] shrink-0" />
@@ -576,7 +576,7 @@ export const InteractivePrescriptionSection: React.FC = () => {
 
             {/* Selective Abstention Caution Banner (for Ambiguous Line) */}
             {activeLine.isAmbiguous && activeLine.abstentionReason && (
-              <div className="p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-300 dark:border-amber-700/60 text-xs text-amber-900 dark:text-amber-200 space-y-1.5">
+              <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-700/60 text-xs text-amber-900 dark:text-amber-200 space-y-1.5">
                 <div className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
                   <AlertTriangle className="w-4 h-4 shrink-0" />
                   <span>Uncertainty Safeguard: Abstaining from Autonomous Decision</span>
@@ -592,7 +592,7 @@ export const InteractivePrescriptionSection: React.FC = () => {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-theme-muted">
                 Patient-Friendly Guidance
               </div>
-              <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed p-3.5 rounded-xl bg-surface-subtle border border-theme">
+              <p className="text-xs sm:text-sm text-theme-secondary leading-relaxed p-3.5 rounded-xl box-dotted-pattern">
                 {activeLine.patientGuidance}
               </p>
             </div>

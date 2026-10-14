@@ -351,7 +351,7 @@ export const HowItWorksSection: React.FC = () => {
                 {activeStage.mechanics.map((mech, i) => (
                   <div
                     key={i}
-                    className="p-4 sm:p-5 rounded-2xl bg-surface-subtle/70 border border-theme space-y-1.5"
+                    className="p-4 sm:p-5 rounded-2xl box-dotted-pattern space-y-1.5"
                   >
                     <div className="text-sm font-bold text-theme-primary flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-[#EAF2FF] dark:bg-[#163657] text-[#155EEF] dark:text-[#84CAFF] text-xs font-mono font-bold flex items-center justify-center shrink-0">
@@ -367,7 +367,7 @@ export const HowItWorksSection: React.FC = () => {
               </div>
 
               {/* Guardrail Box */}
-              <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/60 flex items-start gap-3">
+              <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-900/60 flex items-start gap-3">
                 <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-0.5 text-xs">
                   <div className="font-bold text-amber-900 dark:text-amber-300">
@@ -392,7 +392,7 @@ export const HowItWorksSection: React.FC = () => {
                   {activeStage.inputs.map((inp, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-surface border border-theme text-xs text-theme-secondary flex items-start gap-2"
+                      className="p-3 rounded-xl bg-surface border-2 border-dashed border-[#5073A5]/25 dark:border-[#B4C8E1]/20 text-xs text-theme-secondary flex items-start gap-2"
                     >
                       <Eye className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF] shrink-0 mt-0.5" />
                       <span>{inp}</span>
@@ -411,7 +411,7 @@ export const HowItWorksSection: React.FC = () => {
                   {activeStage.outputs.map((out, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-surface border border-theme text-xs font-medium text-theme-primary flex items-start gap-2"
+                      className="p-3 rounded-xl bg-surface border-2 border-dashed border-[#5073A5]/25 dark:border-[#B4C8E1]/20 text-xs font-medium text-theme-primary flex items-start gap-2"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{out}</span>

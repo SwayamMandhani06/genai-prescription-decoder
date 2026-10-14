@@ -74,7 +74,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
               </div>
 
               {/* Raw handwritten ink note */}
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-2">
+              <div className="p-4 rounded-2xl box-dotted-pattern space-y-2.5">
                 <div className="flex items-center justify-between text-xs text-theme-muted">
                   <span className="font-medium text-[11px] uppercase tracking-wider text-[#155EEF] dark:text-[#4B8BFF]">
                     Prescription Ink Trajectory
@@ -83,7 +83,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                     Doctor pen ink
                   </span>
                 </div>
-                <div className="rounded-lg overflow-hidden border border-theme bg-white shadow-xs">
+                <div className="rounded-xl overflow-hidden box-dotted-frame bg-white shadow-xs p-1">
                   <img
                     src="/samples/handwritten-augmentin-note.png"
                     alt="Handwritten Augmentin Prescription Note showing authentic doctor pen ink"
@@ -139,7 +139,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
               </div>
 
               {/* Verified Item */}
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme space-y-1">
+              <div className="p-3.5 rounded-xl box-dotted-pattern space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -155,7 +155,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
               </div>
 
               {/* LASA Safety Alert */}
-              <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 space-y-1.5">
+              <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-800/60 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
@@ -247,7 +247,7 @@ export const CoreCapabilitiesSection: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl bg-surface-subtle border border-theme space-y-2">
+                <div className="p-4 rounded-xl box-dotted-pattern space-y-2">
                   <div className="text-xs font-semibold text-[#155EEF] dark:text-[#4B8BFF]">
                     Dosing Schedule &amp; Timing
                   </div>

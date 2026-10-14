@@ -140,7 +140,7 @@ export const LanguageSupportSection: React.FC = () => {
                 className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300"
               >
                 {/* Primary Schedule Instruction */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-surface-subtle/70 space-y-1.5">
+                <div className="p-4 sm:p-5 rounded-2xl box-dotted-pattern space-y-1.5">
                   <div className="text-xs font-semibold text-[#155EEF] dark:text-[#4B8BFF] flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     <span>How &amp; when to take</span>
@@ -155,7 +155,7 @@ export const LanguageSupportSection: React.FC = () => {
 
                 {/* Dietary Condition & Precaution Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                  <div className="p-3.5 rounded-2xl bg-surface-subtle/50 space-y-1">
+                  <div className="p-3.5 rounded-2xl bg-surface border-2 border-dashed border-[#5073A5]/25 dark:border-[#B4C8E1]/20 space-y-1">
                     <div className="font-semibold text-theme-primary flex items-center gap-1.5">
                       <Utensils className="w-3.5 h-3.5 text-[#155EEF] dark:text-[#4B8BFF]" />
                       <span>Meal relationship</span>
@@ -165,12 +165,12 @@ export const LanguageSupportSection: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-surface-subtle/50 space-y-1">
-                    <div className="font-semibold text-theme-primary flex items-center gap-1.5">
+                  <div className="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-800/50 space-y-1">
+                    <div className="font-semibold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
                       <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>Important precaution</span>
                     </div>
-                    <p className="text-theme-secondary leading-[1.6]">
+                    <p className="text-amber-800 dark:text-amber-300 leading-[1.6]">
                       {active.precaution}
                     </p>
                   </div>

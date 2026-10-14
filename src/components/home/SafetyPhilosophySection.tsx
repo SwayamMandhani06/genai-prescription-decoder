@@ -58,7 +58,7 @@ export const SafetyPhilosophySection: React.FC = () => {
               </div>
 
               {/* Sample Ink Preview Asset */}
-              <div className="rounded-xl overflow-hidden border border-theme bg-white shadow-xs p-1">
+              <div className="rounded-2xl overflow-hidden box-dotted-frame bg-white shadow-xs p-1.5">
                 <img
                   src="/samples/clear-prescription-sample.png"
                   alt="Clear prescription sample: Cap. Pan 40mg 1-0-0 x 5d (A.C. 30m before food)"
@@ -83,7 +83,7 @@ export const SafetyPhilosophySection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-theme text-sm text-theme-secondary leading-[1.6]">
+              <div className="p-3.5 rounded-xl box-dotted-pattern text-sm text-theme-secondary leading-[1.6]">
                 <strong className="text-theme-primary font-medium">System Outcome:</strong> High certainty achieved. Dosage (40mg), frequency (once daily morning), meal relation (30m before food), and duration (5 days) resolved cleanly.
               </div>
             </div>
@@ -114,7 +114,7 @@ export const SafetyPhilosophySection: React.FC = () => {
               </div>
 
               {/* Sample Ink Preview Asset */}
-              <div className="rounded-xl overflow-hidden border border-theme bg-white shadow-xs p-1">
+              <div className="rounded-2xl overflow-hidden box-dotted-frame bg-white shadow-xs p-1.5">
                 <img
                   src="/samples/ambiguous-prescription-sample.png"
                   alt="Ambiguous prescription sample: Tab. Cetcip 10mg 0-0-1 (H.S.) with ink artifacts"
@@ -139,7 +139,7 @@ export const SafetyPhilosophySection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-sm text-amber-900 dark:text-amber-300 leading-[1.6]">
+              <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border-2 border-dashed border-amber-300 dark:border-amber-900 text-sm text-amber-900 dark:text-amber-300 leading-[1.6]">
                 <strong>System Outcome:</strong> Selective abstention triggered. The system abstains from guessing ambiguous cursive characters or damaged ink and clearly indicates the need for professional pharmacist verification.
               </div>
             </div>
@@ -157,7 +157,7 @@ export const SafetyPhilosophySection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.05 }}
           transition={{ duration: 0.5, delay: shouldReduceMotion ? 0 : 0.08, ease: 'easeOut' }}
-          className="mt-10 p-5 rounded-2xl bg-surface-subtle card-border-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          className="mt-10 p-5 rounded-2xl box-dotted-pattern flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-surface border border-theme flex items-center justify-center text-[#155EEF] dark:text-[#4B8BFF] shrink-0 shadow-xs">

@@ -10,7 +10,7 @@ export const ResearchOverviewSection: React.FC<ResearchOverviewSectionProps> = (
   return (
     <section id="safety-transparency" className="py-20 sm:py-28 bg-canvas border-b border-theme">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 sm:p-12 rounded-3xl bg-surface border border-theme flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 shadow-xs">
+        <div className="p-8 sm:p-12 rounded-3xl box-dotted-frame flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 shadow-xs">
           <div className="space-y-4 max-w-2xl">
             <div className="text-xs sm:text-sm font-semibold text-[#155EEF] dark:text-[#4B8BFF] flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4" />
