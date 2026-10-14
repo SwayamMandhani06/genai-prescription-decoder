@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section
-      className="relative pt-28 pb-20 sm:pt-36 sm:pb-32 lg:pt-42 lg:pb-36 overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-[#F0F6FE] to-[#F7FAFD] dark:from-[#0A0F18] dark:via-[#101826] dark:to-[#0A0F18] border-b border-theme transition-colors"
+      className="relative pt-20 pb-20 sm:pt-24 sm:pb-28 lg:pt-28 lg:pb-32 overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-[#F0F6FE] to-[#F7FAFD] dark:from-[#0A0F18] dark:via-[#101826] dark:to-[#0A0F18] border-b border-theme transition-colors"
     >
       {/* --------------------------------------------------------------- */}
       {/* FLOWING SILK GRADIENT HORIZON (VisualJoy aesthetic reference)   */}
@@ -99,16 +99,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="space-y-6 sm:space-y-8 flex flex-col items-center"
+          className="space-y-5 sm:space-y-6 flex flex-col items-center"
         >
-          {/* Eyebrow Badge */}
-          <motion.div variants={itemVariants}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EAF2FF] dark:bg-[#16263D] border border-[#B2DDFF] dark:border-[rgba(255,255,255,0.12)] text-xs font-semibold text-[#155EEF] dark:text-[#84CAFF] shadow-xs hover:border-[#155EEF]/40 transition-colors">
-              <span className="w-2 h-2 rounded-full bg-[#155EEF] dark:bg-[#4B8BFF] animate-pulse" />
-              <span>PRESCRIPTION UNDERSTANDING, WITH CLARITY</span>
-            </div>
-          </motion.div>
-
           {/* Headline with Serif Italic Pairing (Enlarged by ~12% for Commanding Presence) */}
           <motion.div variants={itemVariants} className="max-w-4xl">
             <h1 className="text-[clamp(3.1rem,6.2vw,5.25rem)] font-extrabold tracking-[-0.038em] leading-[1.06] text-[#102A43] dark:text-[#F5F7FA]">
@@ -129,7 +121,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Action CTAs: High-presence 56px Pill Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-3 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-1 sm:pt-2 w-full sm:w-auto"
           >
             {onOpenUpload && (
               <button
