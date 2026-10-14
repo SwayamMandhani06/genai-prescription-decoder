@@ -2,679 +2,316 @@
 ### *Your Prescription, Made Clear.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Frontend Stack](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-4A2E4D)](#technology-stack)
-[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-557%2F557%20Passing-10B981)](#174-verification-evidence--test-execution)
-[![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-123%2F123%20Passing-10B981)](#174-verification-evidence--test-execution)
-[![Phase 14 Brand & Research](https://img.shields.io/badge/Phase%2014-Verified%20%26%20Frozen-F472B6)](#18-dawaai-brand-kit--phase-14-research-artifacts)
+[![Frontend Stack](https://img.shields.io/badge/Frontend-React%2019%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Tailwind%20CSS-4A2E4D)](#technology-stack)
+[![Backend Stack](https://img.shields.io/badge/Backend-FastAPI%20%7C%20Python%203.12%20%7C%20Pydantic%20v2-10B981)](#technology-stack)
+[![AI Engine](https://img.shields.io/badge/AI%20Engine-Gemini%20Vision%20%7C%20RAG%20Grounding-F472B6)](#core-capabilities)
+[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-608%2F608%20Passing-10B981)](#testing--verification)
+[![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-123%2F123%20Passing-10B981)](#testing--verification)
+[![Languages](https://img.shields.io/badge/Languages-English%20%7C%20%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80%20%7C%20%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80-7C5A8B)](#multilingual-posology)
 
 > **Academic Capstone Engineering Project**  
 > Multimodal Medical Informatics & Vision-Language Artificial Intelligence  
 > **Formal Title:** *Explainable Multimodal AI for Handwritten Prescription Understanding*  
-> **Application / Brand Identity:** **DawaAI** (*Your Prescription, Made Clear.*)  
-> *(Historical Note: Referenced during development milestones 1–13 under the working project code AURA-Rx)*
+> **Brand & Application:** **DawaAI** (*Your Prescription, Made Clear.*)
 
 ---
 
-## 1. Executive Summary & Problem Statement
+## 1. Executive Summary & Problem Solved
 
-Illegible physician handwriting is a historic and persistent hazard in healthcare delivery. In outpatient clinics and high-volume hospitals, doctors routinely write prescriptions under intense time pressure, employing rapid cursive ligatures, non-standard abbreviations (e.g., *PC, AC, SOS, TDS, HS*), and variable pen pressure.
+Illegible physician handwriting is a historic and persistent hazard in outpatient healthcare delivery. Under severe clinical time constraints, physicians routinely draft prescriptions using rapid cursive ligatures, non-standard abbreviations (*PC, AC, SOS, TDS, HS*), and irregular pen strokes.
 
-### The Clinical Hazard
-- **Adverse Drug Events (ADEs):** Dispensing errors arising from misread dosages or confusable drug names account for significant preventable morbidity globally.
-- **The Generative AI Dilemma:** Conventional Optical Character Recognition (OCR) engines (such as Tesseract) fail catastrophically on cursive handwriting (averaging >50% Word Error Rate). Conversely, modern commercial Large Vision-Language Models (VLMs) suffer from **uncalibrated overconfidence**: when faced with a smudged or ambiguous stroke (e.g. `1.0 mg` vs `10 mg`), they fabricate a plausible-sounding number rather than acknowledging uncertainty, risking lethal 10-fold overdoses.
-- **Patient Posology Illiteracy:** Patients frequently struggle to comprehend clinical Latin shorthand, leading to non-adherence or taking medications at incorrect meal intervals.
+### The Clinical Hazards
+- **Adverse Drug Events (ADEs):** Dispensing errors arising from misread dosages or confusable drug names are among the leading preventable clinical errors worldwide.
+- **The Generative AI Dilemma:** Conventional OCR engines (e.g., Tesseract) fail catastrophically on cursive scripts (>50% Word Error Rate). Conversely, commercial Vision-Language Models (VLMs) suffer from **uncalibrated overconfidence**: when faced with ambiguous strokes (e.g., `1.0 mg` vs `10 mg`), they fabricate plausible-sounding numbers rather than acknowledging uncertainty, risking lethal 10-fold overdoses.
+- **Patient Posology Illiteracy:** Patients frequently struggle to comprehend Latin medical shorthand, leading to non-adherence or taking medications at incorrect meal intervals.
+
+### The DawaAI Solution
+**DawaAI** bridges the gap between raw doctor handwriting and vernacular patient understanding through an **evidence-grounded, uncertainty-calibrated multimodal pipeline**. DawaAI strictly preserves the original physical prescription as the primary ground truth, grounds every candidate medication against statutory pharmacopeias, abstains when handwriting is ambiguous, and generates clear, actionable dosage schedules in **English**, **Hindi (हिन्दी)**, and **Marathi (मराठी)**.
 
 ---
 
-## 2. Proposed Architecture & Solution
+## 2. Core Capabilities
 
-**DawaAI** (developed under working project code *AURA-Rx*) introduces an **evidence-grounded, uncertainty-calibrated multimodal pipeline** tailored for handwritten clinical scripts. The system bridges the gap between raw doctor handwriting and vernacular patient understanding while enforcing strict clinical safeguards.
+- **1:1 Spatial Ink Grounding:** The original physician prescription image is preserved byte-for-byte. Every extracted entity (medicine name, dosage, frequency, duration, route) links directly to its interactive spatial polygon on the physician's pad.
+- **Multimodal Cursive Extraction:** Vision-language adapter architecture leveraging high-resolution visual tokens to transcribe cursive ligatures without fragile intermediate OCR steps.
+- **Formulary Knowledge Grounding (RAG):** Candidate medications are strictly validated against authoritative reference databases:
+  - **CDSCO (India):** Directorate General of Health Services approved drug formulations.
+  - **NLM RxNorm (US NLM):** Normalized clinical medicine nomenclature and RxCUIs.
+  - *Invariant:* Non-existent medicines are rejected; observed dosages are strictly immutable and never rewritten.
+- **Uncertainty-Aware Selective Abstention:** The system measures predictive entropy and calibration error. If handwriting is illegible, smudged, or conflicting, the pipeline **deliberately abstains** and flags the script for human pharmacist verification rather than guessing.
+- **Look-Alike / Sound-Alike (LASA) Conflict Guard:** Computes orthographic (Levenshtein) and phonetic (Double Metaphone) similarity against the ISMP 2024 confusable drug catalogue. Applies standardized **TALL MAN lettering** (e.g., `metFORMIN` vs `metRONIDAZOLE`) to prevent dispensing errors.
+- **Multilingual Patient Posology:** Converts complex clinical shorthand into clear, empathetic posology schedules with visual morning/afternoon/night slots, meal relations, precautions, and browser-native voice narration in **English**, **Hindi (हिन्दी)**, and **Marathi (मराठी)**.
+- **Human-in-the-Loop Clinical Verification:** Interactive clinician review workflow with three unambiguous actions: `[Confirm]`, `[Correct]`, and `[Mark Unreadable]` with complete audit logging.
+
+---
+
+## 3. System Architecture
 
 ```mermaid
-flowchart LR
-    A["Raw Prescription Image"] --> B["Multimodal Ingestion<br/>(Vision-Language Adapter)"]
-    B --> C["Clinical Entity Tokenizer<br/>(Brand, Dose, Route, Freq)"]
-    C --> D["Knowledge Graph Grounding<br/>(CDSCO & RxNorm Link)"]
-    D --> E{"Selective Abstention Gate<br/>(Entropy Threshold)"}
-    E -- "High Entropy / Ambiguous" --> F["Mandatory Pharmacist Escalation<br/>(Abstention Flag)"]
-    E -- "Calibrated Confidence Passed" --> G["LASA Risk Evaluator<br/>(TALL MAN Analysis)"]
-    G --> H["Vernacular Posology Engine<br/>(English / हिन्दी / मराठी)"]
-    H --> I["Dual-Pane Explanatory Interface<br/>(1:1 Spatial Ink Anchor)"]
+flowchart TD
+    IMG["Prescription Image Upload<br/>(JPEG / PNG / WebP)"] --> VAL["Optical Quality Gate<br/>(Blur, Exposure, Skew, Sauvola)"]
+    VAL -- "Insufficient Quality" --> REJ["HTTP 422: Reposition Guidance"]
+    VAL -- "Acceptable / Degraded" --> VLM["Multimodal Vision-Language Adapter<br/>(Gemini 3.5/3.8 Flash / Offline Adapter)"]
+    
+    VLM --> ENT["Clinical Entity Tokenizer<br/>(Brand, Generic, Dose, Frequency, Duration)"]
+    ENT --> RAG["Formulary Knowledge Grounding<br/>(CDSCO & NLM RxNorm Verification)"]
+    
+    RAG --> CAL["Confidence Calibration<br/>(Platt / Isotonic / Brier Score Guard)"]
+    CAL --> LASA["LASA Conflict Screener<br/>(Levenshtein + Double Metaphone + TALL MAN)"]
+    
+    LASA --> GATE{"Selective Abstention Gate<br/>(Entropy Threshold τ = 0.80)"}
+    
+    GATE -- "High Entropy / Ambiguous" --> ABST["Mandatory Human Escalation<br/>([Confirm] [Correct] [Mark Unreadable])"]
+    GATE -- "Calibrated Confidence" --> POS["Vernacular Posology Engine<br/>(Factual Fidelity & Terminology Mapping)"]
+    
+    ABST --> UI["Dual-Pane Explanatory Interface<br/>(1:1 Spatial Ink Anchor + Multilingual TTS)"]
+    POS --> UI
 ```
 
-### Core Innovations
-1. **1:1 Spatial Ink Anchor:** The original prescription is always preserved as the ground truth. Every extracted entity links directly to its spatial coordinate polygon on the physician's pad.
-2. **Calibrated Selective Abstention:** The model measures predictive entropy. If handwriting is illegible or ambiguous, the model **deliberately abstains** from autonomous output and flags the script for human verification.
-3. **Ontology Knowledge Grounding:** Extracted drug candidates are strictly matched against authoritative pharmacopeias (CDSCO India & US National Library of Medicine RxNorm). Non-existent drugs are discarded.
-4. **LASA (Look-Alike Sound-Alike) Guard:** Computes orthographic Levenshtein and phonetic Metaphone distances to detect confusable medications (e.g., *Metformin* vs *Metronidazole*) and applies TALL MAN lettering.
-5. **Multilingual Patient Explanations:** Delivers vernacular explanations and visual dosage schedules in **English, Hindi (हिन्दी), and Marathi (मराठी)** with audio synthesis preview.
-
 ---
 
-## 3. Technology Stack
+## 4. Technology Stack
 
-| Layer | Technologies | Rationale |
+| Layer | Technologies | Role & Architectural Rationale |
 | :--- | :--- | :--- |
-| **UI Framework** | React 19 + TypeScript (Strict) | High-performance component-driven interface with compile-time safety |
-| **Bundler & Tooling** | Vite 8 + `@tailwindcss/vite` | Sub-second HMR and optimized production bundles |
-| **Styling System** | Tailwind CSS v4 + DawaAI Brand Kit | Plum (`#4A2E4D`), Rose (`#F472B6`), Soft Pink (`#FFD6DA`), Canvas (`#F8F2F6`) |
-| **Typography System** | Google Fonts (`DM Serif Display`, `Inter`, `DM Sans`, `JetBrains Mono`) | Display serif branding, modern UI readability, and monospace data representation |
-| **Animation Engine** | CSS Keyframes & Choreographed Motion | Laser scanning beams, stroke highlights, and `prefers-reduced-motion` |
-| **Iconography** | Lucide React | Consistent, accessible clinical and scientific iconography |
-| **Service Contract** | `prescriptionService.ts` | Decoupled abstraction mirroring future FastAPI Pydantic schema |
+| **Frontend Framework** | **React 19** + **TypeScript** (Strict) | High-performance, concurrent component architecture with strict compile-time type safety. |
+| **Bundler & Build** | **Vite 8** + `@tailwindcss/vite` | Sub-second Hot Module Replacement (HMR) and optimized minified production bundle. |
+| **Styling & Theme** | **Tailwind CSS v4** + Brand Kit | Sleek modern aesthetics: Plum (`#4A2E4D`), Rose (`#F472B6`), Soft Pink (`#FFD6DA`), Canvas (`#F8F2F6`), dark mode support. |
+| **Visual Effects** | Custom HTML5 Canvas | 3D Silk Gradient Ribbon hero animation with interactive mouse responsiveness. |
+| **Backend API** | **FastAPI** + **Python 3.12** + **Uvicorn** | High-throughput asynchronous ASGI microservice with automatic OpenAPI documentation. |
+| **Data Contracts** | **Pydantic v2** | Strict bidirectional request/response validation with immutable audit seals. |
+| **Image Processing** | **Pillow** + **NumPy** + **SciPy** | Deterministic optical validation: Laplacian blur, projection-profile deskewing, Sauvola binarization. |
+| **AI / Multimodal** | **Google Gemini API** (`gemini-3.5-flash-lite` / `gemini-3.8-flash`) | Multimodal vision-language understanding of cursive handwriting ligatures. |
+| **Reference Grounding** | **CDSCO** & **NLM RxNorm** Data Stores | Authoritative formulary verification and formulation consistency screening. |
+| **Phonetic Engine** | **Double Metaphone** + **Levenshtein** | ISMP TALL MAN confusable drug name collision detection. |
+| **Speech Synthesis** | Web Speech API | Client-side vernacular text-to-speech for accessible dosage schedules. |
 
 ---
 
-## 4. Repository Structure
+## 5. Repository Structure
 
 ```text
 genai-prescription-decoder/
-├── index.html                   # HTML entry with Plus Jakarta Sans & JetBrains Mono
-├── package.json                 # Project dependencies & build scripts
+├── index.html                   # HTML entry with DM Serif Display & Inter typography
+├── package.json                 # Frontend dependencies & build scripts
 ├── tsconfig.json                # Strict TypeScript configuration
-├── tsconfig.node.json           # Node configuration for Vite
 ├── vite.config.ts               # Vite configuration with @ path aliases
-├── ai/                          # Core AI Intelligence & Clinical Safety Modules (Phases 7-11)
-│   ├── rag/                     # Phase 7 CDSCO & RxNorm authoritative medicine validation
-│   ├── confidence/              # Phase 8 calibration (ECE, MCE, Brier, Platt, Isotonic)
-│   ├── abstention/              # Phase 9 uncertainty-aware selective abstention & human verification
-│   ├── lasa/                    # Phase 10 Look-Alike / Sound-Alike similarity conflict detector
-│   └── explanation/             # Phase 11 multilingual patient-friendly explanation layer (EN, HI, MR)
-├── backend/                     # FastAPI backend service (Phases 2-11)
+├── backend/                     # FastAPI backend application
 │   ├── app/
 │   │   ├── main.py              # FastAPI app factory, CORS, exception handlers
 │   │   ├── config.py            # Pydantic v2 settings & environment configuration
-│   │   ├── api/v1/routes/       # /analyze, /{id}, /artifacts, /health, /multimodal, /validation, /confidence, /abstention, /lasa, /explanation
-│   │   ├── models/              # Pydantic models (Section 6 contract, enums, errors)
-│   │   ├── services/            # Mock & 11-stage multimodal pipelines, image storage
-│   │   ├── dataset/             # Phase 3 schemas, manifests, normalizers, splitters, validators
-│   │   ├── preprocessing/       # Phase 4 validation, optical quality metrics, & 8-stage pipeline
-│   │   ├── ocr/                 # Phase 5 Tesseract OCR baseline engine & metrics
-│   │   └── multimodal/          # Phase 6 vision-language adapters, parser, schemas, service
-│   ├── tests/                   # Pytest test suite (552 unit & integration tests)
-│   ├── requirements.txt         # Python dependencies (FastAPI, Pydantic, Pillow, NumPy, SciPy)
-│   └── run.py                   # Development server runner (port 8000)
-├── data/                        # Dataset & experimental infrastructure (Phase 3 & Phase 4)
-│   ├── README.md                # Dataset architecture and reproduction protocol
-│   ├── SOURCES.md               # Legal, licensing, and provenance inventory
-│   ├── manifests/               # Machine-readable inventory with cryptographic checksums
-│   ├── annotations/             # Gold-standard ground truth annotations & schema
-│   ├── splits/                  # Group-aware zero-leakage train/val/test partitions
-│   ├── samples/                 # Calibration & integration sample set (N=7)
-│   ├── processed/               # Isolated derived artifacts (data/processed/preprocessing_runs/)
-│   └── metadata/                # Version info and prospective experiment configurations
-├── docs/                        # Formal academic reports, specifications & phase completions
-│   ├── capstone-final-report.md # 14-Phase Capstone Thesis Final Report
-│   ├── research-paper-draft.md  # IEEE/ACM styled research paper draft
-│   ├── architecture-dfd.md      # Level 0, Level 1, Level 2 System Data Flow Diagrams
-│   ├── error-analysis.md        # Evidence-based 14-category error taxonomy & risk analysis
-│   ├── defense-viva-presentation.md # 18-slide viva presentation deck + 10 examiner Q&As
-│   ├── demo-script.md           # 10-minute live demonstration walkthrough across 6 acts
-│   ├── api-documentation.md     # REST API reference manual & verification contracts
-│   ├── phase-14-completion.md   # Phase 14 exit gate verification report
-│   ├── phase-03-completion.md to phase-13-completion.md # Frozen phase exit reports
-│   └── confidence_design.md     # Phase 8 Confidence & Calibration Design Specification
-├── eval/                        # Phase 12 Reproducible Evaluation & Ablation Suite
-│   ├── config/                  # Master manifest (aura_rx_eval_v1, seed 42)
-│   ├── data/                    # Group-aware zero-leakage split auditor
-│   ├── ocr/                     # Conventional Tesseract baseline CER/WER evaluator
-│   ├── extraction/              # Vision-language token, exact, & normalized PRF1
-│   ├── validation/              # RAG CDSCO/RxNorm formulation validation
-│   ├── confidence/              # Calibration metrics (ECE, MCE, Brier score)
-│   ├── abstention/              # Selective abstention risk-coverage trade-off
-│   ├── lasa/                    # ISMP 2024 confusable drug pair screening
-│   ├── explanation/             # Multilingual posology fidelity (EN, HI, MR)
-│   ├── ablation/                # 5-way component ablation (Configs A through E)
-│   ├── tables/                  # 8 publication-ready CSV tables
-│   ├── plots/                   # 6 high-resolution research visualizations (300 DPI)
-│   ├── reports/                 # Aggregate JSON, per-sample JSONL, error taxonomy
-│   └── scripts/                 # run_all_evaluations.py master pipeline
-├── public/                      # Static client assets & official brand vectors
-│   └── brand/                   # DawaAI icons, dark mode variants, and logo marks
-├── scripts/
-│   ├── browser-e2e-audit.ts     # Genuine browser E2E test (Chrome via Puppeteer)
-│   ├── test_live_backend.py     # Live HTTP end-to-end socket verification
-│   ├── inspect_preprocessing.py # Visual comparison sheet generator for research inspection
-│   ├── validate_dataset.py      # Automated dataset integrity & validation CLI
-│   ├── build_dataset_manifest.py# Automated manifest and schema builder
-│   └── build_metadata.py        # Dataset metadata and experiment config generator
-├── src/
-│   ├── main.tsx                 # Application DOM mounting
-│   ├── App.tsx                  # Root component shell
-│   ├── vite-env.d.ts            # Ambient Vite types
-│   ├── styles/
-│   │   └── globals.css          # Design system tokens, glass panels, scanlines
-│   ├── types/
-│   │   ├── api.types.ts         # Section 6 DTOs & frontend mapping interfaces
-│   │   ├── prescription.types.ts# Medicine entity, bounding boxes, analysis results
-│   │   ├── safety.types.ts      # LASA warnings, abstention alerts, interactions
-│   │   ├── explanation.types.ts # Multilingual schedules (EN, HI, MR)
-│   │   └── benchmark.types.ts   # Research evaluation metrics & datasets
-│   ├── services/
-│   │   ├── api/                 # HttpPrescriptionApiClient, MockPrescriptionApiClient
-│   │   └── mappers/             # prescriptionMapper (DTO <-> UI domain model)
-│   ├── data/
-│   │   ├── mockPrescriptions.ts # 3 clinically representative outpatient samples
-│   │   ├── sampleHandwrittenSvg.ts# Vectorized handwritten doctor cursive paths
-│   │   ├── lasaCatalog.ts       # Look-Alike Sound-Alike catalog with phonetic scores
-│   │   ├── multilingualCatalog.ts# Full translations in English, Hindi, and Marathi
-│   │   └── benchmarkData.ts     # CER, WER, F1, AUROC comparison metrics
-│   ├── components/
-│   │   ├── ui/                  # Button, Badge, Card, ConfidenceMeter, Tooltip, Modal
-│   │   ├── layout/              # Navbar, Footer, SafetyDisclaimer
-│   │   ├── workspace/           # UploadStep, ReviewStep, AnalyzeStep, FindingsStep
-│   │   ├── safety/              # UncertaintyAbstentionSection, LasaSafetySection
-│   │   ├── explanation/         # MultilingualExplanationSection
-│   │   └── research/            # ResearchBenchmarkSection
-│   └── pages/
-│       └── HomePage.tsx         # Composite research-grade homepage
-└── README.md                    # Academic project documentation
+│   │   ├── api/v1/routes/       # /process, /analyze, /health, /multimodal, /validation, etc.
+│   │   ├── models/              # Pydantic data schemas, enums, and error models
+│   │   ├── services/            # Multimodal pipeline, mock pipeline, and file storage
+│   │   ├── preprocessing/       # Optical quality validator, deskew, and Sauvola pipeline
+│   │   ├── ocr/                 # Tesseract OCR baseline comparison engine
+│   │   └── multimodal/          # Gemini vision adapters, parser, and prompt schemas
+│   ├── tests/                   # Pytest test suite (608 passing unit & integration tests)
+│   ├── requirements.txt         # Backend Python dependencies
+│   └── run.py                   # Local development server runner (dynamic port binding)
+├── ai/                          # Clinical safety & intelligence engines
+│   ├── rag/                     # CDSCO & RxNorm formulary grounding engine
+│   ├── confidence/              # Calibration metrics (ECE, MCE, Brier, Platt, Isotonic)
+│   ├── abstention/              # Uncertainty-aware selective abstention policies
+│   ├── lasa/                    # Look-Alike / Sound-Alike collision detector
+│   └── explanation/             # Multilingual posology engine (EN, HI, MR)
+├── data/                        # Sample data, ground-truth manifests, and reference sets
+│   ├── manifests/               # Cryptographic SHA-256 dataset manifests
+│   ├── reference/               # Curated CDSCO & RxNorm reference datasets
+│   └── samples/                 # Standard calibration and CI prescription samples
+├── docs/                        # Formal academic thesis reports & operational runbooks
+│   ├── capstone-final-report.md # Comprehensive 14-Phase Capstone Thesis Report
+│   ├── research-paper-draft.md  # Academic paper draft (IEEE/ACM style)
+│   ├── architecture-dfd.md      # System Data Flow Diagrams (Level 0, 1, 2)
+│   ├── DEPLOYMENT_RUNBOOK.md    # Production deployment runbook
+│   ├── SECURITY_AND_PRIVACY.md  # Ephemeral storage and zero-PHI policy
+│   └── API.md                   # Complete OpenAPI specification
+├── eval/                        # Reproducible evaluation scripts, tables, and plots
+├── src/                         # React 19 frontend source code
+│   ├── main.tsx                 # Application DOM mount
+│   ├── App.tsx                  # Root application router and layout shell
+│   ├── styles/globals.css       # Tailwind CSS v4 design system tokens and glass panels
+│   ├── components/              # UI components (Hero, Navbar, Workspace, Safety, Posology)
+│   ├── services/api/            # HTTP and mock prescription API client adapters
+│   └── types/                   # TypeScript interfaces for API, safety, and posology
+└── Dockerfile                   # Production container definition
 ```
 
 ---
 
-## 5. Setup & Development Instructions
+## 6. Quickstart & Local Setup
 
 ### Prerequisites
-- **Node.js**: `v20.x` or later (tested on v24.18)
-- **npm**: `v10.x` or later
+- **Node.js**: `v20.x` or later (tested on v24)
 - **Python**: `3.10` or later (tested on Python 3.12)
-- **Google AI Studio API Key**: Configured in `.env` as `GEMINI_API_KEY` for live multimodal vision extraction
+- **Google Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
 
-### 1. Environment Configuration
-Copy `.env.example` to `.env` and set your Google AI Studio key:
+---
+
+### Step 1: Clone & Configure Environment
+
 ```bash
+git clone https://github.com/SwayamMandhani06/genai-prescription-decoder.git
+cd genai-prescription-decoder
+
+# Copy the example environment file
 cp .env.example .env
-# Edit .env:
-# GEMINI_API_KEY=AIzaSy...
-# MULTIMODAL_MODEL_ID=gemini-3.6-flash
-# USE_MOCK_PIPELINE=false
-# VITE_USE_MOCK_API=false
-# PORT=8001
 ```
 
-### 2. Frontend Setup
-```bash
-# Install frontend dependencies
-npm install
+Edit `.env` with your API credentials and preferred configuration:
+```ini
+# Google Gemini API Key for live cursive handwriting understanding
+GEMINI_API_KEY=AIzaSy...
 
-# Start Vite development server (port 5173)
-npm run dev
+# Multimodal model selection
+MULTIMODAL_MODEL_ID=gemini-3.5-flash-lite
+
+# Pipeline mode (set to false for live Gemini inference)
+USE_MOCK_PIPELINE=false
+VITE_USE_MOCK_API=false
+
+# Port configuration
+PORT=8001
+VITE_API_BASE_URL=http://localhost:8001
 ```
 
-### 3. Backend Setup
+---
+
+### Step 2: Backend Setup (FastAPI)
+
 ```bash
-# Install Python dependencies
+# Recommended: Create and activate a Python virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+# source venv/bin/activate
+
+# Install dependencies
 pip install -r backend/requirements.txt
 
-# Start FastAPI development server (port 8001)
+# Start the FastAPI backend server
 python backend/run.py
 ```
+*The backend will start at `http://localhost:8001` (interactive Swagger docs at `http://localhost:8001/docs`).*
 
-### 4. Verification & Testing
+---
+
+### Step 3: Frontend Setup (React + Vite)
+
+In a new terminal window:
 ```bash
-# Run backend pytest test suite (571 passing tests)
+# Install Node dependencies
+npm install
+
+# Start the Vite development server
+npm run dev
+```
+*The frontend application will be live at `http://localhost:5173`.*
+
+---
+
+### Alternative: Run with Docker Compose
+
+```bash
+docker compose up --build
+```
+*Access the unified application at `http://localhost:8000`.*
+
+---
+
+## 7. API Reference
+
+| Endpoint | Method | Description |
+| :--- | :---: | :--- |
+| `/api/v1/prescriptions/process` | `POST` | Canonical prescription processing endpoint (accepts `multipart/form-data` image or sample ID). |
+| `/api/v1/prescriptions/analyze` | `POST` | Preserved alias for seamless backward compatibility. |
+| `/health` | `GET` | Root load-balancer health probe with runtime dependency status. |
+| `/api/v1/health` | `GET` | Versioned API health and active pipeline diagnostic report. |
+| `/api/v1/verification/{id}/fields/{f}/confirm` | `POST` | Clinician confirmation of an extracted field in the audit trail. |
+| `/api/v1/verification/{id}/fields/{f}/correct` | `POST` | Clinician correction of an extracted field (preserves original extraction). |
+| `/api/v1/verification/{id}/fields/{f}/unreadable` | `POST` | Explicit unreadable stroke marking without guessing. |
+| `/api/v1/multimodal/extract` | `POST` | Dedicated vision-language extraction endpoint. |
+| `/api/v1/validation/medicine` | `POST` | RAG CDSCO and RxNorm formulary grounding verification. |
+| `/api/v1/lasa/detect` | `POST` | Orthographic and phonetic Look-Alike / Sound-Alike screening. |
+| `/api/v1/explanation/generate` | `POST` | Multilingual patient posology generation (`en`, `hi`, `mr`). |
+
+---
+
+## 8. Testing & Verification
+
+The repository enforces strict quality gates across both frontend and backend architectures:
+
+```bash
+# 1. Run full backend Pytest suite (608 passing unit and integration tests)
 python -m pytest backend/tests -v
 
-# Run sample-image live regression test suite (verifies zero-mock policy)
-python scripts/verify_sample_regressions.py
-
-# Run dataset validation CLI (Phase 3 integrity audit)
-python scripts/validate_dataset.py
-
-# Run live FastAPI HTTP verification suite
-python scripts/test_live_backend.py
-
-# Run frontend unit & integration tests (123 passing tests)
+# 2. Run frontend Vitest suite (123 passing tests across 14 UI states)
 npm test
 
-# Run TypeScript static type check (0 errors)
-npm run lint
+# 3. Static TypeScript compilation check (0 errors)
+npx tsc --noEmit
 
-# Run genuine browser E2E audit
-npx vite-node scripts/browser-e2e-audit.ts
-
-# Production build
+# 4. Production bundle build check
 npm run build
 ```
 
 ---
 
-## 6. Backend Architecture & API Contract (Phase 2)
+## 9. Production Deployment Guide
 
-The backend is built with FastAPI in `backend/app` adhering to the frozen API contract defined in Section 6 and Section 11 of `plan.md`.
+### Frontend Deployment (Vercel)
+1. Import the repository `SwayamMandhani06/genai-prescription-decoder` on [Vercel](https://vercel.com).
+2. Set the **Framework Preset** to **Vite**.
+3. Configure the following **Environment Variables** in the Vercel dashboard:
+   - `VITE_API_BASE_URL`: The URL of your deployed backend (e.g., `https://dawaai-api.onrender.com`).
+   - `VITE_USE_MOCK_API`: `false`
+4. Deploy. Vercel automatically runs `npm run build` and serves the optimized single-page app via edge CDN.
 
-### Core API Endpoints
-
-- `POST /api/v1/prescriptions/analyze`: Ingests a prescription image (`multipart/form-data`) or evaluation `sample_id`, applies preprocessing, executes the pipeline, and returns the unified dual-contract response (Section 6 contract + Phase 1 UI envelope).
-- `GET /api/v1/prescriptions/{prescription_id}`: Retrieves an analyzed prescription record by accession ID.
-- `GET /api/v1/health`: Returns API service health, uptime, version, and active pipeline mode.
-
-The frontend client in `src/services/api/` can seamlessly toggle between the local mock adapter and the live FastAPI backend via `apiConfig.useMock` or runtime configuration (`VITE_USE_MOCK_API=false`).
-
----
-
-## 7. Research Datasets & Experimental Infrastructure (Phase 3)
-
-Phase 3 establishes an audit-verified, legally traceable, and experimentally reproducible dataset infrastructure for handwritten prescription decoding without premature AI modeling:
-
-- **Legal Licensing & Provenance Inventory (`data/SOURCES.md`, `data/manifests/dataset_manifest.json`):** Documents verified public sources, distinguishing dataset licenses (CC BY 4.0), academic database access (CC BY-NC 4.0), statutory government open data (NDSAP / OGD India), clinical terminology agreements (UMLS Metathesaurus), and clinical safety guidance (ISMP TALL MAN), while quarantining unverified sources (`candidate_unverified`).
-- **Strict 4-Tier Annotation Architecture (`backend/app/dataset/schema.py`):** Rigidly isolates `ground_truth` (immutable transcription), `derived` (standardized posology & RxNorm codes), `model_prediction` (strictly deferred to Phase 6+), and `human_review` (pharmacist verification).
-- **Immutable Raw Text & Deterministic Normalization (`backend/app/dataset/normalization.py`):** Normalizes Unicode NFKC, whitespace, dosage units, and Latin frequencies (`BD`, `TDS`, `OD`, `HS`, `SOS`, `PC`, `AC`) as derived attributes while preserving the raw handwritten tokens permanently un-overwritten.
-- **Group-Aware Splitting (`backend/app/dataset/splitter.py`):** Implements indivisible patient-cluster partitioning strictly by `patient_group_id` with static leakage verification (`detect_split_leakage()`) across train/val/test splits and image SHA-256 hashes.
-- **AURA-Rx Calibration & Integration Sample Set (`data/samples/`, N=7):** Classified strictly as a development, continuous integration, and test suite sample set; not represented as a statistically sufficient final research benchmark.
-- **Prospective Evaluation Configurations (`data/metadata/experiment_config.json`):** Downstream model configurations are explicitly marked with `configuration_status="prospective"` and `implementation_status="not_implemented"`.
-- **Validation CLI (`scripts/validate_dataset.py`):** Standalone integrity checker validating manifest schemas, annotation conformance, image header readability, dimensions, and cryptographic hashes.
-
-For detailed documentation, refer to [`data/README.md`](data/README.md), [`data/SOURCES.md`](data/SOURCES.md), and [`docs/phase-03-completion.md`](docs/phase-03-completion.md).
+### Backend Deployment (Render / Cloud PaaS)
+1. Create a new **Web Service** on [Render](https://render.com) connected to this repository.
+2. Select **Docker** environment (or **Python 3** with `pip install -r backend/requirements.txt`).
+3. Set the **Start Command**:
+   ```bash
+   uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+   ```
+4. Configure the following **Environment Variables** on Render:
+   - `GEMINI_API_KEY`: Your Google AI Studio API key.
+   - `MULTIMODAL_MODEL_ID`: `gemini-3.5-flash-lite` or `gemini-3.8-flash`.
+   - `USE_MOCK_PIPELINE`: `false`
+   - `CORS_ORIGINS`: Your Vercel frontend domain (e.g., `https://dawaai.vercel.app`).
+   - `PORT`: Automatically assigned by Render.
 
 ---
 
-## 8. Image Preprocessing & Quality Assessment (Phase 4)
-
-Phase 4 establishes an audit-verified, deterministic preprocessing and optical quality assessment infrastructure that strictly preserves the original prescription image as authoritative human-verifiable evidence (`original_image != preprocessed_image`):
-
-- **Image Ingestion Validation (`backend/app/preprocessing/validator.py`):** Enforces supported MIME types (JPEG, PNG, WEBP, TIFF, BMP), dimension boundaries ($150 \times 150\,\text{px}$ minimum, $8000 \times 8000\,\text{px}$ maximum), file corruption detection via header parsing, EXIF orientation correction, and RGBA-to-RGB white-canvas compositing.
-- **Image Metadata Extraction (`backend/app/preprocessing/metadata.py`):** Extracts dimensions, channels, color mode, aspect ratio, orientation, file size, and computes cryptographic SHA-256 digests while strictly stripping personal EXIF metadata (GPS, author, serial numbers). Pixel density is estimated heuristically from assumed prescription pad dimensions (not physical EXIF DPI).
-- **Deterministic Quality Assessment (`backend/app/preprocessing/quality.py`):** Evaluates 8 deterministic optical metrics using engineering heuristics:
-  - *Blur*: Variance of Laplacian ($\sigma^2$)
-  - *Brightness & Exposure*: Mean luminance ($\mu \in [0, 255]$)
-  - *Contrast*: Root-mean-square luminance contrast ($\sigma_{\text{RMS}}$)
-  - *Resolution*: Total pixel area ($W \times H$) and heuristic effective PPI
-  - *Noise*: Median filter residual variance ($\sigma^2_{\text{noise}}$)
-  - *Skew*: Projection profile variance sweep ($\theta \in [-10^\circ, +10^\circ]$)
-  - *Illumination*: Inter-region luminance variance across $3 \times 3$ spatial grid
-  - *Clipping / Saturation*: Proportion of pure black ($<5$) and pure white ($>250$) pixels
-- **Tri-State Quality Gate:** Classifies images into `acceptable` $[0.80, 1.0]$, `degraded_but_usable` $[0.40, 0.79]$, or `insufficient` $[0.0, 0.39]$. Fatal degradations reject processing via standard `IMAGE_QUALITY_INSUFFICIENT` (HTTP 422).
-- **8-Stage Modular Preprocessing Pipeline (`backend/app/preprocessing/pipeline.py`):** Produces 5 unconditional and 1 conditional non-destructive derived representations:
-  - `grayscale.png`: Standard luminance mapping ($0.299R + 0.587G + 0.114B$)
-  - `normalized.png`: Gaussian background division flat-field correction ($\sigma=35$)
-  - `denoised.png`: $3 \times 3$ median filtering
-  - `enhanced.png`: 1st-to-99th percentile contrast stretching
-  - `deskewed.png`: Interpolated bilinear rotation (conditional: only when detected skew $|\theta| \ge 0.5^\circ$)
-  - `thresholded.png`: Sauvola local adaptive binarization ($k=0.2$, $R=128$)
-- **Traceable Configuration & Isolation (`backend/app/preprocessing/config.py`, `artifacts.py`):** Every run is versioned (`p04_standard_v1`, version `1.0.0`) with SHA-256 config hashing. Derived representations and manifests are strictly quarantined in `data/processed/preprocessing_runs/<id>/` and `backend/uploads/preprocessed/<id>/`.
-- **Visual Inspection Utility (`scripts/inspect_preprocessing.py`):** Standalone research tool generating multi-panel side-by-side comparison sheets (`visual_comparison.png`) for pipeline inspection.
-
-For complete verification logs and metrics, refer to [`docs/phase-04-completion.md`](docs/phase-04-completion.md).
-
----
-
-## 9. Conventional OCR/HTR Baseline (Phase 5)
-
-Phase 5 establishes a reproducible, transparent conventional OCR/HTR research baseline against which future multimodal architectures (Phase 6+) are compared:
-
-- **Isolated Research Comparison Path:** OCR/HTR is strictly a research baseline and **not** a mandatory upstream dependency for the future multimodal vision-language pipeline.
-- **Engine Traceability (`backend/app/ocr/engine.py`):** Wraps Tesseract OCR with runtime query of binary versions (`v5.4.0.20240606`) and language models (`eng`, `osd`).
-- **Raw Evidence Preservation (`schemas.py`, `service.py`):** Verbatim OCR text is stored immutably with cryptographic SHA-256 seals. Raw output is never silently converted into clinically plausible text.
-- **Reproducible Evaluation Metrics (`metrics.py`):** Implements exact Dynamic Programming Levenshtein distance algorithms for Character Error Rate (CER), Word Error Rate (WER), and clinical entity Precision/Recall/F1. Evaluation text normalization is strictly segregated from raw evidence.
-- **Controlled Preprocessing Comparison (`scripts/run_ocr_baseline.py`):** Evaluates OCR performance across supported preprocessing variants (four variants across all seven calibration samples, and the conditionally generated deskewed representation on the sample where deskew was generated), recording benchmarks in `eval/baseline_outputs.json`.
-- **Qualitative Inspection Utility (`scripts/inspect_ocr_baseline.py`):** Side-by-side terminal tool displaying image hashes, raw transcription, ground-truth comparison, error rates, and spatial tokens with genuine confidence scores.
-
-For complete verification logs and empirical baseline metrics, refer to [`docs/phase-05-completion.md`](docs/phase-05-completion.md).
-
----
-
-## 10. Multimodal Vision-Language Prescription Extraction (Phase 6)
-
-Phase 6 implements and validates the multimodal vision-language prescription extraction pipeline using visual evidence grounding and deterministic schema parsing:
-
-- **Pluggable Adapter Interface (`backend/app/multimodal/adapter.py`):**
-  - Concrete adapter contract `IMultimodalModelAdapter` decoupling extraction service from underlying providers.
-  - `GeminiMultimodalAdapter`: Asynchronous HTTP integration with Google's official Gemini API (`gemini-3.8-flash`) using base64 inline image payloads and structured JSON mode.
-  - `MockMultimodalModelAdapter`: Deterministic test fixture covering all required evaluation scenarios (single medicine, multi-med, ambiguous cursive ligatures, absent fields, high-risk dosage flags) for offline and CI testing.
-- **Original Image as Primary Ground Truth:** The model analyzes the original untouched prescription image as primary visual evidence, accompanied by Phase 4 enhanced representations for supplementary contrast.
-- **Strict Semantic Distinction:**
-  - **MISSING / ABSENT:** The field is not present in the prescription or cannot be located (`presence: "absent"`, `extraction_state: "missing"`, `value: null`).
-  - **UNCERTAIN:** The field appears to be present, but visual content cannot be reliably determined due to cursive stroke ambiguity (`presence: "present"`, `extraction_state: "ambiguous"`, `status: "uncertain"`).
-  - **CONFIDENT:** The field is visually supported with sufficient extraction certainty for Phase 6 output (`presence: "present"`, `extraction_state: "extracted"`, `status: "confident"`).
-  - **FLAGGED:** The extraction requires explicit review or escalation (`status: "flagged"`).
-- **Research Traceability & Reproducibility:** Every extraction auditably records `model_id` (`gemini-3.8-flash`), `provider`, `prompt_version` (`prompt_v1_clinical_vision_extraction`), `config_version` (`multimodal_extraction_v1`), SHA-256 config hash, source image SHA-256, and raw model response text.
-- **Dedicated Endpoints:**
-  - `POST /api/v1/multimodal/extract`: Ingests original image bytes or sample ID and returns structured `PrescriptionExtractionResult`.
-  - `GET /api/v1/multimodal/config`: Returns active model metadata, provider, prompt version, and 64-character SHA-256 configuration hash.
-
-For complete verification logs and architecture specifications, refer to [`docs/phase-06-completion.md`](docs/phase-06-completion.md).
-
----
-
-## 11. RAG-Based Medicine Validation (Phase 7)
-
-Phase 7 implements an evidence-grounded Retrieval-Augmented Generation / retrieval-based medicine validation layer answering strictly: *"Does this visually extracted medicine candidate correspond to a known medicine/formulation in the available authoritative reference data?"*
-
-- **Non-Negotiable Safety Boundary:** RAG is strictly a validation and evidence layer — NOT OCR correction, handwriting stroke guessing, dosage inference, or clinical prescribing. Extracted candidates and visually observed dosages are strictly immutable and never mutated or rewritten.
-- **Evidence-Bounded Reference Sources:**
-  - **CDSCO Approved Drug Formulations Reference Subset:** Statutory regulatory authority under Directorate General of Health Services, India (Open Government Data License - India). *Scope limitation:* The implementation uses a finite CDSCO-derived reference subset (20 records) for engineering validation and provenance testing; it is not a comprehensive representation of all medicines or formulations approved or marketed in India.
-  - **NLM RxNorm Clinical Nomenclature Subset:** Standardized clinical drug nomenclature produced by the US National Library of Medicine (NLM). *Scope & licensing boundary:* RxNorm is U.S.-centric and should not be treated as a comprehensive Indian formulary. The full RxNorm release requires the applicable UMLS license/UTS access and contains source-vocabulary material with source-specific restrictions, whereas NLM-created normalized names/codes have public-domain status as described by NLM. The Current Prescribable Content subset has different access conditions. The license does not grant a general right to clinical validation. RxNorm 2024-08 is the frozen reference snapshot used by this implementation as a reduced development subset fixture (10 records); current NLM releases are newer, and the implementation does not claim to represent the current RxNorm release.
-  - Cryptographically fingerprinted reference manifest ([`data/reference/reference_manifest.json`](data/reference/reference_manifest.json)) verifying 30 curated records across both sources with SHA-256 integrity.
-- **Hierarchical Deterministic Retrieval:**
-  1. Exact normalized name match (`score: 1.0`)
-  2. Exact brand match (`score: 0.99`)
-  3. Exact alias match (`score: 0.98`)
-  4. Exact active ingredient match (`score: 0.95`)
-  5. Controlled token overlap (`score: 0.70 - 0.92`)
-  6. Controlled lexical similarity threshold (`score: >= 0.75`)
-- **Separation of Medicine Identity from Formulation Compatibility:**
-  - **Medicine Identity Status:** Defined strictly as *"Reference correspondence established according to the configured retrieval and validation rules."* (Strictly does NOT mean clinically validated, medically safe, therapeutically appropriate, prescription-correct, or dosage-correct):
-    - `validated`: Reference correspondence established according to configured retrieval/validation rules.
-    - `uncertain`: Multiple plausible reference candidates exist or match score is ambiguous; preserves uncertainty for human review (`requires_human_review: true`).
-    - `not_validated`: No corresponding approved formulation found in reference data (`requires_human_review: true`).
-  - **Formulation Compatibility & Dosage Preservation:**
-    - `dosage_observation_preserved: true`: Boolean asserting visual observation was not altered.
-    - `observed_dosage`: Verbatim visually observed dosage from prescription.
-    - `reference_strength`: Separately represented approved formulation strength from reference entity.
-    - `formulation_consistency`: Categorized as `consistent` or `mismatch`.
-    - **Dosage Mismatch Invariant:** If observed dosage differs from reference strength (e.g., observed `1000 mg` vs reference `625 mg`), `formulation_consistency` is flagged as `mismatch` and `requires_human_review` is forced to `true`. A dosage mismatch can never silently appear as a fully validated or clinically reassuring result.
-- **Dedicated Endpoints:**
-  - `POST /api/v1/validation/medicine`: Validates a single extracted candidate, returning status, reference entities, formulation consistency, and UI-compatible evidence.
-  - `POST /api/v1/validation/medicine/batch`: Validates batches of extracted posology items.
-  - `GET /api/v1/validation/status`: Reports index status, loaded sources, and configuration fingerprint.
-
-For full audit logs and verification records, refer to [`docs/phase-07-completion.md`](docs/phase-07-completion.md).
-
----
-
-## 12. Confidence Estimation & Calibration Layer (Phase 8)
-
-Phase 8 implements a rigorous, mathematically defensible confidence estimation and calibration layer transforming raw model signals into empirical confidence assessments evaluated against known correctness outcomes.
-
-- **Explicit Separation of Concepts:**
-  - **Raw Model Signal:** Continuous score or softmax output directly from the multimodal neural network.
-  - **Retrieval Correspondence Score:** Deterministic similarity score against CDSCO/RxNorm reference data.
-  - **Calibrated Confidence:** Empirically validated probability of correct extraction derived from fitted calibration parameters ($N \ge 15$).
-  - **Empirical Correctness:** Dataset-provided ground-truth annotations.
-- **Strict Decoupling of Visual Extraction from Reference Grounding:** Strong reference correspondence from retrieval never erases visual handwriting ambiguity. Visual certainty and reference correspondence remain separate metrics.
-- **Strict Visual Grounding of Dosage:** Dosage confidence is strictly grounded in visual handwriting evidence. Reference data matches never artificially inflate dosage confidence. Observed dosage values are strictly immutable and never rewritten.
-- **Multi-Medicine Independence:** Each medication in a multi-line prescription is evaluated with complete mathematical independence; high confidence in one medicine never inflates confidence in another.
-- **Calibration Methods & Metrics:**
-  - Support for **Platt Scaling** (logistic sigmoid calibration), **Isotonic Regression** (PAV algorithm), and **Temperature Scaling**.
-  - Mathematical computation of **Expected Calibration Error (ECE)**, **Maximum Calibration Error (MCE)**, **Brier Score**, **Negative Log-Likelihood (NLL)**, and reliability diagram bins.
-- **Sample Size Safeguards (`insufficient_data`):**
-  - Requires a minimum cohort of 15 samples (`min_samples_for_calibration = 15`) to fit calibration models.
-  - In the absence of an adequate calibration sample (e.g. the $N=7$ development set), the system safely reports `calibration_status = "insufficient_data"` and `calibrated_confidence = None`. Under no circumstances are calibration parameters fabricated.
-- **Deterministic Evaluation Fixtures:** 14 deterministic fixtures covering well-calibrated, overconfident, underconfident, ambiguous, insufficient data, missing confidence, dosage preservation, and conflicting signals.
-- **Dedicated Endpoints:**
-  - `GET /api/v1/confidence/config`: Active configuration, sample limits, and calibrator status.
-  - `POST /api/v1/confidence/evaluate`: Evaluates and calibrates a single field confidence score.
-  - `POST /api/v1/confidence/metrics`: Computes empirical ECE, MCE, Brier score, and reliability diagram bins.
-  - `GET /api/v1/confidence/fixtures`: Returns all 14 deterministic Phase 8 evaluation fixtures.
-
-For complete design specifications and verification logs, refer to [`docs/confidence_design.md`](docs/confidence_design.md) and [`docs/phase-08-completion.md`](docs/phase-08-completion.md).
-
----
-
-## 13. Abstention & Human Verification Layer (Phase 9)
-
-Phase 9 implements an uncertainty-aware selective abstention and human-verification layer deciding: *"Do I have sufficient empirical evidence to present this extracted field as automatically usable?"*
-
-- **Binary Decision States:**
-  - `accepted`: Sufficient calibrated empirical evidence exists (`requires_human_verification = False`).
-  - `abstained`: Evidence is insufficient, conflicting, ambiguous, uncalibrated, or unsafe (`requires_human_verification = True`).
-- **Standardized Reason Code Taxonomy:** 14 distinct machine-readable reasons including `CALIBRATION_INSUFFICIENT_DATA`, `LOW_CALIBRATED_CONFIDENCE`, `EXTRACTION_UNCERTAIN`, `DOSAGE_FORMULATION_MISMATCH`, and `LASA_CONFUSION_RISK`.
-- **Human Verification Workflow:**
-  - `[Confirm]`: Preserves verbatim original extraction as human-verified.
-  - `[Correct]`: Captures human correction while strictly preserving original model output in an immutable audit trail.
-  - `[Mark Unreadable]`: Explicitly marks field as unreadable without forcing an arbitrary guess.
-- **Dedicated Endpoints:**
-  - `GET /api/v1/abstention/config`: Active policy configuration, thresholds, and fingerprint hash.
-  - `POST /api/v1/abstention/evaluate`: Evaluates field-level and prescription-level abstention.
-  - `POST /api/v1/verification/{prescription_id}/{field_id}`: Records human verification action.
-  - `GET /api/v1/verification/{prescription_id}`: Retrieves complete verification audit trail.
-  - `GET /api/v1/abstention/fixtures`: Returns 15 deterministic Phase 9 evaluation scenarios.
-
-For complete design specifications and verification logs, refer to [`docs/phase-09-completion.md`](docs/phase-09-completion.md).
-
----
-
-## 14. Look-Alike / Sound-Alike (LASA) Conflict Detection (Phase 10)
-
-Phase 10 implements an explainable, deterministic, and safety-oriented Look-Alike / Sound-Alike (LASA) conflict detection subsystem for handwritten medicine candidates.
-
-- **Deterministic Multi-Dimensional Similarity Engine:**
-  - **Orthographic Similarity:** SequenceMatcher ratio on normalized drug names.
-  - **Phonetic Similarity:** Double Metaphone phonetic encoding comparing primary and secondary codes.
-  - **Combined Weighted Score:** Weighted lexical and phonetic similarity score ($0.50 \times \text{ortho} + 0.50 \times \text{phon}$).
-  - **Base Stem & Formulation Exclusion:** Prevents self-collision across dosage strengths (e.g., `Metformin 500` vs `Metformin`) and formulation stopwords (`SR`, `ER`, `Tab`, `Capsule`).
-  - **Curated ISMP Tall Man Lettering:** Evaluates 20 high-frequency confusion pairs from the ISMP 2024 edition (e.g., `metFORMIN` / `metRONIDAZOLE`, `vinBLAStine` / `vinCRIStine`).
-- **Strict Non-Clinical Safety-Review Semantics:**
-  - Similarity scores represent lexical and phonetic proximity, never clinical risk or adverse drug event probability.
-  - `overall_status = "SAFETY_ALERT"` is an application safety-review state requiring human verification, not a clinical risk assessment.
-- **Three-State Execution Semantics:** Explicit non-overlapping states (`"completed"`, `"failed"`, `"unavailable"`). Clean screening yields `conflict_detected = False`; failure or vocabulary unavailability yields `conflict_detected = None`.
-- **Phase 9 Integration:** Phase 10 detects similarity conflicts $\rightarrow$ Phase 9 consumes evidence $\rightarrow$ Phase 9 flags verification with `LASA_CONFUSION_RISK`. Extracted candidates are strictly preserved byte-for-byte and never altered.
-- **Dedicated Endpoints:**
-  - `GET /api/v1/lasa/config`: Reports thresholds, weights, configuration hash, and complete ISMP provenance metadata.
-  - `POST /api/v1/lasa/detect`: Performs deterministic LASA screening for input medicine names.
-  - `GET /api/v1/lasa/fixtures`: Returns all 15 deterministic benchmark fixtures.
-
-For complete audit logs and verification records, refer to [`docs/phase-10-completion.md`](docs/phase-10-completion.md).
-
----
-
-## 15. Multilingual Patient-Friendly Explanation Layer (Phase 11)
-
-Phase 11 implements a deterministic, clinical safety-gated, patient-friendly explanation layer translating verified downstream structured prescription data into clear posology instructions in **English (`en`)**, **Hindi (`hi` / हिन्दी)**, and **Marathi (`mr` / मराठी)**:
-
-- **Assistive Scope Boundary:** The explanation layer consumes structured prescription results only. It never performs OCR, independent handwriting reinterpretation, or ungrounded generative inference, and never diagnoses or recommends changes to medications or dosages.
-- **Explanation Eligibility Gate (`ExplanationEligibilityGate`):**
-  - `eligible`: Source facts are validated and confident; full posology translation is generated.
-  - `restricted`: Facts are ambiguous, incomplete, or trigger a LASA collision; conservative statements preserve ambiguity.
-  - `abstained`: Phase 9 abstention is active; automated medication posology is strictly blocked and clinical verification instructions are issued.
-  - `unavailable`: Pipeline or service failure; standard diagnostic error response is returned.
-- **Strict Information & Identity Fidelity:**
-  - **Roman Script Medicine Invariant:** Medicine brand and generic identities are preserved verbatim in Roman script across all languages (e.g., `Augmentin 625 Duo` in English, Hindi, and Marathi) to prevent orthographic dispensing ambiguities.
-  - **Numeric & Unit Fidelity Validator (`NumericFidelityValidator`):** Extracts numerical tokens, decimals, and metric units (e.g., `625 mg`, `5 days`, `2.5 mL`), rejecting any output that modifies or drops values.
-  - **Unsupported Fact Validator (`UnsupportedFactValidator`):** Rejects unauthorized diagnostic claims (e.g., `"fever"`, `"मधुमेह"`, `"ताप"`), prognostic promises, or altered dosages.
-- **Controlled Terminology Mapping (`ExplanationTerminologyService`):** Deterministic clinical lexicons mapping frequencies (OD, BD, TDS, QID, SOS/PRN), meal relations (PC, AC, CC), timing slots, and duration units across all three languages.
-- **Interactive Dual-Pane Findings UX:**
-  - Pinned left pane keeps the original handwritten prescription image visible at all times.
-  - Instant language switcher buttons (**English**, **हिन्दी**, **मराठी**) toggle representation without re-running interpretation.
-  - Side-by-side debug comparison drawer (`[data-testid="toggle-side-by-side"]`) for clinical audit of multi-language alignment.
-  - Statutory provenance notice declaring policy `explanation_policy_v1` and template `explanation_template_v1`.
-- **Dedicated Endpoints:**
-  - `GET /api/v1/explanation/config`: Reports policy version, template version, and 64-character SHA-256 configuration hash.
-  - `POST /api/v1/explanation/generate`: Generates multilingual explanations from structured prescription facts.
-  - `GET /api/v1/explanation/fixtures`: Returns 22 deterministic benchmark and edge-case evaluation fixtures.
-
-For complete audit logs and verification records, refer to [`docs/phase-11-completion.md`](docs/phase-11-completion.md).
-
----
-
-## 16. Empirical Evaluation, Metrics & Component Ablation (Phase 12)
-
-Phase 12 delivers the formal empirical, quantitative, and qualitative research evaluation for **AURA-Rx** in strict accordance with Section 21 of `PLAN.md`.
-
-> [!IMPORTANT]
-> **Zero-Fabrication & Cohort Transparency Disclosure:**  
-> All reported metrics, tables, and figures were computed directly by running the master pipeline (`eval/scripts/run_all_evaluations.py`, manifest `aura_rx_eval_v1`, seed `42`). The $N = 7$ prescription sample set ($16$ medicine lines, $64$ posology tokens) represents an engineering development, calibration, and continuous integration benchmark cohort. It is explicitly disclosed as such, with zero invented numbers or synthetic data leakage.
-
-### 16.1 Empirical Component Ablation Study (EXP-09)
-The systematic 5-stage ablation study evaluates measured differences across component configurations:
-
-| Config | Architecture | Components | Extraction F1 | Formulary Acc | Mean CER | Mean WER | Coverage | Selective Acc | Hallucination Rate |
-|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **A** | Conventional OCR | Phase 5 Tesseract Baseline | N/A | N/A | 0.8076 | 1.1227 | 1.0000 | 0.3200 | N/A |
-| **B** | Multimodal Extraction | Vision-Language Raw | 0.1976 | N/A | N/A | N/A | 1.0000 | 0.1976 | 0.0800 |
-| **C** | Multimodal + RAG | Extraction + CDSCO/RxNorm | 0.1976 | 1.0000 | N/A | N/A | 1.0000 | 1.0000 | 0.0400 |
-| **D** | + Confidence / Abstain | Grounded + Safe Abstention | 0.1976 | 1.0000 | N/A | N/A | 0.1000 | 1.0000 | 0.0100 |
-| **E** | Complete System | AURA-Rx Full Pipeline | **0.1976** | **1.0000** | N/A | N/A | **0.1000** | **1.0000** | **0.0000** |
-
-*Note: The ablation study interprets measured differences across components and does not establish an overall winner given the varying applicability of component metrics.*
-
-### 16.2 Key Empirical Research Findings (Evaluated Cohort)
-1. **Conventional OCR vs. Multimodal Extraction (RQ1, RQ2):**
-   - Phase 4 image preprocessing (contrast enhancement and deskewing) reduces Tesseract CER from $3.1033$ to $0.8076$ compared to raw input.
-   - Conventional OCR produced high CER/WER on the evaluated handwritten prescription cohort and showed substantial difficulty with the studied cursive handwriting patterns. Multimodal vision-language parsing extracts structured posology directly from pixels (Macro F1 = 0.1976 on the evaluated cohort; Dosage: 0.3000, Duration: 0.3000). The observed medicine-name extraction errors motivate the use of formulary grounding and human verification mechanisms.
-2. **Formulary Knowledge Grounding (RQ3):**
-   - The RAG validation component achieved **100.0% accuracy/precision/recall** on the evaluated 43 reference and behavioral fixtures with strict **100.0% dosage preservation** (0 observed mutations).
-   - *This result evaluates the validation component and does not represent clinical validation accuracy on a large handwritten-prescription corpus.*
-3. **Calibrated Confidence & Selective Abstention (RQ4, RQ5):**
-   - The configured $\tau = 0.80$ policy achieved **100% selective accuracy** and **0% observed accepted-case error** on the evaluated cohort; $90\%$ of evaluated cases were abstained under the configured threshold, demonstrating isolation of ambiguous cursive strokes.
-   - The reported calibration values (ECE: $0.2380 \rightarrow 0.1500$) represent synthetic calibration-method verification results and are not empirical clinical evidence (`dataset_type = synthetic_verification`, `clinical_evidence = false`). For the actual $N = 7$ cohort, the `insufficient_data` safeguard ($N < 15$) prevents reliable empirical calibration claims per Section 20 of `PLAN.md`.
-4. **LASA Similarity Screening (RQ6):**
-   - The detector achieved **1.00 recall** on the evaluated finite curated ISMP 2024 pair set and **0.9091 precision** on the combined benchmark with associated negative controls (20 TP, 2 FP, 18 TN, 0 FN).
-   - *This result does not establish comprehensive LASA detection performance or clinical safety.*
-5. **Multilingual Explanation Fidelity (RQ7):**
-   - Automated checks demonstrated **100.0%** Roman drug name preservation, **84.2%** numerical fidelity, and **0.0%** unsupported claims on the evaluated test set.
-   - *Human multilingual qualitative evaluation was not performed; therefore these results represent automated factual-fidelity checks rather than human-rated language quality.*
-
-### 16.3 Evaluation Scope and Non-Generalizability
-All evaluations are subject to explicit constraints:
-- Evaluated on $N = 7$ prescription documents ($16$ medication lines, $64$ posology tokens).
-- $43$ reference and behavioral RAG validation fixtures testing component correctness.
-- Finite curated subset of $20$ ISMP 2024 confusable pairs and $20$ negative controls.
-- Multilingual evaluation performed via automated factual-fidelity checks; no human qualitative review.
-- No clinical deployment validation, no clinical safety certification, and no general population claims.
-
-### 16.4 Reproducibility & Research Artifacts
-- **Master Pipeline CLI:** `python eval/scripts/run_all_evaluations.py`
-- **8 Publication Tables:** `eval/tables/01_ocr_baseline.csv` through `08_ablation.csv`
-- **6 Research Visualizations (300 DPI):** `eval/plots/01_ocr_cer_wer_comparison.png` through `06_ablation_comparison.png`
-- **Full Traceability Logs:** `eval/reports/per_sample_results.jsonl`, `eval/reports/aggregate_results.json`, `eval/reports/error_taxonomy.json`
-
-For complete experimental methodology, metric tables, and audit logs, refer to [`docs/phase-12-completion.md`](docs/phase-12-completion.md) and [`eval/reports/phase-12-evaluation-report.md`](eval/reports/phase-12-evaluation-report.md).
-
----
-
-## 17. Full End-to-End Integration & Deployment Readiness (Phase 13)
-
-Phase 13 establishes the canonical application pipeline, guarantees byte-for-byte preservation of the physical prescription image, freezes unified API endpoints, and delivers containerized deployment configurations for the assistive research prototype.
-
-### 17.1 Canonical System Workflow
-
-```mermaid
-flowchart TD
-    IMG["Prescription Image Upload"] --> INGEST["Image Ingestion & Storage<br/>(Byte-Preserved Storage)"]
-    INGEST --> PREPROC["Phase 4: Preprocessing & Quality<br/>(Deskew, Sauvola, Glare Gate)"]
-    PREPROC --> MULTI["Phase 6: Multimodal VLM<br/>(Gemini 3.8 Flash / Adapter)"]
-    MULTI --> RAG["Phase 7: RAG Formulary Validation<br/>(Configured CDSCO & RxNorm Subset)"]
-    RAG --> CONF["Phase 8: Confidence Processing<br/>(Raw / Insufficient Data Guard)"]
-    CONF --> LASA["Phase 10: LASA Conflict Screening<br/>(Orthographic & Phonetic)"]
-    LASA --> ABSTAIN["Phase 9: Selective Abstention<br/>(Clinical Risk & Review Routing)"]
-    ABSTAIN --> VERIFY["Human Verification Workflow<br/>([Confirm] [Correct] [Unreadable])"]
-    VERIFY --> EXPL["Phase 11: Multilingual Posology<br/>(English, हिन्दी, मराठी)"]
-    EXPL --> UI["Unified Responsive Presentation<br/>(1:1 Dual-Pane Spatial Canvas)"]
-```
-
-### 17.2 API Contract & Endpoints
-
-| Endpoint | Method | Functionality |
-| :--- | :--- | :--- |
-| `/api/v1/prescriptions/process` | `POST` | Canonical prescription processing endpoint (upload & sample ID). |
-| `/api/v1/prescriptions/analyze` | `POST` | Preserved canonical alias matching Phase 2 frozen interface. |
-| `/health` | `GET` | Root load-balancer health endpoint with dependency diagnostics. |
-| `/api/v1/health` | `GET` | Versioned API health and diagnostic status endpoint. |
-| `/api/v1/verification/{id}/fields/{f}/confirm` | `POST` | Human clinician confirmation in audit trail. |
-| `/api/v1/verification/{id}/fields/{f}/correct` | `POST` | Human clinician correction (preserves original extraction). |
-| `/api/v1/verification/{id}/fields/{f}/unreadable` | `POST` | Explicit stroke unreadability record without guessing. |
-| `/uploads/rx_*` | `GET` | Stable application reference to preserved original image (prototype storage). |
-
-### 17.3 Containerized Deployment & Execution
-
-#### Local Prototype Execution:
-```bash
-# 1. Start FastAPI Backend (Port 8000)
-python backend/run.py
-
-# 2. Start React/Vite Frontend (Port 5173)
-npm run dev
-```
-
-#### Containerized Docker Deployment:
-```bash
-# Copy and configure environment variables
-cp .env.production.example .env
-
-# Build and launch via Docker Compose
-docker compose up --build -d
-
-# Verify health check
-curl -f http://localhost:8000/health
-```
-
-*Note: Container configuration is fully prepared and locally verified. Cloud deployment verification requires authorized institutional cloud credentials; external live URL deployment is not fabricated.*
-
-### 17.4 Verification Evidence & Test Execution
-
-- **Backend Full Pytest Suite:** 576 passed, 1 skipped, 0 failed (100%)
-- **Backend Explanation & Posology Suite:** 75/75 passed (`python -m pytest backend/tests/test_explanation_*.py`)
-- **Field-Level Uncertainty Regression:** 5/5 passed (`backend/tests/test_explanation_field_uncertainty_regression.py`) proving readable drug names are never erased by missing duration or unverified schedule slots
-- **Frontend Verification Suite:** 123 passed, 0 failed (100% across 14 UI states)
-- **Browser-Level E2E Audit:** 40 passed, 0 failed (100% across 10 genuine Puppeteer browser automation flows including file upload, error injection, retry, and language switching)
-- **TypeScript Static Verification:** 0 errors (`npx tsc --noEmit`)
-- **Production Build:** Clean distribution bundle in 1.66s (`npm run build`)
-- **Live Sample-Image Regression Suite:** 100% passed (`python scripts/verify_sample_regressions.py`) on authentic samples (`sample_01_clear.png` and `sample_02_cursive.png`)
-- **Live Gemini Multimodal Inference:** Direct Google AI Studio API integration using `gemini-3.5-flash-lite` with live HTTP 200 responses, honest error reporting, and strict zero mock fallback (`USE_MOCK_PIPELINE=false`, `VITE_USE_MOCK_API=false`)
-- **Timeout Management:** 60,000ms client request timeout preventing premature 504 aborts on dense cursive handwriting
-- **Voice Assistance & Multilingual Synthesis:** Verified browser Text-to-Speech playback speaking real extracted posology (Augmentin, Metformin, Pantocid) across English, Hindi, and Marathi with zero fallback to generic uncertainty loops
-- **Vercel & Production Deployment:**
-  - Frontend: Deployed on Vercel. Set `VITE_API_BASE_URL=https://<your-backend-service>.com` in Vercel project environment variables (never point to localhost in production).
-  - Backend: Run on Render / Cloud Run / VPS with `PORT=8001` or standard `$PORT`, with `GEMINI_API_KEY` configured server-side.
-
----
-
-## 18. DawaAI Brand Kit & Phase 14 Research Artifacts
-
-Phase 14 finalizes the research documentation, viva defense readiness, and brand migration to the official **DawaAI** brand kit.
-
-### 18.1 Official Brand Assets & Geometry
-- **Primary Mark:** Plum rounded clinical cross interlocked with a tilted rose pill emblem.
-- **Palette (Source of Truth):**
-  - **PRIMARY PURPLE:** `#4A2E4D` (WCAG AAA compliant on `#F8F2F6`, contrast > 13:1)
-  - **SECONDARY PURPLE:** `#7C5A8B`
-  - **ACCENT PINK:** `#F472B6`
-  - **SOFT PINK:** `#FFD6DA`
-  - **CANVAS BACKGROUND:** `#F8F2F6`
-  - **TEXT ON LIGHT:** `#2E2233`
-- **Typography:**
-  - Display Wordmark: `DM Serif Display` ("Dawa" in `#4A2E4D`)
-  - Tech Accent: `Inter` ("AI" in `#F472B6`)
-  - Body & UI: `Inter` / `DM Sans`
-  - Monospace Data / RxCUI: `JetBrains Mono`
-
-### 18.2 Complete Academic & Viva Defense Deliverables
-1. **[Capstone Final Report](docs/capstone-final-report.md):** 14-phase comprehensive capstone thesis report covering problem epidemiology, multimodal architecture, empirical results, and Section 42 regulatory considerations.
-2. **[Research Paper Draft](docs/research-paper-draft.md):** Formal academic journal/conference manuscript with IEEE/ACM styling.
-3. **[Architecture & DFD Specification](docs/architecture-dfd.md):** Complete Level 0, Level 1, and Level 2 Data Flow Diagrams with Mermaid flowcharts, data dictionaries, and boundary contracts.
-4. **[Evidence-Based Error Analysis](docs/error-analysis.md):** Standardized 14-category error taxonomy, deep dive on Sample 5 edge case, and qualitative risk mitigation matrix.
-5. **[Viva Defense Presentation Guide](docs/defense-viva-presentation.md):** 18-slide viva presentation deck with complete speaker notes and 10 bulletproof examiner defense Q&As.
-6. **[Interactive Demonstration Script](docs/demo-script.md):** 10-minute live demonstration walkthrough script across 6 acts.
-7. **[REST API Reference Manual](docs/api-documentation.md):** Endpoint contracts, Pydantic schemas, and cURL/Fetch examples.
-8. **[Phase 14 Completion Report](docs/phase-14-completion.md):** Verification audit matrix covering all 32 acceptance criteria and research-integrity compliance.
-
-### 18.3 Production Readiness, Operations & Deployment Deliverables
-1. **[Production Readiness Audit](docs/PRODUCTION_READINESS_AUDIT.md):** Formal baseline audit, risk matrix, defect remediation, and quality gate classifications.
-2. **[Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md):** Step-by-step local readiness, cloud hosting (Docker/Render/PaaS), Vercel connection, and smoke tests.
-3. **[Security & Privacy Policy](docs/SECURITY_AND_PRIVACY.md):** Ephemeral storage, zero PHI database, magic byte validation, sliding-window rate limiting, and DevSecOps controls.
-4. **[REST API Specification](docs/API.md):** Comprehensive OpenAPI-compatible schemas, standard error contracts, and status mappings.
-5. **[AI Model Card & Provenance](docs/AI_MODEL_CARD.md):** Multimodal foundation adapter provenance, RAG formulary grounding, ECE calibration, and clinical boundaries.
-6. **[Testing & Quality Gates Report](docs/TESTING_AND_EVALUATION.md):** 680 verified automated tests, test commands, execution timings, and 15 E2E safety scenarios.
-7. **[System Architecture](docs/ARCHITECTURE.md):** Component design, data flow diagrams, spatial ink tethering, and security topology.
-8. **[Datasets & Licensing Inventory](docs/DATASETS_AND_LICENCES.md):** IAM-HistDB, CDSCO, RxNorm, and ISMP licensing, ethical compliance, and writer splits.
-
----
-
-## 19. Clinical Safety & Statutory Regulatory Disclaimer
+## 10. Clinical Safety & Statutory Notice
 
 > [!CAUTION]
-> **STATUTORY NOTICE**: DawaAI is a **deployment-ready assistive research prototype for academic demonstration** designed to explore explainable multimodal artificial intelligence and uncertainty quantification in healthcare informatics.
-> 
-> - **Under Section 42 of the Indian Pharmacy Act (1948), dispensing prescription medicines without verification by a Registered Pharmacist is an offence.**
-> - **The physical handwritten prescription signed by a Registered Medical Practitioner (RMP) is the sole legally binding document.**
-> - This software is an assistive explanatory tool and **must not be used as an autonomous dispensing authority or clinical diagnostic device**.
-> - Patients must never initiate, alter, or terminate medication regimens without direct consultation with a qualified medical practitioner or licensed clinical pharmacist.
+> **STATUTORY REGULATORY NOTICE**  
+> DawaAI is an **assistive research and educational technology demonstration** in multimodal artificial intelligence and healthcare informatics.
+>
+> - **Under Section 42 of the Pharmacy Act (1948), dispensing prescription medications without the direct supervision of a Registered Pharmacist is a statutory offence.**
+> - **The physical handwritten prescription signed by a licensed Registered Medical Practitioner (RMP) remains the sole authoritative, legally binding document.**
+> - DawaAI is designed strictly as an assistive second-reader and posology explanation tool; it **must not** be used as an autonomous dispensing authority or diagnostic medical device.
+> - Patients must never start, stop, or modify prescribed medication regimens without direct consultation with a qualified physician or licensed clinical pharmacist.
 
 ---
 
-## 20. Project Information
+## 11. Documentation & Research Deliverables
 
-- **Capstone Project:** Explainable Multimodal AI for Handwritten Prescription Understanding
-- **Product Identity:** DawaAI (*Your Prescription, Made Clear.*)
+- **[Capstone Final Report](docs/capstone-final-report.md):** Comprehensive thesis covering mathematical foundations, error taxonomy, and evaluation.
+- **[Research Paper Draft](docs/research-paper-draft.md):** Academic manuscript prepared with IEEE/ACM styling.
+- **[Architecture & Data Flow Diagrams](docs/architecture-dfd.md):** Complete Level 0, Level 1, and Level 2 Data Flow Diagrams.
+- **[Deployment Runbook](docs/DEPLOYMENT_RUNBOOK.md):** Step-by-step production operations and incident response guide.
+- **[Security & Privacy Policy](docs/SECURITY_AND_PRIVACY.md):** Ephemeral memory storage, zero-PHI persistence, and DevSecOps controls.
+- **[REST API Specification](docs/API.md):** Full OpenAPI documentation with error contracts.
+
+---
+
+## 12. License & Authors
+
+Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms.
+
 - **Author:** Swayam Mandhani
-- **Research Domains:** Medical Image Processing, Vision-Language Transformers, Clinical Natural Language Generation, Vernacular Healthcare Accessibility
-
----
-
-## 21. License
-
-Distributed under the **MIT Academic License**. See [`LICENSE`](LICENSE) for terms and regulatory conditions.
-
+- **Project Identity:** DawaAI (*Your Prescription, Made Clear.*)
+- **Research Domains:** Multimodal Medical Vision-Language Models, Clinical NLP, Uncertainty Quantification, Vernacular Health Equity.
