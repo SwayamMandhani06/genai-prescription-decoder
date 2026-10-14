@@ -235,7 +235,19 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
         <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium border border-theme bg-surface shrink-0 self-start sm:self-auto shadow-xs">
           <span className={`w-2.5 h-2.5 rounded-full ${apiConfig.useMock ? 'bg-[#155EEF]' : 'bg-emerald-500 animate-pulse'}`} />
           <span className="text-theme-secondary">
-            {apiConfig.useMock ? 'Demonstration Mock Mode' : 'Live FastAPI Backend (Port 8001)'}
+            {(() => {
+              if (apiConfig.useMock) return 'Demonstration Mode';
+              try {
+                const url = new URL(apiConfig.baseUrl);
+                const isLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+                if (isLocal) {
+                  return `Live FastAPI Backend (Local ${url.port ? `:${url.port}` : ''})`;
+                }
+                return 'Live Cloud AI Pipeline';
+              } catch {
+                return 'Live Cloud AI Pipeline';
+              }
+            })()}
           </span>
         </div>
       </div>
