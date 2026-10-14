@@ -93,7 +93,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               alt="DawaAI — Your Prescription, Made Clear."
               className="h-8 sm:h-9 w-auto hidden dark:block object-contain"
             />
+            <span className="hidden xl:inline-flex items-center text-[10px] font-mono tracking-tight text-theme-muted bg-surface-subtle px-2 py-0.5 rounded-full border border-theme">
+              PCCOE Grp_Cap_43
+            </span>
           </button>
+
 
           {/* Primary Navigation (Desktop) */}
           <nav className="hidden md:flex items-center gap-1 bg-surface-subtle/80 px-2 py-1 rounded-full border border-theme backdrop-blur-sm">

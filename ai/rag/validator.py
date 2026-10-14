@@ -20,12 +20,27 @@ from .config import RAGConfig, get_rag_config
 from .sources import CDSCO_SOURCE_ID, RXNORM_SOURCE_ID
 
 
+import re
+
+
+def parse_strength_value_unit(strength_str: str) -> Tuple[Optional[float], Optional[str]]:
+    """Extracts numeric magnitude and unit from a dosage string (e.g., '500 mg' -> (500.0, 'mg'))."""
+    match = re.search(r"([0-9]+(?:\.[0-9]+)?)\s*([a-zA-Z%]+)", strength_str)
+    if match:
+        try:
+            return float(match.group(1)), match.group(2).lower()
+        except ValueError:
+            return None, None
+    return None, None
+
+
 def evaluate_formulation_consistency(
     observed_dosage: Optional[str],
     reference_strength: Optional[str],
 ) -> Tuple[Literal["consistent", "mismatch", "not_evaluated"], Optional[str]]:
     """
     Evaluates compatibility between prescription observed dosage and reference strength.
+    Detects critical unit confusion (e.g., mg vs mcg) and 10x decimal errors (e.g., 5000 mg vs 500 mg).
     Never mutates, alters, or infers posology.
     """
     if not observed_dosage or not observed_dosage.strip():
@@ -33,13 +48,35 @@ def evaluate_formulation_consistency(
     if not reference_strength or not reference_strength.strip():
         return "not_evaluated", None
 
+    obs_val, obs_unit = parse_strength_value_unit(observed_dosage)
+    ref_val, ref_unit = parse_strength_value_unit(reference_strength)
+
+    # 1. Critical Clinical Safety Bounds (FMEA-01 / HIGH-04)
+    if obs_val is not None and ref_val is not None and obs_unit and ref_unit:
+        # Unit confusion hazard: mg prescribed instead of microgram (1000x overdose)
+        if obs_unit in ("mg", "g") and ref_unit in ("mcg", "ug", "microgram", "micrograms"):
+            return (
+                "mismatch",
+                f"CRITICAL_DOSAGE_OUT_OF_RANGE: Unit mismatch hazard detected (Observed '{observed_dosage}' vs Reference '{reference_strength}'). Prescribing milligrams instead of micrograms presents severe overdose risk."
+            )
+        # Decimal shift / 10x overdose hazard: observed value is 5x or more of manufactured strength
+        if obs_unit == ref_unit and obs_val >= (4.5 * ref_val):
+            return (
+                "mismatch",
+                f"CRITICAL_DOSAGE_OUT_OF_RANGE: Extreme dosage magnitude detected (Observed '{observed_dosage}' vs Reference '{reference_strength}'). Potential decimal point misread or overdose hazard."
+            )
+        # Exact numerical & unit match
+        if obs_unit == ref_unit and abs(obs_val - ref_val) < 1e-4:
+            return "consistent", f"Observed dosage '{observed_dosage}' matches reference strength '{reference_strength}' exactly."
+
     obs_toks = token_set(observed_dosage)
     ref_toks = token_set(reference_strength)
 
-    if obs_toks and (obs_toks == ref_toks or obs_toks.issubset(ref_toks)):
+    if obs_toks and (obs_toks == ref_toks or obs_toks.issubset(ref_toks) or ref_toks.issubset(obs_toks)):
         return "consistent", f"Observed dosage '{observed_dosage}' is consistent with reference strength '{reference_strength}'."
 
     return "mismatch", f"Observed dosage '{observed_dosage}' differs from reference strength '{reference_strength}'."
+
 
 
 class MedicineValidator:

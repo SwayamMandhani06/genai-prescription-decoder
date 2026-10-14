@@ -304,3 +304,25 @@ class PrescriptionAnalyzeResponse(BaseModel):
     )
 
 
+# ==============================================================================
+# 5. Pharmacist Human-in-the-Loop Verification Models (CRIT-04 / Fig. 1)
+# ==============================================================================
+
+class VerifiedMedicineItem(BaseModel):
+    line_id: Optional[str] = Field(None, description="Optional line or index identifier of the medication row")
+    medicine_name: str = Field(..., min_length=2, description="Pharmacist-confirmed or corrected medicine name")
+    dosage: Optional[str] = Field("", description="Confirmed dosage strength (e.g., '500 mg')")
+    frequency: Optional[str] = Field("", description="Confirmed frequency schedule (e.g., '1-0-1 (BD)')")
+    duration: Optional[str] = Field("", description="Confirmed duration (e.g., '5 days')")
+    instructions: Optional[str] = Field("", description="Specific administration instructions (e.g., 'After food')")
+    pharmacist_notes: Optional[str] = Field(None, description="Clinical verification notes or dispensing warnings")
+
+
+class PharmacistVerificationRequest(BaseModel):
+    prescription_id: Optional[str] = Field(None, description="Target prescription accession ID")
+    reviewer_id: str = Field(..., description="Pharmacist registration number or clinician reviewer ID")
+    verified_items: List[VerifiedMedicineItem] = Field(..., min_length=1, description="List of verified medicine items")
+    target_languages: List[str] = Field(default=["en", "hi", "mr"], description="Languages to generate patient explanations for")
+
+
+

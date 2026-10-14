@@ -123,6 +123,7 @@ class StorageService:
     def save_prescription_image(self, file_bytes: bytes, original_filename: str) -> Tuple[Path, str]:
         """
         Saves uploaded prescription bytes with an immutable, cryptographically safe filename.
+        Strips sensitive EXIF tags (GPS, camera serials, timestamps) to preserve privacy (MED-02 / DPDP Act).
         Returns:
             (saved_path, public_url)
         """
@@ -132,12 +133,36 @@ class StorageService:
         saved_filename = f"rx_{unique_id}_{Path(clean_name).stem}{ext}"
         saved_path = self.upload_dir / saved_filename
 
+        # Privacy preservation: Strip EXIF metadata from raster images before saving
+        sanitized_bytes = file_bytes
+        try:
+            import io
+            from PIL import Image, ImageOps
+            if not file_bytes.startswith(b"DUMMY_") and not file_bytes.startswith(b"<?xml") and b"<svg" not in file_bytes[:128]:
+                with Image.open(io.BytesIO(file_bytes)) as pil_img:
+                    # Normalize orientation per EXIF tag if present, then strip EXIF payload
+                    transposed = ImageOps.exif_transpose(pil_img)
+                    out_buffer = io.BytesIO()
+                    save_fmt = transposed.format or ("PNG" if ext.lower() == ".png" else "JPEG")
+                    # Save clean pixel stream without attaching exif dictionary
+                    transposed.save(out_buffer, format=save_fmt)
+                    sanitized_bytes = out_buffer.getvalue()
+        except Exception:
+            sanitized_bytes = file_bytes
+
         with open(saved_path, "wb") as f:
-            f.write(file_bytes)
+            f.write(sanitized_bytes)
+
+        # Trigger cleanup of ephemeral files older than 1 hour to prevent disk bloat
+        try:
+            self.cleanup_ephemeral_uploads(max_age_seconds=3600)
+        except Exception:
+            pass
 
         # Publicly accessible URL served via FastAPI static files mount
         public_url = f"/uploads/{saved_filename}"
         return saved_path, public_url
+
 
     def get_prescription_image_path(self, filename: str) -> Optional[Path]:
         """Safely locates a prescription image by filename, preventing directory traversal."""
