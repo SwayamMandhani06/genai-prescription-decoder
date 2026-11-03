@@ -279,38 +279,50 @@ class PosologyTemplateEngine:
                     lines = [f"Take {medicine_name} according to prescription instructions:"]
                     if dosage:
                         lines.append(f"• Dose: {dosage}")
-                    if freq_label:
+                    if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         lines.append(f"• Frequency: {freq_label}")
+                    else:
+                        lines.append("• Frequency: Not specified / illegible on prescription — confirm with your doctor or pharmacist.")
                     if meal_label:
                         lines.append(f"• Timing: {meal_label}")
-                    if duration:
+                    if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         lines.append(f"• Duration: {duration}")
+                    else:
+                        lines.append("• Duration: Not specified / illegible on prescription — confirm with your doctor or pharmacist.")
                     lines.append("Note: Ambiguous handwriting flagged. Confirm with pharmacist before taking.")
                     return "\n".join(lines)
                 elif language == "hi":
                     lines = [f"{medicine_name} को प्रिस्क्रिप्शन के अनुसार लें:"]
                     if dosage:
                         lines.append(f"• मात्रा: {dosage}")
-                    if freq_label:
+                    if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         lines.append(f"• समय: {freq_label}")
+                    else:
+                        lines.append("• आवृत्ति / समय: प्रिस्क्रिप्शन पर निर्दिष्ट नहीं / पढ़ने योग्य नहीं — अपने डॉक्टर या फार्मासिस्ट से पुष्टि करें।")
                     if meal_label:
                         lines.append(f"• निर्देश: {meal_label}")
-                    if duration:
+                    if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         dur_hi = format_duration_for_lang(duration, "hi")
                         lines.append(f"• अवधि: {dur_hi}")
+                    else:
+                        lines.append("• अवधि: प्रिस्क्रिप्शन पर निर्दिष्ट नहीं / पढ़ने योग्य नहीं — अपने डॉक्टर या फार्मासिस्ट से पुष्टि करें।")
                     lines.append("सूचना: अस्पष्ट लिखावट हो सकती है। लेने से पहले फार्मासिस्ट से पुष्टि करें।")
                     return "\n".join(lines)
                 elif language == "mr":
                     lines = [f"{medicine_name} प्रिस्क्रिप्शननुसार घ्या:"]
                     if dosage:
                         lines.append(f"• मात्रा: {dosage}")
-                    if freq_label:
+                    if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         lines.append(f"• वेळ: {freq_label}")
+                    else:
+                        lines.append("• वारंवारता / वेळ: प्रिस्क्रिप्शनवर नमूद नाही / वाचता येत नाही — तुमच्या डॉक्टरांशी किंवा फार्मासिस्टशी खात्री करा.")
                     if meal_label:
                         lines.append(f"• निर्देश: {meal_label}")
-                    if duration:
+                    if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE"):
                         dur_mr = format_duration_for_lang(duration, "mr")
                         lines.append(f"• कालावधी: {dur_mr}")
+                    else:
+                        lines.append("• कालावधी: प्रिस्क्रिप्शनवर नमूद नाही / वाचता येत नाही — तुमच्या डॉक्टरांशी किंवा फार्मासिस्टशी खात्री करा.")
                     lines.append("टीप: अस्पष्ट हस्ताक्षर असू शकते. औषध घेण्यापूर्वी फार्मासिस्टशी खात्री करा.")
                     return "\n".join(lines)
 
@@ -333,40 +345,52 @@ class PosologyTemplateEngine:
             lines = [f"Take {medicine_name} exactly as prescribed:"]
             if dosage:
                 lines.append(f"• Dose: {dosage}")
-            if freq_label:
+            if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                 lines.append(f"• Frequency: {freq_label}")
+            else:
+                lines.append("• Frequency: Not specified / illegible on prescription — confirm with your doctor or pharmacist.")
             if meal_label:
                 lines.append(f"• Timing: {meal_label}")
-            if duration:
+            if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE"):
                 lines.append(f"• Duration: {duration}")
+            else:
+                lines.append("• Duration: Not specified / illegible on prescription — confirm with your doctor or pharmacist.")
             lines.append("• Do not alter dosage or discontinue without consulting your physician.")
             return "\n".join(lines)
 
         elif language == "hi":
-            dur_hi = format_duration_for_lang(duration, "hi")
+            dur_hi = format_duration_for_lang(duration, "hi") if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE") else None
             lines = [f"{medicine_name} को निर्देशानुसार लें:"]
             if dosage:
                 lines.append(f"• खुराक: {dosage}")
-            if freq_label:
+            if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                 lines.append(f"• बारंबारता: {freq_label}")
+            else:
+                lines.append("• बारंबारता: प्रिस्क्रिप्शन पर निर्दिष्ट नहीं / पढ़ने योग्य नहीं — अपने डॉक्टर या फार्मासिस्ट से पुष्टि करें।")
             if meal_label:
                 lines.append(f"• समय: {meal_label}")
             if dur_hi:
                 lines.append(f"• अवधि: {dur_hi}")
+            else:
+                lines.append("• अवधि: प्रिस्क्रिप्शन पर निर्दिष्ट नहीं / पढ़ने योग्य नहीं — अपने डॉक्टर या फार्मासिस्ट से पुष्टि करें।")
             lines.append("• डॉक्टर की सलाह के बिना खुराक में बदलाव न करें और न ही दवा बंद करें।")
             return "\n".join(lines)
 
         elif language == "mr":
-            dur_mr = format_duration_for_lang(duration, "mr")
+            dur_mr = format_duration_for_lang(duration, "mr") if duration and duration not in ("MISSING_ON_RX", "ILLEGIBLE") else None
             lines = [f"{medicine_name} दिलेल्या निर्देशानुसार घ्या:"]
             if dosage:
                 lines.append(f"• मात्रा: {dosage}")
-            if freq_label:
+            if freq_label and frequency_key not in ("MISSING_ON_RX", "ILLEGIBLE"):
                 lines.append(f"• वारंवारता: {freq_label}")
+            else:
+                lines.append("• वारंवारता: प्रिस्क्रिप्शनवर नमूद नाही / वाचता येत नाही — तुमच्या डॉक्टरांशी किंवा फार्मासिस्टशी खात्री करा.")
             if meal_label:
                 lines.append(f"• वेळ: {meal_label}")
             if dur_mr:
                 lines.append(f"• कालावधी: {dur_mr}")
+            else:
+                lines.append("• कालावधी: प्रिस्क्रिप्शनवर नमूद नाही / वाचता येत नाही — तुमच्या डॉक्टरांशी किंवा फार्मासिस्टशी खात्री करा.")
             lines.append("• डॉक्टरांच्या सल्ल्याशिवाय मात्रा बदलू नका किंवा औषध बंद करू नका.")
             return "\n".join(lines)
 

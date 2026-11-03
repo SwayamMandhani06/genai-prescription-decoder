@@ -5,12 +5,13 @@ visual evidence grounding, and multi-medicine representations.
 """
 
 from datetime import datetime, timezone
-from typing import Dict, List, Literal, Optional, Any
-from pydantic import BaseModel, Field
+from typing import Dict, List, Literal, Optional, Any, Union
+from pydantic import BaseModel, Field, model_validator
 
 FieldStatus = Literal["confident", "uncertain", "flagged"]
 FieldPresence = Literal["present", "absent"]
 ExtractionState = Literal["extracted", "ambiguous", "missing"]
+FieldEpistemicStatus = Literal["EXTRACTED", "MISSING_ON_RX", "ILLEGIBLE", "AMBIGUOUS", "UNVERIFIED"]
 EvidenceType = Literal["visual_region", "image_level"]
 EvidenceSource = Literal["original_image", "preprocessed_image"]
 
@@ -40,9 +41,13 @@ class VisualEvidence(BaseModel):
         None,
         description="Spatial bounding box in percentage [0 - 100]. None if evidence_type is image_level.",
     )
-    note: Optional[str] = Field(
+    line_index: Optional[int] = Field(
         None,
-        description="Observational visual note describing ink stroke or layout context",
+        description="1-based visual line index on prescription pad",
+    )
+    region_type: Optional[str] = Field(
+        None,
+        description="Prescription document region ('HEADER_CLINIC', 'PATIENT_INFO', 'VITALS_DIAGNOSIS', 'MEDICATION_LINE', 'ADVICE_FOLLOWUP')",
     )
 
 
@@ -96,6 +101,14 @@ class ExtractedField(BaseModel):
         None,
         description="Explicit visual reason for uncertainty when content is ambiguous (null for absent fields)",
     )
+    epistemic_status: Optional[FieldEpistemicStatus] = Field(
+        "EXTRACTED",
+        description="Explicit epistemic status: EXTRACTED, MISSING_ON_RX, ILLEGIBLE, AMBIGUOUS, UNVERIFIED",
+    )
+    requires_pharmacist_verification: Optional[bool] = Field(
+        None,
+        description="True if pharmacist verification is mandated",
+    )
     verification_instruction: Optional[str] = Field(
         None,
         description="Actionable verification instruction for human reviewer",
@@ -133,25 +146,46 @@ class ExtractedMedicine(BaseModel):
         default_factory=list,
         description="Alternative candidate drug names observed in cursive ink strokes",
     )
+    line_index: Optional[int] = Field(None, description="1-based visual line index on prescription pad")
+    raw_transcription: Optional[str] = Field(None, description="Character-by-character reading of line using [?] for illegible characters")
     strength: Optional[str] = Field(None, description="Extracted strength (e.g. '625 mg')")
     formulation: Optional[str] = Field(None, description="Dosage formulation (e.g. 'Tablet', 'Syrup')")
+    dosage_form: Optional[Union[ExtractedField, str]] = Field(None, description="Physical dosage form (e.g. 'Tablet', 'Capsule')")
     dosage_amount: Optional[str] = Field(None, description="Dose per administration (e.g. '1 tablet')")
+    raw_frequency: Optional[str] = Field(None, description="Preserved raw frequency token exactly as observed (e.g. '1-0-1')")
     frequency_plain: Optional[str] = Field(None, description="Plain language frequency (e.g. 'Twice daily')")
+    raw_duration: Optional[str] = Field(None, description="Preserved raw duration token exactly as observed (e.g. 'x 5/7')")
     timing_and_food: Optional[str] = Field(None, description="Food-related instructions (e.g. 'After food')")
-    route: Optional[str] = Field(None, description="Route of administration (e.g. 'Oral')")
+    route: Optional[Union[ExtractedField, str]] = Field(None, description="Route of administration (e.g. 'Oral')")
     special_instructions: Optional[str] = Field(None, description="Special instructions or indications")
     patient_explanation: Optional[str] = Field(None, description="Grounded 1-sentence patient explanation")
     requires_verification: bool = Field(False, description="True if this specific medicine requires pharmacist review")
+
+    @model_validator(mode="before")
+    @classmethod
+    def sync_formulation_and_dosage_form(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            form = data.get("formulation")
+            df = data.get("dosage_form")
+            if df and not form:
+                data["formulation"] = df
+            elif form and not df:
+                data["dosage_form"] = form
+        return data
 
 
 class ModelMetadata(BaseModel):
     """Audit metadata describing the multimodal vision-language model used for extraction."""
     provider: str = Field(..., description="Model provider ('gemini' or 'mock')")
-    model_id: str = Field(..., description="Model identifier (e.g. 'gemini-3.8-flash')")
+    model_id: str = Field(..., description="Model identifier (e.g. 'gemini-3.5-flash-lite')")
     model_version: str = Field(..., description="Specific model release version")
     prompt_version: str = Field(..., description="Clinical extraction prompt version")
     config_version: str = Field(..., description="Multimodal configuration version")
     is_mock: bool = Field(False, description="True if output was produced by deterministic test adapter")
+    inference_mode: Literal["live", "mock"] = Field(
+        "live",
+        description="Inference execution mode: 'live' for real model inference, 'mock' for simulated test fixture",
+    )
 
 
 class PrescriptionExtractionResult(BaseModel):
@@ -165,6 +199,22 @@ class PrescriptionExtractionResult(BaseModel):
     preprocessed_image_url: Optional[str] = Field(None, description="Accessible URL of Phase 4 preprocessed image")
     preprocessed_image_sha256: Optional[str] = Field(None, description="SHA-256 of derived preprocessed image")
     model: ModelMetadata = Field(..., description="Audit metadata for model and prompt")
+    inference_mode: Literal["live", "mock"] = Field(
+        "live",
+        description="Inference execution mode: 'live' for real model inference, 'mock' for simulated test fixture",
+    )
+    model_provider: Optional[str] = Field(
+        None,
+        description="Active vision-language model provider (e.g. 'gemini', 'mock')",
+    )
+    model_name: Optional[str] = Field(
+        None,
+        description="Active vision-language model identifier (e.g. 'gemini-3.5-flash-lite')",
+    )
+    ocr_engine: Optional[str] = Field(
+        None,
+        description="Active optical character recognition engine if utilized",
+    )
     is_prescription: bool = Field(
         True,
         description="True if image contains sufficient visual/textual evidence of a valid medical prescription",
@@ -182,6 +232,10 @@ class PrescriptionExtractionResult(BaseModel):
         ge=0.0,
         le=1.0,
         description="Model or heuristic confidence in document type assessment [0.0 - 1.0]",
+    )
+    regions: Optional[List[Dict[str, Any]]] = Field(
+        default_factory=list,
+        description="Prescription document region segmentations ('HEADER_CLINIC', 'PATIENT_INFO', 'VITALS_DIAGNOSIS', 'MEDICATION_LINE', 'ADVICE_FOLLOWUP')",
     )
     medicines: List[ExtractedMedicine] = Field(
         default_factory=list,

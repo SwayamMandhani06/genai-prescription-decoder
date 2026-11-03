@@ -49,6 +49,8 @@ class LasaDetectionService:
         prescription_id: str,
         medicine_names: List[str],
         reference_records: Optional[List[MedicineReferenceRecord]] = None,
+        strengths: Optional[List[Optional[str]]] = None,
+        dosage_forms: Optional[List[Optional[str]]] = None,
     ) -> PrescriptionLasaDetection:
         """
         Runs LASA detection for all medicines in a prescription.
@@ -58,6 +60,8 @@ class LasaDetectionService:
             medicine_names: List of extracted medicine names
             reference_records: Optional override of reference records
                              (uses RAG index if None)
+            strengths: Optional list of visually observed strengths
+            dosage_forms: Optional list of visually observed dosage forms
 
         Returns:
             PrescriptionLasaDetection with all screening results
@@ -67,6 +71,8 @@ class LasaDetectionService:
             prescription_id=prescription_id,
             medicine_names=medicine_names,
             reference_records=refs,
+            strengths=strengths,
+            dosage_forms=dosage_forms,
             config=self._config,
         )
 
@@ -75,6 +81,8 @@ class LasaDetectionService:
         candidate_name: str,
         item_index: int = 1,
         reference_records: Optional[List[MedicineReferenceRecord]] = None,
+        prescribed_strength: Optional[str] = None,
+        prescribed_dosage_form: Optional[str] = None,
     ) -> MedicineLasaResult:
         """
         Screens a single medicine name for LASA conflicts.
@@ -83,6 +91,8 @@ class LasaDetectionService:
             candidate_name: Extracted medicine name
             item_index: 1-based line item index
             reference_records: Optional override (uses RAG index if None)
+            prescribed_strength: Optional visually observed strength
+            prescribed_dosage_form: Optional visually observed dosage form
 
         Returns:
             MedicineLasaResult for the single candidate
@@ -92,6 +102,8 @@ class LasaDetectionService:
             candidate_name=candidate_name,
             item_index=item_index,
             reference_records=refs,
+            prescribed_strength=prescribed_strength,
+            prescribed_dosage_form=prescribed_dosage_form,
             config=self._config,
         )
 

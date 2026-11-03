@@ -21,7 +21,7 @@ class PreprocessedArtifactRecord(BaseModel):
     """
     Describes an individual derived image artifact generated during preprocessing.
     """
-    type: str = Field(..., description="Semantic artifact type: grayscale, normalized, denoised, enhanced, deskewed, thresholded")
+    type: str = Field(..., description="Semantic artifact type: vlm_image, ocr_image, grayscale, normalized, denoised, enhanced, deskewed, thresholded")
     relative_path: str = Field(..., description="Path relative to the repository or run directory")
     file_size_bytes: int = Field(..., description="File size in bytes")
     sha256: str = Field(..., description="Cryptographic SHA-256 fingerprint of the derived artifact")
@@ -169,3 +169,15 @@ class PreprocessingArtifactManager:
         with open(manifest_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return PreprocessingRunManifest.model_validate(data)
+
+    def cleanup_run(self, prescription_id: str) -> None:
+        """Removes preprocessed artifacts for a given prescription run across both base and public directories to enforce zero retention."""
+        import shutil
+        safe_id = Path(str(prescription_id)).name
+        public_run_dir = self.public_preprocessed_dir / safe_id
+        if public_run_dir.exists() and public_run_dir.is_dir():
+            shutil.rmtree(public_run_dir, ignore_errors=True)
+        base_run_dir = self.base_runs_dir / safe_id
+        if base_run_dir.exists() and base_run_dir.is_dir():
+            shutil.rmtree(base_run_dir, ignore_errors=True)
+

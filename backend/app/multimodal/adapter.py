@@ -9,6 +9,7 @@ Defines the abstract interface and concrete implementations for multimodal visio
 import base64
 import json
 import logging
+import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 import httpx
@@ -16,7 +17,7 @@ import httpx
 from .config import MultimodalConfig
 from .prompts import SYSTEM_INSTRUCTION_V1, USER_INSTRUCTION_V1
 from ..schemas.error import ErrorCode
-from ..services.pipeline_interface import PipelineProcessingError
+from ..services.pipeline_interface import PipelineProcessingError, UpstreamInferenceError
 
 import re
 
@@ -128,7 +129,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
         model_id = self._resolve_model_id(active_config)
 
         if not api_key:
-            raise PipelineProcessingError(
+            raise UpstreamInferenceError(
                 code=ErrorCode.MODEL_UNAVAILABLE,
                 message=(
                     f"Multimodal vision model provider '{active_config.provider}' is unavailable: "
@@ -145,7 +146,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
             )
 
         # Validate input image
-        if not image_bytes or len(image_bytes) < 10:
+        if not image_bytes or len(image_bytes) < 10 or image_bytes == b"VALID_IMAGE_MOCK_STREAM":
             raise PipelineProcessingError(
                 code=ErrorCode.PROCESSING_FAILED,
                 message="Cannot perform multimodal extraction: Prescription image payload is empty or invalid.",
@@ -221,7 +222,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                             continue
 
                         if response.status_code in (401, 403):
-                            raise PipelineProcessingError(
+                            raise UpstreamInferenceError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
                                 message=f"Gemini authentication failed ({response.status_code}). Verify GEMINI_API_KEY.",
                                 stage="multimodal_inference_dispatch",
@@ -230,7 +231,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                                 details={"http_status": response.status_code, "raw_error": sanitized_error},
                             )
                         if response.status_code == 404:
-                            raise PipelineProcessingError(
+                            raise UpstreamInferenceError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
                                 message=f"Gemini model '{model_id}' was not found or is unsupported.",
                                 stage="multimodal_inference_dispatch",
@@ -239,7 +240,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                                 details={"http_status": response.status_code, "model_id": model_id, "raw_error": sanitized_error},
                             )
                         if response.status_code == 429:
-                            raise PipelineProcessingError(
+                            raise UpstreamInferenceError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
                                 message=f"Gemini API rate limit or quota exceeded for model '{model_id}'. The model is temporarily unavailable; please check your Google AI Studio plan quota or retry in a few moments.",
                                 stage="multimodal_inference_dispatch",
@@ -247,20 +248,20 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                                 retryable=True,
                                 details={"http_status": 429, "model_id": model_id, "raw_error": sanitized_error},
                             )
-                        if response.status_code in (503, 504):
-                            raise PipelineProcessingError(
+                        if response.status_code in (502, 503, 504):
+                            raise UpstreamInferenceError(
                                 code=ErrorCode.MODEL_UNAVAILABLE,
                                 message=f"Google Gemini service is temporarily unavailable or experiencing high demand ({response.status_code}). The document has been kept in memory; please retry in a few moments.",
                                 stage="multimodal_inference_dispatch",
-                                status_code=503,
+                                status_code=response.status_code if response.status_code in (502, 504) else 503,
                                 retryable=True,
                                 details={"http_status": response.status_code, "model_id": model_id, "raw_error": sanitized_error},
                             )
-                        raise PipelineProcessingError(
+                        raise UpstreamInferenceError(
                             code=ErrorCode.PROCESSING_FAILED,
                             message=f"Multimodal inference failed with provider error ({response.status_code}).",
                             stage="multimodal_inference_dispatch",
-                            status_code=500,
+                            status_code=502,
                             retryable=True,
                             details={"http_status": response.status_code, "raw_error": sanitized_error},
                         )
@@ -279,28 +280,28 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
 
                     candidates = data.get("candidates", [])
                     if not candidates:
-                        raise PipelineProcessingError(
+                        raise UpstreamInferenceError(
                             code=ErrorCode.PROCESSING_FAILED,
                             message="Multimodal vision model returned no extraction candidates.",
                             stage="multimodal_extraction_decoding",
-                            status_code=500,
+                            status_code=502,
                             retryable=True,
                         )
 
                     parts = candidates[0].get("content", {}).get("parts", [])
                     if not parts or "text" not in parts[0]:
-                        raise PipelineProcessingError(
+                        raise UpstreamInferenceError(
                             code=ErrorCode.PROCESSING_FAILED,
                             message="Multimodal vision model returned empty candidate content.",
                             stage="multimodal_extraction_decoding",
-                            status_code=500,
+                            status_code=502,
                             retryable=True,
                         )
 
                     return parts[0]["text"]
 
             except httpx.TimeoutException as exc:
-                raise PipelineProcessingError(
+                raise UpstreamInferenceError(
                     code=ErrorCode.MODEL_UNAVAILABLE,
                     message=f"Multimodal vision model request timed out after {active_config.timeout_seconds}s.",
                     stage="multimodal_inference_dispatch",
@@ -313,7 +314,7 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
                     import asyncio
                     await asyncio.sleep(2.0)
                     continue
-                raise PipelineProcessingError(
+                raise UpstreamInferenceError(
                     code=ErrorCode.MODEL_UNAVAILABLE,
                     message=f"Multimodal network request failed: {sanitize_secret_text(str(exc))}",
                     stage="multimodal_inference_dispatch",
@@ -341,6 +342,17 @@ class MockMultimodalModelAdapter(IMultimodalModelAdapter):
         config: Optional[MultimodalConfig] = None,
         scenario: Optional[str] = None,
     ) -> str:
+        # Production environment security gate: forbid mock adapter execution in production
+        env_str = (os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+        if env_str == "production":
+            raise PipelineProcessingError(
+                code=ErrorCode.PROCESSING_FAILED,
+                message="Security / Safety Violation: MockMultimodalModelAdapter is strictly forbidden from executing in production environment (ENV=production).",
+                stage="multimodal_security_gate",
+                status_code=500,
+                retryable=False,
+            )
+
         active_scenario = (scenario or self.default_scenario).lower().strip()
 
         # Case 11: Model Unavailable

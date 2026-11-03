@@ -25,12 +25,25 @@ def extract_field_confidence_signal(
     field_name: str,
     model_version: str = "gemini-3.8-flash",
     config_version: str = "v1.0",
+    raw_transcription: Optional[str] = None,
+    validation_res: Optional[MedicineValidationResult] = None,
+    lasa_result: Optional[Any] = None,
+    image_quality_flags: Optional[Dict[str, bool]] = None,
 ) -> RawConfidenceSignal:
     """
     Extracts the uncalibrated raw confidence signal from an ExtractedField.
-    Explicitly distinguishes confident, ambiguous, and missing/absent states.
+    Explicitly distinguishes confident, ambiguous, missing/absent, and unverified states.
+    Penalizes immediately if:
+    - raw_transcription contains '[?]' or field is ILLEGIBLE
+    - image quality degradation flags (blur, low resolution, glare) are active
+    - RAG match is below exact/high-similarity threshold (UNVERIFIED)
+    - active LASA similarity conflict exists
+    Guarantees raw confidence < 0.80 on any uncertain, unverified, or illegible item.
     """
-    if field.presence == "absent" or field.extraction_state == "missing" or field.value is None:
+    ep_status = getattr(field, "epistemic_status", None)
+    val = field.value or ""
+
+    if field.presence == "absent" or field.extraction_state == "missing" or field.value is None or ep_status == "MISSING_ON_RX":
         return RawConfidenceSignal(
             source=f"multimodal_{model_version}",
             raw_value=None,
@@ -39,12 +52,28 @@ def extract_field_confidence_signal(
             config_version=config_version,
         )
 
-    # Heuristic raw score mapping based on visual stroke clarity and candidate count
-    if field.status == "confident" and field.extraction_state == "extracted":
-        raw_val = 0.95
-        sig_type = "model_confident_visual_stroke"
-    elif field.status == "uncertain" or field.extraction_state == "ambiguous":
-        # If there are many competing visual candidates, confidence drops
+    # 1. Check for unreadable / illegible tokens
+    has_illegible_token = (
+        "[?]" in val
+        or (raw_transcription and "[?]" in raw_transcription)
+        or ep_status == "ILLEGIBLE"
+        or val == "ILLEGIBLE"
+    )
+
+    # 2. Check for LASA conflict
+    has_lasa_ambiguity = False
+    if lasa_result is not None:
+        if getattr(lasa_result, "has_lasa_conflict", False) or getattr(lasa_result, "conflict_detected", False):
+            has_lasa_ambiguity = True
+
+    # 3. Base signal mapping
+    if has_illegible_token:
+        raw_val = 0.30
+        sig_type = "model_illegible_stroke_anomaly"
+    elif has_lasa_ambiguity:
+        raw_val = 0.45
+        sig_type = "model_ambiguous_or_lasa_conflict"
+    elif field.status == "uncertain" or field.extraction_state == "ambiguous" or ep_status == "AMBIGUOUS":
         candidate_count = len(field.candidates)
         if candidate_count >= 3:
             raw_val = 0.40
@@ -53,13 +82,46 @@ def extract_field_confidence_signal(
         else:
             raw_val = 0.60
         sig_type = "model_ambiguous_cursive_stroke"
+    elif field.status == "confident" and field.extraction_state == "extracted":
+        raw_val = 0.95
+        sig_type = "model_confident_visual_stroke"
     else:  # flagged
         raw_val = 0.35
         sig_type = "model_flagged_stroke_anomaly"
 
+    # 4. Penalize if out-of-formulary / unverified drug candidate
+    is_unverified = False
+    if field_name == "medicine_name" and validation_res is not None:
+        if validation_res.validation_status in ("not_validated", "unverified", "uncertain"):
+            is_unverified = True
+            raw_val = min(raw_val, 0.60)
+            sig_type = "retrieval_unverified_candidate"
+        elif validation_res.selected_reference and float(validation_res.selected_reference.score) < 0.85:
+            is_unverified = True
+            raw_val = min(raw_val, 0.65)
+            sig_type = "retrieval_subthreshold_similarity"
+    elif ep_status == "UNVERIFIED":
+        is_unverified = True
+        raw_val = min(raw_val, 0.60)
+        sig_type = "retrieval_unverified_candidate"
+
+    # 5. Image quality degradation penalization
+    if image_quality_flags:
+        if image_quality_flags.get("blur_detected"):
+            raw_val = min(raw_val, 0.55)
+            sig_type += "_optical_blur_penalized"
+        if image_quality_flags.get("low_resolution"):
+            raw_val = min(raw_val, 0.65)
+        if image_quality_flags.get("glare_detected"):
+            raw_val = min(raw_val, 0.65)
+
+    # 6. Safety Clamp Invariant: Never display >= 0.80 on UNVERIFIED, AMBIGUOUS, or [?]
+    if has_illegible_token or has_lasa_ambiguity or is_unverified or ep_status in ("UNVERIFIED", "AMBIGUOUS", "ILLEGIBLE"):
+        raw_val = min(raw_val, 0.70)
+
     return RawConfidenceSignal(
         source=f"multimodal_{model_version}",
-        raw_value=raw_val,
+        raw_value=round(raw_val, 4) if raw_val is not None else None,
         signal_type=sig_type,
         model_version=model_version,
         config_version=config_version,
@@ -198,12 +260,42 @@ def extract_medicine_identity_confidence(
     )
 
 
+def extract_image_quality_confidence_signals(
+    metadata: Optional[Any] = None,
+    quality_report: Optional[Any] = None,
+) -> Dict[str, bool]:
+    """
+    Extracts structured optical quality degradation flags from ImageMetadata or QualityReport
+    so confidence calibrators and abstention policies can downweight or flag visual uncertainty.
+    """
+    if metadata is not None and hasattr(metadata, "quality_flags"):
+        qf = metadata.quality_flags
+        if hasattr(qf, "model_dump"):
+            return qf.model_dump()
+        if isinstance(qf, dict):
+            return qf
+    if quality_report is not None and hasattr(quality_report, "quality_flags"):
+        qf = quality_report.quality_flags
+        if hasattr(qf, "model_dump"):
+            return qf.model_dump()
+        if isinstance(qf, dict):
+            return qf
+    return {
+        "low_resolution": False,
+        "blur_detected": False,
+        "glare_detected": False,
+        "extreme_skew": False,
+    }
+
+
 def detect_confidence_conflicts(
     med: ExtractedMedicine,
     validation_res: Optional[MedicineValidationResult],
+    image_metadata: Optional[Any] = None,
 ) -> List[str]:
     """
     Detects all evidentiary conflicts for a prescribed medication line item.
+    Incorporates structured optical quality degradation flags from ImageMetadata.
     """
     conflicts: List[str] = []
 
@@ -224,5 +316,15 @@ def detect_confidence_conflicts(
         # 4. Multi-candidate ambiguity
         if validation_res.validation_status == "uncertain":
             conflicts.append("MULTIPLE_REFERENCE_CANDIDATES")
+
+    # 5. Image quality degradation signals attached to metadata
+    if image_metadata is not None:
+        q_signals = extract_image_quality_confidence_signals(metadata=image_metadata)
+        if q_signals.get("blur_detected"):
+            conflicts.append("OPTICAL_BLUR_DEGRADATION")
+        if q_signals.get("glare_detected"):
+            conflicts.append("GLARE_OVEREXPOSURE_DETECTED")
+        if q_signals.get("extreme_skew"):
+            conflicts.append("EXTREME_DOCUMENT_SKEW")
 
     return conflicts

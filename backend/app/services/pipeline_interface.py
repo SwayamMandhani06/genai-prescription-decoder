@@ -48,6 +48,35 @@ class PipelineProcessingError(Exception):
         super().__init__(message)
 
 
+class UpstreamInferenceError(PipelineProcessingError):
+    """
+    Typed domain exception raised when live model inference fails, times out,
+    experiences authentication or rate-limit rejections, or has missing/invalid credentials.
+    Strictly prevents silent fallback to mock fixtures.
+    """
+    def __init__(
+        self,
+        message: str,
+        code: ErrorCode = ErrorCode.MODEL_UNAVAILABLE,
+        stage: str = "multimodal_inference_dispatch",
+        status_code: int = 503,
+        retryable: bool = True,
+        details: Optional[Dict[str, Any]] = None,
+        prescription_id: Optional[str] = None,
+        original_image_url: Optional[str] = None,
+    ):
+        super().__init__(
+            code=code,
+            message=message,
+            stage=stage,
+            status_code=status_code,
+            retryable=retryable,
+            details=details,
+            prescription_id=prescription_id,
+            original_image_url=original_image_url,
+        )
+
+
 class IPrescriptionPipeline(ABC):
     """
     Formal interface for all prescription processing pipelines (Mock and Live Multimodal AI).

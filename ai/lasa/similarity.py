@@ -305,3 +305,65 @@ def combined_similarity(
 
     combined = (ortho_weight * ortho) + (phonetic_weight * phon)
     return (ortho, phon, combined, meta_match)
+
+
+def normalize_form_token(form: Optional[str]) -> Optional[str]:
+    """
+    Normalizes pharmaceutical dosage form tokens for deterministic comparison.
+    """
+    if not form:
+        return None
+    f = form.lower().strip()
+    if any(k in f for k in ("tab", "tablet")):
+        return "tablet"
+    if any(k in f for k in ("cap", "capsule")):
+        return "capsule"
+    if any(k in f for k in ("inj", "injection", "vial", "ampoule")):
+        return "injection"
+    if any(k in f for k in ("syp", "syrup", "susp", "suspension", "liquid")):
+        return "syrup"
+    if any(k in f for k in ("drop", "drops", "eye drops", "ear drops")):
+        return "drops"
+    if any(k in f for k in ("oint", "ointment", "cream", "gel")):
+        return "topical"
+    if any(k in f for k in ("inhal", "rotacap", "respule")):
+        return "inhaler"
+    return f
+
+
+def compare_strengths(prescribed_strength: Optional[str], reference_strength: Optional[str]) -> bool:
+    """
+    Deterministically compares prescribed strength with a reference drug strength.
+    Returns True if numerical magnitude and unit match.
+    """
+    if not prescribed_strength or not reference_strength:
+        return False
+    m1 = re.search(r"(\d+(?:\.\d+)?)\s*([a-zA-Z%]+)?", prescribed_strength)
+    m2 = re.search(r"(\d+(?:\.\d+)?)\s*([a-zA-Z%]+)?", reference_strength)
+    if not m1 or not m2:
+        return False
+    try:
+        v1 = float(m1.group(1))
+        v2 = float(m2.group(1))
+    except ValueError:
+        return False
+    u1 = (m1.group(2) or "").lower()
+    u2 = (m2.group(2) or "").lower()
+    if abs(v1 - v2) < 1e-4:
+        if not u1 or not u2 or u1 == u2:
+            return True
+    return False
+
+
+def compare_forms(prescribed_form: Optional[str], reference_form: Optional[str]) -> bool:
+    """
+    Compares prescribed dosage form with a reference dosage form.
+    """
+    if not prescribed_form or not reference_form:
+        return False
+    f1 = normalize_form_token(prescribed_form)
+    f2 = normalize_form_token(reference_form)
+    if f1 and f2:
+        return f1 == f2
+    return False
+

@@ -22,6 +22,7 @@ class PreprocessingResult:
     """
     Container for the outputs of the preprocessing pipeline.
     Maintains strict separation between the original image and derived representations.
+    Exposes dedicated artifacts for multimodal VLM and conventional OCR.
     """
     def __init__(
         self,
@@ -41,10 +42,17 @@ class PreprocessingResult:
         self.primary_processed_image = primary_processed_image
         self.deskew_applied_angle = deskew_applied_angle
 
+        # Dedicated accessor attributes for dual-artifact strategy
+        self.vlm_image: Image.Image = derived_images.get("vlm_image", primary_processed_image)
+        self.ocr_image: Image.Image = derived_images.get("ocr_image", primary_processed_image)
+
 
 class PrescriptionPreprocessingPipeline:
     """
     Modular, deterministic image preprocessing pipeline for handwritten prescription documents.
+    Generates dual artifacts:
+    1. VLM-optimized image: High-resolution RGB with preserved stroke gradients, decimal points, and EXIF alignment.
+    2. OCR-optimized image: Grayscale, deskewed, contrast-normalized image for classical OCR baseline.
     """
     def __init__(self, config: Optional[PreprocessingConfig] = None):
         self.config = config or PreprocessingConfig()
@@ -76,18 +84,55 @@ class PrescriptionPreprocessingPipeline:
             metadata=metadata,
         )
 
+        derived_images: Dict[str, Image.Image] = {}
+
         # ----------------------------------------------------------------------
-        # 3. Grayscale Representation
+        # 3. Non-Destructive Multimodal VLM Artifact Generation (vlm_image)
+        # Preserves color/grayscale stroke gradients, faint penmanship, and decimal points.
+        # Bounded between 1536px and 2048px longest edge when source permits.
+        # ----------------------------------------------------------------------
+        if getattr(self.config, "enable_vlm_artifact", True):
+            w, h = normalized_pil.size
+            longest_edge = max(w, h)
+            max_bound = getattr(self.config, "vlm_target_longest_edge_max", 2048)
+
+            if longest_edge > max_bound:
+                # Downscale proportionally to avoid upstream HTTP 413 payload limit errors
+                scale = float(max_bound) / float(longest_edge)
+                target_w = max(1, int(round(w * scale)))
+                target_h = max(1, int(round(h * scale)))
+                vlm_base = normalized_pil.resize((target_w, target_h), Image.Resampling.LANCZOS)
+            else:
+                # Never downscale below native source resolution
+                vlm_base = normalized_pil.copy()
+
+            # Contrast enhancement preserving continuous 24-bit stroke gradients (NO binary thresholding)
+            vlm_arr = np.array(vlm_base, dtype=np.float32)
+            p_low = self.config.contrast_percentile_low
+            p_high = self.config.contrast_percentile_high
+            # Calculate luminance for percentile cutoffs to preserve chrominance ratios
+            lum = 0.299 * vlm_arr[:, :, 0] + 0.587 * vlm_arr[:, :, 1] + 0.114 * vlm_arr[:, :, 2]
+            v_low, v_high = np.percentile(lum, (p_low, p_high))
+            if v_high > v_low:
+                scale_factor = 255.0 / (v_high - v_low)
+                stretched = np.clip((vlm_arr - v_low) * scale_factor, 0.0, 255.0)
+                vlm_img = Image.fromarray(stretched.astype(np.uint8))
+            else:
+                vlm_img = vlm_base
+
+            derived_images["vlm_image"] = vlm_img
+
+        # ----------------------------------------------------------------------
+        # 4. Grayscale Representation (for OCR pipeline)
         # ----------------------------------------------------------------------
         gray_pil = normalized_pil.convert("L")
         gray_array = np.array(gray_pil, dtype=np.float32)
 
-        derived_images: Dict[str, Image.Image] = {}
         if self.config.enable_grayscale:
             derived_images["grayscale"] = gray_pil.copy()
 
         # ----------------------------------------------------------------------
-        # 4. Illumination Correction (Gaussian Background Division)
+        # 5. Illumination Correction (Gaussian Background Division)
         # ----------------------------------------------------------------------
         if self.config.enable_illumination_correction:
             sigma = self.config.illumination_sigma
@@ -102,7 +147,7 @@ class PrescriptionPreprocessingPipeline:
             working_array = gray_array.copy()
 
         # ----------------------------------------------------------------------
-        # 5. Denoising (Median Stroke Smoothing)
+        # 6. Denoising (Median Stroke Smoothing)
         # ----------------------------------------------------------------------
         if self.config.enable_denoising:
             ksize = self.config.denoise_kernel_size
@@ -111,7 +156,7 @@ class PrescriptionPreprocessingPipeline:
             derived_images["denoised"] = Image.fromarray(denoised_array.astype(np.uint8))
 
         # ----------------------------------------------------------------------
-        # 6. Contrast Enhancement (Percentile Stretching)
+        # 7. Contrast Enhancement (Percentile Stretching)
         # ----------------------------------------------------------------------
         if self.config.enable_contrast_enhancement:
             p_low = self.config.contrast_percentile_low
@@ -125,7 +170,7 @@ class PrescriptionPreprocessingPipeline:
             derived_images["enhanced"] = Image.fromarray(enhanced_array.astype(np.uint8))
 
         # ----------------------------------------------------------------------
-        # 7. Deskew (Angle Rotation if Justified)
+        # 8. Deskew (Angle Rotation if Justified)
         # ----------------------------------------------------------------------
         skew_metric = quality_report.metrics.get("skew", {})
         detected_angle = float(skew_metric.get("estimated_angle_deg", 0.0))
@@ -144,7 +189,7 @@ class PrescriptionPreprocessingPipeline:
             deskew_applied_angle = detected_angle
 
         # ----------------------------------------------------------------------
-        # 8. Adaptive Thresholding (Sauvola Local Dynamic Binarization)
+        # 9. Adaptive Thresholding (Sauvola Local Dynamic Binarization)
         # ----------------------------------------------------------------------
         if self.config.enable_adaptive_threshold:
             thresholded_array = self._sauvola_threshold(
@@ -156,7 +201,13 @@ class PrescriptionPreprocessingPipeline:
             derived_images["thresholded"] = Image.fromarray(thresholded_array)
 
         # Primary processed image for downstream OCR (enhanced grayscale)
-        primary_image = derived_images.get("enhanced", derived_images.get("normalized", gray_pil))
+        primary_image = derived_images.get("deskewed", derived_images.get("enhanced", derived_images.get("normalized", gray_pil)))
+
+        # ----------------------------------------------------------------------
+        # 10. OCR Artifact Assignment (ocr_image)
+        # ----------------------------------------------------------------------
+        if getattr(self.config, "enable_ocr_artifact", True):
+            derived_images["ocr_image"] = primary_image
 
         return PreprocessingResult(
             original_image_bytes=image_bytes,

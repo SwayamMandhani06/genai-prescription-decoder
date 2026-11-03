@@ -47,10 +47,11 @@ def evaluate_field_abstention(
     validation_result: Optional[MedicineValidationResult] = None,
     config: Optional[AbstentionPolicyConfig] = None,
     lasa_result: Optional[Any] = None,
+    image_quality_flags: Optional[Dict[str, bool]] = None,
 ) -> FieldAbstentionDecision:
     """
     Evaluates whether an individual posology field can be safely accepted
-    or must be abstained to mandate human verification.
+    or must be abstained to mandate human pharmacist verification.
     """
     if config is None:
         config = get_default_abstention_config()
@@ -66,6 +67,27 @@ def evaluate_field_abstention(
     if field_name == "dosage":
         observed_dosage_preserved = True
 
+    # Derive or extract epistemic status
+    ep_status = getattr(extracted_field, "epistemic_status", None) if extracted_field else None
+    clean_val = (extracted_field.value or "").strip() if extracted_field else ""
+
+    if extracted_field and not ep_status:
+        val_status = validation_result.validation_status if validation_result else None
+        has_lasa = False
+        if lasa_result is not None:
+            has_lasa = getattr(lasa_result, "has_lasa_conflict", False) or getattr(lasa_result, "conflict_detected", False)
+        from backend.app.schemas.prescription import determine_epistemic_status
+        ep_status = determine_epistemic_status(
+            value=extracted_field.value,
+            status=extracted_field.status,
+            presence=extracted_field.presence,
+            extraction_state=extracted_field.extraction_state,
+            candidates=extracted_field.candidates,
+            uncertainty_reason=extracted_field.uncertainty_reason,
+            validation_status=val_status,
+            has_lasa_conflict=has_lasa,
+        )
+
     # ------------------------------------------------------------------
     # 1. Inspect Field Presence & Extraction State (Phase 6)
     # ------------------------------------------------------------------
@@ -75,6 +97,7 @@ def evaluate_field_abstention(
         or extracted_field.extraction_state == "missing"
         or extracted_field.value is None
         or extracted_field.value.strip() == ""
+        or ep_status == "MISSING_ON_RX"
     )
     if is_missing:
         if config.abstain_on_field_missing:
@@ -101,6 +124,23 @@ def evaluate_field_abstention(
                 reason_codes.append(AbstentionReasonCode.MULTIPLE_CANDIDATES.value)
                 cands_str = ", ".join(f"'{c}'" for c in extracted_field.candidates)
                 reasons_detail.append(f"Multiple visual extraction candidates detected ({cands_str}).")
+
+    # ------------------------------------------------------------------
+    # 1.1 Strict Epistemic Status Handling
+    # ------------------------------------------------------------------
+    if field_name == "medicine_name":
+        if ep_status == "ILLEGIBLE" or "[?]" in clean_val or clean_val == "ILLEGIBLE" or clean_val.endswith("..."):
+            if AbstentionReasonCode.MEDICINE_ILLEGIBLE.value not in reason_codes:
+                reason_codes.append(AbstentionReasonCode.MEDICINE_ILLEGIBLE.value)
+                reasons_detail.append(get_reason_description(AbstentionReasonCode.MEDICINE_ILLEGIBLE))
+        elif ep_status == "AMBIGUOUS":
+            if AbstentionReasonCode.MEDICINE_AMBIGUOUS.value not in reason_codes:
+                reason_codes.append(AbstentionReasonCode.MEDICINE_AMBIGUOUS.value)
+                reasons_detail.append(get_reason_description(AbstentionReasonCode.MEDICINE_AMBIGUOUS))
+        elif ep_status == "UNVERIFIED" or (validation_result and validation_result.validation_status in ("not_validated", "unverified")):
+            if AbstentionReasonCode.MEDICINE_UNVERIFIED.value not in reason_codes:
+                reason_codes.append(AbstentionReasonCode.MEDICINE_UNVERIFIED.value)
+                reasons_detail.append(get_reason_description(AbstentionReasonCode.MEDICINE_UNVERIFIED))
 
     # ------------------------------------------------------------------
     # 2. Inspect Calibration & Probabilistic Confidence (Phase 8)
@@ -162,7 +202,7 @@ def evaluate_field_abstention(
             )
 
     # ------------------------------------------------------------------
-    # 3. Inspect Reference Formulary Evidence (Phase 7)
+    # 3. Inspect Reference Formulary Evidence (Phase 7) & Safety Bounds
     # ------------------------------------------------------------------
     ref_evidence_dict: Optional[Dict[str, Any]] = None
 
@@ -203,10 +243,30 @@ def evaluate_field_abstention(
                     reasons_detail.append("Candidate entity has no matching entry in CDSCO or RxNorm reference formularies.")
 
     # ------------------------------------------------------------------
-    # 3.1 Inspect LASA Name Conflict Evidence (Phase 10)
+    # 3.1 Inspect Safe Dosage Bounds & Decimal Blur Hazard
+    # ------------------------------------------------------------------
+    if field_name in ("dosage", "strength") and extracted_field:
+        # Decimal blur hazard on degraded images
+        if image_quality_flags and image_quality_flags.get("blur_detected"):
+            if "." in clean_val:
+                if AbstentionReasonCode.DECIMAL_BLUR_HAZARD.value not in reason_codes:
+                    reason_codes.append(AbstentionReasonCode.DECIMAL_BLUR_HAZARD.value)
+                    reasons_detail.append(get_reason_description(AbstentionReasonCode.DECIMAL_BLUR_HAZARD))
+
+        # Check safe bounds against reference strength (10x overdose or unit confusion)
+        if validation_result and validation_result.reference_strength and clean_val:
+            from ai.rag.validator import evaluate_formulation_consistency
+            f_status, f_note = evaluate_formulation_consistency(clean_val, validation_result.reference_strength)
+            if f_status == "mismatch" and ("CRITICAL_DOSAGE_OUT_OF_RANGE" in f_note or "overdose" in f_note.lower() or "microgram" in f_note.lower()):
+                if AbstentionReasonCode.DOSAGE_OUT_OF_BOUNDS.value not in reason_codes:
+                    reason_codes.append(AbstentionReasonCode.DOSAGE_OUT_OF_BOUNDS.value)
+                    reasons_detail.append(f"Safe dosage bounds violated: {f_note}")
+
+    # ------------------------------------------------------------------
+    # 3.2 Inspect LASA Name Conflict Evidence (Phase 10)
     # ------------------------------------------------------------------
     if field_name == "medicine_name" and lasa_result is not None:
-        has_conflict = getattr(lasa_result, "has_lasa_conflict", False)
+        has_conflict = getattr(lasa_result, "has_lasa_conflict", False) or getattr(lasa_result, "conflict_detected", False)
         if has_conflict:
             conflicts.append("LASA_CONFUSION_RISK")
             if AbstentionReasonCode.LASA_CONFUSION_RISK.value not in reason_codes:
@@ -219,11 +279,19 @@ def evaluate_field_abstention(
                     "Autonomous acceptance withheld; human clinical verification of medicine identity is mandated."
                 )
 
+            # Check if high-alert LASA pair cannot be disambiguated by strength/form
+            can_disambiguate = getattr(lasa_result, "disambiguated_by_strength_or_form", False)
+            if not can_disambiguate:
+                if AbstentionReasonCode.HIGH_ALERT_LASA_UNRESOLVED.value not in reason_codes:
+                    reason_codes.append(AbstentionReasonCode.HIGH_ALERT_LASA_UNRESOLVED.value)
+                    reasons_detail.append(get_reason_description(AbstentionReasonCode.HIGH_ALERT_LASA_UNRESOLVED))
+
     # ------------------------------------------------------------------
     # 4. Final Determination
     # ------------------------------------------------------------------
     decision = "abstained" if len(reason_codes) > 0 else "accepted"
     requires_human_verification = (decision == "abstained")
+    requires_pharmacist_verification = requires_human_verification
 
     # Selective prediction metadata for future Phase 12 evaluation
     selective_meta = {
@@ -233,12 +301,16 @@ def evaluate_field_abstention(
         "coverage_candidate": decision == "accepted",
     }
 
+    final_ep_status = ep_status or ("MISSING_ON_RX" if is_missing else "EXTRACTED")
+
     return FieldAbstentionDecision(
         field_name=field_name,
         field_label=field_label,
         original_value=original_value,
         decision=decision,
         requires_human_verification=requires_human_verification,
+        requires_pharmacist_verification=requires_pharmacist_verification,
+        epistemic_status=final_ep_status,
         reason_codes=reason_codes,
         reasons_detail=reasons_detail,
         confidence=FieldConfidenceMetadata(
@@ -261,6 +333,7 @@ def evaluate_medicine_abstention(
     validation_result: Optional[MedicineValidationResult] = None,
     config: Optional[AbstentionPolicyConfig] = None,
     lasa_result: Optional[Any] = None,
+    image_quality_flags: Optional[Dict[str, bool]] = None,
 ) -> MedicineAbstentionDecision:
     """
     Evaluates abstention decisions for all posology fields of an individual medication item.
@@ -285,6 +358,7 @@ def evaluate_medicine_abstention(
         validation_result=validation_result,
         config=config,
         lasa_result=lasa_result,
+        image_quality_flags=image_quality_flags,
     )
 
     # 2. dosage
@@ -294,6 +368,7 @@ def evaluate_medicine_abstention(
         confidence_assessment=None,  # dosage evaluated independently with strict visual grounding
         validation_result=validation_result,
         config=config,
+        image_quality_flags=image_quality_flags,
     )
 
     # 3. frequency
@@ -303,6 +378,7 @@ def evaluate_medicine_abstention(
         confidence_assessment=confidence_assessment.frequency if confidence_assessment else None,
         validation_result=None,
         config=config,
+        image_quality_flags=image_quality_flags,
     )
 
     # 4. duration
@@ -312,17 +388,23 @@ def evaluate_medicine_abstention(
         confidence_assessment=confidence_assessment.duration if confidence_assessment else None,
         validation_result=None,
         config=config,
+        image_quality_flags=image_quality_flags,
     )
 
     abstained_count = sum(1 for f in fields.values() if f.decision == "abstained")
+    requires_pharma = any(f.requires_pharmacist_verification for f in fields.values())
     total_count = len(fields)
     overall_med_decision = "abstained" if abstained_count > 0 else "accepted"
+
+    med_ep = getattr(med.medicine_name, "epistemic_status", None) or fields["medicine_name"].epistemic_status
 
     return MedicineAbstentionDecision(
         item_index=item_index,
         medicine_name=med.medicine_name.value or f"Medication #{item_index}",
         decision=overall_med_decision,
         requires_human_verification=abstained_count > 0,
+        requires_pharmacist_verification=requires_pharma or (abstained_count > 0),
+        epistemic_status=med_ep,
         fields=fields,
         abstained_fields_count=abstained_count,
         total_fields_count=total_count,
@@ -337,6 +419,7 @@ def evaluate_prescription_abstention(
     config: Optional[AbstentionPolicyConfig] = None,
     original_image_url: Optional[str] = None,
     lasa_detection: Optional[Any] = None,
+    image_quality_flags: Optional[Dict[str, bool]] = None,
 ) -> PrescriptionAbstentionDecision:
     """
     Consolidates field-level and medicine-level abstention evaluations into a complete
@@ -374,6 +457,7 @@ def evaluate_prescription_abstention(
                 validation_result=med_val,
                 config=config,
                 lasa_result=med_lasa,
+                image_quality_flags=image_quality_flags,
             )
             medicine_decisions.append(med_dec)
 
@@ -435,12 +519,14 @@ def evaluate_prescription_abstention(
             )
 
     now_iso = datetime.now(timezone.utc).isoformat()
+    requires_pharma = requires_verification or any(m.requires_pharmacist_verification for m in medicine_decisions)
 
     return PrescriptionAbstentionDecision(
         prescription_id=prescription_id,
         policy_version=config.policy_version,
         prescription_decision=prescription_decision,
         requires_human_verification=requires_verification,
+        requires_pharmacist_verification=requires_pharma,
         fields=primary_fields,
         medicines=medicine_decisions,
         fields_requiring_verification=fields_requiring_verification,

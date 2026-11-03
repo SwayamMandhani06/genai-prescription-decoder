@@ -60,6 +60,28 @@ class DatasetSourceEntry(BaseModel):
     provenance: ProvenanceRecord = Field(..., description="Detailed provenance and licensing documentation")
 
 
+MAGIC_BYTES_BY_EXTENSION = {
+    ".png": b"\x89PNG\r\n\x1a\n",
+    ".jpg": b"\xff\xd8\xff",
+    ".jpeg": b"\xff\xd8\xff",
+}
+
+MIME_TYPE_BY_EXTENSION = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+}
+
+
+class ManifestFileEntry(BaseModel):
+    """Inventory entry for a discrete verified dataset file."""
+    file_path: str = Field(..., description="Path to file relative to repo root, e.g. 'data/samples/sample_01_clear.png'")
+    mime_type: str = Field(..., description="MIME content type (e.g. 'image/png' or 'image/jpeg')")
+    sha256: str = Field(..., min_length=64, max_length=64, description="Cryptographic SHA-256 hash")
+    size_bytes: int = Field(..., ge=0, description="File size in bytes")
+    description: Optional[str] = Field(None, description="Clinical or developmental descriptor")
+
+
 class DatasetManifest(BaseModel):
     """
     Machine-readable dataset manifest cataloging all approved, candidate,
@@ -73,17 +95,21 @@ class DatasetManifest(BaseModel):
     project_identifier: str = Field(default="AURA-Rx-GenAI-Prescription-Decoder", description="Project slug")
     sources: List[DatasetSourceEntry] = Field(default_factory=list, description="Cataloged dataset sources")
     local_sample_count: int = Field(default=0, ge=0, description="Number of verified local evaluation samples")
+    files: List[ManifestFileEntry] = Field(default_factory=list, description="Verified sample files catalog")
     checksum: Optional[str] = Field(None, description="SHA-256 checksum of the manifest contents")
 
     def compute_hash(self) -> str:
-        """Computes a deterministic SHA-256 hash of all sources and sample counts."""
+        """Computes a deterministic SHA-256 hash of all sources, files, and sample counts."""
+        payload_dict: Dict[str, Any] = {
+            "manifest_version": self.manifest_version,
+            "project_identifier": self.project_identifier,
+            "sources": [s.model_dump() for s in self.sources],
+            "local_sample_count": self.local_sample_count,
+        }
+        if self.files:
+            payload_dict["files"] = [f.model_dump() for f in self.files]
         payload = json.dumps(
-            {
-                "manifest_version": self.manifest_version,
-                "project_identifier": self.project_identifier,
-                "sources": [s.model_dump() for s in self.sources],
-                "local_sample_count": self.local_sample_count,
-            },
+            payload_dict,
             sort_keys=True
         )
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -91,6 +117,14 @@ class DatasetManifest(BaseModel):
     def update_checksum(self) -> None:
         """Calculates and stores self-checksum."""
         self.checksum = self.compute_hash()
+
+    def get_file_by_path(self, file_path: str) -> Optional[ManifestFileEntry]:
+        """Finds a file entry by its relative file path."""
+        norm = file_path.replace("\\", "/")
+        for f in self.files:
+            if f.file_path.replace("\\", "/") == norm:
+                return f
+        return None
 
 
 def load_manifest(manifest_path: Path) -> DatasetManifest:

@@ -8,7 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import List, Union, Optional
 from dotenv import load_dotenv
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Determine project root and load environment variables early
@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_PREFIX: str = "/api/v1"
     DEBUG: bool = False
+
+    # Runtime Environment & Inference Mode Enforcement
+    ENV: str = Field(default="development", description="Runtime environment: 'development', 'staging', 'production', or 'test'")
+    ENVIRONMENT: Optional[str] = Field(default=None, description="Alias for ENV")
+    INFERENCE_MODE: Optional[str] = Field(default=None, description="Inference mode: 'live' or 'mock'. Overrides USE_MOCK_PIPELINE if set.")
 
     # Server Network Binding - binds to 0.0.0.0 for container/PaaS routing compatibility
     HOST: str = "0.0.0.0"
@@ -48,9 +53,13 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8001",
     ]
 
-    # File Storage (Original Prescription Image Preservation)
+    # File Storage & Ephemeral PHI Retention (Zero-Retention by default)
     UPLOAD_DIR: Path = Path("backend/uploads")
-    MAX_UPLOAD_SIZE_BYTES: int = 15 * 1024 * 1024  # 15 MB
+    MAX_UPLOAD_SIZE_BYTES: int = 10 * 1024 * 1024  # 10 MB strict limit
+    RETENTION_TTL_SECONDS: int = Field(
+        default=3600,
+        description="Ephemeral PHI retention TTL in seconds. 0 indicates zero-retention (immediate deletion after request). Defaults to 0 in production.",
+    )
     ALLOWED_IMAGE_TYPES: List[str] = [
         "image/jpeg",
         "image/png",
@@ -59,6 +68,11 @@ class Settings(BaseSettings):
         "image/bmp",
         "image/svg+xml",
     ]
+
+    # API Authentication & Rate Limiting
+    API_KEY: Optional[str] = Field(default=None, description="Optional API key for protected endpoints")
+    REQUIRE_API_KEY: bool = Field(default=False, description="Whether API key authentication is strictly required")
+    RATE_LIMIT_PER_MINUTE: int = Field(default=60, description="Max requests per minute per client IP")
 
     # Pipeline Mode (Mock Pipeline vs Multimodal AI Modules)
     USE_MOCK_PIPELINE: bool = False
@@ -69,6 +83,52 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def sync_inference_mode_and_validate(self) -> "Settings":
+        # Resolve active environment identifier
+        env_val = (self.ENVIRONMENT or self.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "development").strip()
+        object.__setattr__(self, "ENV", env_val)
+
+        # Synchronize INFERENCE_MODE if provided
+        if self.INFERENCE_MODE:
+            inf = self.INFERENCE_MODE.lower().strip()
+            if inf == "live":
+                object.__setattr__(self, "USE_MOCK_PIPELINE", False)
+            elif inf == "mock":
+                object.__setattr__(self, "USE_MOCK_PIPELINE", True)
+
+        # Strict security constraint: Mock pipeline execution is forbidden in production
+        env_str = env_val.lower()
+        is_mock = self.USE_MOCK_PIPELINE or (self.INFERENCE_MODE and self.INFERENCE_MODE.lower().strip() == "mock")
+        if env_str == "production" and is_mock:
+            raise ValueError(
+                "Configuration Validation Error: Mock pipeline execution is strictly forbidden in production environment (ENV=production)."
+            )
+
+        # Strict security constraint: Disallow wildcard CORS and strip localhost/127.0.0.1 when in production with custom origins
+        if env_str == "production" and isinstance(self.CORS_ORIGINS, list):
+            custom_non_local = [
+                o for o in self.CORS_ORIGINS
+                if o.strip() != "*" and not o.startswith("http://localhost") and not o.startswith("http://127.0.0.1")
+            ]
+            if custom_non_local:
+                object.__setattr__(self, "CORS_ORIGINS", custom_non_local)
+            else:
+                sanitized_origins = [o for o in self.CORS_ORIGINS if o.strip() != "*"]
+                object.__setattr__(self, "CORS_ORIGINS", sanitized_origins)
+
+        # Default RETENTION_TTL_SECONDS to 0 in production unless explicitly overridden in environment
+        if env_str == "production" and "RETENTION_TTL_SECONDS" not in os.environ:
+            object.__setattr__(self, "RETENTION_TTL_SECONDS", 0)
+
+        return self
+
+    @property
+    def is_live_mode(self) -> bool:
+        if self.INFERENCE_MODE:
+            return self.INFERENCE_MODE.lower().strip() == "live"
+        return not self.USE_MOCK_PIPELINE
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -84,17 +144,22 @@ class Settings(BaseSettings):
             "http://localhost:8001",
             "http://127.0.0.1:8001",
         ]
+        active_env = (os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "development").strip().lower()
+        is_prod = active_env == "production"
+
         if isinstance(v, str) and not v.startswith("["):
             origins = [i.strip() for i in v.split(",") if i.strip()]
-            for loc in default_local:
-                if loc not in origins:
-                    origins.append(loc)
+            if not is_prod:
+                for loc in default_local:
+                    if loc not in origins:
+                        origins.append(loc)
             return origins
         elif isinstance(v, list):
             origins = list(v)
-            for loc in default_local:
-                if loc not in origins:
-                    origins.append(loc)
+            if not is_prod:
+                for loc in default_local:
+                    if loc not in origins:
+                        origins.append(loc)
             return origins
         return default_local
 

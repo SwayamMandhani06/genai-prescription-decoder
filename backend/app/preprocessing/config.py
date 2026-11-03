@@ -16,15 +16,15 @@ class QualityThresholds(BaseModel):
     Documented as engineering heuristics; not claimed as clinical or universal constants.
     """
     # Dimensional and Density Bounds
-    min_width: int = Field(150, description="Minimum acceptable image width in pixels")
-    min_height: int = Field(150, description="Minimum acceptable image height in pixels")
+    min_width: int = Field(120, description="Minimum acceptable image width in pixels")
+    min_height: int = Field(120, description="Minimum acceptable image height in pixels")
     max_dimension: int = Field(8000, description="Maximum permitted width or height before rejection")
     min_dpi: int = Field(150, description="Minimum effective PPI threshold for clinical interpretation (heuristic pixel density)")
     nominal_dpi: int = Field(300, description="Nominal benchmark PPI for standard prescription pad pixel density")
 
     # Sharpness / Blur (Variance of Laplacian)
     blur_insufficient_threshold: float = Field(
-        25.0,
+        0.50,
         description="Variance of Laplacian below which severe optical/motion blur renders strokes illegible"
     )
     blur_degraded_threshold: float = Field(
@@ -48,11 +48,11 @@ class QualityThresholds(BaseModel):
 
     # Contrast (RMS Grayscale Standard Deviation)
     min_contrast: float = Field(
-        7.0,
+        4.0,
         description="Minimum RMS contrast below which ink strokes cannot be differentiated from background"
     )
     degraded_min_contrast: float = Field(
-        20.0,
+        18.0,
         description="RMS contrast below which low-contrast warning is flagged"
     )
 
@@ -94,11 +94,12 @@ class PreprocessingConfig(BaseModel):
     Versioned, traceable configuration specification for the Phase 4 preprocessing pipeline.
     """
     id: str = Field("p04_standard_v1", description="Unique configuration release identifier")
-    version: str = Field("1.0.0", description="Semantic configuration version")
+    version: str = Field("1.1.0", description="Semantic configuration version")
     status: Literal["implemented", "prospective"] = Field("implemented", description="Current implementation state")
     description: str = Field(
         "Standard deterministic preprocessing pipeline: orientation normalization, illumination correction, "
-        "median denoising, percentile contrast enhancement, discrete deskewing, and Sauvola thresholding.",
+        "median denoising, percentile contrast enhancement, discrete deskewing, and Sauvola thresholding with "
+        "dual-artifact generation for VLM and OCR.",
         description="Operational summary of configuration"
     )
 
@@ -110,9 +111,13 @@ class PreprocessingConfig(BaseModel):
     enable_contrast_enhancement: bool = Field(True, description="Apply percentile contrast stretching")
     enable_deskew: bool = Field(True, description="Apply text-line alignment rotation")
     enable_adaptive_threshold: bool = Field(True, description="Generate Sauvola local adaptive binarized representation")
+    enable_vlm_artifact: bool = Field(True, description="Generate high-resolution non-destructive RGB/contrast-preserved artifact for multimodal VLM inference")
+    enable_ocr_artifact: bool = Field(True, description="Generate OCR-optimized deskewed/normalized grayscale artifact for OCR baseline")
 
-    # Working Resolution
+    # Working Resolution and Bounds
     max_processing_dimension: int = Field(2400, description="Downscale boundary for processing efficiency")
+    vlm_target_longest_edge_max: int = Field(2048, description="Maximum longest edge for VLM-optimized image artifact to prevent payload-size limit (HTTP 413) errors")
+    vlm_target_longest_edge_min: int = Field(1536, description="Target minimum longest edge for VLM-optimized image artifact when source allows")
 
     # Algorithm Hyperparameters
     illumination_sigma: float = Field(35.0, description="Gaussian kernel standard deviation for background estimation")

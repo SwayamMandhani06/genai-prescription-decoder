@@ -44,6 +44,7 @@ class ErrorResponse(BaseModel):
     detail: Optional[str] = Field(None, description="FastAPI/OpenAPI compatibility field")
     prescription_id: Optional[str] = Field(None, description="Traceable prescription ID if assigned")
     original_image_url: Optional[str] = Field(None, description="Original image URL if preserved")
+    request_id: Optional[str] = Field(None, description="Unique correlation request ID")
 
     def model_post_init(self, __context: Any) -> None:
         if self.detail is None:

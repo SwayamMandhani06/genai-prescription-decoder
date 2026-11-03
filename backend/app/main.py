@@ -18,12 +18,19 @@ from .schemas.error import ErrorCode, ErrorDetail, ErrorResponse
 from .schemas.health import HealthResponse
 from .services.pipeline_interface import PipelineProcessingError
 
-# Configure application logging
+from .core.security import PHISafeLoggingFilter
+
+# Configure application logging with PHI-safe redaction filter
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger("dawaai")
+_settings = get_settings()
+_is_prod = (_settings.ENV or "").lower().strip() == "production"
+_phi_filter = PHISafeLoggingFilter(is_production=_is_prod)
+logging.getLogger().addFilter(_phi_filter)
+logger.addFilter(_phi_filter)
 
 
 @asynccontextmanager
@@ -37,6 +44,8 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    env_str = (settings.ENV or "").lower().strip()
+    is_prod = env_str == "production"
 
     app = FastAPI(
         title=settings.PROJECT_NAME,
@@ -50,29 +59,45 @@ def create_app() -> FastAPI:
     )
 
     # --------------------------------------------------------------------------
-    # 1. CORS Middleware (Supports localhost & all Vercel preview/production domains)
+    # 1. CORS Middleware (Strict allowlist in production, no wildcard with credentials)
     # --------------------------------------------------------------------------
+    cors_origins = list(settings.CORS_ORIGINS) if isinstance(settings.CORS_ORIGINS, list) else [settings.CORS_ORIGINS]
+    if is_prod:
+        cors_origins = [orig for orig in cors_origins if orig.strip() != "*"]
+        if not cors_origins:
+            cors_origins = ["https://dawaai-prescription-decoder.vercel.app"]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
-        allow_origin_regex=r"^(https://.*\.vercel\.app|http://(localhost|127\.0\.0\.1):(517\d|3000|800\d))$",
+        allow_origins=cors_origins,
+        allow_origin_regex=r"^https://.*\.vercel\.app$" if is_prod else r"^(https://.*\.vercel\.app|http://(localhost|127\.0\.0\.1):(517\d|3000|800\d))$",
         allow_credentials=True,
-        allow_methods=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
 
+    # --------------------------------------------------------------------------
     # --------------------------------------------------------------------------
     # 2. Security & Request Correlation Headers Middleware
     # --------------------------------------------------------------------------
     @app.middleware("http")
     async def security_and_tracing_middleware(request: Request, call_next):
         req_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+        request.state.request_id = req_id
         response = await call_next(request)
         response.headers["X-Request-ID"] = req_id
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+        # Anti-caching headers for all patient health information endpoints
+        path = request.url.path
+        if "/prescriptions" in path or "/multimodal" in path or "/ocr" in path:
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+            response.headers["Pragma"] = "no-cache"
+
         return response
 
     # --------------------------------------------------------------------------
@@ -84,6 +109,23 @@ def create_app() -> FastAPI:
     # --------------------------------------------------------------------------
     # 3. Exception Handlers (Standardizing to PLAN.md Section 6 Error Contract)
     # --------------------------------------------------------------------------
+    def _extract_request_id(request: Request) -> str:
+        return getattr(request.state, "request_id", None) or request.headers.get("x-request-id") or str(uuid.uuid4())
+
+    def _make_error_response(request: Request, status_code: int, error_response: ErrorResponse) -> JSONResponse:
+        req_id = _extract_request_id(request)
+        error_response.request_id = req_id
+        headers = {
+            "X-Request-ID": req_id,
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+        }
+        path = request.url.path
+        if "/prescriptions" in path or "/multimodal" in path or "/ocr" in path:
+            headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+            headers["Pragma"] = "no-cache"
+        return JSONResponse(status_code=status_code, content=error_response.model_dump(), headers=headers)
+
     @app.exception_handler(PipelineProcessingError)
     async def pipeline_processing_error_handler(request: Request, exc: PipelineProcessingError):
         logger.warning("Pipeline processing error [%s]: %s (Stage: %s)", exc.code, exc.message, exc.stage)
@@ -98,7 +140,7 @@ def create_app() -> FastAPI:
             prescription_id=exc.prescription_id,
             original_image_url=exc.original_image_url,
         )
-        return JSONResponse(status_code=exc.status_code, content=payload.model_dump())
+        return _make_error_response(request, exc.status_code, payload)
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -117,34 +159,38 @@ def create_app() -> FastAPI:
             ),
             detail="Request validation failed.",
         )
-        return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=payload.model_dump())
+        return _make_error_response(request, status.HTTP_422_UNPROCESSABLE_ENTITY, payload)
 
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
         # Map HTTP status codes to stable error codes
         code_map = {
             400: ErrorCode.INVALID_REQUEST,
+            401: ErrorCode.INVALID_REQUEST,
+            403: ErrorCode.INVALID_REQUEST,
             404: ErrorCode.INVALID_REQUEST,
             413: ErrorCode.FILE_TOO_LARGE,
             415: ErrorCode.INVALID_FILE_TYPE,
             422: ErrorCode.VALIDATION_FAILED,
             429: ErrorCode.RATE_LIMIT_EXCEEDED,
             500: ErrorCode.INTERNAL_ERROR,
+            502: ErrorCode.MODEL_UNAVAILABLE,
             503: ErrorCode.MODEL_UNAVAILABLE,
             504: ErrorCode.MODEL_UNAVAILABLE,
         }
         err_code = code_map.get(exc.status_code, ErrorCode.INTERNAL_ERROR)
+        msg = str(exc.detail) if exc.detail else "An HTTP error occurred."
         payload = ErrorResponse(
             error=ErrorDetail(
                 code=err_code,
-                message=str(exc.detail),
+                message=msg,
                 stage="api_routing",
-                retryable=exc.status_code in (500, 503, 504),
+                retryable=exc.status_code in (429, 500, 502, 503, 504),
                 details={"status_code": exc.status_code},
             ),
-            detail=str(exc.detail),
+            detail=msg,
         )
-        return JSONResponse(status_code=exc.status_code, content=payload.model_dump())
+        return _make_error_response(request, exc.status_code, payload)
 
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
@@ -159,7 +205,7 @@ def create_app() -> FastAPI:
             ),
             detail="Internal Server Error",
         )
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=payload.model_dump())
+        return _make_error_response(request, status.HTTP_500_INTERNAL_SERVER_ERROR, payload)
 
     # --------------------------------------------------------------------------
     # 4. Route Mounting

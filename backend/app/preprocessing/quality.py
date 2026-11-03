@@ -13,7 +13,7 @@ from scipy.signal import convolve2d
 from scipy.ndimage import median_filter, rotate
 
 from .config import PreprocessingConfig, QualityThresholds
-from .metadata import ImageMetadata
+from .metadata import ImageMetadata, StructuredQualityFlags
 
 
 class ResolutionMetric(BaseModel):
@@ -87,6 +87,10 @@ class QualityReport(BaseModel):
         description="Clarification of score semantics"
     )
     metrics: Dict[str, dict] = Field(..., description="Granular metric breakdowns")
+    quality_flags: StructuredQualityFlags = Field(
+        default_factory=StructuredQualityFlags,
+        description="Structured optical quality degradation flags",
+    )
     issues: List[str] = Field(default_factory=list, description="Critical defects causing insufficient status")
     warnings: List[str] = Field(default_factory=list, description="Degradation warnings that may affect OCR precision")
     recommendations: List[str] = Field(default_factory=list, description="Actionable operator guidance")
@@ -351,6 +355,20 @@ class ImageQualityAssessor:
         else:
             heuristic_score = round(max(0.80, min(raw_score, 1.0)), 2)
 
+        # Structured quality degradation flags for confidence calibration
+        low_res = (not res_sufficient) or (ppi < self.thresholds.min_dpi)
+        blur_det = is_blurry or is_fatal_blur
+        glare_det = is_fatal_over or (mean_lum > self.thresholds.max_brightness - 10.0) or (white_clip > 0.40)
+        skew_det = is_skewed or is_fatal_skew
+
+        quality_flags = StructuredQualityFlags(
+            low_resolution=low_res,
+            blur_detected=blur_det,
+            glare_detected=glare_det,
+            extreme_skew=skew_det,
+        )
+        metadata.quality_flags = quality_flags
+
         return QualityReport(
             overall_status=overall_status,
             heuristic_quality_score=heuristic_score,
@@ -364,6 +382,7 @@ class ImageQualityAssessor:
                 "illumination": illumination_metric.model_dump(),
                 "clipping": clipping_metric.model_dump(),
             },
+            quality_flags=quality_flags,
             issues=issues,
             warnings=warnings,
             recommendations=recommendations,

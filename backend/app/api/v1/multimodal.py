@@ -23,6 +23,7 @@ from ...schemas.error import ErrorCode, ErrorDetail, ErrorResponse
 from ...services.storage import StorageService, FileValidationError
 from ...services.pipeline_interface import PipelineProcessingError
 from ...preprocessing import ImagePreprocessingService, ImageValidationError
+from ...core.security import check_rate_limit, read_upload_file_chunked
 
 router = APIRouter(prefix="/multimodal", tags=["Multimodal Vision Extraction"])
 
@@ -32,9 +33,16 @@ _preprocessing_service = ImagePreprocessingService()
 
 def get_multimodal_service(settings: Settings = Depends(get_settings)) -> MultimodalExtractionService:
     """Dependency injector providing configured MultimodalExtractionService."""
-    if not settings.USE_MOCK_PIPELINE:
+    env_str = (settings.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+    is_live = getattr(settings, "is_live_mode", False) or not settings.USE_MOCK_PIPELINE
+    if env_str == "production" and not is_live:
+        raise HTTPException(
+            status_code=500,
+            detail="Mock multimodal service is strictly forbidden in production environment.",
+        )
+    if is_live:
         cfg = MultimodalConfig(provider="gemini", configuration_status="implemented")
-        adapter = GeminiMultimodalAdapter(config=cfg)
+        adapter = GeminiMultimodalAdapter(config=cfg, settings=settings)
         return MultimodalExtractionService(adapter=adapter, config=cfg)
 
     cfg = MultimodalConfig(provider="mock", configuration_status="mock")
@@ -70,11 +78,13 @@ async def get_config(
 @router.post(
     "/extract",
     response_model=PrescriptionExtractionResult,
+    dependencies=[Depends(check_rate_limit)],
     responses={
         400: {"model": ErrorResponse, "description": "Invalid Request or Empty File"},
         413: {"model": ErrorResponse, "description": "Uploaded File Exceeds Allowed Size"},
         415: {"model": ErrorResponse, "description": "Unsupported File Type"},
         422: {"model": ErrorResponse, "description": "Pre-flight Quality Insufficient"},
+        429: {"model": ErrorResponse, "description": "Client Sliding Window Rate Limit Exceeded"},
         500: {"model": ErrorResponse, "description": "Multimodal Parsing or Inference Failure"},
         503: {"model": ErrorResponse, "description": "Multimodal Vision Model Unavailable"},
     },
@@ -86,9 +96,21 @@ async def extract_prescription(
     scenario: Optional[str] = Form(None, description="Optional deterministic test scenario override"),
     service: MultimodalExtractionService = Depends(get_multimodal_service),
 ) -> PrescriptionExtractionResult:
-    # 1. Read image bytes
+    env_str = (os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+    if env_str == "production" and scenario:
+        raise HTTPException(
+            status_code=400,
+            detail="Scenario parameter is strictly forbidden in production environment.",
+        )
+
+    # 1. Read image bytes with chunked limit enforcement
     try:
-        content = await file.read()
+        content = await read_upload_file_chunked(
+            upload_file=file,
+            max_bytes=_storage_service.settings.MAX_UPLOAD_SIZE_BYTES,
+        )
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(
             status_code=400,
@@ -109,6 +131,7 @@ async def extract_prescription(
     # 2. Store original prescription image
     filename = file.filename or "prescription.png"
     prescription_id = f"RX-{uuid.uuid4().hex[:8].upper()}"
+    saved_path = None
 
     try:
         _storage_service.validate_file_metadata(
@@ -116,7 +139,7 @@ async def extract_prescription(
             content_type=file.content_type,
             size=len(content),
         )
-        _, public_image_url = _storage_service.save_prescription_image(
+        saved_path, public_image_url = _storage_service.save_prescription_image(
             file_bytes=content,
             original_filename=filename,
         )
@@ -131,58 +154,66 @@ async def extract_prescription(
         )
         raise HTTPException(status_code=fve.status_code, detail=err.model_dump())
 
-    # 3. Preprocess and assess quality
+    # 3. Preprocess and assess quality with guaranteed cleanup
     derived_url: Optional[str] = None
     derived_bytes: Optional[bytes] = None
     try:
-        res, manifest, derived_url = _preprocessing_service.process_and_store(
-            image_bytes=content,
-            filename=filename,
-            prescription_id=prescription_id,
-            reject_insufficient_quality=True,
-        )
-        if res.primary_processed_image:
-            import io
-            buf = io.BytesIO()
-            res.primary_processed_image.save(buf, format="PNG")
-            derived_bytes = buf.getvalue()
-    except ImageValidationError as ive:
-        err = ErrorResponse(
-            error=ErrorDetail(
-                code=ive.code,
-                message=ive.message,
-                stage=ive.stage,
-                retryable=ive.retryable,
-                details=ive.details,
-            ),
-            prescription_id=prescription_id,
-            original_image_url=public_image_url,
-        )
-        raise HTTPException(status_code=ive.status_code, detail=err.model_dump())
+        try:
+            res, manifest, derived_url = _preprocessing_service.process_and_store(
+                image_bytes=content,
+                filename=filename,
+                prescription_id=prescription_id,
+                reject_insufficient_quality=True,
+            )
+            if res.primary_processed_image:
+                import io
+                buf = io.BytesIO()
+                res.primary_processed_image.save(buf, format="PNG")
+                derived_bytes = buf.getvalue()
+        except ImageValidationError as ive:
+            err = ErrorResponse(
+                error=ErrorDetail(
+                    code=ive.code,
+                    message=ive.message,
+                    stage=ive.stage,
+                    retryable=ive.retryable,
+                    details=ive.details,
+                ),
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+            raise HTTPException(status_code=ive.status_code, detail=err.model_dump())
 
-    # 4. Multimodal Vision-Language Extraction
-    try:
-        result = await service.extract_prescription(
-            image_bytes=content,
-            prescription_id=prescription_id,
-            original_image_url=public_image_url,
-            mime_type=file.content_type or "image/jpeg",
-            preprocessed_bytes=derived_bytes,
-            preprocessed_image_url=derived_url,
-            scenario=scenario,
-        )
-        return result
-    except PipelineProcessingError as ppe:
-        err = ErrorResponse(
-            error=ErrorDetail(
-                code=ppe.code,
-                message=ppe.message,
-                stage=ppe.stage,
-                retryable=ppe.retryable,
-                details=ppe.details,
-            ),
-            prescription_id=prescription_id,
-            original_image_url=public_image_url,
-        )
-        raise HTTPException(status_code=ppe.status_code, detail=err.model_dump())
+        # 4. Multimodal Vision-Language Extraction
+        try:
+            result = await service.extract_prescription(
+                image_bytes=content,
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+                mime_type=file.content_type or "image/jpeg",
+                preprocessed_bytes=derived_bytes,
+                preprocessed_image_url=derived_url,
+                scenario=scenario,
+            )
+            return result
+        except PipelineProcessingError as ppe:
+            err = ErrorResponse(
+                error=ErrorDetail(
+                    code=ppe.code,
+                    message=ppe.message,
+                    stage=ppe.stage,
+                    retryable=ppe.retryable,
+                    details=ppe.details,
+                ),
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+            raise HTTPException(status_code=ppe.status_code, detail=err.model_dump())
+    finally:
+        # Zero-retention ephemeral cleanup
+        settings = _storage_service.settings
+        if settings.RETENTION_TTL_SECONDS <= 0:
+            if saved_path:
+                _storage_service.delete_prescription_image(saved_path)
+            _storage_service.cleanup_preprocessed_artifacts(prescription_id)
 

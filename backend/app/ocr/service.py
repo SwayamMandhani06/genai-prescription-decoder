@@ -4,6 +4,7 @@ Orchestrates preprocessing artifact consumption, conventional OCR inference,
 and immutable result generation. Maintains clean isolation from multimodal extraction.
 """
 
+import asyncio
 import hashlib
 import io
 import uuid
@@ -37,6 +38,45 @@ class OCRBaselineService:
         self.ocr_config = ocr_config or OCRBaselineConfig()
         self.preprocessing_pipeline = PrescriptionPreprocessingPipeline(config=preprocessing_config)
         self.engine = TesseractEngine(config=self.ocr_config)
+
+    async def async_run_ocr(
+        self,
+        image_input: Union[bytes, Image.Image],
+        filename: Optional[str] = None,
+        prescription_id: Optional[str] = None,
+        preprocessing_variant: Optional[str] = None,
+        config_override: Optional[OCRBaselineConfig] = None,
+    ) -> OCRRunResult:
+        """
+        Asynchronously executes CPU-intensive preprocessing and Tesseract OCR inference in a worker thread,
+        preventing blocking of the FastAPI event loop.
+        """
+        return await asyncio.to_thread(
+            self.run_ocr,
+            image_input=image_input,
+            filename=filename,
+            prescription_id=prescription_id,
+            preprocessing_variant=preprocessing_variant,
+            config_override=config_override,
+        )
+
+    async def async_run_variant_comparison(
+        self,
+        image_bytes: bytes,
+        filename: Optional[str] = None,
+        prescription_id: Optional[str] = None,
+        variants: Optional[List[str]] = None,
+    ) -> Dict[str, OCRRunResult]:
+        """
+        Asynchronously executes multi-variant OCR comparison in a worker thread.
+        """
+        return await asyncio.to_thread(
+            self.run_variant_comparison,
+            image_bytes=image_bytes,
+            filename=filename,
+            prescription_id=prescription_id,
+            variants=variants,
+        )
 
     def run_ocr(
         self,

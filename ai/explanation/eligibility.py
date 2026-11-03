@@ -45,6 +45,7 @@ class ExplanationEligibilityGate:
         human_verification_status: Optional[str] = None,
         human_verified_value: Optional[str] = None,
         is_service_healthy: bool = True,
+        epistemic_status: Optional[str] = None,
     ) -> EligibilityEvaluation:
         """
         Pure deterministic evaluation of eligibility state across clinical pipeline dimensions.
@@ -68,6 +69,27 @@ class ExplanationEligibilityGate:
                 original_ai_name="",
                 reason="MEDICINE_NAME_MISSING",
                 guidance="Medicine name not observed on prescription; do not invent instructions.",
+            )
+
+        # 2.1 Block if epistemic status is ILLEGIBLE or characters cannot be read
+        if epistemic_status == "ILLEGIBLE" or raw_name == "ILLEGIBLE" or "[?]" in raw_name:
+            return EligibilityEvaluation(
+                status="abstained",
+                effective_medicine_name=raw_name,
+                original_ai_name=raw_name,
+                is_unreadable=True,
+                reason="MEDICINE_NAME_ILLEGIBLE",
+                guidance="Medicine name illegible on prescription; suppress patient-facing posology explanation.",
+            )
+
+        # 2.2 Block if epistemic status is AMBIGUOUS
+        if epistemic_status == "AMBIGUOUS":
+            return EligibilityEvaluation(
+                status="abstained",
+                effective_medicine_name=raw_name,
+                original_ai_name=raw_name,
+                reason="MEDICINE_NAME_AMBIGUOUS",
+                guidance="Medicine name ambiguous on prescription; suppress patient-facing posology explanation.",
             )
 
         # 3. Human verification states (Phase 9 audit trail takes precedence)

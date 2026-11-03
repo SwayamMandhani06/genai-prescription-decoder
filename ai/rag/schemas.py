@@ -5,7 +5,7 @@ Enforces explicit separation between medicine identity correspondence and formul
 """
 
 from typing import List, Dict, Optional, Literal, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class SourceProvenance(BaseModel):
@@ -102,6 +102,7 @@ class MedicineValidationResult(BaseModel):
     Separates medicine identity correspondence from formulation/dosage compatibility.
     """
     input_candidate: str = Field(..., description="Original raw prescription candidate text from Phase 6")
+    extracted_name: str = Field(..., description="Unmodified candidate name visually extracted from prescription pad")
     normalized_candidate: str = Field(..., description="Normalized representation of the input candidate")
     validation_status: Literal["validated", "uncertain", "not_validated"] = Field(
         ...,
@@ -115,9 +116,21 @@ class MedicineValidationResult(BaseModel):
         ...,
         description="Explicit medicine identity correspondence status separate from formulation/dosage compatibility."
     )
+    matched_reference_drug: Optional[str] = Field(
+        None,
+        description="Canonical approved reference drug title from CDSCO/RxNorm if validated; None if uncertain or unverified",
+    )
+    match_confidence: Optional[float] = Field(
+        None,
+        description="Match relevance confidence score of selected reference drug [0.0 - 1.0]",
+    )
     matched_candidates: List[RetrievalCandidate] = Field(
         default_factory=list,
         description="Top-k reference candidates meeting retrieval thresholds"
+    )
+    unverified_candidates: List[RetrievalCandidate] = Field(
+        default_factory=list,
+        description="Top-k reference candidates returned when autonomous validation is uncertain or not validated",
     )
     selected_reference: Optional[RetrievalCandidate] = Field(
         None,
@@ -157,11 +170,26 @@ class MedicineValidationResult(BaseModel):
         description="Full audit provenance for the validation decision"
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def sync_candidate_names(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            inp = data.get("input_candidate")
+            ext = data.get("extracted_name")
+            if ext and not inp:
+                data["input_candidate"] = ext
+            elif inp and not ext:
+                data["extracted_name"] = inp
+        return data
+
     def to_ui_validation_evidence(self) -> Dict[str, Any]:
         """
         Converts validation result to the ValidationEvidence dictionary format
         expected by the Phase 1 frontend envelope.
+        Strictly preserves extracted candidate name and never silently overwrites with fuzzy matches.
         """
+        active_candidate_name = self.extracted_name or self.input_candidate
+
         if self.selected_reference:
             ref = self.selected_reference
             status_map = {
@@ -188,8 +216,8 @@ class MedicineValidationResult(BaseModel):
                 )
 
             return {
-                "candidate_name": self.input_candidate,
-                "matched_entity_name": ref.medicine_name,
+                "candidate_name": active_candidate_name,
+                "matched_entity_name": self.matched_reference_drug or ref.medicine_name,
                 "generic_salt": ref.generic_name or ref.medicine_name,
                 "validation_status": val_status,
                 "status_badge_text": badge,
@@ -216,17 +244,36 @@ class MedicineValidationResult(BaseModel):
             }
 
         # Fallback for unverified / not_validated / uncertain without selection
-        top_alt = self.matched_candidates[0] if self.matched_candidates else None
+        # Safe RAG Grounding: NEVER overwrite the extracted candidate name with a low-similarity fuzzy match!
+        candidates_pool = self.unverified_candidates or self.matched_candidates
+        top_alt = candidates_pool[0] if candidates_pool else None
+
+        if self.validation_status == "uncertain" and top_alt:
+            matched_name = top_alt.medicine_name
+            generic_salt = top_alt.generic_name or top_alt.medicine_name
+            cdsco_sched = top_alt.cdsco_schedule or "Verification Required"
+            rx_cui = top_alt.rxnorm_cui or "N/A"
+            badge = "AMBIGUOUS / UNCERTAIN"
+            th_class = top_alt.therapeutic_class or "Clinical Formulation"
+        else:
+            # not_validated / sub-threshold: strictly do not present a false-positive matched drug name
+            matched_name = "Unverified Candidate"
+            generic_salt = "Unverified Salt"
+            cdsco_sched = "Verification Required"
+            rx_cui = "N/A"
+            badge = "UNVERIFIED CANDIDATE"
+            th_class = "Unclassified Formulation"
+
         return {
-            "candidate_name": self.input_candidate,
-            "matched_entity_name": top_alt.medicine_name if top_alt else "Unverified Candidate",
-            "generic_salt": (top_alt.generic_name if top_alt else None) or "Unverified Salt",
+            "candidate_name": active_candidate_name,
+            "matched_entity_name": matched_name,
+            "generic_salt": generic_salt,
             "validation_status": "unverified",
-            "status_badge_text": "UNVERIFIED CANDIDATE" if self.validation_status == "not_validated" else "AMBIGUOUS / UNCERTAIN",
-            "cdsco_schedule": (top_alt.cdsco_schedule if top_alt else None) or "Verification Required",
-            "rxnorm_cui": (top_alt.rxnorm_cui if top_alt else None) or "N/A",
-            "atc_code": (top_alt.atc_code if top_alt else None) or "N/A",
-            "therapeutic_class": (top_alt.therapeutic_class if top_alt else None) or "Unclassified Formulation",
+            "status_badge_text": badge,
+            "cdsco_schedule": cdsco_sched,
+            "rxnorm_cui": rx_cui,
+            "atc_code": top_alt.atc_code if (top_alt and self.validation_status == "uncertain") else "N/A",
+            "therapeutic_class": th_class,
             "indications": "Prescription observation not confirmed against reference formulary.",
             "evidence_source": self.evidence,
             "reference_url": None,
@@ -237,6 +284,6 @@ class MedicineValidationResult(BaseModel):
                     "similarity_score": alt.score,
                     "notes": f"Plausible candidate via {alt.match_method}"
                 }
-                for alt in self.matched_candidates[:4]
+                for alt in candidates_pool[:4]
             ]
         }

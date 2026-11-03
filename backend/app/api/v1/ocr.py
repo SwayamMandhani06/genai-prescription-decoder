@@ -7,7 +7,7 @@ Strictly isolated from production multimodal inference and clinical interpretati
 import os
 from pathlib import Path
 from typing import Dict, List, Optional
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status, Depends
 
 from ...ocr import (
     OCRBaselineConfig,
@@ -18,6 +18,7 @@ from ...ocr import (
 from ...schemas.error import ErrorCode, ErrorDetail, ErrorResponse
 from ...services.pipeline_interface import PipelineProcessingError
 from ...services.storage import StorageService
+from ...core.security import check_rate_limit, read_upload_file_chunked
 
 router = APIRouter(prefix="/ocr", tags=["Research OCR Baseline"])
 
@@ -104,10 +105,12 @@ async def get_engine_status():
 @router.post(
     "/baseline",
     response_model=OCRRunResult,
+    dependencies=[Depends(check_rate_limit)],
     responses={
         400: {"model": ErrorResponse, "description": "Invalid Request"},
         413: {"model": ErrorResponse, "description": "File Too Large"},
         415: {"model": ErrorResponse, "description": "Unsupported File Type"},
+        429: {"model": ErrorResponse, "description": "Rate Limit Exceeded"},
         500: {"model": ErrorResponse, "description": "Processing Failed"},
         503: {"model": ErrorResponse, "description": "OCR Engine Unavailable"},
     },
@@ -136,7 +139,12 @@ async def run_baseline_ocr(
     if file:
         filename = file.filename or "prescription.png"
         try:
-            file_bytes = await file.read()
+            file_bytes = await read_upload_file_chunked(
+                upload_file=file,
+                max_bytes=_storage_service.settings.MAX_UPLOAD_SIZE_BYTES,
+            )
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(
                 status_code=400,
@@ -161,7 +169,7 @@ async def run_baseline_ocr(
     )
 
     try:
-        result = _ocr_service.run_ocr(
+        result = await _ocr_service.async_run_ocr(
             image_input=file_bytes,
             filename=filename,
             prescription_id=prescription_id,
@@ -183,6 +191,7 @@ async def run_baseline_ocr(
 @router.post(
     "/baseline/compare",
     response_model=Dict[str, OCRRunResult],
+    dependencies=[Depends(check_rate_limit)],
     summary="Compare OCR Across Preprocessing Variants",
     description="Executes conventional OCR across all Phase 4 derived representations (original, grayscale, enhanced, deskewed, thresholded) for controlled comparison.",
 )
@@ -202,7 +211,18 @@ async def compare_baseline_variants(
 
     if file:
         filename = file.filename or "prescription.png"
-        file_bytes = await file.read()
+        try:
+            file_bytes = await read_upload_file_chunked(
+                upload_file=file,
+                max_bytes=_storage_service.settings.MAX_UPLOAD_SIZE_BYTES,
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unable to read incoming file stream: {str(e)}",
+            )
         _storage_service.validate_file_metadata(
             filename=filename,
             content_type=file.content_type,
@@ -215,7 +235,7 @@ async def compare_baseline_variants(
             file_bytes = f.read()
 
     try:
-        results = _ocr_service.run_variant_comparison(
+        results = await _ocr_service.async_run_variant_comparison(
             image_bytes=file_bytes,
             filename=filename,
             prescription_id=prescription_id,

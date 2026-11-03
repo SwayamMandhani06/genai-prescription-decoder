@@ -85,6 +85,38 @@ class LasaSimilarityDetail(BaseModel):
         None,
         description="ISMP Tall Man Lettering for the confusable counterpart (if known pair)",
     )
+    prescribed_strength: Optional[str] = Field(
+        None,
+        description="Prescribed dosage strength visually observed",
+    )
+    prescribed_form: Optional[str] = Field(
+        None,
+        description="Prescribed formulation or dosage form observed",
+    )
+    confusable_strength: Optional[str] = Field(
+        None,
+        description="Formulation dosage strength documented in reference record for the confusable drug",
+    )
+    confusable_form: Optional[str] = Field(
+        None,
+        description="Formulation dosage form documented in reference record for the confusable drug",
+    )
+    matches_confusable_strength: Optional[bool] = Field(
+        None,
+        description="True if prescribed strength matches the confusable counterpart's manufactured strength",
+    )
+    matches_confusable_form: Optional[bool] = Field(
+        None,
+        description="True if prescribed dosage form matches the confusable counterpart's manufactured form",
+    )
+    strength_context_warning: Optional[str] = Field(
+        None,
+        description="Warning message if prescribed strength aligns with confusable counterpart rather than candidate",
+    )
+    form_context_warning: Optional[str] = Field(
+        None,
+        description="Warning message if prescribed dosage form aligns with confusable counterpart rather than candidate",
+    )
     clinical_context: str = Field(
         ...,
         description=(
@@ -104,6 +136,14 @@ class MedicineLasaResult(BaseModel):
     prescribed_candidate: str = Field(
         ...,
         description="Extracted medicine name from Phase 6",
+    )
+    prescribed_strength: Optional[str] = Field(
+        None,
+        description="Prescribed dosage strength evaluated for strength-aware LASA detection",
+    )
+    prescribed_dosage_form: Optional[str] = Field(
+        None,
+        description="Prescribed dosage form evaluated for form-aware LASA detection",
     )
     normalized_candidate: str = Field(
         ...,

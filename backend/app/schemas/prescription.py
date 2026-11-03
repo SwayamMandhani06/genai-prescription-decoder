@@ -12,6 +12,57 @@ from pydantic import BaseModel, Field
 # 1. PLAN.md Section 6 Core Response Schemas
 # ==============================================================================
 
+FieldEpistemicStatus = Literal["EXTRACTED", "MISSING_ON_RX", "ILLEGIBLE", "AMBIGUOUS", "UNVERIFIED"]
+
+
+def determine_epistemic_status(
+    value: Optional[str],
+    status: Optional[str] = "confident",
+    presence: Optional[str] = "present",
+    extraction_state: Optional[str] = "extracted",
+    candidates: Optional[List[str]] = None,
+    uncertainty_reason: Optional[str] = None,
+    raw_transcription: Optional[str] = None,
+    validation_status: Optional[str] = None,
+    has_lasa_conflict: bool = False,
+) -> FieldEpistemicStatus:
+    """
+    Evaluates extraction, RAG validation, and visual uncertainty signals into one of 5
+    statutory epistemic statuses:
+    - EXTRACTED: Clearly legible and grounded in visual evidence.
+    - MISSING_ON_RX: Field was not written by the prescriber on the slip.
+    - ILLEGIBLE: Ink is present on the slip, but characters cannot be read reliably (e.g. contains '[?]').
+    - AMBIGUOUS: Multiple conflicting interpretations or LASA candidates exist.
+    - UNVERIFIED: Legible text, but drug/strength combination is not corroborated in data/reference/.
+    """
+    clean_val = str(value).strip() if value is not None else ""
+
+    # 1. MISSING_ON_RX: not written or cannot be located
+    if not clean_val or presence == "absent" or extraction_state == "missing" or clean_val.lower() in ("null", "none", "not present in prescription", "not observed"):
+        return "MISSING_ON_RX"
+
+    # 2. ILLEGIBLE: Ink present, but characters cannot be read reliably
+    if clean_val == "ILLEGIBLE" or "[?]" in clean_val or (raw_transcription and "[?]" in raw_transcription):
+        return "ILLEGIBLE"
+    if clean_val.endswith("...") or (uncertainty_reason and any(k in uncertainty_reason.lower() for k in ("illegible", "unreadable", "collapsed ink", "degraded ligature"))):
+        return "ILLEGIBLE"
+
+    # 3. AMBIGUOUS: Multiple competing interpretations or active LASA conflict
+    if has_lasa_conflict:
+        return "AMBIGUOUS"
+    if candidates and len([c for c in candidates if str(c).strip() and str(c).strip() != clean_val]) >= 1:
+        return "AMBIGUOUS"
+    if status == "uncertain" or extraction_state == "ambiguous":
+        return "AMBIGUOUS"
+
+    # 4. UNVERIFIED: Legible, but uncorroborated in reference formulary
+    if validation_status in ("unverified", "not_validated", "not_in_reference", "mismatch"):
+        return "UNVERIFIED"
+
+    # 5. EXTRACTED: Clearly legible and grounded
+    return "EXTRACTED"
+
+
 class FieldExtractionItem(BaseModel):
     """
     Field-level interpretation adhering strictly to Section 6:
@@ -21,6 +72,10 @@ class FieldExtractionItem(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0, description="Calibrated confidence score [0.0 - 1.0]")
     status: Literal["confident", "uncertain", "flagged"] = Field(
         ..., description="Semantic certainty status: exactly one of confident, uncertain, flagged"
+    )
+    epistemic_status: Optional[FieldEpistemicStatus] = Field(
+        "EXTRACTED",
+        description="Explicit epistemic status: EXTRACTED, MISSING_ON_RX, ILLEGIBLE, AMBIGUOUS, UNVERIFIED",
     )
     candidates: List[str] = Field(default_factory=list, description="Candidate interpretations considered")
     explanation: Optional[str] = Field(None, description="Clinical rationale for the interpretation")
@@ -33,6 +88,7 @@ class FieldExtractionItem(BaseModel):
     abstention_decision: Optional[str] = Field(None, description="Phase 9 decision: 'accepted' or 'abstained'")
     abstention_reasons: Optional[List[str]] = Field(default_factory=list, description="Machine-readable reason codes if abstained")
     requires_human_verification: Optional[bool] = Field(None, description="True if clinician/pharmacist verification is mandated")
+    requires_pharmacist_verification: Optional[bool] = Field(None, description="True if pharmacist verification is mandated")
 
 
 class LasaFlagItem(BaseModel):
@@ -93,12 +149,14 @@ class ExtractedEntity(BaseModel):
     normalized_value: str
     confidence: float
     status: Literal["confident", "uncertain", "flagged", "abstained"]
+    epistemic_status: Optional[FieldEpistemicStatus] = None
     stroke_source: str
     bounding_box: BoundingBox
     explanation: str
     uncertainty_reason: Optional[str] = None
     verification_instruction: Optional[str] = None
     interpreted_candidate: Optional[str] = None
+    requires_pharmacist_verification: Optional[bool] = None
 
 
 class AlternativeCandidate(BaseModel):
@@ -171,6 +229,22 @@ class PrescriptionMetadata(BaseModel):
     processing_time_ms: int
     model_version: str
     pipeline_stages_completed: int
+    inference_mode: Literal["live", "mock"] = Field(
+        "live",
+        description="Pipeline inference execution mode: 'live' for real model inference, 'mock' for simulated test fixture",
+    )
+    model_provider: Optional[str] = Field(
+        None,
+        description="Active vision-language model provider (e.g. 'gemini', 'mock')",
+    )
+    model_name: Optional[str] = Field(
+        None,
+        description="Active vision-language model identifier (e.g. 'gemini-3.5-flash-lite')",
+    )
+    ocr_engine: Optional[str] = Field(
+        None,
+        description="Active optical character recognition engine if OCR utilized",
+    )
 
 
 class PatientInfo(BaseModel):
@@ -234,6 +308,24 @@ class PrescriptionAnalyzeResponse(BaseModel):
     meta: PrescriptionMetadata = Field(..., description="Pipeline execution metadata and request ID")
     document_telemetry: DocumentTelemetry = Field(..., description="Pre-flight image quality metrics")
     data: PrescriptionData = Field(..., description="Detailed clinical and spatial posology dataset")
+
+    # Explicit Model Inference Provenance Metadata
+    inference_mode: Literal["live", "mock"] = Field(
+        "live",
+        description="Pipeline inference execution mode: 'live' for real model inference, 'mock' for simulated test fixture",
+    )
+    model_provider: Optional[str] = Field(
+        None,
+        description="Active vision-language model provider (e.g. 'gemini', 'mock')",
+    )
+    model_name: Optional[str] = Field(
+        None,
+        description="Active vision-language model identifier (e.g. 'gemini-3.5-flash-lite')",
+    )
+    ocr_engine: Optional[str] = Field(
+        None,
+        description="Active optical character recognition engine if OCR utilized",
+    )
 
     # Phase 4 Preprocessing & Quality Infrastructure Extensions (PLAN.md Section 13):
     processed_image_url: Optional[str] = Field(

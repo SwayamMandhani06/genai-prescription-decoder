@@ -5,6 +5,7 @@ Detects actual engine binary versions and available languages at runtime.
 Preserves raw OCR output immutability and never fabricates confidence scores.
 """
 
+import asyncio
 import logging
 import os
 import time
@@ -149,6 +150,17 @@ class TesseractEngine:
             oem=cfg.oem,
             tessdata_path=os.path.dirname(self._tesseract_cmd) if self._tesseract_cmd else None,
         )
+
+    async def async_execute(
+        self,
+        pil_image: Image.Image,
+        config: Optional[OCRBaselineConfig] = None,
+    ) -> Tuple[str, List[OCRToken], List[OCRLine], float]:
+        """
+        Asynchronously executes CPU/process-bound OCR extraction in a worker thread via asyncio.to_thread,
+        preventing blocking of the FastAPI event loop during multi-second OCR inference.
+        """
+        return await asyncio.to_thread(self.execute, pil_image, config)
 
     def execute(
         self,

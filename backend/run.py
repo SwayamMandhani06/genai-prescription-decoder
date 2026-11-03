@@ -9,10 +9,13 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Add project root directory to sys.path and load environment variables early
+# Add project root and backend directories to sys.path and load environment variables early
 ROOT_DIR = Path(__file__).resolve().parent.parent
+BACKEND_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(1, str(BACKEND_DIR))
 
 load_dotenv(ROOT_DIR / ".env")
 

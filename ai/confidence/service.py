@@ -102,6 +102,10 @@ class ConfidenceEstimationService:
         field: ExtractedField,
         field_name: str,
         model_version: str = "gemini-3.8-flash",
+        raw_transcription: Optional[str] = None,
+        validation_res: Optional[MedicineValidationResult] = None,
+        lasa_result: Optional[Any] = None,
+        image_quality_flags: Optional[Dict[str, bool]] = None,
     ) -> FieldConfidenceAssessment:
         """Evaluates confidence for an individual posology field."""
         raw_sig = extract_field_confidence_signal(
@@ -109,6 +113,10 @@ class ConfidenceEstimationService:
             field_name=field_name,
             model_version=model_version,
             config_version=self.config.config_version,
+            raw_transcription=raw_transcription,
+            validation_res=validation_res,
+            lasa_result=lasa_result,
+            image_quality_flags=image_quality_flags,
         )
 
         calibrated_conf = CalibratedConfidence(
@@ -119,10 +127,25 @@ class ConfidenceEstimationService:
             calibration_status=self.calibration_status,
         )
 
+        ep_status = getattr(field, "epistemic_status", None)
+        val_str = field.value or ""
+        has_illegible = (
+            "[?]" in val_str
+            or (raw_transcription and "[?]" in raw_transcription)
+            or ep_status == "ILLEGIBLE"
+            or val_str == "ILLEGIBLE"
+        )
+        has_lasa = False
+        if lasa_result is not None:
+            has_lasa = getattr(lasa_result, "has_lasa_conflict", False) or getattr(lasa_result, "conflict_detected", False)
+
         if self.active_calibrator and self.active_calibrator.is_fitted and raw_sig.raw_value is not None:
             calibrated_conf = self.active_calibrator.calibrate(
                 raw_sig.raw_value,
                 dataset_version=self.config.calibration_dataset_version,
+                epistemic_status=ep_status,
+                has_lasa_ambiguity=has_lasa,
+                has_illegible_marker=has_illegible,
             )
 
         # Conflict description
@@ -149,6 +172,8 @@ class ConfidenceEstimationService:
         med: ExtractedMedicine,
         validation_res: Optional[MedicineValidationResult],
         model_version: str = "gemini-3.8-flash",
+        lasa_result: Optional[Any] = None,
+        image_quality_flags: Optional[Dict[str, bool]] = None,
     ) -> MedicineConfidenceAssessment:
         """
         Evaluates confidence for a single prescribed medicine line item completely
@@ -158,16 +183,21 @@ class ConfidenceEstimationService:
             med.medicine_name,
             field_name="medicine_name",
             model_version=model_version,
+            validation_res=validation_res,
+            lasa_result=lasa_result,
+            image_quality_flags=image_quality_flags,
         )
         freq_conf = self.evaluate_field_confidence(
             med.frequency,
             field_name="frequency",
             model_version=model_version,
+            image_quality_flags=image_quality_flags,
         )
         dur_conf = self.evaluate_field_confidence(
             med.duration,
             field_name="duration",
             model_version=model_version,
+            image_quality_flags=image_quality_flags,
         )
         dosage_conf = extract_dosage_confidence_signal(
             med.dosage,
@@ -181,6 +211,7 @@ class ConfidenceEstimationService:
             dosage_conf.calibrated = self.active_calibrator.calibrate(
                 dosage_conf.visual_extraction_confidence.raw_value,
                 dataset_version=self.config.calibration_dataset_version,
+                epistemic_status=getattr(med.dosage, "epistemic_status", None),
             )
         else:
             dosage_conf.calibrated.calibration_status = self.calibration_status
@@ -207,9 +238,33 @@ class ConfidenceEstimationService:
         overall_raw = sum(valid_raw_scores) / len(valid_raw_scores) if valid_raw_scores else 0.50
         overall_raw = round(overall_raw, 4)
 
+        # CRITICAL SAFETY REQUIREMENT:
+        # Never display a high confidence score (>= 0.80) on any medication item that has an UNVERIFIED
+        # drug name, active LASA ambiguity, or [?] in its transcription.
+        has_lasa_ambiguity = False
+        if lasa_result is not None:
+            has_lasa_ambiguity = getattr(lasa_result, "has_lasa_conflict", False) or getattr(lasa_result, "conflict_detected", False)
+
+        med_name_val = med.medicine_name.value or ""
+        med_ep_status = getattr(med.medicine_name, "epistemic_status", None)
+        has_illegible_token = "[?]" in med_name_val or med_ep_status == "ILLEGIBLE" or med_name_val == "ILLEGIBLE"
+        is_unverified = (
+            med_ep_status == "UNVERIFIED"
+            or (validation_res is not None and validation_res.validation_status in ("not_validated", "unverified", "uncertain"))
+        )
+        is_ambiguous = (
+            med_ep_status == "AMBIGUOUS"
+            or has_lasa_ambiguity
+        )
+
+        if is_unverified or is_ambiguous or has_illegible_token:
+            overall_raw = min(overall_raw, 0.70)
+
         overall_cal = None
         if self.active_calibrator and self.active_calibrator.is_fitted:
             overall_cal = round(self.active_calibrator.predict_one(overall_raw), 4)
+            if is_unverified or is_ambiguous or has_illegible_token:
+                overall_cal = min(overall_cal, 0.70)
 
         return MedicineConfidenceAssessment(
             item_index=1,  # updated by caller if multi-med
@@ -229,6 +284,8 @@ class ConfidenceEstimationService:
         self,
         extraction_result: PrescriptionExtractionResult,
         validation_results: Optional[List[MedicineValidationResult]] = None,
+        lasa_results: Optional[List[Any]] = None,
+        image_quality_flags: Optional[Dict[str, bool]] = None,
     ) -> PrescriptionConfidenceAssessment:
         """
         Evaluates document-level and multi-medicine confidence for a prescription extraction.
@@ -249,10 +306,16 @@ class ConfidenceEstimationService:
             if matching_val is None and validation_results and idx <= len(validation_results):
                 matching_val = validation_results[idx - 1]
 
+            med_lasa = None
+            if lasa_results and idx <= len(lasa_results):
+                med_lasa = lasa_results[idx - 1]
+
             med_assessment = self.evaluate_medicine_confidence(
                 med=med,
                 validation_res=matching_val,
                 model_version=model_version,
+                lasa_result=med_lasa,
+                image_quality_flags=image_quality_flags,
             )
             med_assessment.item_index = idx
             medicines_assessment.append(med_assessment)
@@ -264,6 +327,7 @@ class ConfidenceEstimationService:
                 field=f_obj,
                 field_name=f_name,
                 model_version=model_version,
+                image_quality_flags=image_quality_flags,
             )
 
         # Overall raw score: conservative aggregate across medicines

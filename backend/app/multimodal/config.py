@@ -51,10 +51,10 @@ class MultimodalConfig(BaseModel):
         description="Exact provider model release version",
     )
     temperature: float = Field(
-        0.1,
+        0.0,
         ge=0.0,
         le=1.0,
-        description="Sampling temperature (low temperature enforces deterministic extraction)",
+        description="Sampling temperature (0.0 enforces strictly deterministic extraction)",
     )
     max_tokens: int = Field(
         default_factory=lambda: int(
@@ -69,7 +69,7 @@ class MultimodalConfig(BaseModel):
         default_factory=lambda: float(
             os.environ.get("MULTIMODAL_TIMEOUT_SECONDS")
             or os.environ.get("GEMINI_TIMEOUT_SECONDS")
-            or 50.0
+            or 75.0
         ),
         gt=0.0,
         description="Subprocess or HTTP request timeout in seconds",

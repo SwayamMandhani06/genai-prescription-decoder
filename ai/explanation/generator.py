@@ -55,6 +55,9 @@ class PosologyExplanationGenerator:
         human_verification_status: Optional[str] = None,
         human_verified_value: Optional[str] = None,
         is_service_healthy: bool = True,
+        epistemic_status: Optional[str] = None,
+        duration_epistemic_status: Optional[str] = None,
+        frequency_epistemic_status: Optional[str] = None,
     ) -> MultilingualPrescriptionExplanation:
         """
         Generates validated posology explanations in English, Hindi, and Marathi.
@@ -71,23 +74,32 @@ class PosologyExplanationGenerator:
             human_verification_status=human_verification_status,
             human_verified_value=human_verified_value,
             is_service_healthy=is_service_healthy,
+            epistemic_status=epistemic_status,
         )
 
         effective_name = eligibility.effective_medicine_name
         status = eligibility.status
 
         # 2. Canonical fact normalization
-        frequency_key = normalize_frequency_to_key(frequency)
-        meal_relation_key = normalize_meal_relation_to_key(frequency)
+        clean_dur = duration.strip() if duration and duration.strip() not in ("MISSING_ON_RX", "ILLEGIBLE") else None
+        if duration_epistemic_status in ("MISSING_ON_RX", "ILLEGIBLE"):
+            clean_dur = None
+
+        clean_freq = frequency.strip() if frequency and frequency.strip() not in ("MISSING_ON_RX", "ILLEGIBLE") else None
+        if frequency_epistemic_status in ("MISSING_ON_RX", "ILLEGIBLE"):
+            clean_freq = None
+
+        frequency_key = normalize_frequency_to_key(clean_freq) if clean_freq else None
+        meal_relation_key = normalize_meal_relation_to_key(clean_freq) if clean_freq else None
 
         canonical_facts: Dict[str, Any] = {
             "effective_medicine_name": effective_name,
             "original_ai_name": eligibility.original_ai_name,
             "is_human_corrected": eligibility.is_human_corrected,
-            "dosage": dosage.strip() if dosage else None,
-            "frequency_raw": frequency.strip() if frequency else None,
+            "dosage": dosage.strip() if dosage and dosage.strip() not in ("MISSING_ON_RX", "ILLEGIBLE") else None,
+            "frequency_raw": clean_freq,
             "frequency_key": frequency_key,
-            "duration": duration.strip() if duration else None,
+            "duration": clean_dur,
             "meal_relation_key": meal_relation_key,
             "eligibility_reason": eligibility.reason,
         }
@@ -95,9 +107,9 @@ class PosologyExplanationGenerator:
         source_fields = ["medicine_name"]
         if dosage:
             source_fields.append("dosage")
-        if frequency:
+        if clean_freq:
             source_fields.append("frequency")
-        if duration:
+        if clean_dur:
             source_fields.append("duration")
 
         # 3. Generate and validate per supported language

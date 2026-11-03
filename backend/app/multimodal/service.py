@@ -10,6 +10,7 @@ Orchestrates end-to-end multimodal prescription posology extraction:
 """
 
 import hashlib
+import os
 import time
 from typing import Optional
 
@@ -86,11 +87,20 @@ class MultimodalExtractionService:
 
         start_time = time.perf_counter()
 
+        # Production environment security gate: forbid mock adapter execution in production
+        env_str = (os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+        if env_str == "production" and (isinstance(self.adapter, MockMultimodalModelAdapter) or self.config.provider == "mock"):
+            raise PipelineProcessingError(
+                code=ErrorCode.PROCESSING_FAILED,
+                message="Security / Safety Violation: Mock multimodal extraction adapter is strictly forbidden from executing in production environment (ENV=production).",
+                stage="multimodal_security_gate",
+                status_code=500,
+                retryable=False,
+            )
+
         # 2. Invoke multimodal model adapter
-        # If an evaluation scenario is explicitly requested (for offline tests), use MockMultimodalModelAdapter
+        # Strict fail-closed live enforcement: NEVER silently switch a live Gemini adapter to Mock adapter
         active_adapter = self.adapter
-        if scenario is not None and not isinstance(self.adapter, MockMultimodalModelAdapter):
-            active_adapter = MockMultimodalModelAdapter()
 
         raw_text = await active_adapter.extract(
             image_bytes=image_bytes,
@@ -118,7 +128,8 @@ class MultimodalExtractionService:
         duration = time.perf_counter() - start_time
 
         # 4. Construct audit metadata
-        is_mock = isinstance(active_adapter, MockMultimodalModelAdapter) or self.config.provider == "mock" or scenario is not None
+        is_mock = isinstance(active_adapter, MockMultimodalModelAdapter) or self.config.provider == "mock"
+        inf_mode = "mock" if is_mock else "live"
         model_meta = ModelMetadata(
             provider="mock" if is_mock else self.config.provider,
             model_id="mock-prescription-v1" if is_mock else self.config.model_id,
@@ -126,6 +137,7 @@ class MultimodalExtractionService:
             prompt_version=self.config.prompt_version,
             config_version=self.config.config_version,
             is_mock=is_mock,
+            inference_mode=inf_mode,
         )
 
         # 5. Finalize with conservative post-processing
@@ -147,6 +159,7 @@ class MultimodalExtractionService:
             document_type=parsed.get("document_type", "prescription"),
             rejection_reason=parsed.get("rejection_reason"),
             document_type_confidence=parsed.get("document_type_confidence", 1.0),
+            regions=parsed.get("regions", []),
         )
 
         return result

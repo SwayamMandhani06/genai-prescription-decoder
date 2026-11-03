@@ -119,10 +119,14 @@ class MedicineValidator:
             )
             return MedicineValidationResult(
                 input_candidate=raw_candidate,
+                extracted_name=raw_candidate,
                 normalized_candidate=norm_candidate,
                 validation_status="not_validated",
                 medicine_identity_status="not_validated",
+                matched_reference_drug=None,
+                match_confidence=None,
                 matched_candidates=[],
+                unverified_candidates=[],
                 selected_reference=None,
                 evidence="No medicine name candidate was extracted from visual evidence.",
                 retrieval_metadata={"error": "empty_query"},
@@ -153,10 +157,14 @@ class MedicineValidator:
             )
             return MedicineValidationResult(
                 input_candidate=raw_candidate,
+                extracted_name=raw_candidate,
                 normalized_candidate=norm_candidate,
                 validation_status="not_validated",
                 medicine_identity_status="not_validated",
+                matched_reference_drug=None,
+                match_confidence=None,
                 matched_candidates=[],
+                unverified_candidates=[],
                 selected_reference=None,
                 evidence=(
                     f"Candidate '{raw_candidate}' has no corresponding approved formulation "
@@ -203,10 +211,14 @@ class MedicineValidator:
             consistency, _ = evaluate_formulation_consistency(observed_dosage, top_cand.strength)
             return MedicineValidationResult(
                 input_candidate=raw_candidate,
+                extracted_name=raw_candidate,
                 normalized_candidate=norm_candidate,
                 validation_status="uncertain",
                 medicine_identity_status="uncertain",
+                matched_reference_drug=None,
+                match_confidence=top_cand.score,
                 matched_candidates=retrieved_candidates,
+                unverified_candidates=retrieved_candidates,
                 selected_reference=None,  # Do NOT pick one arbitrarily!
                 evidence=(
                     f"Prescription candidate '{raw_candidate}' matches multiple plausible formulations "
@@ -273,10 +285,14 @@ class MedicineValidator:
 
             return MedicineValidationResult(
                 input_candidate=raw_candidate,
+                extracted_name=raw_candidate,
                 normalized_candidate=norm_candidate,
                 validation_status="validated",
                 medicine_identity_status="validated",
+                matched_reference_drug=top_cand.medicine_name,
+                match_confidence=top_cand.score,
                 matched_candidates=retrieved_candidates,
+                unverified_candidates=[],
                 selected_reference=top_cand,
                 evidence=evidence_text,
                 retrieval_metadata={
@@ -312,10 +328,14 @@ class MedicineValidator:
             consistency, _ = evaluate_formulation_consistency(observed_dosage, top_cand.strength)
             return MedicineValidationResult(
                 input_candidate=raw_candidate,
+                extracted_name=raw_candidate,
                 normalized_candidate=norm_candidate,
                 validation_status="uncertain",
                 medicine_identity_status="uncertain",
+                matched_reference_drug=None,
+                match_confidence=top_cand.score,
                 matched_candidates=retrieved_candidates,
+                unverified_candidates=retrieved_candidates,
                 selected_reference=None,
                 evidence=(
                     f"Candidate '{raw_candidate}' demonstrates lexical similarity ({top_cand.score:.2f}) "
@@ -356,10 +376,14 @@ class MedicineValidator:
         )
         return MedicineValidationResult(
             input_candidate=raw_candidate,
+            extracted_name=raw_candidate,
             normalized_candidate=norm_candidate,
             validation_status="not_validated",
             medicine_identity_status="not_validated",
+            matched_reference_drug=None,
+            match_confidence=top_cand.score if retrieved_candidates else None,
             matched_candidates=[],
+            unverified_candidates=retrieved_candidates,
             selected_reference=None,
             evidence=f"No reference formulation achieved the minimum confidence threshold ({self.config.min_similarity_threshold}).",
             retrieval_metadata={"best_score": top_cand.score},

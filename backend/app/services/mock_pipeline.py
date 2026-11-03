@@ -30,6 +30,23 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
         public_image_url: str,
         options: PipelineOptions,
     ) -> PrescriptionAnalyzeResponse:
+        import os
+        from ..config import get_settings
+        try:
+            settings = get_settings()
+            env_val = getattr(settings, "ENV", "").lower()
+        except Exception:
+            env_val = os.environ.get("ENV", "").lower()
+
+        if env_val == "production" or os.environ.get("ENV") == "production" or os.environ.get("ENVIRONMENT") == "production":
+            raise PipelineProcessingError(
+                code=ErrorCode.PROCESSING_FAILED,
+                message="Mock pipeline execution is strictly forbidden in production environment.",
+                stage="mock_pipeline_execution",
+                status_code=500,
+                retryable=False,
+            )
+
         scenario = options.mock_scenario
         sample_id = options.sample_id
         prescription_id = f"RX-{uuid.uuid4().hex[:8].upper()}"
@@ -98,12 +115,24 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
 
         if scenario == "timeout":
             raise PipelineProcessingError(
-                code=ErrorCode.INTERNAL_ERROR,
+                code=ErrorCode.MODEL_UNAVAILABLE,
                 message="CDSCO Drug Database & RxNorm Formulary Gateway connection timed out after 15,000ms.",
                 stage="evidence_retrieval",
                 status_code=504,
                 retryable=True,
                 details={"timeout_ms": 15000, "target_endpoint": "https://cdsco.gov.in/api/v1/search"},
+                prescription_id=prescription_id,
+                original_image_url=public_image_url,
+            )
+
+        if scenario in ("rate_limit", "rate_limited"):
+            raise PipelineProcessingError(
+                code=ErrorCode.RATE_LIMIT_EXCEEDED,
+                message="Upstream Vision-Language Model rate limit exceeded. Retry after 60 seconds.",
+                stage="inference_dispatch",
+                status_code=429,
+                retryable=True,
+                details={"retry_after_seconds": 60},
                 prescription_id=prescription_id,
                 original_image_url=public_image_url,
             )
@@ -354,5 +383,15 @@ class MockPrescriptionPipeline(IPrescriptionPipeline):
             original_image_url=response.original_image_url or "",
             pending_fields=abstained_keys,
         )
+
+        response.inference_mode = "mock"
+        response.model_provider = "mock"
+        response.model_name = "mock-prescription-v1"
+        response.ocr_engine = None
+        if response.meta:
+            response.meta.inference_mode = "mock"
+            response.meta.model_provider = "mock"
+            response.meta.model_name = "mock-prescription-v1"
+            response.meta.ocr_engine = None
 
         return response

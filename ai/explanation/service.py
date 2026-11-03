@@ -38,6 +38,9 @@ class ExplanationService:
         human_verification_status: Optional[str] = None,
         human_verified_value: Optional[str] = None,
         is_service_healthy: bool = True,
+        epistemic_status: Optional[str] = None,
+        duration_epistemic_status: Optional[str] = None,
+        frequency_epistemic_status: Optional[str] = None,
     ) -> MultilingualPrescriptionExplanation:
         """
         Generates structured MultilingualPrescriptionExplanation with fidelity audits.
@@ -57,6 +60,9 @@ class ExplanationService:
             human_verification_status=human_verification_status,
             human_verified_value=human_verified_value,
             is_service_healthy=is_service_healthy,
+            epistemic_status=epistemic_status,
+            duration_epistemic_status=duration_epistemic_status,
+            frequency_epistemic_status=frequency_epistemic_status,
         )
 
     @classmethod
@@ -76,6 +82,9 @@ class ExplanationService:
         human_verification_status: Optional[str] = None,
         human_verified_value: Optional[str] = None,
         is_service_healthy: bool = True,
+        epistemic_status: Optional[str] = None,
+        duration_epistemic_status: Optional[str] = None,
+        frequency_epistemic_status: Optional[str] = None,
     ) -> Tuple[Any, Any, MultilingualPrescriptionExplanation]:
         """
         Synthesizes the complete triple needed by PrescriptionAnalyzeResponse:
@@ -105,6 +114,9 @@ class ExplanationService:
             human_verification_status=human_verification_status,
             human_verified_value=human_verified_value,
             is_service_healthy=is_service_healthy,
+            epistemic_status=epistemic_status,
+            duration_epistemic_status=duration_epistemic_status,
+            frequency_epistemic_status=frequency_epistemic_status,
         )
 
         en_exp = explanation_obj.explanations["en"]

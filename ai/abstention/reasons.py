@@ -38,6 +38,14 @@ class AbstentionReasonCode(str, Enum):
     # LASA medicine-name conflict reasons (Phase 10)
     LASA_CONFUSION_RISK = "LASA_CONFUSION_RISK"
 
+    # Epistemic and safety bounds reasons
+    MEDICINE_ILLEGIBLE = "MEDICINE_ILLEGIBLE"
+    MEDICINE_AMBIGUOUS = "MEDICINE_AMBIGUOUS"
+    MEDICINE_UNVERIFIED = "MEDICINE_UNVERIFIED"
+    DOSAGE_OUT_OF_BOUNDS = "DOSAGE_OUT_OF_BOUNDS"
+    DECIMAL_BLUR_HAZARD = "DECIMAL_BLUR_HAZARD"
+    HIGH_ALERT_LASA_UNRESOLVED = "HIGH_ALERT_LASA_UNRESOLVED"
+
     # Pipeline & system reasons
     PROCESSING_UNCERTAIN = "PROCESSING_UNCERTAIN"
     DOCUMENT_NOT_PRESCRIPTION = "DOCUMENT_NOT_PRESCRIPTION"
@@ -98,6 +106,30 @@ REASON_DESCRIPTIONS: Dict[AbstentionReasonCode, str] = {
     ),
     AbstentionReasonCode.NO_PRESCRIPTION_CONTENT_OBSERVED: (
         "Zero valid medication posology line items were visually identified on the submitted document."
+    ),
+    AbstentionReasonCode.MEDICINE_ILLEGIBLE: (
+        "Prescribed medicine name contains illegible ink strokes, characters that cannot be read reliably, or '[?]'. "
+        "Autonomous acceptance is withheld; human pharmacist verification is mandated."
+    ),
+    AbstentionReasonCode.MEDICINE_AMBIGUOUS: (
+        "Prescribed medicine exhibits multiple competing interpretations or ambiguous cursive stroke formations. "
+        "Autonomous acceptance is withheld; human pharmacist verification is mandated."
+    ),
+    AbstentionReasonCode.MEDICINE_UNVERIFIED: (
+        "Prescribed drug entity is legible but not corroborated in reference formularies (CDSCO/RxNorm). "
+        "Autonomous acceptance is withheld; human pharmacist verification is mandated."
+    ),
+    AbstentionReasonCode.DOSAGE_OUT_OF_BOUNDS: (
+        "Prescribed dosage strength exceeds safe clinical bounds (e.g. 10x overdose hazard or unit mismatch). "
+        "Autonomous acceptance is withheld; urgent pharmacist verification is mandated."
+    ),
+    AbstentionReasonCode.DECIMAL_BLUR_HAZARD: (
+        "Prescribed dosage contains a decimal point on a degraded or blurry image (e.g. 0.5 vs 5 vs 50 hazard). "
+        "Autonomous acceptance is withheld; human pharmacist verification is mandated."
+    ),
+    AbstentionReasonCode.HIGH_ALERT_LASA_UNRESOLVED: (
+        "High-alert look-alike / sound-alike (LASA) medicine pair detected without disambiguating formulation or strength evidence. "
+        "Autonomous acceptance is withheld; human pharmacist verification is mandated."
     ),
 }
 

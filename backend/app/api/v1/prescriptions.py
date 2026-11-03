@@ -28,22 +28,72 @@ from ...fixtures.mock_fixtures import (
     get_lasa_fixture,
     get_abstained_fixture,
 )
-from ...core.security import check_rate_limit
+from ...core.security import check_rate_limit, read_upload_file_chunked
 
 router = APIRouter(prefix="/prescriptions", tags=["Prescriptions"])
+
+import threading
+from collections import OrderedDict
 
 # Service dependency singletons
 _storage_service = StorageService()
 _mock_pipeline = MockPrescriptionPipeline()
 _multimodal_pipeline = None
-_prescription_store: Dict[str, PrescriptionAnalyzeResponse] = {}
+
+
+class BoundedPrescriptionStore:
+    """Thread-safe bounded in-memory store enforcing LRU eviction to prevent memory leakage and unbounded retention."""
+    def __init__(self, max_entries: int = 250):
+        self.max_entries = max_entries
+        self._store: OrderedDict[str, PrescriptionAnalyzeResponse] = OrderedDict()
+        self._lock = threading.Lock()
+
+    def __setitem__(self, key: str, value: PrescriptionAnalyzeResponse):
+        with self._lock:
+            if key in self._store:
+                self._store.move_to_end(key)
+            self._store[key] = value
+            if len(self._store) > self.max_entries:
+                self._store.popitem(last=False)
+
+    def __getitem__(self, key: str) -> PrescriptionAnalyzeResponse:
+        with self._lock:
+            val = self._store[key]
+            self._store.move_to_end(key)
+            return val
+
+    def get(self, key: str, default: Optional[PrescriptionAnalyzeResponse] = None) -> Optional[PrescriptionAnalyzeResponse]:
+        with self._lock:
+            if key in self._store:
+                self._store.move_to_end(key)
+                return self._store[key]
+            return default
+
+    def __contains__(self, key: str) -> bool:
+        with self._lock:
+            return key in self._store
+
+    def __len__(self) -> int:
+        with self._lock:
+            return len(self._store)
+
+
+_prescription_store = BoundedPrescriptionStore(max_entries=250)
 
 
 
 def get_pipeline(settings: Settings = Depends(get_settings)) -> IPrescriptionPipeline:
     """Dependency injector returning the active processing pipeline."""
     global _multimodal_pipeline
-    if not settings.USE_MOCK_PIPELINE:
+    import os
+    env_str = (settings.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+    is_live = getattr(settings, "is_live_mode", False) or not settings.USE_MOCK_PIPELINE
+    if env_str == "production" and not is_live:
+        raise HTTPException(
+            status_code=500,
+            detail="Mock pipeline is strictly forbidden in production environment.",
+        )
+    if is_live:
         if _multimodal_pipeline is None or getattr(_multimodal_pipeline, "settings", None) != settings:
             from ...services.multimodal_pipeline import MultimodalPrescriptionPipeline
             _multimodal_pipeline = MultimodalPrescriptionPipeline(settings=settings)
@@ -94,7 +144,16 @@ async def analyze_prescription(
     target_language: Optional[str] = Form("en", description="Target regional language ('en', 'hi', 'mr') for patient explanation"),
     mock_scenario: Optional[str] = Form(None, description="Evaluation scenario override: confident, uncertain, lasa_warning, abstained, validation_error, server_error, timeout"),
     pipeline: IPrescriptionPipeline = Depends(get_pipeline),
+    settings: Settings = Depends(get_settings),
 ) -> PrescriptionAnalyzeResponse:
+    import os
+    env_str = (settings.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+    if env_str == "production" and mock_scenario:
+        raise HTTPException(
+            status_code=400,
+            detail="Mock scenario override is strictly forbidden in production environment.",
+        )
+
     # 1. Validate that at least one input source is supplied
     if not file and not sample_id:
         raise HTTPException(
@@ -104,20 +163,26 @@ async def analyze_prescription(
 
     file_bytes: Optional[bytes] = None
     filename: Optional[str] = None
+    saved_path = None
     public_image_url: str = "/uploads/samples/sample-standard.svg"
 
     # 2. Process physical file upload if provided
     if file:
         filename = file.filename or "prescription.png"
         try:
-            file_bytes = await file.read()
+            file_bytes = await read_upload_file_chunked(
+                upload_file=file,
+                max_bytes=settings.MAX_UPLOAD_SIZE_BYTES,
+            )
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(
                 status_code=400,
                 detail=f"Unable to read incoming file stream: {str(e)}",
             )
 
-        # Pre-flight validation (File size, MIME type & binary magic byte signature)
+        # Pre-flight validation (File size, MIME type, traversal check & binary magic byte signature)
         try:
             _storage_service.validate_file_metadata(
                 filename=filename,
@@ -134,8 +199,8 @@ async def analyze_prescription(
                 detail=fve.message,
             )
 
-        # Store original image file (preserves original statutory reference)
-        _, public_image_url = _storage_service.save_prescription_image(
+        # Store original image file (preserves original statutory reference during processing)
+        saved_path, public_image_url = _storage_service.save_prescription_image(
             file_bytes=file_bytes,
             original_filename=filename,
         )
@@ -160,7 +225,9 @@ async def analyze_prescription(
         sample_id=sample_id,
     )
 
-    # 4. Execute the pipeline
+    # 4. Execute the pipeline with guaranteed ephemeral zero-retention cleanup
+    response = None
+    active_rx_id = None
     try:
         response = await pipeline.process_prescription(
             image_bytes=file_bytes,
@@ -175,7 +242,16 @@ async def analyze_prescription(
         return response
     except PipelineProcessingError as ppe:
         # Domain errors convert to uniform ErrorResponse
+        active_rx_id = getattr(ppe, "prescription_id", None)
         raise ppe
+    finally:
+        # Ephemeral Zero-Retention Cleanup: purge uploaded original image and derived artifacts immediately
+        if settings.RETENTION_TTL_SECONDS <= 0:
+            if saved_path:
+                _storage_service.delete_prescription_image(saved_path)
+            rx_id_to_clean = getattr(response, "prescription_id", None) or active_rx_id
+            if rx_id_to_clean:
+                _storage_service.cleanup_preprocessed_artifacts(rx_id_to_clean)
 
 
 @router.post(
@@ -193,7 +269,9 @@ async def analyze_prescription(
 async def verify_prescription(
     request: PharmacistVerificationRequest,
     prescription_id: Optional[str] = None,
+    settings: Settings = Depends(get_settings),
 ) -> PrescriptionAnalyzeResponse:
+    import os
     from ai.rag import get_medicine_validation_service
     from ai.lasa import get_lasa_detection_service
     from ai.abstention.service import get_abstention_service
@@ -221,6 +299,12 @@ async def verify_prescription(
 
     base_record = _prescription_store.get(norm_id) or _prescription_store.get(target_id)
     if not base_record:
+        env_str = (settings.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+        if env_str == "production":
+            raise HTTPException(
+                status_code=404,
+                detail=f"Prescription with ID '{target_id}' was not found.",
+            )
         if norm_id in ("DEMO-RX-01", "RX-SAMPLE-1"):
             base_record = get_confident_fixture(prescription_id=norm_id)
         elif norm_id in ("DEMO-RX-02", "RX-SAMPLE-2-UNCERTAIN"):
@@ -436,7 +520,7 @@ async def verify_prescription(
 
     p_info = (base_record.data.patient_info if (base_record and base_record.data) else PatientInfo(name="Verified Patient", age_gender="Adult"))
     d_info = (base_record.data.prescriber_info if (base_record and base_record.data) else PrescriberInfo(name=f"Verified by Pharmacist {request.reviewer_id}", clinic_hospital="Clinical Verification Unit"))
-    pub_url = (base_record.data.original_image_url if (base_record and base_record.data) else "/uploads/samples/sample-standard.svg")
+    pub_url = (base_record.original_image_url if base_record else "/uploads/samples/sample-standard.svg")
 
     # Build validation dictionary conforming to Section 6
     validation_dict = {}
@@ -489,6 +573,11 @@ async def verify_prescription(
         posology_explanation=exp_posology,
     )
 
+    v_mode = getattr(base_record, "inference_mode", None) or ("mock" if getattr(settings, "USE_MOCK_PIPELINE", False) else "live")
+    v_provider = getattr(base_record, "model_provider", None) or ("mock" if v_mode == "mock" else "gemini")
+    v_name = getattr(base_record, "model_name", None) or ("mock-prescription-v1" if v_mode == "mock" else "gemini-3.5-flash-lite")
+    v_ocr = getattr(base_record, "ocr_engine", None)
+
     verified_response = PrescriptionAnalyzeResponse(
         prescription_id=norm_id,
         original_image_url=pub_url,
@@ -501,6 +590,10 @@ async def verify_prescription(
         confidence_score=1.0,
         summary=exp_summary,
         data=data_block,
+        inference_mode=v_mode,
+        model_provider=v_provider,
+        model_name=v_name,
+        ocr_engine=v_ocr,
         document_telemetry=DocumentTelemetry(
             estimated_dpi=300,
             contrast_ratio=18.5,
@@ -514,6 +607,10 @@ async def verify_prescription(
             processing_time_ms=15,
             model_version=f"Pharmacist Reviewer: {request.reviewer_id}",
             pipeline_stages_completed=14,
+            inference_mode=v_mode,
+            model_provider=v_provider,
+            model_name=v_name,
+            ocr_engine=v_ocr,
         ),
         medicines=verified_medicines,
         validation_records=validation_records_list,
@@ -535,6 +632,7 @@ async def verify_prescription(
 )
 async def get_prescription_by_id(
     prescription_id: str,
+    settings: Settings = Depends(get_settings),
 ) -> PrescriptionAnalyzeResponse:
     norm_id = prescription_id.strip().upper()
 
@@ -543,14 +641,17 @@ async def get_prescription_by_id(
     if prescription_id in _prescription_store:
         return _prescription_store[prescription_id]
 
-    if norm_id in ("DEMO-RX-01", "RX-SAMPLE-1"):
-        return get_confident_fixture(prescription_id=norm_id)
-    elif norm_id in ("DEMO-RX-02", "RX-SAMPLE-2-UNCERTAIN"):
-        return get_uncertain_fixture(prescription_id=norm_id)
-    elif norm_id in ("DEMO-RX-04", "RX-SAMPLE-2", "DEMO-RX-LASA"):
-        return get_lasa_fixture(prescription_id=norm_id)
-    elif norm_id in ("DEMO-RX-05", "RX-SAMPLE-3", "DEMO-RX-ABSTAIN"):
-        return get_abstained_fixture(prescription_id=norm_id)
+    import os
+    env_str = (settings.ENV or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower().strip()
+    if env_str != "production":
+        if norm_id in ("DEMO-RX-01", "RX-SAMPLE-1"):
+            return get_confident_fixture(prescription_id=norm_id)
+        elif norm_id in ("DEMO-RX-02", "RX-SAMPLE-2-UNCERTAIN"):
+            return get_uncertain_fixture(prescription_id=norm_id)
+        elif norm_id in ("DEMO-RX-04", "RX-SAMPLE-2", "DEMO-RX-LASA"):
+            return get_lasa_fixture(prescription_id=norm_id)
+        elif norm_id in ("DEMO-RX-05", "RX-SAMPLE-3", "DEMO-RX-ABSTAIN"):
+            return get_abstained_fixture(prescription_id=norm_id)
 
     raise HTTPException(
         status_code=404,

@@ -29,6 +29,8 @@ from ai.lasa.similarity import (
     combined_similarity,
     lookup_tall_man_pair,
     extract_base_stem,
+    compare_strengths,
+    compare_forms,
 )
 
 
@@ -74,16 +76,21 @@ def screen_medicine(
     candidate_name: str,
     item_index: int,
     reference_records: Optional[List[MedicineReferenceRecord]],
+    prescribed_strength: Optional[str] = None,
+    prescribed_dosage_form: Optional[str] = None,
     config: Optional[LasaConfig] = None,
 ) -> MedicineLasaResult:
     """
     Screens a single extracted medicine name against the reference pool
-    for look-alike / sound-alike conflicts.
+    for look-alike / sound-alike conflicts, taking into account prescribed
+    strength and dosage form.
 
     Args:
         candidate_name: Extracted medicine name from Phase 6
         item_index: 1-based medication line item index
         reference_records: All reference medicine records from the RAG index
+        prescribed_strength: Visually observed dosage strength (e.g., '400 mg')
+        prescribed_dosage_form: Visually observed dosage form (e.g., 'Tablet')
         config: LASA detection configuration (uses default if None)
 
     Returns:
@@ -96,6 +103,8 @@ def screen_medicine(
         return MedicineLasaResult(
             item_index=item_index,
             prescribed_candidate=candidate_name or "",
+            prescribed_strength=prescribed_strength,
+            prescribed_dosage_form=prescribed_dosage_form,
             normalized_candidate=norm_candidate or "",
             status="unavailable",
             has_lasa_conflict=None,
@@ -109,6 +118,8 @@ def screen_medicine(
         return MedicineLasaResult(
             item_index=item_index,
             prescribed_candidate=candidate_name or "",
+            prescribed_strength=prescribed_strength,
+            prescribed_dosage_form=prescribed_dosage_form,
             normalized_candidate="",
             status="completed",
             has_lasa_conflict=False,
@@ -122,6 +133,23 @@ def screen_medicine(
     # Build a set of already-compared normalized names to avoid duplicates
     compared_names: set = set()
     stem_candidate = extract_base_stem(norm_candidate)
+
+    # Gather known strengths and forms for the candidate from reference data
+    candidate_known_strengths: Set[str] = set()
+    candidate_known_forms: Set[str] = set()
+    for r in reference_records:
+        r_names = [r.medicine_name]
+        if r.brand_name:
+            r_names.append(r.brand_name)
+        r_names.extend(r.aliases)
+        for r_name in r_names:
+            rn = normalize_medicine_name(r_name)
+            rs = extract_base_stem(rn)
+            if rn == norm_candidate or (stem_candidate and rs == stem_candidate):
+                if r.strength:
+                    candidate_known_strengths.add(r.strength)
+                if r.dosage_form:
+                    candidate_known_forms.add(r.dosage_form)
 
     # ------------------------------------------------------------------
     # Pass 1: Screen against all reference records in the RAG index
@@ -181,10 +209,47 @@ def screen_medicine(
             if not meets_threshold and not is_known:
                 continue
 
+            # Evaluate strength- and form-aware context
+            ref_strength = ref.strength
+            ref_dosage_form = ref.dosage_form
+            matches_conf_str = False
+            matches_conf_form = False
+            str_warning = None
+            form_warning = None
+
+            if prescribed_strength and ref_strength:
+                if compare_strengths(prescribed_strength, ref_strength):
+                    matches_conf_str = True
+                    cand_has_str = any(compare_strengths(prescribed_strength, cs) for cs in candidate_known_strengths)
+                    if not cand_has_str and candidate_known_strengths:
+                        str_warning = (
+                            f"Prescribed strength '{prescribed_strength}' matches confusable counterpart '{variant_name}' ({ref_strength}) "
+                            f"rather than candidate '{candidate_name}' approved formulations ({', '.join(sorted(candidate_known_strengths))})."
+                        )
+                    else:
+                        str_warning = f"Prescribed strength '{prescribed_strength}' matches confusable counterpart '{variant_name}' ({ref_strength})."
+
+            if prescribed_dosage_form and ref_dosage_form:
+                if compare_forms(prescribed_dosage_form, ref_dosage_form):
+                    matches_conf_form = True
+                    cand_has_form = any(compare_forms(prescribed_dosage_form, cf) for cf in candidate_known_forms)
+                    if not cand_has_form and candidate_known_forms:
+                        form_warning = (
+                            f"Prescribed dosage form '{prescribed_dosage_form}' matches confusable counterpart '{variant_name}' ({ref_dosage_form}) "
+                            f"rather than candidate '{candidate_name}' formulation."
+                        )
+                    else:
+                        form_warning = f"Prescribed dosage form '{prescribed_dosage_form}' matches confusable counterpart '{variant_name}' ({ref_dosage_form})."
+
             # Classify risk (similarity conflict severity)
             risk = _classify_risk(combo, cfg)
             if is_known:
                 risk = _max_risk(risk, cfg.known_pair_risk_override)  # type: ignore
+            # Escalate risk if prescribed strength or form matches the confusable counterpart
+            if matches_conf_str:
+                risk = _max_risk(risk, "high")
+            elif matches_conf_form:
+                risk = _max_risk(risk, "medium")
 
             sim_type = _determine_similarity_type(ortho, phon, is_known, cfg)
 
@@ -200,6 +265,10 @@ def screen_medicine(
             )
             if meta_match:
                 context_parts.append("Primary phonetic codes are identical (metaphone match).")
+            if str_warning:
+                context_parts.append(f"STRENGTH HAZARD: {str_warning}")
+            if form_warning:
+                context_parts.append(f"FORM HAZARD: {form_warning}")
             context_parts.append(
                 "Potential medicine-name similarity conflict flagged for verification. "
                 "This is an application safety-review state indicating that a potential medicine-name "
@@ -211,6 +280,14 @@ def screen_medicine(
                 confusable_name=variant_name,
                 confusable_reference_id=ref.reference_id,
                 confusable_generic_name=ref.generic_name,
+                prescribed_strength=prescribed_strength,
+                prescribed_form=prescribed_dosage_form,
+                confusable_strength=ref_strength,
+                confusable_form=ref_dosage_form,
+                matches_confusable_strength=matches_conf_str if prescribed_strength else None,
+                matches_confusable_form=matches_conf_form if prescribed_dosage_form else None,
+                strength_context_warning=str_warning,
+                form_context_warning=form_warning,
                 orthographic_score=round(ortho, 4),
                 phonetic_score=round(phon, 4),
                 combined_score=round(combo, 4),
@@ -261,6 +338,14 @@ def screen_medicine(
                 confusable_name=counterpart_name.title(),
                 confusable_reference_id=None,
                 confusable_generic_name=None,
+                prescribed_strength=prescribed_strength,
+                prescribed_form=prescribed_dosage_form,
+                confusable_strength=None,
+                confusable_form=None,
+                matches_confusable_strength=None,
+                matches_confusable_form=None,
+                strength_context_warning=None,
+                form_context_warning=None,
                 orthographic_score=round(ortho, 4),
                 phonetic_score=round(phon, 4),
                 combined_score=round(combo, 4),
@@ -295,6 +380,8 @@ def screen_medicine(
     return MedicineLasaResult(
         item_index=item_index,
         prescribed_candidate=candidate_name,
+        prescribed_strength=prescribed_strength,
+        prescribed_dosage_form=prescribed_dosage_form,
         normalized_candidate=norm_candidate,
         status="completed",
         has_lasa_conflict=has_conflict,
@@ -310,6 +397,8 @@ def detect_prescription_lasa(
     prescription_id: str,
     medicine_names: List[str],
     reference_records: Optional[List[MedicineReferenceRecord]],
+    strengths: Optional[List[Optional[str]]] = None,
+    dosage_forms: Optional[List[Optional[str]]] = None,
     config: Optional[LasaConfig] = None,
 ) -> PrescriptionLasaDetection:
     """
@@ -319,6 +408,8 @@ def detect_prescription_lasa(
         prescription_id: Unique prescription identifier
         medicine_names: List of extracted medicine names from Phase 6
         reference_records: All reference records from the RAG index
+        strengths: Optional parallel list of prescribed dosage strengths
+        dosage_forms: Optional parallel list of prescribed dosage forms
         config: LASA configuration (uses default if None)
 
     Returns:
@@ -360,10 +451,14 @@ def detect_prescription_lasa(
         conflict_count = 0
 
         for idx, med_name in enumerate(medicine_names, start=1):
+            med_strength = strengths[idx - 1] if strengths and idx - 1 < len(strengths) else None
+            med_form = dosage_forms[idx - 1] if dosage_forms and idx - 1 < len(dosage_forms) else None
             result = screen_medicine(
                 candidate_name=med_name,
                 item_index=idx,
                 reference_records=reference_records,
+                prescribed_strength=med_strength,
+                prescribed_dosage_form=med_form,
                 config=cfg,
             )
             medicines.append(result)

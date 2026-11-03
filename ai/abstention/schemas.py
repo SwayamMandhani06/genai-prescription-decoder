@@ -14,6 +14,7 @@ DecisionState = Literal["accepted", "abstained"]
 PrescriptionDecisionState = Literal["ACCEPTED", "REQUIRES_HUMAN_VERIFICATION", "READY_FOR_REVIEW"]
 VerificationStatus = Literal["pending", "confirmed", "corrected", "unreadable"]
 VerifierActionType = Literal["confirm", "correct", "mark_unreadable"]
+FieldEpistemicStatus = Literal["EXTRACTED", "MISSING_ON_RX", "ILLEGIBLE", "AMBIGUOUS", "UNVERIFIED"]
 
 
 class FieldConfidenceMetadata(BaseModel):
@@ -49,6 +50,11 @@ class FieldAbstentionDecision(BaseModel):
     original_value: Optional[str] = Field(None, description="Extracted text from visual prescription (immutable)")
     decision: DecisionState = Field(..., description="'accepted' if evidence is sufficient; 'abstained' if uncertain")
     requires_human_verification: bool = Field(..., description="True if clinician/pharmacist verification is mandated")
+    requires_pharmacist_verification: bool = Field(False, description="True if pharmacist verification is mandated")
+    epistemic_status: Optional[FieldEpistemicStatus] = Field(
+        "EXTRACTED",
+        description="Explicit epistemic status: EXTRACTED, MISSING_ON_RX, ILLEGIBLE, AMBIGUOUS, UNVERIFIED",
+    )
     reason_codes: List[str] = Field(default_factory=list, description="Standardized machine-readable reason codes")
     reasons_detail: List[str] = Field(default_factory=list, description="Human-readable clinical rationale for decision")
     confidence: FieldConfidenceMetadata = Field(..., description="Underlying confidence state")
@@ -75,6 +81,11 @@ class MedicineAbstentionDecision(BaseModel):
     medicine_name: str = Field(..., description="Candidate or extracted medicine name")
     decision: DecisionState = Field(..., description="Line-item decision ('accepted' or 'abstained')")
     requires_human_verification: bool = Field(..., description="True if any field in this line item requires verification")
+    requires_pharmacist_verification: bool = Field(False, description="True if pharmacist verification is mandated")
+    epistemic_status: Optional[FieldEpistemicStatus] = Field(
+        None,
+        description="Line-item composite epistemic status",
+    )
     fields: Dict[str, FieldAbstentionDecision] = Field(..., description="Field-level decisions for this medicine")
     abstained_fields_count: int = Field(0, description="Count of abstained fields in this medication")
     total_fields_count: int = Field(0, description="Total posology fields evaluated")
@@ -93,6 +104,10 @@ class PrescriptionAbstentionDecision(BaseModel):
     requires_human_verification: bool = Field(
         ...,
         description="True if one or more fields trigger an abstention condition"
+    )
+    requires_pharmacist_verification: bool = Field(
+        False,
+        description="True if document mandates pharmacist verification"
     )
     fields: Dict[str, FieldAbstentionDecision] = Field(
         default_factory=dict,

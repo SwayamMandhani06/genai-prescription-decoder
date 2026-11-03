@@ -175,6 +175,18 @@ def normalize_frequency(raw_frequency: Optional[str]) -> NormalizedFrequencyResu
             is_valid=True,
         )
 
+    # Partial match for compound strings (e.g. "BD (Twice daily - Morning, Night)", "1-0-1 after food")
+    for key in sorted(FREQUENCY_PATTERN_MAP.keys(), key=len, reverse=True):
+        if re.search(rf"\b{re.escape(key)}\b", pattern_clean):
+            code, expansion, count = FREQUENCY_PATTERN_MAP[key]
+            return NormalizedFrequencyResult(
+                raw_token=raw_frequency,
+                canonical_code=code,
+                standard_expansion=expansion,
+                daily_count=count,
+                is_valid=True,
+            )
+
     return NormalizedFrequencyResult(
         raw_token=raw_frequency,
         canonical_code=raw_frequency.strip().upper(),

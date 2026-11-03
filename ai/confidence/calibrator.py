@@ -67,10 +67,15 @@ class BaseCalibrator(ABC):
         self,
         raw_score: Optional[float],
         dataset_version: Optional[str] = None,
+        epistemic_status: Optional[str] = None,
+        has_lasa_ambiguity: bool = False,
+        has_illegible_marker: bool = False,
     ) -> CalibratedConfidence:
         """
         Calibrates a raw score, returning a fully typed CalibratedConfidence schema.
         Handles uncalibrated and insufficient data states cleanly.
+        Enforces statutory rule-bounded safety clamp: NEVER returns >= 0.80 if the candidate
+        has UNVERIFIED status, active LASA ambiguity, or an illegible token.
         """
         if raw_score is None:
             return CalibratedConfidence(
@@ -91,6 +96,16 @@ class BaseCalibrator(ABC):
             )
 
         calibrated_val = self.predict_one(raw_score)
+
+        # Safety clamp constraint: Never display high confidence (>= 0.80) on unverified,
+        # LASA-ambiguous, or illegible medication items
+        if (
+            has_lasa_ambiguity
+            or has_illegible_marker
+            or epistemic_status in ("UNVERIFIED", "AMBIGUOUS", "ILLEGIBLE")
+        ):
+            calibrated_val = min(calibrated_val, 0.70)
+
         return CalibratedConfidence(
             value=round(calibrated_val, 4),
             calibration_method=self.method_name,

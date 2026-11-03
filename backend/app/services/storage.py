@@ -7,7 +7,7 @@ Never overwrites, destructively crops, or discards the original uploaded prescri
 import re
 import uuid
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 from ..config import get_settings
 from ..schemas.error import ErrorCode
 
@@ -27,9 +27,25 @@ class StorageService:
 
     def validate_file_metadata(self, filename: str, content_type: Optional[str], size: int) -> None:
         """
-        Validates content type and file size against security and diagnostic policies.
+        Validates content type, file size, and filename safety against security and diagnostic policies.
+        Rejects directory traversal sequences ('..', '/', '\\') to enforce ingress security.
         """
+        # Strictly reject path traversal sequences in original filename
+        if filename and (".." in filename or "/" in filename or "\\" in filename):
+            raise FileValidationError(
+                code=ErrorCode.INVALID_REQUEST,
+                message="Directory traversal sequences ('..', '/', '\\') are strictly forbidden in filenames.",
+                status_code=400,
+            )
+
         # Validate file size
+        if size == 0:
+            raise FileValidationError(
+                code=ErrorCode.INVALID_REQUEST,
+                message="Uploaded file payload is empty (zero bytes). Please provide a valid prescription image scan.",
+                status_code=400,
+            )
+
         if size > self.settings.MAX_UPLOAD_SIZE_BYTES:
             max_mb = self.settings.MAX_UPLOAD_SIZE_BYTES / (1024 * 1024)
             raise FileValidationError(
@@ -98,12 +114,16 @@ class StorageService:
             status_code=415,
         )
 
-    def cleanup_ephemeral_uploads(self, max_age_seconds: int = 7200) -> int:
+    def cleanup_ephemeral_uploads(self, max_age_seconds: Optional[int] = None) -> int:
         """
-        Purges transient prescription uploads older than max_age_seconds (default 2 hours).
+        Purges transient prescription uploads older than max_age_seconds (or all rx_ files if <= 0).
         Guarantees privacy-conscious ephemeral retention and prevents storage exhaustion.
         """
         import time
+        import shutil
+
+        if max_age_seconds is None:
+            max_age_seconds = self.settings.RETENTION_TTL_SECONDS
 
         now = time.time()
         purged = 0
@@ -111,26 +131,78 @@ class StorageService:
             return 0
 
         for item in self.upload_dir.iterdir():
+            # Never purge the static curated evaluation samples directory
+            if item.name == "samples":
+                continue
             if item.is_file() and item.name.startswith("rx_"):
                 try:
-                    if (now - item.stat().st_mtime) > max_age_seconds:
+                    if max_age_seconds <= 0 or (now - item.stat().st_mtime) > max_age_seconds:
                         item.unlink(missing_ok=True)
                         purged += 1
                 except Exception:
                     pass
+            elif item.is_dir() and item.name == "preprocessed":
+                for sub in item.iterdir():
+                    if sub.is_dir():
+                        try:
+                            if max_age_seconds <= 0 or (now - sub.stat().st_mtime) > max_age_seconds:
+                                shutil.rmtree(sub, ignore_errors=True)
+                                purged += 1
+                        except Exception:
+                            pass
         return purged
+
+    def delete_prescription_image(self, file_path_or_name: Union[str, Path]) -> bool:
+        """
+        Safely deletes an uploaded prescription file from disk, enforcing upload_dir containment.
+        Guarantees zero-retention PHI disposal.
+        """
+        try:
+            if isinstance(file_path_or_name, Path):
+                target = file_path_or_name.resolve()
+            else:
+                safe_name = Path(str(file_path_or_name)).name
+                target = (self.upload_dir / safe_name).resolve()
+            upload_dir_resolved = self.upload_dir.resolve()
+            if target.is_file() and target.is_relative_to(upload_dir_resolved):
+                target.unlink(missing_ok=True)
+                return True
+        except Exception:
+            pass
+        return False
+
+    def cleanup_preprocessed_artifacts(self, prescription_id: str) -> None:
+        """Purges ephemeral derived preprocessing artifacts for a specific prescription ID across both public and base runs directories."""
+        import shutil
+        safe_id = Path(str(prescription_id)).name
+        preproc_dir = self.upload_dir / "preprocessed" / safe_id
+        try:
+            if preproc_dir.exists() and preproc_dir.is_dir():
+                shutil.rmtree(preproc_dir, ignore_errors=True)
+        except Exception:
+            pass
+        base_runs_dir = Path("data/processed/preprocessing_runs") / safe_id
+        try:
+            if base_runs_dir.exists() and base_runs_dir.is_dir():
+                shutil.rmtree(base_runs_dir, ignore_errors=True)
+        except Exception:
+            pass
 
     def save_prescription_image(self, file_bytes: bytes, original_filename: str) -> Tuple[Path, str]:
         """
-        Saves uploaded prescription bytes with an immutable, cryptographically safe filename.
+        Saves uploaded prescription bytes with an immutable, cryptographically safe UUIDv4 filename.
+        Strictly ignores user-supplied filename stems to prevent directory traversal and injection.
         Strips sensitive EXIF tags (GPS, camera serials, timestamps) to preserve privacy (MED-02 / DPDP Act).
         Returns:
             (saved_path, public_url)
         """
-        clean_name = re.sub(r"[^a-zA-Z0-9_.-]", "_", original_filename or "prescription.png")
-        ext = Path(clean_name).suffix or ".png"
-        unique_id = uuid.uuid4().hex[:12]
-        saved_filename = f"rx_{unique_id}_{Path(clean_name).stem}{ext}"
+        raw_ext = Path(original_filename or "").suffix.lower()
+        valid_extensions = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp", ".svg"}
+        ext = raw_ext if raw_ext in valid_extensions else ".png"
+
+        # Strict UUIDv4 filename generation: user-supplied filenames are NEVER included in filesystem paths
+        unique_uuid = uuid.uuid4().hex
+        saved_filename = f"rx_{unique_uuid}{ext}"
         saved_path = self.upload_dir / saved_filename
 
         # Privacy preservation: Strip EXIF metadata from raster images before saving
@@ -153,9 +225,10 @@ class StorageService:
         with open(saved_path, "wb") as f:
             f.write(sanitized_bytes)
 
-        # Trigger cleanup of ephemeral files older than 1 hour to prevent disk bloat
+        # Trigger cleanup of ephemeral files if retention TTL is exceeded
         try:
-            self.cleanup_ephemeral_uploads(max_age_seconds=3600)
+            if self.settings.RETENTION_TTL_SECONDS > 0:
+                self.cleanup_ephemeral_uploads(max_age_seconds=self.settings.RETENTION_TTL_SECONDS)
         except Exception:
             pass
 
@@ -163,11 +236,14 @@ class StorageService:
         public_url = f"/uploads/{saved_filename}"
         return saved_path, public_url
 
-
     def get_prescription_image_path(self, filename: str) -> Optional[Path]:
-        """Safely locates a prescription image by filename, preventing directory traversal."""
+        """Safely locates a prescription image by filename, strictly preventing directory traversal."""
         safe_name = Path(filename).name
-        target = self.upload_dir / safe_name
-        if target.is_file():
-            return target
+        try:
+            target = (self.upload_dir / safe_name).resolve()
+            upload_dir_resolved = self.upload_dir.resolve()
+            if target.is_file() and target.is_relative_to(upload_dir_resolved):
+                return target
+        except Exception:
+            return None
         return None

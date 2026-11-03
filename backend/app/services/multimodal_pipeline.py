@@ -6,6 +6,7 @@ Ensures the original prescription image is preserved as primary visual evidence 
 providing full multi-medicine, field uncertainty, and visual grounding support.
 """
 
+import asyncio
 import logging
 import time
 import uuid
@@ -72,22 +73,28 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 pass
 
         self.config = config or MultimodalConfig()
+        is_live = False
+        if self.settings:
+            is_live = getattr(self.settings, "is_live_mode", False) or not getattr(self.settings, "USE_MOCK_PIPELINE", True)
+
         if service is not None:
             self.service = service
-        elif self.config.provider == "gemini":
+        elif is_live:
             self.service = MultimodalExtractionService(
                 adapter=GeminiMultimodalAdapter(config=self.config, settings=self.settings),
                 config=self.config,
             )
-        elif self.settings and not getattr(self.settings, "USE_MOCK_PIPELINE", True):
-            raise PipelineProcessingError(
-                code=ErrorCode.MODEL_UNAVAILABLE,
-                message="Mock adapter fallback is forbidden when USE_MOCK_PIPELINE is False.",
-                stage="multimodal_pipeline_initialization",
-                status_code=503,
-                retryable=False,
-            )
         else:
+            import os
+            env_val = (getattr(self.settings, "ENV", None) or os.environ.get("ENV") or os.environ.get("ENVIRONMENT") or "").lower()
+            if env_val == "production":
+                raise PipelineProcessingError(
+                    code=ErrorCode.PROCESSING_FAILED,
+                    message="Mock multimodal adapter execution is strictly forbidden in production environment.",
+                    stage="multimodal_pipeline_initialization",
+                    status_code=500,
+                    retryable=False,
+                )
             self.service = MultimodalExtractionService(
                 adapter=MockMultimodalModelAdapter(),
                 config=self.config,
@@ -195,9 +202,12 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     image_bytes = p.read_bytes()
                     filename = p.name
 
+        effective_mime = "image/jpeg"
         if image_bytes and len(image_bytes) > 0 and image_bytes != b"dummy" and image_bytes != b"VALID_IMAGE_MOCK_STREAM":
             try:
-                res, manifest, derived_url = self.preprocessing_service.process_and_store(
+                # Offload CPU-heavy image preprocessing to worker thread to avoid blocking FastAPI event loop
+                res, manifest, derived_url = await asyncio.to_thread(
+                    self.preprocessing_service.process_and_store,
                     image_bytes=image_bytes,
                     filename=filename,
                     prescription_id=prescription_id,
@@ -211,6 +221,14 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     _buf = _io.BytesIO()
                     res.primary_processed_image.save(_buf, format="PNG")
                     preprocessed_bytes = _buf.getvalue()
+
+                # Pass VLM-optimized high-resolution RGB image preserving continuous stroke gradients and decimal points
+                if "vlm_image" in res.derived_images:
+                    import io as _io
+                    _vbuf = _io.BytesIO()
+                    res.derived_images["vlm_image"].save(_vbuf, format="PNG")
+                    image_bytes = _vbuf.getvalue()
+                    effective_mime = "image/png"
             except ImageValidationError as ive:
                 raise PipelineProcessingError(
                     code=ive.code,
@@ -226,7 +244,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
 
         # ------------------------------------------------------------------
         # 3. Phase 6 Multimodal Vision-Language Extraction
-        # Ingests untouched original prescription image as primary visual evidence
+        # Ingests VLM-optimized image preserving continuous stroke gradients
         # ------------------------------------------------------------------
         t_inf_start = time.perf_counter()
         effective_bytes = image_bytes if (image_bytes and len(image_bytes) >= 10) else b"VALID_IMAGE_MOCK_STREAM"
@@ -235,7 +253,7 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             image_bytes=effective_bytes,
             prescription_id=prescription_id,
             original_image_url=public_image_url,
-            mime_type="image/jpeg",
+            mime_type=effective_mime,
             preprocessed_bytes=preprocessed_bytes,
             preprocessed_image_url=processed_image_url,
             scenario=scenario,
@@ -276,10 +294,13 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         fields_dict: Dict[str, FieldExtractionItem] = {}
         for key, field in extraction_result.fields.items():
             conf_val = 0.95 if field.status == "confident" else (0.65 if field.status == "uncertain" else 0.40)
+            ep_stat = getattr(field, "epistemic_status", None) or ("MISSING_ON_RX" if not field.value else "EXTRACTED")
             fields_dict[key] = FieldExtractionItem(
                 value=field.value or "Not Observed / Absent",
                 confidence=conf_val,
                 status=field.status,
+                epistemic_status=ep_stat,
+                requires_pharmacist_verification=getattr(field, "requires_pharmacist_verification", None),
                 candidates=field.candidates,
                 explanation=field.explanation or "Visually observed handwriting feature",
                 uncertainty_reason=field.uncertainty_reason,
@@ -318,6 +339,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     else (0.95 if f_obj.status == "confident" else 0.65)
                 )
 
+                ent_ep_stat = getattr(f_obj, "epistemic_status", None) or ("MISSING_ON_RX" if not f_obj.value else "EXTRACTED")
+
                 ui_entities.append(
                     ExtractedEntity(
                         field_key=f_key,  # type: ignore
@@ -326,6 +349,8 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                         normalized_value=f_obj.value or "Not Observed",
                         confidence=conf_score,
                         status=f_obj.status,  # type: ignore
+                        epistemic_status=ent_ep_stat,
+                        requires_pharmacist_verification=getattr(f_obj, "requires_pharmacist_verification", None),
                         stroke_source="Original Prescription Visual Evidence",
                         bounding_box=ui_box,
                         explanation=f_obj.explanation or f"Multimodal extraction of {f_label}",
@@ -465,14 +490,26 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
         # It does NOT decide abstention or confirm/reject medicines; it passes evidence to Phase 9.
         from ai.lasa.service import get_lasa_detection_service
         lasa_service = get_lasa_detection_service()
-        medicine_names_for_lasa = [
-            med.medicine_name.value or ""
-            for med in extraction_result.medicines
-            if med.medicine_name.value
-        ]
+        medicine_names_for_lasa = []
+        strengths_for_lasa = []
+        dosage_forms_for_lasa = []
+        for med in extraction_result.medicines:
+            if med.medicine_name.value:
+                medicine_names_for_lasa.append(med.medicine_name.value)
+                # Extract strength and dosage form (may be str or ExtractedField)
+                raw_str = getattr(med, "strength", None)
+                str_val = raw_str.value if hasattr(raw_str, "value") else (raw_str if isinstance(raw_str, str) else None)
+                strengths_for_lasa.append(str_val)
+
+                raw_df = getattr(med, "dosage_form", None) or getattr(med, "formulation", None)
+                df_val = raw_df.value if hasattr(raw_df, "value") else (raw_df if isinstance(raw_df, str) else None)
+                dosage_forms_for_lasa.append(df_val)
+
         lasa_result = lasa_service.detect_prescription(
             prescription_id=prescription_id,
             medicine_names=medicine_names_for_lasa,
+            strengths=strengths_for_lasa,
+            dosage_forms=dosage_forms_for_lasa,
         )
         t_lasa_ms = (time.perf_counter() - t_lasa_start) * 1000.0
 
@@ -500,6 +537,16 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                 f_item.abstention_decision = f_dec.decision
                 f_item.abstention_reasons = f_dec.reason_codes
                 f_item.requires_human_verification = f_dec.requires_human_verification
+                f_item.requires_pharmacist_verification = f_dec.requires_pharmacist_verification
+                if f_dec.epistemic_status:
+                    f_item.epistemic_status = f_dec.epistemic_status
+
+        for ent in ui_entities:
+            f_dec = abstention_decision.fields.get(ent.field_key)
+            if f_dec:
+                ent.requires_pharmacist_verification = f_dec.requires_pharmacist_verification
+                if f_dec.epistemic_status:
+                    ent.epistemic_status = f_dec.epistemic_status
 
         # Ensure human verification state is initialized for traceability
         abstention_service.get_or_create_verification_state(
@@ -665,6 +712,10 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             or candidate_status_val == "uncertain"
         )
 
+        med_ep_status = getattr(primary_med.medicine_name, "epistemic_status", None) if primary_med else None
+        freq_ep_status = getattr(primary_med.frequency, "epistemic_status", None) if primary_med else None
+        dur_ep_status = getattr(primary_med.duration, "epistemic_status", None) if primary_med else None
+
         exp_summary, exp_posology, exp_full = get_explanation_service().generate_prescription_bundle(
             prescription_id=prescription_id,
             medicine_name=primary_med_name,
@@ -678,6 +729,9 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             has_lasa_conflict=has_lasa_conflict_flag,
             confusable_counterpart=confusable_name,
             is_service_healthy=True,
+            epistemic_status=med_ep_status,
+            duration_epistemic_status=dur_ep_status,
+            frequency_epistemic_status=freq_ep_status,
         )
         t_explanation_ms = (time.perf_counter() - t_exp_start) * 1000.0
         t_total_ms = (time.perf_counter() - t_pipeline_start) * 1000.0
@@ -762,6 +816,10 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             posology_explanation=exp_posology,
         )
 
+        mode_val = "mock" if extraction_result.model.is_mock else "live"
+        m_provider = extraction_result.model.provider
+        m_name = extraction_result.model.model_id
+
         response = PrescriptionAnalyzeResponse(
             prescription_id=prescription_id,
             original_image_url=public_image_url,
@@ -770,13 +828,21 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
             validation=validation_dict,
             explanation=exp_summary,
             requires_human_review=effective_human_review,
-            status="abstain" if overall_status_str == "NEEDS_VERIFICATION" and scenario in ("abstained", "flagged") else "success",
+            status="abstain" if overall_status_str in ("NEEDS_VERIFICATION", "ABSTAINED") and scenario in ("abstained", "flagged", "abstention_ambiguity") else "success",
+            inference_mode=mode_val,
+            model_provider=m_provider,
+            model_name=m_name,
+            ocr_engine=None,
             meta=PrescriptionMetadata(
                 request_id=f"REQ-{uuid.uuid4().hex[:12].upper()}",
                 timestamp=extraction_result.created_at,
                 processing_time_ms=int(t_total_ms),
                 model_version=f"{extraction_result.model.provider}:{extraction_result.model.model_id}",
                 pipeline_stages_completed=11,
+                inference_mode=mode_val,
+                model_provider=m_provider,
+                model_name=m_name,
+                ocr_engine=None,
             ),
             document_telemetry=DocumentTelemetry(
                 estimated_dpi=200,
