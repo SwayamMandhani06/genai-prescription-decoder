@@ -160,7 +160,7 @@ export const AnalyzeStep: React.FC<AnalyzeStepProps> = ({
           setErrorState({
             title: 'Prescription Analysis Timed Out (Gateway 504)',
             message:
-              'The live Gemini multimodal vision model took longer than the configured 60-second limit to decode the handwriting. This can occur during temporary upstream demand spikes or for complex cursive scripts. The original document has been preserved.',
+              'The live Gemini multimodal vision model took longer than the configured time limit to decode the handwriting. This can occur during temporary upstream demand spikes or for complex cursive scripts. The original document has been preserved.',
             code: 'GATEWAY_TIMEOUT_504',
             isTimeout: true,
           });

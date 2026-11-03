@@ -26,7 +26,7 @@ export const apiConfig: ApiConfiguration = {
   baseUrl: rawBaseUrl.replace(/\/+$/, ''),
   // Defaults to mock adapter unless VITE_USE_MOCK_API is explicitly set to 'false'
   useMock: !isMockExplicitlyDisabled,
-  requestTimeoutMs: Number(env.VITE_API_TIMEOUT_MS) || 60000,
+  requestTimeoutMs: Number(env.VITE_API_TIMEOUT_MS) || 75000,
   endpoints: {
     analyze: '/api/v1/prescriptions/analyze',
     process: '/api/v1/prescriptions/process',
