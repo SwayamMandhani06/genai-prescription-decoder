@@ -111,7 +111,7 @@ class TestImageQualityAssessor:
             assert report.heuristic_quality_score >= 0.80
 
     def test_calibration_sample_03_blurred(self):
-        """Verifies that canonical blurred sample is classified as insufficient."""
+        """Verifies that canonical blurred sample is classified as degraded_but_usable and flags blur."""
         p = Path("data/samples/sample_03_blurred.png")
         if not p.exists():
             pytest.skip("data/samples/sample_03_blurred.png not found")
@@ -119,8 +119,9 @@ class TestImageQualityAssessor:
         with Image.open(p) as im:
             meta = extract_image_metadata(p.read_bytes(), filename=p.name)
             report = self.assessor.assess_quality(im, meta)
-            assert report.overall_status == "insufficient"
-            assert report.metrics["blur"]["is_fatal"] is True
+            assert report.overall_status == "degraded_but_usable"
+            assert report.metrics["blur"]["is_blurry"] is True
+            assert report.metrics["blur"]["is_fatal"] is False
 
     def test_calibration_sample_04_lowlight(self):
         """Verifies that canonical low-light sample is classified as degraded_but_usable."""

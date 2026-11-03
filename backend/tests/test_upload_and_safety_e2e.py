@@ -20,6 +20,9 @@ from ai.lasa import get_lasa_detection_service
 from ai.explanation import get_explanation_service
 
 
+import pytest
+from backend.app.schemas.error import ErrorResponse, ErrorCode
+
 client = TestClient(app)
 
 
@@ -29,6 +32,7 @@ def test_tesseract_engine_presence():
     assert hasattr(tesseract_engine, "is_available")
 
 
+@pytest.mark.live_inference
 def test_physical_image_ingestion_and_storage():
     img_path_1 = ROOT_DIR / "data" / "samples" / "sample_01_clear.png"
     assert img_path_1.is_file(), "sample_01_clear.png missing!"
@@ -39,6 +43,7 @@ def test_physical_image_ingestion_and_storage():
     assert resp_1.status_code in (200, 503), f"Unexpected status {resp_1.status_code}"
 
 
+@pytest.mark.live_inference
 def test_preprocessing_blur_assessment():
     preproc_service = ImagePreprocessingService()
     img_path_3 = ROOT_DIR / "data" / "samples" / "sample_03_blurred.png"
@@ -77,13 +82,70 @@ def test_file_signature_security_rejections():
     # 1. Disallowed file type (.exe)
     resp_exe = client.post("/api/v1/prescriptions/process", files={"file": ("malware.exe", b"MZ_BINARY_DATA", "application/x-msdownload")})
     assert resp_exe.status_code == 415
+    err_exe = ErrorResponse(**resp_exe.json())
+    assert err_exe.error.code == ErrorCode.INVALID_FILE_TYPE
+    assert err_exe.request_id is not None
 
     # 2. Spoofed file extension (MZ executable renamed as .png)
     spoofed_bytes = b"MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00\xff\xff\x00\x00" + b"\x00" * 32
     resp_spoofed = client.post("/api/v1/prescriptions/process", files={"file": ("fake_prescription.png", spoofed_bytes, "image/png")})
     assert resp_spoofed.status_code == 415
+    err_spoofed = ErrorResponse(**resp_spoofed.json())
+    assert err_spoofed.error.code == ErrorCode.INVALID_FILE_TYPE
+    assert err_spoofed.request_id is not None
 
-    # 3. Oversized file (> 15 MB)
-    oversized_bytes = b"0" * (16 * 1024 * 1024)
+    # 3. Oversized file (> configured limit)
+    settings = get_settings()
+    oversized_bytes = b"\x89PNG\r\n\x1a\n" + b"0" * (settings.MAX_UPLOAD_SIZE_BYTES + 1024)
     resp_oversized = client.post("/api/v1/prescriptions/process", files={"file": ("huge.jpg", oversized_bytes, "image/jpeg")})
     assert resp_oversized.status_code == 413
+    err_oversized = ErrorResponse(**resp_oversized.json())
+    assert err_oversized.error.code == ErrorCode.FILE_TOO_LARGE
+    assert err_oversized.request_id is not None
+
+
+def test_zero_byte_file_rejection_e2e():
+    """Zero-byte uploads to /process return HTTP 400 and structured ErrorResponse."""
+    files = {"file": ("empty.png", b"", "image/png")}
+    response = client.post("/api/v1/prescriptions/process", files=files)
+    assert response.status_code == 400
+    data = response.json()
+    validated = ErrorResponse(**data)
+    assert validated.error.code == ErrorCode.INVALID_REQUEST
+    assert validated.request_id is not None
+
+
+def test_corrupted_file_upload_e2e():
+    """Corrupted non-image files return HTTP 415 and structured ErrorResponse."""
+    files = {"file": ("corrupt.jpg", b"SOME_CORRUPTED_NON_IMAGE_HEADER_BYTES", "image/jpeg")}
+    response = client.post("/api/v1/prescriptions/process", files=files)
+    assert response.status_code == 415
+    data = response.json()
+    validated = ErrorResponse(**data)
+    assert validated.error.code == ErrorCode.INVALID_FILE_TYPE
+    assert validated.request_id is not None
+
+
+def test_upstream_vlm_error_and_rate_limit_e2e():
+    """Fault-injected upstream VLM errors (500, 429, 504) return structured ErrorResponse."""
+    # 500 Processing Failed
+    resp_500 = client.post("/api/v1/prescriptions/process", data={"sample_id": "rx-sample-1", "mock_scenario": "processing_failed"})
+    assert resp_500.status_code == 500
+    err_500 = ErrorResponse(**resp_500.json())
+    assert err_500.error.code == ErrorCode.PROCESSING_FAILED
+    assert err_500.request_id is not None
+
+    # 429 Rate Limit
+    resp_429 = client.post("/api/v1/prescriptions/process", data={"sample_id": "rx-sample-1", "mock_scenario": "rate_limit"})
+    assert resp_429.status_code == 429
+    err_429 = ErrorResponse(**resp_429.json())
+    assert err_429.error.code == ErrorCode.RATE_LIMIT_EXCEEDED
+    assert err_429.request_id is not None
+
+    # 504 Gateway Timeout
+    resp_504 = client.post("/api/v1/prescriptions/process", data={"sample_id": "rx-sample-1", "mock_scenario": "timeout"})
+    assert resp_504.status_code == 504
+    err_504 = ErrorResponse(**resp_504.json())
+    assert err_504.error.code == ErrorCode.MODEL_UNAVAILABLE
+    assert err_504.request_id is not None
+

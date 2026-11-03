@@ -199,5 +199,112 @@
     }
   ],
   "local_sample_count": 7,
-  "checksum": "90df05c57d54b54cd8fe1138cd263f939fcca0dcddcb574fc2a743ba2c0f8a6f"
+  "files": [
+    {
+      "file_path": "data/samples/sample_01_clear.png",
+      "mime_type": "image/png",
+      "sha256": "1af3e83947ff05371278460331fa14b2975bbb823b2c36a729eabadb8ed7ecc4",
+      "size_bytes": 29525,
+      "description": "Calibration Sample 01 - Clear outpatient script (Augmentin, Paracetamol, Pantocid)"
+    },
+    {
+      "file_path": "data/samples/sample_02_cursive.png",
+      "mime_type": "image/png",
+      "sha256": "73f49d57ff93bd2b889f83e2179b507d91ac68cbbd993440c1efba21f7bd2e9d",
+      "size_bytes": 26065,
+      "description": "Calibration Sample 02 - Cursive script (Metformin, Atorvastatin)"
+    },
+    {
+      "file_path": "data/samples/sample_03_blurred.png",
+      "mime_type": "image/png",
+      "sha256": "7164c4da9c9e9129485d55a54bb5b9a5ad1469dacd8ba11eb7a6091ed3d827d3",
+      "size_bytes": 48307,
+      "description": "Calibration Sample 03 - Blurred script (Azithromycin, Cetirizine)"
+    },
+    {
+      "file_path": "data/samples/sample_04_lowlight.png",
+      "mime_type": "image/png",
+      "sha256": "41489ff23a3369dc9f13461b8f139825c200f55a10e8c969eb378255ffe06c53",
+      "size_bytes": 20545,
+      "description": "Calibration Sample 04 - Lowlight shadowed script (Amoxicillin)"
+    },
+    {
+      "file_path": "data/samples/sample_05_abbreviations.png",
+      "mime_type": "image/png",
+      "sha256": "bbc91eb79d0df77cbee6b2ac132e12aa1f387fe3206853fe83b9ceaad3cc99e9",
+      "size_bytes": 29793,
+      "description": "Calibration Sample 05 - Shorthand script (Cifran, Dolo, Omeprazole)"
+    },
+    {
+      "file_path": "data/samples/sample_06_lasa_pair.png",
+      "mime_type": "image/png",
+      "sha256": "2979532f19e357ed941b47a3dafd815b210153ee3f950c71b1cac43951afaa21",
+      "size_bytes": 25508,
+      "description": "Calibration Sample 06 - LASA confusable pair (Metformin, Metronidazole)"
+    },
+    {
+      "file_path": "data/samples/sample_07_ambiguous_abstain.png",
+      "mime_type": "image/png",
+      "sha256": "102e8246c4d42c093956005199fd8742d01df2d1161304077d4332cd0be58ff1",
+      "size_bytes": 22405,
+      "description": "Calibration Sample 07 - Severe stroke collapse (Abstention baseline)"
+    },
+    {
+      "file_path": "data/samples/ambiguous-prescription-sample.png",
+      "mime_type": "image/png",
+      "sha256": "2642ef4a5cc556e8d0456d13056cf988ee6e5b2da8ed2ba58a66ecba0e984004",
+      "size_bytes": 457569,
+      "description": "Ambiguous outpatient clinical pad scan"
+    },
+    {
+      "file_path": "data/samples/cardiology-clinic-slip.jpg",
+      "mime_type": "image/jpeg",
+      "sha256": "d0947829d5f42ca4c0cea0aa5cd7d1ee8ed30218a8ad64f5bc7c1f5ed01c730b",
+      "size_bytes": 368155,
+      "description": "Cardiology outpatient clinic slip (JPEG format)"
+    },
+    {
+      "file_path": "data/samples/cardiology-clinic-slip.png",
+      "mime_type": "image/png",
+      "sha256": "edd9b130c20088e1a5280571471505f384cb4e49922c05ce305343612407b9e1",
+      "size_bytes": 836181,
+      "description": "Cardiology outpatient clinic slip (PNG format)"
+    },
+    {
+      "file_path": "data/samples/childcare-paediatric-sheet.png",
+      "mime_type": "image/png",
+      "sha256": "5219c742b785619bfed19da47b9c3dd240d85672636ba8edecbd5c4e6094467b",
+      "size_bytes": 2923843,
+      "description": "Paediatric outpatient consultation sheet"
+    },
+    {
+      "file_path": "data/samples/clear-prescription-sample.png",
+      "mime_type": "image/png",
+      "sha256": "d7a6f6debb1a610831a3fc7d986b9704d45a3cd973448ac8ed2dc1e51872ddf7",
+      "size_bytes": 500568,
+      "description": "Clear outpatient prescription sample (deduplicated against .jpg)"
+    },
+    {
+      "file_path": "data/samples/handwritten-augmentin-note.png",
+      "mime_type": "image/png",
+      "sha256": "15011be16aa9cf8975670cb6e486e690217e0a09ca34bc12409dd175f53cc4b4",
+      "size_bytes": 312641,
+      "description": "Handwritten physician posology note for Augmentin"
+    },
+    {
+      "file_path": "data/samples/handwritten-clinic-pad.jpg",
+      "mime_type": "image/jpeg",
+      "sha256": "5cf12092618b56cb1036629aa7def255f23ea52b098d984690ecf56c534f4ed1",
+      "size_bytes": 447355,
+      "description": "Handwritten clinic prescription pad (JPEG format)"
+    },
+    {
+      "file_path": "data/samples/handwritten-clinic-pad.png",
+      "mime_type": "image/png",
+      "sha256": "d168939c7cf38941426b1db1da5c4b8c22205dbe6cb2adc36a3fb0af6739ffcb",
+      "size_bytes": 993678,
+      "description": "Handwritten clinic prescription pad (PNG format)"
+    }
+  ],
+  "checksum": "906c6c20b693f389dff7cf4881d61e7fd27e65e358a3ea9e22f94dfa9ff19de8"
 }

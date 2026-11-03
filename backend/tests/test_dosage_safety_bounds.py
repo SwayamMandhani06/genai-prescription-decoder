@@ -46,3 +46,63 @@ def test_unit_confusion_overdose_detection():
     assert status == "mismatch"
     assert "CRITICAL_DOSAGE_OUT_OF_RANGE" in note
     assert "microgram" in note.lower()
+
+
+@pytest.mark.parametrize("ep_status,val,expected_decision", [
+    ("EXTRACTED", "500 mg", "accepted"),
+    ("MISSING_ON_RX", None, "abstained"),
+    ("ILLEGIBLE", "[?] mg", "abstained"),
+    ("AMBIGUOUS", "250 or 500 mg", "abstained"),
+    ("UNVERIFIED", "99999 mg", "abstained"),
+])
+def test_dosage_field_epistemic_statuses(ep_status, val, expected_decision):
+    from backend.app.multimodal.schemas import ExtractedField
+    from ai.abstention.policy import evaluate_field_abstention
+    from ai.confidence.schemas import FieldConfidenceAssessment, RawConfidenceSignal, CalibratedConfidence
+
+    field = ExtractedField(
+        value=val,
+        status="confident" if ep_status == "EXTRACTED" else "uncertain",
+        presence="absent" if ep_status == "MISSING_ON_RX" else "present",
+        extraction_state="missing" if ep_status == "MISSING_ON_RX" else ("extracted" if ep_status == "EXTRACTED" else "ambiguous"),
+        epistemic_status=ep_status,
+    )
+    conf = None
+    if ep_status == "EXTRACTED":
+        conf = FieldConfidenceAssessment(
+            field_name="dosage",
+            observed_value=val,
+            raw_signal=RawConfidenceSignal(source="multimodal", raw_value=0.95, signal_type="model_score"),
+            calibrated=CalibratedConfidence(value=0.92, calibration_status="calibrated"),
+            status="confident",
+        )
+    dec = evaluate_field_abstention("dosage", field, conf)
+    assert dec.decision == expected_decision
+    assert dec.epistemic_status == ep_status
+    if expected_decision == "abstained":
+        assert dec.requires_pharmacist_verification is True
+    else:
+        assert dec.requires_pharmacist_verification is False
+
+
+def test_dosage_decimal_blur_hazard_mandates_pharmacist_verification():
+    from backend.app.multimodal.schemas import ExtractedField
+    from ai.abstention.policy import evaluate_field_abstention
+    from ai.abstention.reasons import AbstentionReasonCode
+
+    # 0.5 mg on a blurred image is a critical clinical hazard (0.5 vs 5 vs 50)
+    field = ExtractedField(
+        value="0.5 mg",
+        status="confident",
+        presence="present",
+        extraction_state="extracted",
+    )
+    dec = evaluate_field_abstention(
+        "dosage",
+        field,
+        image_quality_flags={"blur_detected": True},
+    )
+    assert dec.decision == "abstained"
+    assert dec.requires_pharmacist_verification is True
+    assert AbstentionReasonCode.DECIMAL_BLUR_HAZARD.value in dec.reason_codes
+

@@ -32,10 +32,12 @@ class TestPrescriptionPreprocessingPipeline:
         self.pipeline = PrescriptionPreprocessingPipeline(self.config)
 
     def test_pipeline_generates_all_derived_representations(self):
-        """Verifies that the 5 unconditional derived representations are produced (deskewed.png is conditional on detected skew angle)."""
+        """Verifies that unconditional derived representations are produced including vlm_image and ocr_image."""
         data = _generate_test_script_image()
         result = self.pipeline.process(data, "test.png")
 
+        assert "vlm_image" in result.derived_images
+        assert "ocr_image" in result.derived_images
         assert "grayscale" in result.derived_images
         assert "normalized" in result.derived_images
         assert "denoised" in result.derived_images
@@ -108,3 +110,52 @@ class TestPrescriptionPreprocessingPipeline:
         # Modify parameter and verify hash changes
         c3 = PreprocessingConfig(illumination_sigma=45.0)
         assert c3.compute_config_hash() != c1.compute_config_hash()
+
+    def test_vlm_image_preserves_decimal_points_and_thin_strokes(self):
+        """Verifies that vlm_image preserves continuous grayscale/color gradients and decimal points without binary threshold clipping."""
+        # Create an image with an off-white background, faint text, and a delicate decimal point dot
+        im = Image.new("RGB", (500, 300), color=(248, 246, 240))
+        draw = ImageDraw.Draw(im)
+        draw.text((30, 40), "Digoxin 0.125 mg daily", fill=(70, 70, 70))
+        # Explicitly draw a small decimal point dot (1x1 pixel) at known location (100, 100)
+        im.putpixel((100, 100), (140, 140, 140))
+        buf = io.BytesIO()
+        im.save(buf, format="PNG")
+
+        result = self.pipeline.process(buf.getvalue(), "decimal_rx.png")
+        vlm_img = result.derived_images["vlm_image"]
+
+        # VLM image must be RGB mode to preserve stroke color gradients
+        assert vlm_img.mode == "RGB"
+
+        # The decimal point pixel must be preserved as distinct dark stroke pixel, not obliterated to pure white (255, 255, 255)
+        dot_pixel = vlm_img.getpixel((100, 100))
+        bg_pixel = vlm_img.getpixel((10, 10))
+        # Stroke must be darker than background
+        assert dot_pixel[0] < bg_pixel[0]
+        # Stroke must maintain continuous tonal gradient rather than being strictly binary (0 or 255)
+        assert 0 < dot_pixel[0] < 255
+
+    def test_vlm_image_respects_resolution_bounds_and_never_downscales_below_bounds(self):
+        """Verifies that high-resolution images are preserved within the [1536px, 2048px] target window and never downscaled below bounds."""
+        # Test 1: Image within bounds (1600x1200) - longest edge 1600px is <= 2048px and >= 1536px
+        im_in_bound = Image.new("RGB", (1600, 1200), color=(240, 240, 240))
+        buf1 = io.BytesIO()
+        im_in_bound.save(buf1, format="PNG")
+
+        res1 = self.pipeline.process(buf1.getvalue(), "high_res.png")
+        vlm1 = res1.derived_images["vlm_image"]
+        # Must NOT be downscaled; original resolution preserved
+        assert vlm1.size == (1600, 1200)
+
+        # Test 2: Huge camera photo (3000x2000) - longest edge exceeds 2048px limit
+        im_huge = Image.new("RGB", (3000, 2000), color=(240, 240, 240))
+        buf2 = io.BytesIO()
+        im_huge.save(buf2, format="JPEG")
+
+        res2 = self.pipeline.process(buf2.getvalue(), "huge_phone_photo.jpg")
+        vlm2 = res2.derived_images["vlm_image"]
+        # Longest edge capped at 2048px to prevent HTTP 413 payload size errors
+        assert max(vlm2.size) == 2048
+        assert vlm2.size == (2048, 1365)
+

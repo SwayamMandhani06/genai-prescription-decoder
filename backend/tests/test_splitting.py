@@ -150,3 +150,110 @@ def test_canonical_sample_splits_file_is_leak_free():
     assert audit["is_leak_free"] is True
     assert audit["has_group_leakage"] is False
     assert audit["has_hash_leakage"] is False
+
+
+def test_duplicate_and_augmented_prescription_leakage_prevented():
+    """
+    Verifies that duplicate or augmented views of the same prescription
+    (identical image SHA-256 or patient_group_id) are strictly flagged if leaked,
+    and kept within the same partition by GroupAwareSplitter.
+    """
+    augmented_records = [
+        PrescriptionDocumentRecord(
+            document_id="DOC-ORIG-1",
+            patient_group_id="PATIENT-RX-AUG-01",
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id="DOC-ORIG-1",
+                image_rel_path="samples/test.png",
+                image_sha256="a" * 64,
+                patient_deidentified=True,
+                source_dataset_id="test-source",
+                medications=[]
+            )
+        ),
+        PrescriptionDocumentRecord(
+            document_id="DOC-AUG-VIEW-1",
+            patient_group_id="PATIENT-RX-AUG-01",  # Same patient/prescription group
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id="DOC-AUG-VIEW-1",
+                image_rel_path="samples/test_dewarped.png",
+                image_sha256="b" * 64,
+                patient_deidentified=True,
+                source_dataset_id="test-source",
+                medications=[]
+            )
+        ),
+        PrescriptionDocumentRecord(
+            document_id="DOC-OTHER-1",
+            patient_group_id="PATIENT-RX-OTHER-02",
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id="DOC-OTHER-1",
+                image_rel_path="samples/other.png",
+                image_sha256="c" * 64,
+                patient_deidentified=True,
+                source_dataset_id="test-source",
+                medications=[]
+            )
+        ),
+        PrescriptionDocumentRecord(
+            document_id="DOC-OTHER-2",
+            patient_group_id="PATIENT-RX-OTHER-03",
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id="DOC-OTHER-2",
+                image_rel_path="samples/other2.png",
+                image_sha256="d" * 64,
+                patient_deidentified=True,
+                source_dataset_id="test-source",
+                medications=[]
+            )
+        ),
+    ]
+
+    # Split using GroupAwareSplitter
+    splitter = GroupAwareSplitter(seed=42)
+    split = splitter.split(augmented_records)
+
+    # Verify both DOC-ORIG-1 and DOC-AUG-VIEW-1 are in the SAME split partition
+    orig_in_train = "DOC-ORIG-1" in split.train_ids
+    aug_in_train = "DOC-AUG-VIEW-1" in split.train_ids
+    assert orig_in_train == aug_in_train, "Augmented view leaked across train split!"
+
+    orig_in_val = "DOC-ORIG-1" in split.val_ids
+    aug_in_val = "DOC-AUG-VIEW-1" in split.val_ids
+    assert orig_in_val == aug_in_val, "Augmented view leaked across val split!"
+
+    orig_in_test = "DOC-ORIG-1" in split.test_ids
+    aug_in_test = "DOC-AUG-VIEW-1" in split.test_ids
+    assert orig_in_test == aug_in_test, "Augmented view leaked across test split!"
+
+    # Also verify that if an identical hash is artificially placed across partitions, it is detected
+    hash_leaked_split = DatasetSplitResult(
+        seed=42,
+        train_ids=["DOC-ORIG-1"],
+        val_ids=[],
+        test_ids=["DOC-DUPE-HASH"],
+    )
+    dupe_records = [
+        augmented_records[0],
+        PrescriptionDocumentRecord(
+            document_id="DOC-DUPE-HASH",
+            patient_group_id="DIFFERENT-GROUP",
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id="DOC-DUPE-HASH",
+                image_rel_path="samples/test_copy.png",
+                image_sha256="a" * 64,  # Exact duplicate hash as DOC-ORIG-1!
+                patient_deidentified=True,
+                source_dataset_id="test-source",
+                medications=[]
+            )
+        )
+    ]
+    hash_audit = detect_split_leakage(hash_leaked_split, dupe_records)
+    assert hash_audit["is_leak_free"] is False
+    assert hash_audit["has_hash_leakage"] is True
+    assert "a" * 64 in hash_audit["leaked_hashes"]["train_test"]

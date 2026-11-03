@@ -89,3 +89,38 @@ def test_pharmacist_verification_canonical_alias():
     assert data["data"]["document_confidence"] == 1.0
     assert data["fields"]["medicine_name"]["confidence"] == 1.0
 
+
+@pytest.mark.parametrize("ep_status", ["MISSING_ON_RX", "ILLEGIBLE", "AMBIGUOUS", "UNVERIFIED"])
+def test_pharmacist_verification_resolves_uncertain_epistemic_statuses(ep_status):
+    """
+    Ensures that medications with unverified, illegible, ambiguous, or missing statuses
+    mandate pharmacist verification, and that submitting verified details successfully
+    resolves the verification requirement to confident status.
+    """
+    raw_name = "Augmentin [?]" if ep_status == "ILLEGIBLE" else "Augmentin"
+    payload = {
+        "prescription_id": f"RX-VERIFY-{ep_status}",
+        "reviewer_id": "PHARM-MH-12345",
+        "verified_items": [
+            {
+                "line_id": "line_1",
+                "medicine_name": "Augmentin 625 Duo",
+                "dosage": "625 mg",
+                "frequency": "1-0-1",
+                "duration": "5 days",
+                "pharmacist_notes": f"Resolved initial {ep_status} handwriting uncertainty",
+            }
+        ],
+        "target_languages": ["en", "hi", "mr"],
+    }
+    response = client.post(f"/api/v1/prescriptions/RX-VERIFY-{ep_status}/verify", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+
+    med_field = data["fields"]["medicine_name"]
+    assert med_field["confidence"] == 1.0
+    assert med_field["status"] == "confident"
+    assert med_field["requires_human_verification"] is False
+    assert med_field["abstention_decision"] == "accepted"
+
+

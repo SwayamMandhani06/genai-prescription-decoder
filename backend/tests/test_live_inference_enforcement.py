@@ -19,10 +19,15 @@ import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 from fastapi.testclient import TestClient
 
+from pydantic import ValidationError
+
 from backend.app.main import app
 from backend.app.config import get_settings, Settings
 from backend.app.multimodal.config import MultimodalConfig
-from backend.app.multimodal.adapter import GeminiMultimodalAdapter, sanitize_secret_text
+from backend.app.multimodal.adapter import GeminiMultimodalAdapter, MockMultimodalModelAdapter, sanitize_secret_text
+from backend.app.services.mock_pipeline import MockPrescriptionPipeline
+from backend.app.services.multimodal_pipeline import MultimodalPrescriptionPipeline
+from backend.app.services.pipeline_interface import PipelineOptions, PipelineProcessingError, UpstreamInferenceError
 from backend.app.schemas.error import ErrorCode
 
 
@@ -277,7 +282,11 @@ class TestLiveInferenceEnforcement:
         img_bytes = create_test_image_bytes()
         try:
             raw_result = await adapter.extract(image_bytes=img_bytes, mime_type="image/png")
-            parsed = json.loads(raw_result)
+            try:
+                parsed = json.loads(raw_result)
+            except json.JSONDecodeError:
+                from backend.app.multimodal.parser import parse_multimodal_response
+                parsed = parse_multimodal_response(raw_result)
             assert "medicines" in parsed
             assert len(parsed["medicines"]) > 0
             first_med = parsed["medicines"][0]
@@ -287,3 +296,180 @@ class TestLiveInferenceEnforcement:
             if "503" in str(exc) or "high demand" in str(exc).lower() or "504" in str(exc) or "timed out" in str(exc).lower():
                 pytest.skip(f"Live Gemini provider is experiencing transient latency spike or high demand: {exc}")
             raise
+
+    def test_production_environment_rejects_mock_configuration_with_validation_error(self):
+        """In production environment mode (ENV=production), attempting to enable mock mode raises ValidationError."""
+        # 1. ENV=production with USE_MOCK_PIPELINE=True
+        with pytest.raises(ValidationError) as exc1:
+            Settings(ENV="production", USE_MOCK_PIPELINE=True)
+        assert "Mock pipeline execution is strictly forbidden in production environment" in str(exc1.value)
+
+        # 2. ENV=production with INFERENCE_MODE="mock"
+        with pytest.raises(ValidationError) as exc2:
+            Settings(ENV="production", INFERENCE_MODE="mock")
+        assert "Mock pipeline execution is strictly forbidden in production environment" in str(exc2.value)
+
+        # 3. ENVIRONMENT=production with USE_MOCK_PIPELINE=True
+        with pytest.raises(ValidationError) as exc3:
+            Settings(ENVIRONMENT="production", USE_MOCK_PIPELINE=True)
+        assert "Mock pipeline execution is strictly forbidden in production environment" in str(exc3.value)
+
+    @pytest.mark.asyncio
+    async def test_production_environment_rejects_mock_pipeline_execution(self):
+        """MockPrescriptionPipeline and MockMultimodalModelAdapter refuse execution if ENV=production."""
+        mock_pipe = MockPrescriptionPipeline()
+        options = PipelineOptions()
+        with patch.dict("os.environ", {"ENV": "production"}):
+            with pytest.raises(PipelineProcessingError) as exc_pipe:
+                await mock_pipe.process_prescription(
+                    image_bytes=b"dummy",
+                    filename="sample.png",
+                    public_image_url="/sample.png",
+                    options=options,
+                )
+            assert exc_pipe.value.status_code == 500
+            assert "strictly forbidden in production" in exc_pipe.value.message
+
+        mock_adapter = MockMultimodalModelAdapter()
+        with patch.dict("os.environ", {"ENV": "production"}):
+            with pytest.raises(PipelineProcessingError) as exc_adapter:
+                await mock_adapter.extract(image_bytes=b"sample_bytes_1234567890", mime_type="image/png")
+            assert exc_adapter.value.status_code == 500
+            assert "strictly forbidden" in exc_adapter.value.message
+
+    def test_production_environment_rejects_mock_scenario_at_api_gate(self):
+        """When ENV=production, API routes reject mock_scenario and scenario overrides with HTTP 400."""
+        prod_settings = Settings(
+            ENV="production",
+            USE_MOCK_PIPELINE=False,
+            GEMINI_API_KEY="AIzaSyTestValidKeyFormat1234567890",
+        )
+        app.dependency_overrides[get_settings] = lambda: prod_settings
+
+        try:
+            with patch.dict("os.environ", {"ENV": "production"}):
+                client = TestClient(app)
+                img_bytes = create_test_image_bytes()
+
+                # /analyze with mock_scenario in production returns 400
+                resp1 = client.post(
+                    "/api/v1/prescriptions/analyze",
+                    files={"file": ("rx.png", img_bytes, "image/png")},
+                    data={"mock_scenario": "confident"},
+                )
+                assert resp1.status_code == 400
+                assert "strictly forbidden in production" in resp1.json().get("detail", "")
+
+                # /extract with scenario in production returns 400
+                resp2 = client.post(
+                    "/api/v1/multimodal/extract",
+                    files={"file": ("rx.png", img_bytes, "image/png")},
+                    data={"scenario": "single_medicine_confident"},
+                )
+                assert resp2.status_code == 400
+                assert "strictly forbidden in production" in resp2.json().get("detail", "")
+        finally:
+            app.dependency_overrides.pop(get_settings, None)
+
+    @pytest.mark.asyncio
+    async def test_multimodal_pipeline_live_mode_without_credentials_fails_explicitly(self):
+        """Invoking multimodal_pipeline in live mode without valid API credentials fails explicitly and never returns mock fixtures."""
+        test_settings = Settings(
+            ENV="development",
+            USE_MOCK_PIPELINE=False,
+            GEMINI_API_KEY="",
+        )
+        pipeline = MultimodalPrescriptionPipeline(settings=test_settings)
+        options = PipelineOptions()
+        img_bytes = create_test_image_bytes()
+
+        with patch.dict("os.environ", {"GEMINI_API_KEY": "", "GOOGLE_API_KEY": ""}):
+            with pytest.raises(PipelineProcessingError) as exc_info:
+                await pipeline.process_prescription(
+                    image_bytes=img_bytes,
+                    filename="sample.png",
+                    public_image_url="/sample.png",
+                    options=options,
+                )
+            assert exc_info.value.status_code == 503
+            assert isinstance(exc_info.value, UpstreamInferenceError)
+            assert "missing or is an invalid placeholder" in exc_info.value.message.lower()
+
+    def test_all_prescription_and_multimodal_responses_declare_inference_mode(self):
+        """100% of responses from /api/v1/prescriptions and /api/v1/multimodal include explicit inference_mode."""
+        mock_settings = Settings(
+            ENV="development",
+            USE_MOCK_PIPELINE=True,
+            INFERENCE_MODE="mock",
+        )
+        app.dependency_overrides[get_settings] = lambda: mock_settings
+
+        try:
+            client = TestClient(app)
+            img_bytes = create_test_image_bytes()
+
+            # 1. /api/v1/prescriptions/analyze
+            resp_analyze = client.post(
+                "/api/v1/prescriptions/analyze",
+                files={"file": ("rx.png", img_bytes, "image/png")},
+            )
+            assert resp_analyze.status_code == 200
+            data_analyze = resp_analyze.json()
+            assert "inference_mode" in data_analyze
+            assert data_analyze["inference_mode"] == "mock"
+            assert data_analyze["meta"]["inference_mode"] == "mock"
+            assert data_analyze["model_provider"] == "mock"
+            assert data_analyze["meta"]["model_provider"] == "mock"
+
+            # 2. /api/v1/prescriptions/process (alias)
+            resp_process = client.post(
+                "/api/v1/prescriptions/process",
+                files={"file": ("rx.png", img_bytes, "image/png")},
+            )
+            assert resp_process.status_code == 200
+            data_process = resp_process.json()
+            assert data_process["inference_mode"] == "mock"
+            assert data_process["meta"]["inference_mode"] == "mock"
+
+            # 3. /api/v1/prescriptions/{id}
+            presc_id = data_analyze["prescription_id"]
+            resp_get = client.get(f"/api/v1/prescriptions/{presc_id}")
+            assert resp_get.status_code == 200
+            data_get = resp_get.json()
+            assert data_get["inference_mode"] == "mock"
+            assert data_get["meta"]["inference_mode"] == "mock"
+
+            # 4. /api/v1/prescriptions/verify
+            resp_verify = client.post(
+                "/api/v1/prescriptions/verify",
+                json={
+                    "prescription_id": presc_id,
+                    "reviewer_id": "PHARM-TEST-001",
+                    "verified_items": [
+                        {
+                            "medicine_name": "Augmentin 625 Duo",
+                            "dosage": "625 mg",
+                            "frequency": "1-0-1",
+                            "duration": "5 days",
+                        }
+                    ],
+                },
+            )
+            assert resp_verify.status_code == 200
+            data_verify = resp_verify.json()
+            assert data_verify["inference_mode"] == "mock"
+            assert data_verify["meta"]["inference_mode"] == "mock"
+
+            # 5. /api/v1/multimodal/extract
+            resp_extract = client.post(
+                "/api/v1/multimodal/extract",
+                files={"file": ("rx.png", img_bytes, "image/png")},
+            )
+            assert resp_extract.status_code == 200
+            data_extract = resp_extract.json()
+            assert "inference_mode" in data_extract
+            assert data_extract["inference_mode"] == "mock"
+            assert data_extract["model"]["inference_mode"] == "mock"
+        finally:
+            app.dependency_overrides.pop(get_settings, None)
+

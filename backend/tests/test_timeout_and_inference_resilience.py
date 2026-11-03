@@ -9,6 +9,7 @@ Covers Requirement 9:
 5. Structured stage timing telemetry is logged for every stage without leaking patient, clinical, or secret data.
 """
 
+import asyncio
 import io
 import json
 import logging
@@ -284,3 +285,62 @@ class TestTimeoutAndInferenceResilience:
             assert "AIza" not in timing_log
             assert "Amoxicillin" not in timing_log
             assert "patient" not in timing_log.lower()
+
+    @pytest.mark.asyncio
+    async def test_non_blocking_async_ocr_execution(self):
+        """Verifies that OCR baseline service offloads CPU/process-bound operations asynchronously."""
+        from backend.app.ocr import OCRBaselineService
+        import asyncio
+
+        ocr_svc = OCRBaselineService()
+        img_bytes = create_test_image_bytes()
+
+        # Run concurrent coroutine while OCR runs to verify event loop remains unblocked
+        concurrent_ran = False
+        async def concurrent_task():
+            nonlocal concurrent_ran
+            await asyncio.sleep(0.01)
+            concurrent_ran = True
+
+        task = asyncio.create_task(concurrent_task())
+        with patch.object(ocr_svc.engine, "execute", return_value=("Rx Amoxicillin 500mg", [], [], 0.05)):
+            ocr_res = await ocr_svc.async_run_ocr(image_input=img_bytes, filename="test.png")
+            await task
+
+        assert concurrent_ran is True
+        assert ocr_res.raw_text == "Rx Amoxicillin 500mg"
+
+    @pytest.mark.asyncio
+    async def test_non_blocking_pipeline_preprocessing_offloading(self):
+        """Verifies that multimodal prescription pipeline offloads preprocessing to worker thread via asyncio.to_thread."""
+        pipeline = MultimodalPrescriptionPipeline()
+        img_bytes = create_test_image_bytes()
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "candidates": [
+                {
+                    "content": {
+                        "parts": [{"text": VALID_GEMINI_EXTRACTION_JSON}]
+                    }
+                }
+            ]
+        }
+
+        with patch.dict("os.environ", {"GEMINI_API_KEY": "AIzaSyFakeKeyForTimeoutTest1234567890"}), \
+             patch("httpx.AsyncClient.post", return_value=mock_resp), \
+             patch("asyncio.to_thread", wraps=asyncio.to_thread) as spy_to_thread:
+
+            res = await pipeline.process_prescription(
+                image_bytes=img_bytes,
+                filename="sample.png",
+                public_image_url="/uploads/samples/sample_01_clear.png",
+                options=PipelineOptions(confidence_threshold=0.65, enable_lasa_detection=False),
+            )
+
+            assert res.status == "success"
+            # Verify asyncio.to_thread was invoked to offload preprocessing
+            assert spy_to_thread.called
+            thread_call_target = spy_to_thread.call_args_list[0][0][0]
+            assert thread_call_target == pipeline.preprocessing_service.process_and_store

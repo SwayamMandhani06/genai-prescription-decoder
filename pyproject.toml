@@ -16,3 +16,14 @@ include = ["ai*", "app*", "eval*"]
 [tool.pytest.ini_options]
 pythonpath = [".", "backend"]
 testpaths = ["backend/tests"]
+markers = [
+    "unit: fast, deterministic tests using dependency-injected fixtures",
+    "live_inference: end-to-end tests requiring live VLM/OCR execution on data/samples/",
+    "integration: end-to-end component integration tests",
+]
+filterwarnings = [
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
+    "ignore:.*Using `httpx` with `starlette.testclient` is deprecated.*",
+    "ignore:.*StarletteDeprecationWarning.*",
+    "ignore::DeprecationWarning",
+]

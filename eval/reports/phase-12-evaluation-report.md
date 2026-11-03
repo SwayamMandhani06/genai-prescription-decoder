@@ -3,7 +3,7 @@
 **Project:** Explainable Multimodal AI for Handwritten Prescription Understanding  
 **Stage:** Phase 12 — Evaluation, Metrics & Ablation  
 **Status:** ✅ **PASS / FROZEN**  
-**Date:** September 29, 2026  
+**Date:** October 27, 2026  
 **Evaluation ID:** `aura_rx_eval_v1`  
 **Random Seed:** 42  
 
@@ -14,7 +14,7 @@
 This report establishes the empirical, quantitative, and qualitative research evaluation for **AURA-Rx** in strict accordance with Section 21 of `PLAN.md` and the Phase 12 specification.
 
 All 9 primary research experiments (EXP-01 through EXP-09) were executed without metric fabrication, metric cherry-picking, or data leakage. The findings evaluate the core research questions:
-1. **Multimodal vs. Conventional OCR:** Conventional OCR produced high CER/WER on the evaluated handwritten prescription cohort and showed substantial difficulty with the studied cursive handwriting patterns (Enhanced Mean CER: **0.8076**, Mean WER: **1.1227**). Multimodal Vision-Language extraction parsed structured posology directly from pixels with Macro F1: **0.1976**.
+1. **Multimodal vs. Conventional OCR:** Conventional OCR produced high CER/WER on the evaluated handwritten prescription cohort and showed substantial difficulty with the studied cursive handwriting patterns (Enhanced Mean CER: **0.8076**, Mean WER: **1.1227**). Multimodal Vision-Language extraction parsed structured posology directly from pixels with Macro F1: **0.1500**.
 2. **Formulary Knowledge Grounding:** The RAG validation component achieved **100.0%** accuracy/precision/recall on the evaluated 43 reference and behavioral fixtures with **100.0%** dosage observation preservation rate (zero dosage mutations). This result evaluates the validation component and does not represent clinical validation accuracy on a large handwritten-prescription corpus.
 3. **Calibrated Confidence & Selective Abstention:** The configured tau=0.80 policy achieved **100% selective accuracy** and **0% observed accepted-case error on the evaluated cohort**; **90% of evaluated cases were abstained** under the configured threshold, motivating human verification for ambiguous ligatures.
 4. **LASA Screening:** The detector achieved **1.00 recall** on the evaluated finite curated ISMP 2024 pair set and **0.9091** precision on the combined benchmark with associated negative controls. This result does not establish comprehensive LASA detection performance or clinical safety.
@@ -26,7 +26,7 @@ All 9 primary research experiments (EXP-01 through EXP-09) were executed without
 
 | # | Research Question | Empirical Finding |
 |---|---|---|
-| **RQ1** | How accurately can clinical prescription fields be extracted from handwriting? | Raw vision-language extraction achieved Macro F1 of **0.1976** on the evaluated cohort (Dosage: 0.3000, Duration: 0.3000, Frequency: 0.1905). The observed medicine-name extraction errors motivate the use of formulary grounding and human verification mechanisms in the proposed system. |
+| **RQ1** | How accurately can clinical prescription fields be extracted from handwriting? | Raw vision-language extraction achieved Macro F1 of **0.1500** on the evaluated cohort (Dosage: 0.3000, Duration: 0.3000, Frequency: 0.1905). The observed medicine-name extraction errors motivate the use of formulary grounding and human verification mechanisms in the proposed system. |
 | **RQ2** | How does multimodal vision-language extraction compare with conventional OCR? | The evaluated OCR baseline produced substantially higher CER/WER and did not provide structured field extraction comparable to the multimodal pipeline. |
 | **RQ3** | Does RAG improve medicine formulation validation without hallucination? | The RAG validation component achieved 100% accuracy on the evaluated 43 reference and behavioral fixtures with 100% dosage observation preservation. This result evaluates the validation component and does not represent clinical validation on a large handwritten corpus. |
 | **RQ4** | Does confidence calibration provide meaningful reliability information? | For the actual N=7 AURA-Rx cohort, the `insufficient_data` safeguard (N < 15) prevents reliable empirical calibration claims. Theoretical calibration-method verification on synthetic fixtures demonstrated ECE reduction from 0.2380 to 0.1500. |
@@ -74,10 +74,10 @@ Evaluates Phase 6 multimodal extraction across 16 medication lines:
 |---|---|---|---|---|---|---|---|---|---|
 | **medicine_name** | 14 | 0 | 0 | 7 | 14 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
 | **dosage** | 14 | 3 | 3 | 4 | 10 | 0.4286 | 0.2308 | 0.3000 | 0.2143 |
-| **frequency** | 14 | 2 | 2 | 5 | 12 | 0.2857 | 0.1429 | 0.1905 | 0.1429 |
+| **frequency** | 14 | 0 | 0 | 7 | 14 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
 | **duration** | 14 | 3 | 3 | 4 | 10 | 0.4286 | 0.2308 | 0.3000 | 0.2143 |
-| **MACRO AVG** | 16 | - | - | - | - | **0.2857** | **0.1511** | **0.1976** | - |
-| **MICRO AVG** | 64 | - | - | - | - | **0.2857** | **0.1481** | **0.1951** | - |
+| **MACRO AVG** | 16 | - | - | - | - | **0.2143** | **0.1154** | **0.1500** | - |
+| **MICRO AVG** | 64 | - | - | - | - | **0.2143** | **0.1111** | **0.1463** | - |
 
 **Observation:** The observed medicine-name extraction errors motivate the use of formulary grounding and human verification mechanisms in the proposed system.
 
@@ -147,11 +147,11 @@ Evaluates factual preservation across English, Hindi, and Marathi:
 
 | Target Language | Evaluated | Roman Drug Identity Preservation | Numeric & Unit Preservation | Unsupported Info Rate |
 |---|---|---|---|---|
-| **English (`en`)** | 19 | 100.0% | 84.2% | 0.0% |
-| **Hindi (`hi`)** | 19 | 100.0% | 84.2% | 0.0% |
-| **Marathi (`mr`)** | 19 | 100.0% | 84.2% | 0.0% |
+| **English (`en`)** | 19 | 100.0% | 89.5% | 0.0% |
+| **Hindi (`hi`)** | 19 | 100.0% | 89.5% | 0.0% |
+| **Marathi (`mr`)** | 19 | 100.0% | 89.5% | 0.0% |
 
-- **Cross-Language Semantic Consistency:** **79.0%**
+- **Cross-Language Semantic Consistency:** **84.2%**
 - **Human Multilingual Evaluation:** *Human multilingual qualitative evaluation was not performed; therefore these results represent automated factual-fidelity checks rather than human-rated language quality.*
 
 ---
@@ -163,10 +163,10 @@ Systematic ablation across five configurations evaluating measured differences a
 | Config | Configuration Name | Architectural Components | Extraction F1 | Validation Acc | CER | WER | Coverage | Selective Acc | Unsupported Info |
 |---|---|---|---|---|---|---|---|---|---|
 | **A** | Conventional OCR | Tesseract 5.4.0 Baseline | N/A | N/A | 0.8076 | 1.1227 | 1.0000 | 0.3200 | N/A |
-| **B** | Multimodal Extraction | Vision-Language (Raw) | 0.1976 | N/A | N/A | N/A | 1.0000 | 0.1976 | 0.0800 |
-| **C** | Multimodal + RAG | Extraction + Formulary Grounding | 0.1976 | 1.0000 | N/A | N/A | 1.0000 | 1.0000 | 0.0400 |
-| **D** | + Confidence / Abstention | Grounded + Safe Abstention | 0.1976 | 1.0000 | N/A | N/A | 0.1000 | 1.0000 | 0.0100 |
-| **E** | Complete System | AURA-Rx Full Pipeline | **0.1976** | **1.0000** | N/A | N/A | **0.1000** | **1.0000** | **0.0000** |
+| **B** | Multimodal Extraction | Vision-Language (Raw) | 0.1500 | N/A | N/A | N/A | 1.0000 | 0.1500 | 0.0800 |
+| **C** | Multimodal + RAG | Extraction + Formulary Grounding | 0.1500 | 1.0000 | N/A | N/A | 1.0000 | 1.0000 | 0.0400 |
+| **D** | + Confidence / Abstention | Grounded + Safe Abstention | 0.1500 | 1.0000 | N/A | N/A | 0.1000 | 1.0000 | 0.0100 |
+| **E** | Complete System | AURA-Rx Full Pipeline | **0.1500** | **1.0000** | N/A | N/A | **0.1000** | **1.0000** | **0.0000** |
 
 *Component Metric Applicability:*
 - **Config A (OCR Baseline):** Evaluated primarily by CER and WER. Field-level clinical entity extraction is not supported.

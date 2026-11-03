@@ -135,3 +135,74 @@ def test_finalize_extraction_result_conservative_review():
         duration_seconds=0.1,
     )
     assert res_empty.requires_human_review is True
+
+
+def test_indian_frequency_and_duration_normalization_preserving_raw():
+    """Verifies Indian prescription frequencies and durations are normalized while strictly preserving raw tokens."""
+    med = ExtractedMedicine(
+        medicine_name=ExtractedField(value="Augmentin", status="confident"),
+        dosage=ExtractedField(value="625 mg", status="confident"),
+        frequency=ExtractedField(value="1-0-1", status="confident"),
+        duration=ExtractedField(value="5/7", status="confident"),
+        raw_frequency="1-0-1",
+        raw_duration="5/7",
+        status="confident",
+    )
+    processed = postprocess_extracted_medicine(med)
+
+    # Normalized human-readable form
+    assert "BD" in processed.frequency.value
+    assert "Morning, Night" in processed.frequency.value
+    assert processed.duration.value == "5 days"
+
+    # Strictly preserved raw tokens
+    assert processed.raw_frequency == "1-0-1"
+    assert processed.raw_duration == "5/7"
+
+
+def test_zero_fabrication_route_rule():
+    """Verifies that route is never fabricated unless explicitly observed or implied by dosage form."""
+    # Case 1: No dosage form and no route -> route remains None (Zero Fabrication Rule)
+    med_no_form = ExtractedMedicine(
+        medicine_name=ExtractedField(value="Paracetamol", status="confident"),
+        dosage=ExtractedField(value="500 mg", status="confident"),
+        frequency=ExtractedField(value=None, status="uncertain"),
+        duration=ExtractedField(value=None, status="uncertain"),
+        route=None,
+        dosage_form=None,
+        status="confident",
+    )
+    proc_no_form = postprocess_extracted_medicine(med_no_form)
+    assert proc_no_form.route is None or proc_no_form.route.value is None
+
+    # Case 2: Dosage form is "Tab" -> route safely inferred as "Oral"
+    med_tab = ExtractedMedicine(
+        medicine_name=ExtractedField(value="Paracetamol", status="confident"),
+        dosage=ExtractedField(value="500 mg", status="confident"),
+        frequency=ExtractedField(value=None, status="uncertain"),
+        duration=ExtractedField(value=None, status="uncertain"),
+        dosage_form="Tab",
+        status="confident",
+    )
+    proc_tab = postprocess_extracted_medicine(med_tab)
+    assert proc_tab.route is not None
+    assert proc_tab.route == "Oral"
+
+
+def test_vitals_and_lab_item_rejection():
+    """Verifies that vitals and lab investigation rows are rejected from medication list."""
+    from backend.app.multimodal.evidence import is_vitals_or_lab_item
+
+    assert is_vitals_or_lab_item("BP 120/80 mmHg") is True
+    assert is_vitals_or_lab_item("Pulse: 72 bpm") is True
+    assert is_vitals_or_lab_item("SpO2 98%") is True
+    assert is_vitals_or_lab_item("HbA1c: 6.8%") is True
+    assert is_vitals_or_lab_item("FBS 110 mg/dL") is True
+    assert is_vitals_or_lab_item("TLC 9,500 /cumm") is True
+    assert is_vitals_or_lab_item("Serum Creatinine 1.1") is True
+
+    # Real medicines must NOT be rejected
+    assert is_vitals_or_lab_item("Amoxicillin 500mg") is False
+    assert is_vitals_or_lab_item("Metformin 500 mg") is False
+    assert is_vitals_or_lab_item("Tab Pantocid 40") is False
+

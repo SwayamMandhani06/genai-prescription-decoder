@@ -3,7 +3,7 @@
   "code_version": "1.0.0",
   "config_version": "evaluation_config_v1",
   "random_seed": 42,
-  "created_at": "2026-09-29T03:40:40.125799+00:00",
+  "created_at": "2026-10-27T15:39:32.307671+00:00",
   "dataset_metadata": {
     "annotations_file": "data\\annotations\\sample_annotations.json",
     "annotations_sha256": "3775cdfa002261833ba94368716bb1bc2c5881b29c7cdd2c212cf95ae840e37d",

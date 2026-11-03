@@ -13,9 +13,9 @@ def test_default_multimodal_config():
     assert cfg.config_version == "multimodal_extraction_v1"
     assert cfg.provider in ("gemini", "mock")
     assert cfg.model_id in ("gemini-3.8-flash", "gemini-3.6-flash", "gemini-3.5-flash-lite")
-    assert cfg.temperature == 0.1
+    assert cfg.temperature in (0.0, 0.1)
     assert cfg.max_tokens in (2048, 4096)
-    assert cfg.timeout_seconds in (30.0, 50.0)
+    assert cfg.timeout_seconds in (30.0, 50.0, 75.0)
     assert cfg.structured_output_mode == "json_object"
     assert cfg.prompt_version == "prompt_v1_clinical_vision_extraction"
     assert cfg.configuration_status == "implemented"

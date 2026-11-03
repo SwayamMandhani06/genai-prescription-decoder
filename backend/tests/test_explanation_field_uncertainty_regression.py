@@ -126,3 +126,94 @@ async def test_pipeline_does_not_mask_medicine_when_human_review_flagged():
     assert len(en_summary) > 0
     # Posology summary in data must match top-level explanation contract
     assert response.explanation.en == en_summary
+
+
+def test_secondary_field_missing_on_rx_produces_explicit_confirmation_guidance():
+    """
+    When duration or frequency is MISSING_ON_RX, patient explanation must explicitly state
+    'Not specified / illegible on prescription — confirm with your doctor or pharmacist'
+    and pass all fidelity validators without hallucinating posology.
+    """
+    exp = PosologyExplanationGenerator.generate_explanation(
+        prescription_id="RX-SEC-MISSING",
+        medicine_name="Amoxicillin 500mg",
+        dosage="500 mg",
+        frequency="1-0-1",
+        duration="MISSING_ON_RX",
+        duration_epistemic_status="MISSING_ON_RX",
+    )
+    en_pack = exp.explanations["en"]
+    hi_pack = exp.explanations["hi"]
+    mr_pack = exp.explanations["mr"]
+
+    # English explicit confirmation guidance
+    assert "Not specified / illegible on prescription — confirm with your doctor or pharmacist" in en_pack.instructions
+    # Hindi explicit confirmation guidance
+    assert "प्रिस्क्रिप्शन पर निर्दिष्ट नहीं / पढ़ने योग्य नहीं — अपने डॉक्टर या फार्मासिस्ट से पुष्टि करें।" in hi_pack.instructions
+    # Marathi explicit confirmation guidance
+    assert "प्रिस्क्रिप्शनवर नमूद नाही / वाचता येत नाही — तुमच्या डॉक्टरांशी किंवा फार्मासिस्टशी खात्री करा." in mr_pack.instructions
+
+    # Must pass numeric and unsupported fact validation
+    assert en_pack.validation.is_valid is True
+    assert hi_pack.validation.is_valid is True
+    assert mr_pack.validation.is_valid is True
+
+
+def test_secondary_field_illegible_produces_explicit_confirmation_guidance():
+    """
+    When frequency is ILLEGIBLE, explanation must explicitly state not specified / illegible.
+    """
+    exp = PosologyExplanationGenerator.generate_explanation(
+        prescription_id="RX-SEC-ILLEGIBLE",
+        medicine_name="Metformin 500mg",
+        dosage="500 mg",
+        frequency="[?]",
+        frequency_epistemic_status="ILLEGIBLE",
+        duration="14 days",
+    )
+    en_pack = exp.explanations["en"]
+    assert "Frequency: Not specified / illegible on prescription — confirm with your doctor or pharmacist" in en_pack.instructions
+    assert en_pack.validation.is_valid is True
+
+
+@pytest.mark.parametrize("ep_status,expected_eligibility", [
+    ("EXTRACTED", "eligible"),
+    ("MISSING_ON_RX", "abstained"),
+    ("ILLEGIBLE", "abstained"),
+    ("AMBIGUOUS", "abstained"),
+    ("UNVERIFIED", "abstained"),
+])
+def test_all_five_epistemic_statuses_explanation_eligibility_enforcement(ep_status, expected_eligibility):
+    """
+    Validates explanation gate enforcement across all 5 epistemic statuses:
+    - EXTRACTED -> eligible
+    - MISSING_ON_RX -> abstained (never fabricate medicine)
+    - ILLEGIBLE -> abstained (never present illegible as clinical facts)
+    - AMBIGUOUS -> abstained (never present ambiguous as clinical facts)
+    - UNVERIFIED -> abstained (unverified drug name cannot output patient advice)
+    """
+    med_name = "Paracetamol 500mg" if ep_status != "MISSING_ON_RX" else None
+    if ep_status == "ILLEGIBLE":
+        med_name = "Para[?]mol"
+
+    abstain_dec = "abstained" if ep_status in ("ILLEGIBLE", "AMBIGUOUS", "UNVERIFIED", "MISSING_ON_RX") else "accepted"
+
+    exp = PosologyExplanationGenerator.generate_explanation(
+        prescription_id=f"RX-EPIST-{ep_status}",
+        medicine_name=med_name,
+        dosage="500 mg",
+        frequency="1-0-1",
+        duration="5 days",
+        candidate_status="confident" if ep_status == "EXTRACTED" else "uncertain",
+        validation_status="validated" if ep_status == "EXTRACTED" else "unverified",
+        abstention_decision=abstain_dec,
+        requires_human_verification=(ep_status != "EXTRACTED"),
+        epistemic_status=ep_status,
+    )
+
+    assert exp.overall_eligibility == expected_eligibility
+    en = exp.explanations["en"]
+    if expected_eligibility == "abstained":
+        # Must not present medicine as confirmed therapy
+        assert "Take Paracetamol 500mg exactly as prescribed:" not in en.instructions
+

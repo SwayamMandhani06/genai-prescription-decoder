@@ -279,3 +279,115 @@ class TestAbstentionPolicy:
         assert presc_dec.requires_human_verification is True
         assert len(presc_dec.medicines) == 2
         assert presc_dec.medicines[1].decision == "abstained"
+
+    @pytest.mark.parametrize("ep_status,expected_decision,expected_reason", [
+        ("EXTRACTED", "accepted", None),
+        ("MISSING_ON_RX", "abstained", AbstentionReasonCode.FIELD_MISSING.value),
+        ("ILLEGIBLE", "abstained", AbstentionReasonCode.MEDICINE_ILLEGIBLE.value),
+        ("AMBIGUOUS", "abstained", AbstentionReasonCode.MEDICINE_AMBIGUOUS.value),
+        ("UNVERIFIED", "abstained", AbstentionReasonCode.MEDICINE_UNVERIFIED.value),
+    ])
+    def test_all_five_epistemic_statuses_abstention_policy(self, ep_status, expected_decision, expected_reason):
+        val = "Paracetamol 500mg" if ep_status != "MISSING_ON_RX" else None
+        if ep_status == "ILLEGIBLE":
+            val = "Para[?]mol"
+        field = ExtractedField(
+            value=val,
+            status="confident" if ep_status == "EXTRACTED" else "uncertain",
+            presence="absent" if ep_status == "MISSING_ON_RX" else "present",
+            extraction_state="missing" if ep_status == "MISSING_ON_RX" else ("extracted" if ep_status == "EXTRACTED" else "ambiguous"),
+            epistemic_status=ep_status,
+        )
+        conf = None
+        if ep_status == "EXTRACTED":
+            conf = FieldConfidenceAssessment(
+                field_name="medicine_name",
+                observed_value=val,
+                raw_signal=RawConfidenceSignal(source="multimodal", raw_value=0.95, signal_type="model_score"),
+                calibrated=CalibratedConfidence(value=0.92, calibration_status="calibrated"),
+                status="confident",
+            )
+        dec = evaluate_field_abstention("medicine_name", field, conf)
+        assert dec.decision == expected_decision
+        assert dec.epistemic_status == ep_status
+        if expected_decision == "abstained":
+            assert dec.requires_human_verification is True
+            assert dec.requires_pharmacist_verification is True
+            assert expected_reason in dec.reason_codes
+        else:
+            assert dec.requires_pharmacist_verification is False
+
+    def test_dosage_safety_bounds_overdose_abstention(self):
+        dosage_field = ExtractedField(
+            value="5000 mg",
+            status="confident",
+            presence="present",
+            extraction_state="extracted",
+        )
+        val_res = MedicineValidationResult(
+            input_candidate="Paracetamol",
+            normalized_candidate="paracetamol",
+            validation_status="uncertain",
+            medicine_identity_status="validated",
+            evidence="Formulation review",
+            observed_dosage="5000 mg",
+            reference_strength="500 mg",
+            formulation_consistency="mismatch",
+            dosage_observation_preserved=True,
+            requires_human_review=True,
+            provenance=ValidationDecisionProvenance(
+                retrieval_method="exact",
+                query_raw="Paracetamol",
+                query_normalized="paracetamol",
+                normalization_version="v1.0",
+                index_version="v1.0",
+                config_hash="abc",
+                matched_count=1,
+                timestamp="2026-09-27T00:00:00Z",
+                validation_rule="FORMULATION_MISMATCH_GATE",
+                source_authorities=["cdsco"],
+            )
+        )
+        dec = evaluate_field_abstention("dosage", dosage_field, validation_result=val_res)
+        assert dec.decision == "abstained"
+        assert dec.requires_pharmacist_verification is True
+        assert AbstentionReasonCode.DOSAGE_OUT_OF_BOUNDS.value in dec.reason_codes
+
+    def test_decimal_blur_hazard_abstention(self):
+        dosage_field = ExtractedField(
+            value="0.5 mg",
+            status="confident",
+            presence="present",
+            extraction_state="extracted",
+        )
+        dec = evaluate_field_abstention(
+            "dosage",
+            dosage_field,
+            image_quality_flags={"blur_detected": True},
+        )
+        assert dec.decision == "abstained"
+        assert dec.requires_pharmacist_verification is True
+        assert AbstentionReasonCode.DECIMAL_BLUR_HAZARD.value in dec.reason_codes
+
+    def test_high_alert_lasa_unresolved_abstention(self):
+        med_field = ExtractedField(
+            value="Prednisone",
+            status="confident",
+            presence="present",
+            extraction_state="extracted",
+        )
+        class MockLasa:
+            has_lasa_conflict = True
+            top_confusable_name = "Prednisolone"
+            top_confusable_score = 0.92
+            disambiguated_by_strength_or_form = False
+
+        dec = evaluate_field_abstention(
+            "medicine_name",
+            med_field,
+            lasa_result=MockLasa(),
+        )
+        assert dec.decision == "abstained"
+        assert dec.requires_pharmacist_verification is True
+        assert AbstentionReasonCode.HIGH_ALERT_LASA_UNRESOLVED.value in dec.reason_codes
+

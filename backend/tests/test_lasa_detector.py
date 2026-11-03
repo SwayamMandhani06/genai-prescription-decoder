@@ -312,3 +312,60 @@ class TestDetectPrescriptionLasa:
         )
         for idx, med in enumerate(result.medicines, start=1):
             assert med.item_index == idx
+
+    def test_strength_aware_lasa_escalates_risk_and_warns(self, default_config):
+        """Verifies that if prescribed strength matches confusable counterpart, risk escalates and warning is generated."""
+        from ai.rag.schemas import MedicineReferenceRecord, SourceProvenance
+
+        prov = SourceProvenance(
+            source_id="cdsco-approved-drugs",
+            source_name="CDSCO",
+            source_version="2024.1",
+            license="Open Government Data License",
+            license_category="government_open_data",
+            retrieval_date="2026-09-27T00:00:00Z",
+            citation="CDSCO",
+        )
+        custom_pool = [
+            MedicineReferenceRecord(
+                reference_id="REF-TEST-01",
+                source="cdsco",
+                source_version="v1",
+                medicine_name="Metformin",
+                normalized_name="metformin",
+                generic_name="Metformin",
+                strength="500 mg",
+                dosage_form="Tablet",
+                provenance=prov,
+            ),
+            MedicineReferenceRecord(
+                reference_id="REF-TEST-02",
+                source="cdsco",
+                source_version="v1",
+                medicine_name="Metronidazole",
+                normalized_name="metronidazole",
+                generic_name="Metronidazole",
+                strength="400 mg",
+                dosage_form="Tablet",
+                provenance=prov,
+            ),
+        ]
+
+        # Case 1: Prescribed Metformin with 400 mg (which is Metronidazole strength!)
+        result = screen_medicine(
+            candidate_name="Metformin",
+            item_index=1,
+            reference_records=custom_pool,
+            prescribed_strength="400 mg",
+            prescribed_dosage_form="Tablet",
+            config=default_config,
+        )
+
+        assert result.has_lasa_conflict is True
+        top_conf = result.confusables[0]
+        assert "Metronidazole" in top_conf.confusable_name
+        assert top_conf.matches_confusable_strength is True
+        assert top_conf.strength_context_warning is not None
+        assert "400 mg" in top_conf.strength_context_warning
+        assert top_conf.risk_level == "high"  # Escalated due to matching confusable strength
+

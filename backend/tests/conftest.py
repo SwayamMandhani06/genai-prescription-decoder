@@ -1,15 +1,49 @@
 """
-Pytest Fixtures for AURA-Rx Backend Testing
+Pytest Fixtures and Configuration for AURA-Rx / DawaAI Backend Testing
 """
 
 import os
 import shutil
 import tempfile
+import warnings
 from pathlib import Path
+
+# Silence harmless third-party deprecation warnings during testing
+warnings.filterwarnings("ignore", message=".*httpx.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import pytest
 from fastapi.testclient import TestClient
 from backend.app.main import app
 from backend.app.config import get_settings
+
+
+def pytest_configure(config):
+    """Registers custom markers for test suite segregation."""
+    config.addinivalue_line(
+        "markers", "unit: fast, deterministic unit and integration tests using dependency injection or fixtures"
+    )
+    config.addinivalue_line(
+        "markers", "live_inference: end-to-end tests requiring live VLM/OCR execution on data/samples/"
+    )
+    config.addinivalue_line(
+        "markers", "integration: integration tests between multi-stage pipeline components"
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """
+    Categorizes tests into `unit` vs `live_inference` if not already explicitly tagged:
+    - Tests with marker `live_inference` require physical sample images or live model inference.
+    - All other tests default to `unit` for fast, reproducible CI execution.
+    """
+    for item in items:
+        # If test is explicitly marked with live_inference, respect it
+        if "live_inference" in item.keywords:
+            continue
+        # If item has no marker or is in unit test files, ensure unit marker is attached
+        if "unit" not in item.keywords:
+            item.add_marker(pytest.mark.unit)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -81,4 +115,3 @@ def reset_rate_limiter():
     """Resets the singleton prescription rate limiter before each test to prevent test runner quota exhaustion."""
     from backend.app.core.security import prescription_rate_limiter
     prescription_rate_limiter.reset()
-

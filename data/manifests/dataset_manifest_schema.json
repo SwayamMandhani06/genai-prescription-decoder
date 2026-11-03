@@ -97,6 +97,55 @@
       "title": "LicenseCategory",
       "type": "string"
     },
+    "ManifestFileEntry": {
+      "description": "Inventory entry for a discrete verified dataset file.",
+      "properties": {
+        "file_path": {
+          "description": "Path to file relative to repo root, e.g. 'data/samples/sample_01_clear.png'",
+          "title": "File Path",
+          "type": "string"
+        },
+        "mime_type": {
+          "description": "MIME content type (e.g. 'image/png' or 'image/jpeg')",
+          "title": "Mime Type",
+          "type": "string"
+        },
+        "sha256": {
+          "description": "Cryptographic SHA-256 hash",
+          "maxLength": 64,
+          "minLength": 64,
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "description": "File size in bytes",
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clinical or developmental descriptor",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "file_path",
+        "mime_type",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "ManifestFileEntry",
+      "type": "object"
+    },
     "ProvenanceRecord": {
       "description": "Provenance tracking record for legal traceability and auditability.",
       "properties": {
@@ -223,6 +272,14 @@
       "minimum": 0,
       "title": "Local Sample Count",
       "type": "integer"
+    },
+    "files": {
+      "description": "Verified sample files catalog",
+      "items": {
+        "$ref": "#/$defs/ManifestFileEntry"
+      },
+      "title": "Files",
+      "type": "array"
     },
     "checksum": {
       "anyOf": [

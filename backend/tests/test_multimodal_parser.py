@@ -109,3 +109,41 @@ def test_parse_multimodal_response_empty_medicines():
     res = parse_multimodal_response(raw)
     assert len(res["medicines"]) == 0
     assert res["requires_human_review"] is True
+
+
+def test_parse_multimodal_response_repair_edge_cases():
+    """Verifies that imperfect LLM outputs (trailing commas, unquoted keys, single quotes) are repaired."""
+    # 1. Unquoted keys, trailing commas, and double commas
+    imperfect_1 = """
+    {
+      medicines: [
+        {
+          "medicine_name": "Azithromycin",
+          dosage: "500 mg",
+        },
+      ],
+      requires_human_review: false,
+    }
+    """
+    res1 = parse_multimodal_response(imperfect_1)
+    assert len(res1["medicines"]) == 1
+    assert res1["medicines"][0].medicine_name.value == "Azithromycin"
+    assert res1["medicines"][0].dosage.value == "500 mg"
+
+    # 2. Python style dict literals (single quotes, True/False/None)
+    imperfect_2 = """
+    {
+      'is_prescription': True,
+      'medicines': [
+        {
+          'medicine_name': {'value': 'Metformin'},
+          'dosage': {'value': '500 mg'},
+        }
+      ],
+      'requires_human_review': False
+    }
+    """
+    res2 = parse_multimodal_response(imperfect_2)
+    assert len(res2["medicines"]) == 1
+    assert res2["medicines"][0].medicine_name.value == "Metformin"
+

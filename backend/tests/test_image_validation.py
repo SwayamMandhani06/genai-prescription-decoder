@@ -127,3 +127,46 @@ class TestImageIngestionValidator:
         im_l.save(buf, format="PNG")
         pil_img_l, _ = self.validator.validate_and_load(buf.getvalue(), "gray.png")
         assert pil_img_l.mode == "RGB"
+
+    def test_misnamed_extension_jpeg_named_png(self):
+        """Verifies that a JPEG file misnamed with a .png extension is validated by its true magic bytes."""
+        im = Image.new("RGB", (400, 500), color=(240, 240, 240))
+        buf = io.BytesIO()
+        im.save(buf, format="JPEG")
+        jpeg_bytes = buf.getvalue()
+
+        pil_img, meta = self.validator.validate_and_load(jpeg_bytes, "misnamed_prescription.png")
+        assert pil_img.size == (400, 500)
+        assert meta.file_format == "JPEG"
+
+    def test_exif_rotated_image_auto_transposition(self):
+        """Verifies that EXIF-oriented phone camera photos are auto-transposed right-side up."""
+        im = Image.new("RGB", (300, 500), color=(240, 240, 240))
+        exif = im.getexif()
+        exif[0x0112] = 6  # 90 degrees CCW (camera sensor rotated)
+        buf = io.BytesIO()
+        im.save(buf, format="JPEG", exif=exif)
+
+        pil_img, meta = self.validator.validate_and_load(buf.getvalue(), "phone_photo.jpg")
+        # Transposed upright dimensions should be (500, 300)
+        assert pil_img.size == (500, 300)
+        assert meta.width == 500
+        assert meta.height == 300
+        assert meta.orientation == "Landscape"
+        assert meta.exif_orientation == 6
+
+    def test_tinted_stationery_with_low_ink_notes_accepted(self):
+        """Verifies that tinted clinic pads (e.g. yellow/blue hospital stationery) with low-ink notes are not falsely rejected as blank."""
+        from PIL import ImageDraw
+        # Yellow clinic pad with blue ink text
+        im = Image.new("RGB", (400, 500), color=(255, 248, 195))
+        draw = ImageDraw.Draw(im)
+        draw.text((30, 40), "Dr. Mehta Clinic - Paediatric Note", fill=(40, 60, 140))
+        draw.text((30, 80), "Paracetamol 120mg/5ml - 5ml TDS", fill=(40, 60, 140))
+        buf = io.BytesIO()
+        im.save(buf, format="PNG")
+
+        pil_img, meta = self.validator.validate_and_load(buf.getvalue(), "yellow_clinic_pad.png", reject_blank=True)
+        assert pil_img.size == (400, 500)
+        assert pil_img.mode == "RGB"
+

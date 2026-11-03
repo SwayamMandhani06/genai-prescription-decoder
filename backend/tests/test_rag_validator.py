@@ -143,3 +143,28 @@ class TestRAGValidator:
         assert ui_evidence["rxnorm_cui"] is not None
         assert ui_evidence["therapeutic_class"] is not None
         assert ui_evidence["evidence_source"] is not None
+
+    def test_safe_rag_grounding_unlisted_drug_not_overwritten(self, validation_service):
+        """Verifies safe RAG grounding: an out-of-formulary / unlisted drug is never silently overwritten."""
+        unlisted_drug = "XyzCustomUnlistedDrugName"
+        res = validation_service.validate_candidate(unlisted_drug)
+
+        # 1. Candidate name is strictly preserved in both extracted_name and input_candidate
+        assert res.extracted_name == unlisted_drug
+        assert res.input_candidate == unlisted_drug
+
+        # 2. matched_reference_drug must be None (never a distant fuzzy guess)
+        assert res.matched_reference_drug is None
+        assert res.validation_status in ("uncertain", "not_validated")
+
+        # 3. unverified_candidates or matched_candidates captures candidate pool for clinician review
+        candidates = res.unverified_candidates or res.matched_candidates
+        assert isinstance(candidates, list)
+
+        # 4. In UI evidence, unlisted drug is NOT presented as confirmed formulary match
+        ui_evidence = res.to_ui_validation_evidence()
+        assert ui_evidence["candidate_name"] == unlisted_drug
+        if res.validation_status == "not_validated":
+            assert ui_evidence["matched_entity_name"] == "Unverified Candidate"
+            assert "UNVERIFIED" in ui_evidence["status_badge_text"]
+

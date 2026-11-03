@@ -13,6 +13,7 @@ Verifies:
 
 import json
 from pathlib import Path
+from typing import Optional, List, Dict, Any
 import pytest
 
 from eval.ocr.metrics import compute_cer, compute_wer, levenshtein_dp
@@ -23,6 +24,7 @@ from ai.confidence.metrics import compute_calibration_bins, compute_ece, compute
 from eval.lasa.evaluator import LASAEvaluator
 from eval.abstention.evaluator import AbstentionEvaluator
 from eval.explanation.evaluator import MultilingualEvaluator
+from backend.app.dataset.schema import AmbiguityLevel, PrescriptionDocumentRecord
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -256,3 +258,307 @@ class TestEvaluationArtifactsConformance:
         assert man["random_seed"] == 42
         assert "annotations_sha256" in man["dataset_metadata"]
         assert "splits_sha256" in man["dataset_metadata"]
+
+
+class TestBenchmark11MetricsMath:
+    """
+    Tests exact mathematical correctness for all 11 benchmark metrics on synthetic edge cases:
+    1. Perfect match across all fields (including canonical frequency 1-0-1 == BD)
+    2. Partial field mismatches (strength mismatch, frequency mismatch)
+    3. Hallucinated / fabricated fields and extra medications
+    4. Correct abstention on severely illegible prescription
+    5. Missed abstention with hallucinated prediction on illegible prescription
+    6. Field completeness / recall on missing fields
+    7. Latency p50/p95 percentiles and error/timeout rate
+    """
+
+    def _create_synthetic_record(
+        self,
+        doc_id: str = "DOC-SYN-001",
+        med_name: str = "Augmentin",
+        strength: Optional[str] = "625 mg",
+        freq: Optional[str] = "1-0-1",
+        dur: Optional[str] = "5 days",
+        route: Optional[str] = "Oral",
+        instructions: Optional[str] = "After food",
+        ambiguity: AmbiguityLevel = AmbiguityLevel.NONE,
+    ) -> PrescriptionDocumentRecord:
+        from backend.app.dataset.schema import (
+            PrescriptionDocumentRecord,
+            GroundTruthAnnotation,
+            MedicationEntityAnnotation,
+            AnnotationTier,
+        )
+        meds = []
+        if med_name:
+            meds.append(MedicationEntityAnnotation(
+                item_index=1,
+                raw_text=f"{med_name} {strength or ''} {freq or ''}",
+                medicine_name=med_name,
+                dosage_strength=strength,
+                frequency=freq,
+                duration=dur,
+                route=route,
+                instructions=instructions,
+                ambiguity_level=ambiguity,
+            ))
+        return PrescriptionDocumentRecord(
+            document_id=doc_id,
+            patient_group_id=f"GRP-{doc_id}",
+            ground_truth=GroundTruthAnnotation(
+                tier=AnnotationTier.GROUND_TRUTH,
+                document_id=doc_id,
+                image_rel_path="samples/test.png",
+                image_sha256="0" * 64,
+                patient_deidentified=True,
+                source_dataset_id="test",
+                medications=meds,
+            )
+        )
+
+    def test_all_11_metrics_perfect_match(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+
+        rec1 = self._create_synthetic_record("DOC-1", "Augmentin", "625 mg", "1-0-1", "5 days", "Oral", "After food")
+        rec2 = self._create_synthetic_record("DOC-2", "Paracetamol", "500 mg", "SOS", "3 days", "Oral", "For fever")
+
+        pred1 = {
+            "status": "success",
+            "medicines": [{
+                "medicine_name": "Augmentin",
+                "dosage_strength": "625 mg",
+                "dosage": "625 mg",
+                "frequency": "BD",  # Canonical match: 1-0-1 == BD!
+                "duration": "5 days",
+                "route": "Oral",
+                "instructions": "After food",
+            }]
+        }
+        pred2 = {
+            "status": "success",
+            "medicines": [{
+                "medicine_name": "Paracetamol",
+                "dosage_strength": "500 mg",
+                "dosage": "500 mg",
+                "frequency": "SOS",
+                "duration": "3 days",
+                "route": "Oral",
+                "instructions": "For fever",
+            }]
+        }
+
+        items = [
+            EvaluationItem(record=rec1, prediction=pred1, latency_ms=120.0),
+            EvaluationItem(record=rec2, prediction=pred2, latency_ms=180.0),
+        ]
+
+        metrics, details = compute_evaluation_metrics(items)
+
+        assert metrics.exact_medicine_name_accuracy == 1.0
+        assert metrics.strength_accuracy == 1.0
+        assert metrics.dosage_accuracy == 1.0
+        assert metrics.route_accuracy == 1.0
+        assert metrics.frequency_accuracy == 1.0  # 1-0-1 matched to BD
+        assert metrics.duration_accuracy == 1.0
+        assert metrics.field_completeness == 1.0
+        assert metrics.unsupported_fabricated_rate == 0.0
+        assert metrics.appropriate_abstention_rate == 1.0
+        assert metrics.prescription_level_exact_match == 1.0
+        assert metrics.error_rate == 0.0
+        assert metrics.latency_p50_ms == 150.0
+        assert len(details) == 2
+        assert all(d.is_exact_match for d in details)
+
+    def test_partial_match_and_mismatched_frequency(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+
+        rec = self._create_synthetic_record("DOC-PARTIAL", "Augmentin", "625 mg", "1-0-1", "5 days", "Oral")
+
+        # Wrong strength (500mg != 625mg) and wrong frequency (TDS != BD)
+        pred = {
+            "status": "success",
+            "medicines": [{
+                "medicine_name": "Augmentin",
+                "dosage_strength": "500 mg",
+                "dosage": "500 mg",
+                "frequency": "TDS",
+                "duration": "5 days",
+                "route": "Oral",
+            }]
+        }
+
+        items = [EvaluationItem(record=rec, prediction=pred, latency_ms=100.0)]
+        metrics, _ = compute_evaluation_metrics(items)
+
+        assert metrics.exact_medicine_name_accuracy == 1.0
+        assert metrics.strength_accuracy == 0.0
+        assert metrics.dosage_accuracy == 0.0
+        assert metrics.frequency_accuracy == 0.0
+        assert metrics.duration_accuracy == 1.0
+        assert metrics.route_accuracy == 1.0
+        assert metrics.prescription_level_exact_match == 0.0
+
+    def test_hallucinated_fields_and_extra_medication(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+
+        # GT has 1 med with NO duration and NO instructions
+        rec = self._create_synthetic_record("DOC-FAB", "Metformin", "500 mg", "OD", None, "Oral", None)
+
+        # Pred has 2 meds (1 extra) and hallucinates duration on the first med
+        pred = {
+            "status": "success",
+            "medicines": [
+                {
+                    "medicine_name": "Metformin",
+                    "dosage_strength": "500 mg",
+                    "frequency": "OD",
+                    "duration": "30 days",  # Fabricated duration (GT is None)
+                    "route": "Oral",
+                },
+                {
+                    "medicine_name": "Glimepiride",  # Fabricated extra medication
+                    "dosage_strength": "2 mg",
+                    "frequency": "OD",
+                    "duration": "30 days",
+                    "route": "Oral",
+                }
+            ]
+        }
+
+        items = [EvaluationItem(record=rec, prediction=pred, latency_ms=150.0)]
+        metrics, _ = compute_evaluation_metrics(items)
+
+        assert metrics.unsupported_fabricated_rate > 0.0
+        assert metrics.fabricated_count >= 1
+        assert metrics.prescription_level_exact_match == 0.0
+
+    def test_correct_abstention_on_illegible_prescription(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+        from backend.app.dataset.schema import AmbiguityLevel
+
+        # Severely illegible stroke collapse
+        rec = self._create_synthetic_record(
+            "DOC-ILLEGIBLE",
+            "IllegibleStroke",
+            None,
+            None,
+            None,
+            None,
+            None,
+            ambiguity=AmbiguityLevel.SEVERE_ILLEGIBLE
+        )
+
+        # Model correctly triggers abstention
+        pred = {
+            "status": "abstain",
+            "data": {
+                "overall_status": "ABSTAINED",
+                "extracted_entities": []
+            },
+            "medicines": []
+        }
+
+        items = [EvaluationItem(record=rec, prediction=pred, latency_ms=200.0)]
+        metrics, details = compute_evaluation_metrics(items)
+
+        assert metrics.appropriate_abstention_rate == 1.0
+        assert metrics.unsupported_fabricated_rate == 0.0
+        assert metrics.prescription_level_exact_match == 1.0
+        assert details[0].is_abstained is True
+        assert details[0].is_exact_match is True
+
+    def test_missed_abstention_with_hallucination_on_illegible_prescription(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+        from backend.app.dataset.schema import AmbiguityLevel
+
+        rec = self._create_synthetic_record(
+            "DOC-MISSED-ABSTAIN",
+            "IllegibleStroke",
+            None,
+            None,
+            None,
+            None,
+            None,
+            ambiguity=AmbiguityLevel.SEVERE_ILLEGIBLE
+        )
+
+        # Model FAILED to abstain, falsely claiming certainty on hallucinated drug
+        pred = {
+            "status": "success",
+            "data": {
+                "overall_status": "VERIFIED"
+            },
+            "medicines": [{
+                "medicine_name": "Ciprofloxacin",
+                "dosage_strength": "500 mg",
+                "frequency": "BD",
+                "duration": "5 days",
+            }]
+        }
+
+        items = [EvaluationItem(record=rec, prediction=pred, latency_ms=220.0)]
+        metrics, details = compute_evaluation_metrics(items)
+
+        assert metrics.appropriate_abstention_rate == 0.0
+        assert metrics.unsupported_fabricated_rate > 0.0
+        assert metrics.prescription_level_exact_match == 0.0
+        assert details[0].is_abstained is False
+        assert details[0].is_exact_match is False
+
+    def test_field_completeness_recall(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+
+        # GT has 5 legible fields: name, strength, route, frequency, duration (no instructions)
+        rec = self._create_synthetic_record("DOC-COMPLETENESS", "Amoxicillin", "250 mg", "TDS", "7 days", "Oral", instructions=None)
+
+        # Pred only provides medicine_name and dosage_strength (missing frequency, duration, route)
+        pred = {
+            "status": "success",
+            "medicines": [{
+                "medicine_name": "Amoxicillin",
+                "dosage_strength": "250 mg",
+                "dosage": "250 mg",
+                "frequency": None,
+                "duration": None,
+                "route": None,
+            }]
+        }
+
+        items = [EvaluationItem(record=rec, prediction=pred, latency_ms=100.0)]
+        metrics, _ = compute_evaluation_metrics(items)
+
+        # 5 legible fields in GT, only 2 extracted -> 2/5 = 0.40
+        assert metrics.field_completeness == pytest.approx(0.40, abs=0.01)
+
+    def test_latency_statistics_and_error_handling(self):
+        from backend.app.dataset.evaluator import EvaluationItem, compute_evaluation_metrics
+
+        rec = self._create_synthetic_record("DOC-LAT", "Paracetamol", "500 mg", "SOS", "3 days", "Oral")
+        pred = {
+            "status": "success",
+            "medicines": [{
+                "medicine_name": "Paracetamol",
+                "dosage_strength": "500 mg",
+                "frequency": "SOS",
+                "duration": "3 days",
+                "route": "Oral",
+            }]
+        }
+
+        items = [
+            EvaluationItem(record=rec, prediction=pred, latency_ms=100.0),
+            EvaluationItem(record=rec, prediction=pred, latency_ms=200.0),
+            EvaluationItem(record=rec, prediction=pred, latency_ms=300.0),
+            EvaluationItem(record=rec, prediction=pred, latency_ms=400.0),
+            EvaluationItem(record=rec, prediction=None, is_error=True, error_message="Timeout after 10s"),
+        ]
+
+        metrics, details = compute_evaluation_metrics(items)
+
+        assert metrics.total_prescriptions == 5
+        assert metrics.error_count == 1
+        assert metrics.error_rate == pytest.approx(0.20, abs=0.01)
+        # Median of [100.0, 200.0, 300.0, 400.0] is (200 + 300) / 2 = 250.0 ms
+        assert metrics.latency_p50_ms == 250.0
+        assert metrics.latency_mean_ms == 250.0
+        assert details[4].is_error is True
