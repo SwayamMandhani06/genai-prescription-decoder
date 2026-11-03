@@ -60,7 +60,7 @@ class MultimodalConfig(BaseModel):
         default_factory=lambda: int(
             os.environ.get("MULTIMODAL_MAX_TOKENS")
             or os.environ.get("GEMINI_MAX_TOKENS")
-            or 8192
+            or 4096
         ),
         gt=0,
         description="Maximum generation token budget",
