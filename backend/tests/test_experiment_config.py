@@ -42,8 +42,10 @@ def test_dataset_version_info_matches_physical_files():
     vinfo = DatasetVersionInfo.model_validate(data)
 
     def file_hash(p: Path) -> str:
-        with open(p, "rb") as f:
-            return hashlib.sha256(f.read()).hexdigest()
+        content = p.read_bytes()
+        if p.suffix.lower() in (".json", ".txt", ".md", ".csv", ".jsonl"):
+            content = content.replace(b"\r\n", b"\n")
+        return hashlib.sha256(content).hexdigest()
 
     assert vinfo.manifest_checksum == file_hash(Path("data/manifests/dataset_manifest.json"))
     assert vinfo.ground_truth_checksum == file_hash(Path("data/annotations/sample_annotations.json"))

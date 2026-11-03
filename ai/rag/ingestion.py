@@ -44,11 +44,13 @@ class IngestionReport:
 
 
 def compute_file_sha256(file_path: Path) -> str:
-    """Computes SHA-256 checksum of a file."""
+    """Computes SHA-256 checksum of a file, normalizing line endings for text/json to guarantee cross-platform consistency."""
     hasher = hashlib.sha256()
-    with open(file_path, "rb") as f:
-        while chunk := f.read(65536):
-            hasher.update(chunk)
+    p = Path(file_path)
+    content = p.read_bytes()
+    if p.suffix.lower() in (".json", ".txt", ".md", ".csv", ".jsonl"):
+        content = content.replace(b"\r\n", b"\n")
+    hasher.update(content)
     return hasher.hexdigest()
 
 

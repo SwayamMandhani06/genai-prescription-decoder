@@ -6,7 +6,7 @@
       "source_id": "cdsco-approved-drugs",
       "file_path": "data/reference/cdsco_approved_drugs.json",
       "record_count": 20,
-      "sha256": "a8077f6c5fa281e93c5b8581a1277b712c1d0d0d5d27a174fb826e8951ad17c1",
+      "sha256": "ad6a26b51b765df3132559a292894f16fc91b249cdf71bd9134b4bc6c18ddb9b",
       "provenance": {
         "source_id": "cdsco-approved-drugs",
         "source_name": "CDSCO Approved Drug Formulations Reference Subset",
@@ -22,7 +22,7 @@
       "source_id": "nlm-rxnorm",
       "file_path": "data/reference/nlm_rxnorm_drugs.json",
       "record_count": 10,
-      "sha256": "22f0a37352b1d630123c62b98075b8d056a7f3d38572e8f3b82f7910e620356f",
+      "sha256": "1a7b10b71a36a01dbcaa69f70fb32c335f6870fcfc36978f19f758ff4a8396b8",
       "provenance": {
         "source_id": "nlm-rxnorm",
         "source_name": "NLM RxNorm Clinical Nomenclature Subset",
