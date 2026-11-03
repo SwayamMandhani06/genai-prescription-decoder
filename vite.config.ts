@@ -21,4 +21,7 @@ export default defineConfig({
       ignored: ['**/*.md', '**/*.log'],
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1200,
+  },
 });
