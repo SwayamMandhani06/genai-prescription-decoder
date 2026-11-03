@@ -24,9 +24,10 @@ COPY backend ./backend
 COPY ai ./ai
 COPY data ./data
 
-# Create uploads directory for immutable original prescription image preservation and set ownership
-RUN mkdir -p /app/backend/uploads/samples && \
-    chown -R appuser:appuser /app
+# Create uploads and processed data directories with least-privilege permissions and set ownership
+RUN mkdir -p /app/backend/uploads/samples /app/backend/uploads/preprocessed /app/data/processed && \
+    chown -R appuser:appuser /app && \
+    chmod -R 775 /app/backend/uploads
 
 # Switch to unprivileged user
 USER appuser
@@ -35,7 +36,11 @@ USER appuser
 ENV HOST=0.0.0.0 \
     PORT=8000 \
     PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app:/app/backend \
+    ENV=production \
+    INFERENCE_MODE=live \
     USE_MOCK_PIPELINE=false \
+    RETENTION_TTL_SECONDS=0 \
     MULTIMODAL_MODEL_ID=gemini-3.5-flash-lite
 
 EXPOSE 8000

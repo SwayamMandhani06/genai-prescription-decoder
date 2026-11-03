@@ -22,9 +22,7 @@ __pycache__
 htmlcov
 
 # Local environment and secret files
-.env
-.env.local
-.env.*.local
+.env*
 *.log
 
 # IDE & Editor artifacts
@@ -33,5 +31,10 @@ htmlcov
 .gemini
 .agents
 
-# Ephemeral user uploads (preserve samples only)
-backend/uploads/rx_*
+# Ephemeral user uploads and runtime artifacts
+backend/uploads/*
+data/processed/*
+reports/*
+scratch/*
+test-results/*
+screenshots/*

@@ -26,9 +26,10 @@ dist-ssr/
 # ==============================================================================
 # Environment variables & secrets protection
 # ==============================================================================
-.env
-.env.local
-.env.*.local
+.env*
+!.env.example
+!.env.production.example
+!.env.test.example
 *.pem
 *.key
 *.secret
@@ -47,6 +48,15 @@ client_secrets*.json
 *.sln
 *.sw?
 *.swo
+
+# ==============================================================================
+# Archives & compressed dumps
+# ==============================================================================
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
 
 # ==============================================================================
 # OS temporary files
@@ -103,3 +113,4 @@ scratch/
 screenshots/
 data/samples/user_*
 *.log
+reports/

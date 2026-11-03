@@ -59,6 +59,15 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-asyncio pytest-cov
 
-      - name: Run Pytest Suite & Regression Gates
+      - name: Run Fast Deterministic Unit Tests (Coverage Enforced >= 80%)
+        env:
+          PYTHONPATH: .
+          USE_MOCK_PIPELINE: "true"
         run: |
-          python -m pytest backend/tests/ -q
+          python -m pytest backend/tests/ -m "not live_inference" --cov=backend/app --cov-report=term-missing --cov-report=xml --cov-fail-under=80 -q
+
+      - name: Run Live Inference Golden Regression Tests
+        env:
+          PYTHONPATH: .
+        run: |
+          python -m pytest backend/tests/ -m "live_inference" -q
