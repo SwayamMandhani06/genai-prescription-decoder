@@ -97,6 +97,7 @@ class PreprocessingArtifactManager:
         public_run_dir.mkdir(parents=True, exist_ok=True)
 
         # 3. Save derived image artifacts
+        import shutil
         artifact_records: List[PreprocessedArtifactRecord] = []
 
         for name, pil_img in result.derived_images.items():
@@ -104,11 +105,11 @@ class PreprocessingArtifactManager:
             target_path = run_dir / filename
             public_path = public_run_dir / filename
 
-            # Save in research run directory
-            pil_img.save(target_path, format="PNG", optimize=True)
+            # Save in research run directory without slow CPU-intensive optimize=True
+            pil_img.save(target_path, format="PNG")
 
-            # Also mirror to public preprocessed directory for HTTP serving
-            pil_img.save(public_path, format="PNG", optimize=True)
+            # Fast file copy to public preprocessed directory instead of re-compressing
+            shutil.copyfile(target_path, public_path)
 
             # Compute artifact hash
             with open(target_path, "rb") as f:

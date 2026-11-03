@@ -76,6 +76,17 @@ class PrescriptionPreprocessingPipeline:
             filename=filename,
         )
 
+        # Bound maximum source image resolution (max 2048px longest edge)
+        # Prevents multi-megabyte raw photos from causing CPU exhaustion and 504 timeouts on cloud instances
+        w, h = normalized_pil.size
+        longest_edge = max(w, h)
+        max_bound = getattr(self.config, "vlm_target_longest_edge_max", 2048)
+        if longest_edge > max_bound:
+            scale = float(max_bound) / float(longest_edge)
+            target_w = max(1, int(round(w * scale)))
+            target_h = max(1, int(round(h * scale)))
+            normalized_pil = normalized_pil.resize((target_w, target_h), Image.Resampling.LANCZOS)
+
         # ----------------------------------------------------------------------
         # 2. Quality Assessment
         # ----------------------------------------------------------------------
@@ -92,19 +103,7 @@ class PrescriptionPreprocessingPipeline:
         # Bounded between 1536px and 2048px longest edge when source permits.
         # ----------------------------------------------------------------------
         if getattr(self.config, "enable_vlm_artifact", True):
-            w, h = normalized_pil.size
-            longest_edge = max(w, h)
-            max_bound = getattr(self.config, "vlm_target_longest_edge_max", 2048)
-
-            if longest_edge > max_bound:
-                # Downscale proportionally to avoid upstream HTTP 413 payload limit errors
-                scale = float(max_bound) / float(longest_edge)
-                target_w = max(1, int(round(w * scale)))
-                target_h = max(1, int(round(h * scale)))
-                vlm_base = normalized_pil.resize((target_w, target_h), Image.Resampling.LANCZOS)
-            else:
-                # Never downscale below native source resolution
-                vlm_base = normalized_pil.copy()
+            vlm_base = normalized_pil.copy()
 
             # Contrast enhancement preserving continuous 24-bit stroke gradients (NO binary thresholding)
             vlm_arr = np.array(vlm_base, dtype=np.float32)
