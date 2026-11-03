@@ -11,10 +11,10 @@
 # AURA-Rx Outpatient Prescription Decoder - Baseline Evaluation
 
 - **Dataset Version:** `1.0.0`
-- **Git Commit:** `8ce01cdc` (`8ce01cdcadebb2ba8f6c334706f0170bd9cddc04`)
+- **Git Commit:** `ecff68c8` (`ecff68c8736100331872eb0b829e7154de3324a2`)
 - **Inference Execution Mode:** `LIVE`
 - **Model Provider / Name:** `gemini` / `gemini-3.5-flash-lite`
-- **Evaluation Timestamp:** `2026-11-03T10:33:39.906988+00:00`
+- **Evaluation Timestamp:** `2026-11-03T12:11:49.482341+00:00`
 - **Prescriptions Evaluated:** `7`
 
 > [!NOTE]
@@ -30,24 +30,24 @@
 | 3 | **Dosage Accuracy** | **100.00%** | ≥ 90.00% | 13/13 dosage fields | ✅ PASS |
 | 4 | **Route Accuracy** | **100.00%** | ≥ 95.00% | 13/13 route fields | ✅ PASS |
 | 5 | **Frequency Accuracy (Canonical)** | **100.00%** | ≥ 90.00% | 13/13 (e.g. 1-0-1 == BD) | ✅ PASS |
-| 6 | **Duration Accuracy** | **92.31%** | ≥ 85.00% | 12/13 duration fields | ✅ PASS |
-| 7 | **Field Completeness (Recall)** | **88.46%** | ≥ 90.00% | 69/78 legible fields | ⚠️ REVIEW |
+| 6 | **Duration Accuracy** | **100.00%** | ≥ 85.00% | 13/13 duration fields | ✅ PASS |
+| 7 | **Field Completeness (Recall)** | **87.18%** | ≥ 90.00% | 68/78 legible fields | ⚠️ REVIEW |
 | 8 | **Unsupported/Fabricated Rate** | **0.00%** | ≤ 5.00% | 0/65 hallucinated items | ✅ PASS |
 | 9 | **Appropriate Abstention Rate** | **100.00%** | ≥ 95.00% | 1/1 ambiguous targets | ✅ PASS |
-| 10 | **Prescription Exact Match** | **85.71%** | ≥ 75.00% | 6/7 complete prescriptions | ✅ PASS |
-| 11 | **Latency (p50 / p95) & Error Rate** | **p50=7009ms, p95=23479ms** | Error ≤ 1.0% | Error Rate: 0.00% (0 errors) | ✅ PASS |
+| 10 | **Prescription Exact Match** | **100.00%** | ≥ 75.00% | 7/7 complete prescriptions | ✅ PASS |
+| 11 | **Latency (p50 / p95) & Error Rate** | **p50=7182ms, p95=8089ms** | Error ≤ 1.0% | Error Rate: 0.00% (0 errors) | ✅ PASS |
 
 ## 2. Per-Document Diagnostic Breakdown
 
 | Document ID | Scenario | Exact Match | Abstained | GT Meds | Pred Meds | Fields (Matched/Eval) | Latency |
 |---|---|---|---|---|---|---|---|
-| `DOC-RX-001` | clear_outpatient_prescription | ✅ YES | NO | 3 | 3 | 15/15 | 7794 ms |
-| `DOC-RX-002` | cursive_handwriting | ✅ YES | NO | 2 | 2 | 10/10 | 7009 ms |
-| `DOC-RX-003` | defocus_blurred | ❌ NO | NO | 2 | 2 | 9/10 | 7005 ms |
-| `DOC-RX-004` | low_light_shadow | ✅ YES | NO | 1 | 1 | 5/5 | 5223 ms |
-| `DOC-RX-005` | posology_abbreviations | ✅ YES | NO | 3 | 3 | 15/15 | 7542 ms |
-| `DOC-RX-006` | lasa_confusable_pair | ✅ YES | NO | 2 | 2 | 10/10 | 6139 ms |
-| `DOC-RX-007` | abstention_ambiguity | ✅ YES | 🛡️ YES | 1 | 1 | 1/1 | 23479 ms |
+| `DOC-RX-001` | clear_outpatient_prescription | ✅ YES | NO | 3 | 3 | 15/15 | 8089 ms |
+| `DOC-RX-002` | cursive_handwriting | ✅ YES | NO | 2 | 2 | 10/10 | 7476 ms |
+| `DOC-RX-003` | defocus_blurred | ✅ YES | NO | 2 | 2 | 10/10 | 6181 ms |
+| `DOC-RX-004` | low_light_shadow | ✅ YES | NO | 1 | 1 | 5/5 | 5220 ms |
+| `DOC-RX-005` | posology_abbreviations | ✅ YES | NO | 3 | 3 | 15/15 | 7252 ms |
+| `DOC-RX-006` | lasa_confusable_pair | ✅ YES | NO | 2 | 2 | 10/10 | 7182 ms |
+| `DOC-RX-007` | abstention_ambiguity | ✅ YES | 🛡️ YES | 1 | 1 | 1/1 | 5675 ms |
 
 ---
 *Automated Evaluation Runner v1.0.0 — AURA-Rx Capstone Engineering Team*
