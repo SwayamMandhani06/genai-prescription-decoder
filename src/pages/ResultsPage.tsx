@@ -229,6 +229,44 @@ export const ResultsPage: React.FC<ResultsPageProps> = ({
           </div>
         </div>
 
+        {/* Prominent LASA Warning Banner */}
+        {((currentState.lasaDetail && currentState.lasaDetail.hasWarning) || currentState.overallStatus === 'SAFETY_ALERT') && (
+          <div
+            data-testid="banner-lasa-warning"
+            className="p-5 sm:p-6 rounded-2xl bg-amber-500/15 border-2 border-amber-500 text-amber-950 dark:text-amber-100 space-y-2 shadow-xs"
+          >
+            <div className="flex items-center gap-2.5 font-bold text-base sm:text-lg text-amber-900 dark:text-amber-200">
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>Critical Look-Alike Sound-Alike (LASA) Ambiguity Alert</span>
+            </div>
+            <p className="text-xs sm:text-sm leading-relaxed text-amber-900/90 dark:text-amber-200/90">
+              A high-risk orthographic or phonetic name collision was detected:
+              {currentState.lasaDetail ? (
+                <> <strong className="font-mono">{currentState.lasaDetail.prescribedCandidate}</strong> may be confused with <strong className="font-mono">{currentState.lasaDetail.confusedWithDrug}</strong> ({currentState.lasaDetail.similarityType} similarity: {currentState.lasaDetail.levenshteinScore}%). </>
+              ) : (
+                ' Potential name confusion identified against CDSCO/ISMP high-alert catalogs. '
+              )}
+              <strong>Action Mandated:</strong> Pharmacist must verify active indication and confirm drug identity with the prescriber before dispensing.
+            </p>
+          </div>
+        )}
+
+        {/* Mandatory Pharmacist Verification Required Banner on Abstention */}
+        {(currentState.overallStatus === 'ABSTAINED' || currentState.overallStatus === 'SELECTIVE_ABSTAIN' || currentState.overallStatus === 'NEEDS_VERIFICATION') && (
+          <div
+            data-testid="banner-pharmacist-verification-required"
+            className="p-5 sm:p-6 rounded-2xl bg-rose-500/15 border-2 border-rose-500 text-rose-950 dark:text-rose-100 space-y-2 shadow-xs"
+          >
+            <div className="flex items-center gap-2.5 font-bold text-base sm:text-lg text-rose-900 dark:text-rose-200">
+              <ShieldAlert className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+              <span>Mandatory Pharmacist Verification Required</span>
+            </div>
+            <p className="text-xs sm:text-sm leading-relaxed text-rose-900/90 dark:text-rose-200/90">
+              Autonomous clinical safety guardrails have triggered selective or total abstention. Under Central Drugs Standard Control Organisation (CDSCO) and Good Pharmacy Practice guidelines, <strong>this prescription MUST be manually reviewed and countersigned by a registered pharmacist</strong> before dispensing any medication.
+            </p>
+          </div>
+        )}
+
         {/* Explicit Clinical Abstention Notice if Document Abstained */}
         {currentState.overallStatus === 'ABSTAINED' && (
           <div className="p-5 sm:p-6 rounded-2xl bg-amber-500/10 border-2 border-amber-600/40 text-amber-900 dark:text-amber-200 space-y-2">

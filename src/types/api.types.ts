@@ -20,6 +20,13 @@ export type EntityFieldKeyDto =
 
 export type EntityStatusDto = 'confident' | 'uncertain' | 'flagged' | 'abstained';
 
+export type EpistemicStatusDto =
+  | 'EXTRACTED'
+  | 'MISSING_ON_RX'
+  | 'ILLEGIBLE'
+  | 'AMBIGUOUS'
+  | 'UNVERIFIED';
+
 export interface ExtractedEntityDto {
   field_key: EntityFieldKeyDto;
   field_label: string;
@@ -27,6 +34,7 @@ export interface ExtractedEntityDto {
   normalized_value: string;
   confidence: number; // 0.0 - 1.0
   status: EntityStatusDto;
+  epistemic_status?: EpistemicStatusDto | null;
   stroke_source: string;
   bounding_box: BoundingBoxDto;
   explanation: string;

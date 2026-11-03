@@ -69,12 +69,20 @@ export interface PrescriptionAnalysisResult {
 
 export type FieldConfidenceStatus = 'confident' | 'uncertain' | 'flagged' | 'abstained';
 
+export type EpistemicStatus =
+  | 'EXTRACTED'
+  | 'MISSING_ON_RX'
+  | 'ILLEGIBLE'
+  | 'AMBIGUOUS'
+  | 'UNVERIFIED';
+
 export interface ExtractedFieldItem {
   fieldKey: 'medicineName' | 'dosage' | 'frequency' | 'duration' | 'abbreviation' | 'route';
   fieldName: string;
   value: string;
   confidence: number; // 0.0 - 1.0 (e.g. 0.94)
   status: FieldConfidenceStatus;
+  epistemicStatus?: EpistemicStatus;
   statusLabel: string; // e.g. "CONFIDENT · High confidence", "UNCERTAIN · Needs verification", "FLAGGED · Do not rely on this interpretation", "ABSTAINED · Unable to interpret"
   explanation: string;
   source: string; // e.g. "Prescription Line 01 · Pen Stroke #1"

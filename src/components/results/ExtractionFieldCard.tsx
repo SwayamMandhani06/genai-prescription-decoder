@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExtractedFieldItem, BoundingBox } from '../../types/prescription.types';
+import { ExtractedFieldItem, BoundingBox, EpistemicStatus } from '../../types/prescription.types';
 import {
   CheckCircle2,
   AlertCircle,
@@ -34,38 +34,104 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
   );
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(field.value);
+
+  const resolveEpistemicStatus = (): EpistemicStatus => {
+    if (field.epistemicStatus) return field.epistemicStatus;
+    const val = (field.value || '').trim();
+    if (val === 'ILLEGIBLE' || val.includes('[?]') || val.toLowerCase().includes('illegible')) {
+      return 'ILLEGIBLE';
+    }
+    if (!val || val === 'MISSING' || val === 'NOT_SPECIFIED' || val.toLowerCase().includes('not written')) {
+      return 'MISSING_ON_RX';
+    }
+    if (field.status === 'flagged' || field.status === 'abstained') {
+      return 'AMBIGUOUS';
+    }
+    if (field.status === 'uncertain') {
+      return 'UNVERIFIED';
+    }
+    return 'EXTRACTED';
+  };
+
+  const epistemic = resolveEpistemicStatus();
+
   const getStatusBadge = () => {
-    switch (field.status) {
-      case 'confident':
+    switch (epistemic) {
+      case 'MISSING_ON_RX':
         return (
-          <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-theme-muted font-medium">
+          <div
+            data-testid="badge-missing-on-rx"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700"
+            title="Prescriber did not write or specify this field on the prescription pad."
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+            <span>Not written on prescription</span>
+          </div>
+        );
+
+      case 'ILLEGIBLE':
+        return (
+          <div
+            data-testid="badge-illegible"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800"
+            title="Handwriting strokes are present on pad but illegible or collapsed. Clinical safety rules strictly forbid guessing."
+          >
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+            <span>Handwriting unclear — do not guess</span>
+          </div>
+        );
+
+      case 'AMBIGUOUS':
+        return (
+          <div
+            data-testid="badge-ambiguous"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border border-orange-300 dark:border-orange-800"
+            title="Multiple conflicting or ambiguous posology interpretations detected."
+          >
+            <AlertCircle className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
+            <span>Ambiguous interpretation</span>
+          </div>
+        );
+
+      case 'UNVERIFIED':
+        return (
+          <div
+            data-testid="badge-unverified"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+            title="Extraction confidence below verification threshold. Pharmacist confirmation required."
+          >
+            <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>Pharmacist Verification Required</span>
+          </div>
+        );
+
+      case 'EXTRACTED':
+      default:
+        return (
+          <div
+            data-testid="badge-extracted"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+            title="Visually grounded extraction with confident evidence support."
+          >
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span>Grounded</span>
-          </div>
-        );
-      case 'uncertain':
-        return (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-            <span>Needs verification</span>
-          </div>
-        );
-      case 'flagged':
-        return (
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-semibold bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800">
-            <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
-            <span>Flagged for review</span>
+            <span>Grounded · Extracted</span>
           </div>
         );
     }
   };
 
   const getBorderAndBgStyle = () => {
-    if (field.status === 'flagged') {
-      return 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-800';
+    if (epistemic === 'ILLEGIBLE') {
+      return 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800 shadow-xs';
     }
-    if (field.status === 'uncertain') {
-      return 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800';
+    if (epistemic === 'MISSING_ON_RX') {
+      return 'bg-slate-50/50 dark:bg-slate-900/20 border-slate-300 dark:border-slate-800 shadow-xs';
+    }
+    if (epistemic === 'AMBIGUOUS' || field.status === 'flagged') {
+      return 'bg-orange-50/40 dark:bg-orange-950/20 border-orange-300 dark:border-orange-800 shadow-xs';
+    }
+    if (epistemic === 'UNVERIFIED' || field.status === 'uncertain') {
+      return 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800 shadow-xs';
     }
     if (isActive) {
       return 'bg-[#EAF2FF]/50 dark:bg-[#155EEF]/20 border-[#155EEF] dark:border-[#4B8BFF] shadow-sm ring-1 ring-[#155EEF]/30';
@@ -88,7 +154,18 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
             {field.fieldName}
           </span>
           <h3 className="text-xl sm:text-2xl lg:text-[1.65rem] font-bold text-theme-primary tracking-tight leading-snug">
-            {field.value}
+            {epistemic === 'MISSING_ON_RX' ? (
+              <span className="text-slate-500 dark:text-slate-400 italic font-normal text-lg sm:text-xl">
+                Not written on prescription
+              </span>
+            ) : epistemic === 'ILLEGIBLE' ? (
+              <span className="text-rose-700 dark:text-rose-300 font-mono flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />
+                <span>[Illegible Handwriting]</span>
+              </span>
+            ) : (
+              field.value
+            )}
           </h3>
         </div>
 
@@ -112,11 +189,15 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
                 <span
                   title="Estimated extraction confidence score (raw model signal — not a calibrated probability)"
                   className={`text-sm font-bold font-mono ${
-                    field.status === 'confident'
+                    epistemic === 'EXTRACTED'
                       ? 'text-emerald-700 dark:text-emerald-400'
-                      : field.status === 'uncertain'
-                      ? 'text-amber-700 dark:text-amber-400'
-                      : 'text-red-700 dark:text-red-400'
+                      : epistemic === 'MISSING_ON_RX'
+                      ? 'text-slate-600 dark:text-slate-400'
+                      : epistemic === 'ILLEGIBLE'
+                      ? 'text-rose-700 dark:text-rose-400'
+                      : epistemic === 'AMBIGUOUS'
+                      ? 'text-orange-700 dark:text-orange-400'
+                      : 'text-amber-700 dark:text-amber-400'
                   }`}
                 >
                   {confidencePercent}%
@@ -137,16 +218,49 @@ export const ExtractionFieldCard: React.FC<ExtractionFieldCardProps> = ({
         <div className="w-full h-1.5 bg-surface-subtle rounded-full overflow-hidden border border-theme flex">
           <div
             className={`h-full rounded-full transition-all duration-300 ${
-              field.status === 'confident'
+              epistemic === 'EXTRACTED'
                 ? 'bg-emerald-500'
-                : field.status === 'uncertain'
-                ? 'bg-amber-500'
-                : 'bg-red-500'
+                : epistemic === 'MISSING_ON_RX'
+                ? 'bg-slate-400'
+                : epistemic === 'ILLEGIBLE'
+                ? 'bg-rose-500'
+                : epistemic === 'AMBIGUOUS'
+                ? 'bg-orange-500'
+                : 'bg-amber-500'
             }`}
             style={{ width: `${confidencePercent}%` }}
           />
         </div>
       </div>
+
+      {/* Explicit Epistemic Callout: Missing on Rx vs Illegible */}
+      {epistemic === 'MISSING_ON_RX' && (
+        <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex items-start gap-2.5">
+          <HelpCircle className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <strong className="font-semibold block text-slate-900 dark:text-slate-100">
+              Not Written on Prescription Pad
+            </strong>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              The prescribing physician omitted this field (no ink strokes present on pad for this posology attribute). Clinical safety guidelines prohibit guessing or inserting default dosages.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {epistemic === 'ILLEGIBLE' && (
+        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-xs sm:text-sm text-rose-900 dark:text-rose-200 flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <strong className="font-semibold block text-rose-950 dark:text-rose-100">
+              Handwriting Unclear — Do Not Guess
+            </strong>
+            <p className="text-xs text-rose-800/90 dark:text-rose-200/90 leading-relaxed">
+              Handwriting stroke is visually detected, but ink ligature is collapsed or severely degraded. To protect patient safety, automated AI interpretation has been halted for this field. Contact prescriber for clarification.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Explanation & Rationale */}
       <p className="text-base sm:text-lg text-theme-secondary leading-relaxed">

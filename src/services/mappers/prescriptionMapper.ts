@@ -37,12 +37,26 @@ export function mapEntityDtoToFieldItem(dto: ExtractedEntityDto): ExtractedField
     abbreviation: 'abbreviation',
   };
 
+  // Resolve epistemic status with semantic fallbacks
+  const epistemicStatus =
+    dto.epistemic_status ||
+    (dto.raw_value === 'ILLEGIBLE' || (dto.raw_value && dto.raw_value.includes('[?]'))
+      ? 'ILLEGIBLE'
+      : !dto.raw_value || dto.raw_value === 'MISSING' || dto.raw_value === 'NOT_SPECIFIED' || dto.raw_value.toLowerCase().includes('not written')
+      ? 'MISSING_ON_RX'
+      : dto.status === 'flagged' || dto.status === 'abstained'
+      ? 'AMBIGUOUS'
+      : dto.status === 'uncertain'
+      ? 'UNVERIFIED'
+      : 'EXTRACTED');
+
   return {
     fieldKey: fieldKeyMap[dto.field_key] || 'medicineName',
     fieldName: dto.field_label,
     value: dto.normalized_value || dto.raw_value,
     confidence: dto.confidence,
     status: dto.status,
+    epistemicStatus,
     statusLabel,
     explanation: dto.explanation,
     source: dto.stroke_source,

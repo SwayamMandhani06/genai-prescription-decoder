@@ -176,6 +176,40 @@ export const FindingsStep: React.FC<FindingsStepProps> = ({
         </p>
       </div>
 
+      {/* Prominent LASA Ambiguity Warning Banner */}
+      {currentState.lasaDetail && currentState.lasaDetail.hasWarning && (
+        <div
+          data-testid="banner-lasa-warning"
+          className="rounded-2xl border-2 border-amber-500 bg-amber-500/15 p-5 sm:p-6 space-y-2 text-amber-950 dark:text-amber-100 shadow-xs"
+        >
+          <div className="flex items-center gap-2.5 font-bold text-base sm:text-lg text-amber-900 dark:text-amber-200">
+            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+            <span>Critical Look-Alike Sound-Alike (LASA) Ambiguity Alert</span>
+          </div>
+          <p className="text-xs sm:text-sm leading-relaxed text-amber-900/90 dark:text-amber-200/90">
+            A high-risk orthographic or phonetic name collision was detected:
+            <strong className="font-mono ml-1">{currentState.lasaDetail.prescribedCandidate}</strong> may be confused with <strong className="font-mono">{currentState.lasaDetail.confusedWithDrug}</strong>.
+            <strong> Mandatory Action:</strong> Pharmacist must verify active clinical indication and confirm drug identity with the prescriber before dispensing.
+          </p>
+        </div>
+      )}
+
+      {/* Mandatory Pharmacist Verification Required Banner on Abstention */}
+      {(currentState.overallStatus === 'ABSTAINED' || currentState.overallStatus === 'SELECTIVE_ABSTAIN' || currentState.overallStatus === 'NEEDS_VERIFICATION' || medicines.some((m) => m.requiresVerification)) && (
+        <div
+          data-testid="banner-pharmacist-verification-required"
+          className="rounded-2xl border-2 border-rose-500 bg-rose-500/15 p-5 sm:p-6 space-y-2 text-rose-950 dark:text-rose-100 shadow-xs"
+        >
+          <div className="flex items-center gap-2.5 font-bold text-base sm:text-lg text-rose-900 dark:text-rose-200">
+            <ShieldAlert className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+            <span>Mandatory Pharmacist Verification Required</span>
+          </div>
+          <p className="text-xs sm:text-sm leading-relaxed text-rose-900/90 dark:text-rose-200/90">
+            Clinical safety guardrails flagged one or more items on this prescription as requiring manual pharmacist verification. Under Good Pharmacy Practice regulations, do not dispense medications without checking against the physical prescription pad or clarifying with the prescriber.
+          </p>
+        </div>
+      )}
+
       {/* 3. Primary Grid: Document Visual on Left, Structured Clinical Content on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Original Prescription Document (5 columns on desktop) */}
