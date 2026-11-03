@@ -223,12 +223,16 @@ class MultimodalPrescriptionPipeline(IPrescriptionPipeline):
                     preprocessed_bytes = _buf.getvalue()
 
                 # Pass VLM-optimized high-resolution RGB image preserving continuous stroke gradients and decimal points
+                # Encoded as high-quality JPEG (quality=88) to avoid multi-megabyte PNG upload delays and 504 timeouts
                 if "vlm_image" in res.derived_images:
                     import io as _io
                     _vbuf = _io.BytesIO()
-                    res.derived_images["vlm_image"].save(_vbuf, format="PNG")
+                    vlm_img = res.derived_images["vlm_image"]
+                    if vlm_img.mode != "RGB":
+                        vlm_img = vlm_img.convert("RGB")
+                    vlm_img.save(_vbuf, format="JPEG", quality=88, optimize=True)
                     image_bytes = _vbuf.getvalue()
-                    effective_mime = "image/png"
+                    effective_mime = "image/jpeg"
             except ImageValidationError as ive:
                 raise PipelineProcessingError(
                     code=ive.code,

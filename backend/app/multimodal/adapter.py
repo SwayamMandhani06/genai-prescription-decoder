@@ -187,9 +187,9 @@ class GeminiMultimodalAdapter(IMultimodalModelAdapter):
 
         timeout = httpx.Timeout(
             timeout=active_config.timeout_seconds,
-            connect=10.0,
+            connect=15.0,
             read=active_config.timeout_seconds,
-            write=15.0,
+            write=max(30.0, active_config.timeout_seconds),
         )
 
         max_attempts = 2

@@ -309,6 +309,76 @@ def parse_raw_medicine(
     )
 
 
+def repair_truncated_json(s: str) -> Optional[dict]:
+    """
+    Recovers valid structured JSON from model output that was truncated mid-generation (e.g. token limits).
+    Closes unclosed strings, strips dangling trailing commas/colons, and balances open braces and brackets.
+    """
+    if not s or not isinstance(s, str):
+        return None
+    s = s.strip()
+
+    # 1. Close unclosed string if output ended abruptly inside quotes
+    in_string = False
+    escape = False
+    for c in s:
+        if escape:
+            escape = False
+        elif c == '\\':
+            escape = True
+        elif c == '"':
+            in_string = not in_string
+
+    if in_string:
+        s += '"'
+
+    # 2. Repeatedly trim trailing colons, dangling keys, or commas
+    prev = None
+    while prev != s:
+        prev = s
+        s = s.strip()
+        s = re.sub(r',\s*"[^"]*"\s*:\s*$', '', s)
+        s = re.sub(r'{\s*"[^"]*"\s*:\s*$', '{', s)
+        s = re.sub(r',\s*"[^"]*"\s*$', '', s)
+        s = re.sub(r',\s*$', '', s)
+        s = re.sub(r':\s*$', '', s)
+
+    # 3. Balance opening and closing braces/brackets
+    stack = []
+    in_string = False
+    escape = False
+    for c in s:
+        if escape:
+            escape = False
+        elif c == '\\':
+            escape = True
+        elif c == '"':
+            in_string = not in_string
+        elif not in_string:
+            if c in '{[':
+                stack.append(c)
+            elif c == '}':
+                if stack and stack[-1] == '{':
+                    stack.pop()
+            elif c == ']':
+                if stack and stack[-1] == '[':
+                    stack.pop()
+
+    for open_char in reversed(stack):
+        if open_char == '{':
+            s += '}'
+        elif open_char == '[':
+            s += ']'
+
+    try:
+        res = json.loads(s, strict=False)
+        if isinstance(res, dict):
+            return res
+    except Exception:
+        pass
+    return None
+
+
 def parse_multimodal_response(
     raw_text: str,
     source: EvidenceSource = "original_image",
@@ -399,10 +469,13 @@ def parse_multimodal_response(
                         repaired_sq = re.sub(r"'(.*?)'", r'"\1"', repaired)
                         data = json.loads(repaired_sq, strict=False)
                     except Exception:
-                        raise MultimodalParseError(
-                            f"Failed to decode model JSON output: {str(primary_exc)}",
-                            raw_response=raw_text,
-                        ) from primary_exc
+                        # 9. Truncated output recovery: close unclosed strings and unbalanced brackets
+                        data = repair_truncated_json(repaired) or repair_truncated_json(sanitized) or repair_truncated_json(cleaned)
+                        if data is None:
+                            raise MultimodalParseError(
+                                f"Failed to decode model JSON output: {str(primary_exc)}",
+                                raw_response=raw_text,
+                            ) from primary_exc
 
     if not isinstance(data, dict):
         raise MultimodalParseError(
